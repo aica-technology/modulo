@@ -396,15 +396,29 @@ protected:
    * @brief Look up a transform from TF.
    * @param frame The desired frame of the transform
    * @param reference_frame The desired reference frame of the transform
-   * @param time_point The time at which the value of the transform is desired (default: 0, will get the latest)
+   * @param time_point The time at which the value of the transform is desired
    * @param duration How long to block the lookup call before failing
    * @throws modulo_components::exceptions::LookupTransformException if TF buffer/listener are unconfigured or
    * if the lookupTransform call failed
    * @return If it exists, the requested transform
    */
+   [[nodiscard]] state_representation::CartesianPose lookup_transform(
+      const std::string& frame, const std::string& reference_frame, const tf2::TimePoint& time_point,
+      const tf2::Duration& duration
+  );
+
+  /**
+   * @brief Look up a transform from TF.
+   * @param frame The desired frame of the transform
+   * @param reference_frame The desired reference frame of the transform
+   * @param validity_period The validity period of the latest transform from the time of lookup
+   * @param duration How long to block the lookup call before failing
+   * @throws modulo_components::exceptions::LookupTransformException if TF buffer/listener are unconfigured,
+   * if the lookupTransform call failed, or if the transform is too old
+   * @return If it exists and is still valid, the requested transform
+   */
   [[nodiscard]] state_representation::CartesianPose lookup_transform(
-      const std::string& frame, const std::string& reference_frame = "world",
-      const tf2::TimePoint& time_point = tf2::TimePoint(std::chrono::microseconds(0)),
+      const std::string& frame, const std::string& reference_frame = "world", double validity_period = -1.0,
       const tf2::Duration& duration = tf2::Duration(std::chrono::microseconds(10)));
 
   /**
@@ -516,6 +530,21 @@ private:
    * @return The parsed service name
    */
   std::string validate_service_name(const std::string& service_name);
+
+  /**
+ * @brief Helper method to look up a transform from TF.
+ * @param frame The desired frame of the transform
+ * @param reference_frame The desired reference frame of the transform
+ * @param time_point The time at which the value of the transform is desired (default: 0, will get the latest)
+ * @param duration How long to block the lookup call before failing
+ * @throws modulo_components::exceptions::LookupTransformException if TF buffer/listener are unconfigured or
+ * if the lookupTransform call failed
+ * @return If it exists, the requested transform
+ */
+  [[nodiscard]] geometry_msgs::msg::TransformStamped lookup_ros_transform(
+      const std::string& frame, const std::string& reference_frame, const tf2::TimePoint& time_point,
+      const tf2::Duration& duration
+  );
 
   modulo_core::communication::PublisherType
       publisher_type_; ///< Type of the output publishers (one of PUBLISHER, LIFECYCLE_PUBLISHER)
@@ -1155,7 +1184,7 @@ inline void ComponentInterface<NodeT>::send_static_transform(const state_represe
 template<class NodeT>
 inline void
 ComponentInterface<NodeT>::send_static_transforms(const std::vector<state_representation::CartesianPose>& transforms) {
-  this->template publish_transforms(transforms, this->static_tf_broadcaster_);
+  this->template publish_transforms(transforms, this->static_tf_broadcaster_, true);
 }
 
 template<class NodeT>
@@ -1186,8 +1215,9 @@ inline void ComponentInterface<NodeT>::publish_transforms(
   }
 }
 
+
 template<class NodeT>
-inline state_representation::CartesianPose ComponentInterface<NodeT>::lookup_transform(
+inline geometry_msgs::msg::TransformStamped ComponentInterface<NodeT>::lookup_ros_transform(
     const std::string& frame, const std::string& reference_frame, const tf2::TimePoint& time_point,
     const tf2::Duration& duration
 ) {
@@ -1195,13 +1225,36 @@ inline state_representation::CartesianPose ComponentInterface<NodeT>::lookup_tra
     throw exceptions::LookupTransformException("Failed to lookup transform: To TF buffer / listener configured.");
   }
   try {
-    state_representation::CartesianPose result(frame, reference_frame);
-    auto transform = this->tf_buffer_->lookupTransform(reference_frame, frame, time_point, duration);
-    modulo_core::translators::read_message(result, transform);
-    return result;
+    return this->tf_buffer_->lookupTransform(reference_frame, frame, time_point, duration);;
   } catch (const tf2::TransformException& ex) {
     throw exceptions::LookupTransformException(std::string("Failed to lookup transform: ").append(ex.what()));
   }
+}
+
+
+template<class NodeT>
+inline state_representation::CartesianPose ComponentInterface<NodeT>::lookup_transform(
+    const std::string& frame, const std::string& reference_frame, const tf2::TimePoint& time_point,
+    const tf2::Duration& duration
+) {
+  auto transform = this->lookup_ros_transform(frame, reference_frame, time_point, duration);
+  state_representation::CartesianPose result(frame, reference_frame);
+  modulo_core::translators::read_message(result, transform);
+  return result;
+}
+
+template<class NodeT>
+inline state_representation::CartesianPose ComponentInterface<NodeT>::lookup_transform(
+    const std::string& frame, const std::string& reference_frame, double validity_period, const tf2::Duration& duration
+) {
+  auto transform =
+      this->lookup_ros_transform(frame, reference_frame, tf2::TimePoint(std::chrono::microseconds(0)), duration);
+  if (validity_period > 0.0 && (this->get_clock()->now() - transform.header.stamp).seconds() > validity_period) {
+    throw exceptions::LookupTransformException("Failed to lookup transform: Latest transform is too old!");
+  }
+  state_representation::CartesianPose result(frame, reference_frame);
+  modulo_core::translators::read_message(result, transform);
+  return result;
 }
 
 template<class NodeT>
