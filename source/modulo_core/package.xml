@@ -3,7 +3,7 @@
 <package format="3">
   <name>modulo_core</name>
   <version>2.1.7</version>
-  <description>Modulo Core communication and translation utilities for interoperability with EPFL Control Libraries</description>
+  <description>Modulo Core communication and translation utilities for interoperability with AICA Control Libraries</description>
   <maintainer email="baptiste@aica.tech">Baptiste Busch</maintainer>
   <maintainer email="enrico@aica.tech">Enrico Eberhard</maintainer>
   <maintainer email="dominic@aica.tech">Dominic Reber</maintainer>

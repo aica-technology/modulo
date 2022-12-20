@@ -1,7 +1,7 @@
 #!/bin/bash
 BASE_TAG=humble-devel
 
-IMAGE_NAME=epfl-lasa/modulo
+IMAGE_NAME=aica-technology/modulo
 IMAGE_TAG=latest
 
 REMOTE_SSH_PORT=4440

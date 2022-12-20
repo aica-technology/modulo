@@ -20,7 +20,7 @@ Release Versions:
 ### October 28, 2022
 
 Version 2.1.1 is a patch release to update the license of the Modulo project from MIT to GPLv3. A core dependency
-of modulo is [control libraries](https://github.com/epfl-lasa/control-libraries), making it a combined work.
+of modulo is [control libraries](https://github.com/aica-technology/control-libraries), making it a combined work.
 To be compliant with the GLPv3 license of control libraries, modulo must also be licensed under GPLv3.
 
 ### Changes
@@ -68,7 +68,7 @@ modulo_components::LifecycleComponent, which provide a simple framework for crea
 state-based (managed) custom components.
 
 For more information, see the new description of each package in the respective README.md files and view
-the full generated documentation on [epfl-lasa.github.io/modulo](epfl-lasa.github.io/modulo).
+the full generated documentation on [aica-technology.github.io/modulo](aica-technology.github.io/modulo).
 
 ### Changes
 

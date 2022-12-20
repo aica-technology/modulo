@@ -1,10 +1,10 @@
 # Modulo
 
-Modulo is an extension layer to ROS2 that adds interoperability support for [epfl-lasa/control-libraries](https://github.com/epfl-lasa/control-libraries)
+Modulo is an extension layer to ROS2 that adds interoperability support for [aica-technology/control-libraries](https://github.com/aica-technology/control-libraries)
 and provides a modular framework for [application composition](https://docs.ros.org/en/humble/Concepts/About-Composition.html)
 through custom component classes in both C++ and Python.
 
-Documentation is available at [epfl-lasa.github.io/modulo](epfl-lasa.github.io/modulo).
+Documentation is available at [aica-technology.github.io/modulo](aica-technology.github.io/modulo).
 
 ## Modulo Core
 
@@ -52,7 +52,7 @@ root@docker-desktop:/# ros2 run ros1_bridge dynamic_bridge --bridge-all-topics
 
 ### Further reading
 
-- [epfl-lasa/control-libraries](https://github.com/epfl-lasa/control-libraries)
+- [aica-technology/control-libraries](https://github.com/aica-technology/control-libraries)
 - [aica-technology/docker-images](https://github.com/aica-technology/docker-images)
 - [aica-technology/component-sdk](https://github.com/aica-technology/component-sdk)
 - [ROS2 Composition](https://github.com/aica-technology/docker-images)
