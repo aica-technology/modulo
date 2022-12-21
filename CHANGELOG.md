@@ -13,6 +13,7 @@ Release Versions:
 - Fix creation of triggers and improve tests (epfl-lasa#149)
 - Change order of execution in step callback (epfl-lasa#150)
 - Transfer repository ownership to AICA (#1)
+- Add lookup transform variant with validity period (#2)
 
 ## 2.1.1
 
