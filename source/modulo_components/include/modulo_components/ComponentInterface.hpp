@@ -535,7 +535,7 @@ private:
  * @brief Helper method to look up a transform from TF.
  * @param frame The desired frame of the transform
  * @param reference_frame The desired reference frame of the transform
- * @param time_point The time at which the value of the transform is desired (default: 0, will get the latest)
+ * @param time_point The time at which the value of the transform is desired
  * @param duration How long to block the lookup call before failing
  * @throws modulo_components::exceptions::LookupTransformException if TF buffer/listener are unconfigured or
  * if the lookupTransform call failed
