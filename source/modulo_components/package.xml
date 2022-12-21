@@ -2,8 +2,8 @@
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>modulo_components</name>
-  <version>2.1.7</version>
-  <description>TODO</description>
+  <version>2.1.8</version>
+  <description>Modulo base classes that wrap ROS2 Nodes as modular components for the AICA application framework</description>
   <maintainer email="baptiste@aica.tech">Baptiste Busch</maintainer>
   <maintainer email="enrico@aica.tech">Enrico Eberhard</maintainer>
   <maintainer email="dominic@aica.tech">Dominic Reber</maintainer>

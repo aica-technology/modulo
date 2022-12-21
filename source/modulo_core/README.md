@@ -1,7 +1,7 @@
 # Modulo Core
 
 Modulo Core is an interface package to support the interoperability of the [Robot Operating System (ROS)](https://www.ros.org)
-with [EPFL LASA control libraries](https://github.com/epfl-lasa/control-libraries) by providing communication and
+with [AICA control libraries](https://github.com/aica-technology/control-libraries) by providing communication and
 translation utilities.
 
 This package is specifically designed for ROS2 and was developed on Galactic Geochelone.
@@ -171,7 +171,7 @@ The ROS `Parameter` is a specific implementation of the parameter concept which,
 can be used to read and write named parameters on application nodes through the ROS interface. The ROS `Parameter`
 supports only simple types (atomic types, strings and arrays).
 
-The control libraries [`state_representation::Parameter`](https://epfl-lasa.github.io/control-libraries/versions/main/classstate__representation_1_1_parameter_interface.html)
+The control libraries [`state_representation::Parameter`](https://aica-technology.github.io/control-libraries/versions/main/classstate__representation_1_1_parameter_interface.html)
 is another implementation that supports more data types, including `State`-derived objects and matrices.
 
 The parameter translator utilities in `modulo_core::translators` convert between ROS and `state_representation`
