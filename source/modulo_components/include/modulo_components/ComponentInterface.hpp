@@ -411,7 +411,7 @@ protected:
    * @brief Look up a transform from TF.
    * @param frame The desired frame of the transform
    * @param reference_frame The desired reference frame of the transform
-   * @param validity_period The validity period of the latest transform from the time of lookup
+   * @param validity_period The validity period of the latest transform from the time of lookup in seconds
    * @param duration How long to block the lookup call before failing
    * @throws modulo_components::exceptions::LookupTransformException if TF buffer/listener are unconfigured,
    * if the lookupTransform call failed, or if the transform is too old

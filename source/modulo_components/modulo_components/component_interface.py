@@ -648,7 +648,7 @@ class ComponentInterface(Node):
 
         :param frame: The desired frame of the transform
         :param reference_frame: The desired reference frame of the transform
-        :param validity_period: The validity period of the latest transform from the time of lookup
+        :param validity_period: The validity period of the latest transform from the time of lookup in seconds
         :param time_point: The time at which the value of the transform is desired (default: 0, will get the latest)
         :param duration: How long to block the lookup call before failing
         :return: If it exists and is still valid, the requested transform
