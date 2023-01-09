@@ -14,6 +14,7 @@ Release Versions:
 - Change order of execution in step callback (epfl-lasa#150)
 - Transfer repository ownership to AICA (#1)
 - Add lookup transform variant with validity period (#2)
+- Update tests after removal of SpatialState constructor (#3)
 
 ## 2.1.1
 

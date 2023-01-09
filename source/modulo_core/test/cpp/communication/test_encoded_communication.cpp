@@ -119,12 +119,9 @@ protected:
 TEST_F(EncodedCommunicationTest, SameType) {
   this->communicate<State, State>(State(StateType::STATE, "this"), State(StateType::STATE, "that"), false);
   this->communicate<State, State>(State(StateType::STATE, "this", false), State(StateType::STATE, "that"));
+  this->communicate<SpatialState, SpatialState>(SpatialState("this"), SpatialState("that"), false);
   this->communicate<SpatialState, SpatialState>(
-      SpatialState(StateType::SPATIAL_STATE, "this"), SpatialState(StateType::SPATIAL_STATE, "that"), false
-  );
-  this->communicate<SpatialState, SpatialState>(
-      SpatialState(StateType::SPATIAL_STATE, "this", "world", false),
-      SpatialState(StateType::SPATIAL_STATE, "that", "base"), true,
+      SpatialState("this", "world", false), SpatialState("that", "base"), true,
       [](const std::shared_ptr<SpatialState>& pub_state, const std::shared_ptr<SpatialState>& recv_state) {
         EXPECT_EQ(pub_state->get_reference_frame(), recv_state->get_reference_frame());
       }
@@ -150,9 +147,10 @@ TEST_F(EncodedCommunicationTest, SameType) {
 }
 
 TEST_F(EncodedCommunicationTest, CompatibleType) {
+  // SpatialState is empty constructed and will not be published
+  // this->communicate<SpatialState, State>(SpatialState("this", "world"), State(StateType::STATE, "that"));
+
   // State is compatible with everything
-  this->communicate<SpatialState, State>(
-      SpatialState(StateType::SPATIAL_STATE, "this", "world", false), State(StateType::STATE, "that"));
   this->communicate<CartesianState, State>(CartesianState::Random("this"), State(StateType::STATE, "that"));
   this->communicate<CartesianPose, State>(CartesianPose::Random("this"), State(StateType::STATE, "that"));
   this->communicate<JointState, State>(JointState::Random("this", 3), State(StateType::STATE, "that"));
@@ -160,10 +158,8 @@ TEST_F(EncodedCommunicationTest, CompatibleType) {
   this->communicate<Jacobian, State>(Jacobian::Random("this", 3, "ee"), State(StateType::STATE, "that"));
 
   // SpatialState is compatible with Cartesian types
-  this->communicate<CartesianState, SpatialState>(
-      CartesianState::Random("this"), SpatialState(StateType::SPATIAL_STATE, "that"));
-  this->communicate<CartesianPose, SpatialState>(
-      CartesianPose::Random("this"), SpatialState(StateType::SPATIAL_STATE, "that"));
+  this->communicate<CartesianState, SpatialState>(CartesianState::Random("this"), SpatialState("that"));
+  this->communicate<CartesianPose, SpatialState>(CartesianPose::Random("this"), SpatialState("that"));
 
   // CartesianState is compatible with all Cartesian types
   this->communicate_cartesian_state<CartesianPose, CartesianState>(CartesianStateVariable::ALL);
@@ -193,13 +189,13 @@ TEST_F(EncodedCommunicationTest, CompatibleType) {
 TEST_F(EncodedCommunicationTest, IncompatibleType) {
   // SpatialState is incompatible with State, JointState and Jacobian
   this->communicate<State, SpatialState>(
-      State(StateType::STATE, "this"), SpatialState(StateType::SPATIAL_STATE, "that"), false
+      State(StateType::STATE, "this"), SpatialState("that"), false
   );
   this->communicate<JointState, SpatialState>(
-      JointState::Random("this", 3), SpatialState(StateType::SPATIAL_STATE, "that"), false
+      JointState::Random("this", 3), SpatialState("that"), false
   );
   this->communicate<Jacobian, SpatialState>(
-      Jacobian("this", 3, "ee"), SpatialState(StateType::SPATIAL_STATE, "that"), false
+      Jacobian("this", 3, "ee"), SpatialState("that"), false
   );
 
   // Jacobian is incompatible with State, SpatialState, CartesianState and JointState
@@ -211,7 +207,7 @@ TEST_F(EncodedCommunicationTest, IncompatibleType) {
       }
   );
   this->communicate<SpatialState, Jacobian>(
-      SpatialState(StateType::SPATIAL_STATE, "this"), Jacobian("that", 3, "base"), false,
+      SpatialState("this"), Jacobian("that", 3, "base"), false,
       [](const std::shared_ptr<SpatialState>&, const std::shared_ptr<Jacobian>& recv_state) {
         EXPECT_EQ(recv_state->get_frame(), "base");
         EXPECT_NEAR(recv_state->data().norm(), 0, tol);
@@ -243,7 +239,7 @@ TEST_F(EncodedCommunicationTest, IncompatibleTypeCartesian) {
       }
   );
   this->communicate<SpatialState, CartesianState>(
-      SpatialState(StateType::SPATIAL_STATE, "this"), CartesianState::Identity("that", "base"), false,
+      SpatialState("this"), CartesianState::Identity("that", "base"), false,
       [](const std::shared_ptr<SpatialState>&, const std::shared_ptr<CartesianState>& recv_state) {
         EXPECT_EQ(recv_state->get_reference_frame(), "base");
         EXPECT_NEAR(recv_state->data().norm(), 1, tol);
@@ -297,7 +293,7 @@ TEST_F(EncodedCommunicationTest, IncompatibleTypeJoint) {
       }
   );
   this->communicate<SpatialState, JointState>(
-      SpatialState(StateType::SPATIAL_STATE, "this"), JointState::Zero("that", 3), false,
+      SpatialState("this"), JointState::Zero("that", 3), false,
       [](const std::shared_ptr<SpatialState>&, const std::shared_ptr<JointState>& recv_state) {
         EXPECT_EQ(recv_state->get_size(), 3u);
         EXPECT_NEAR(recv_state->data().norm(), 0, tol);
