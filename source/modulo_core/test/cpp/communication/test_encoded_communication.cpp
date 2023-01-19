@@ -117,8 +117,7 @@ protected:
 };
 
 TEST_F(EncodedCommunicationTest, SameType) {
-  this->communicate<State, State>(State(StateType::STATE, "this"), State(StateType::STATE, "that"), false);
-  this->communicate<State, State>(State(StateType::STATE, "this", false), State(StateType::STATE, "that"));
+  this->communicate<State, State>(State("this"), State("that"), false);
   this->communicate<SpatialState, SpatialState>(SpatialState("this"), SpatialState("that"), false);
   this->communicate<SpatialState, SpatialState>(
       SpatialState("this", "world", false), SpatialState("that", "base"), true,
@@ -151,11 +150,11 @@ TEST_F(EncodedCommunicationTest, CompatibleType) {
   // this->communicate<SpatialState, State>(SpatialState("this", "world"), State(StateType::STATE, "that"));
 
   // State is compatible with everything
-  this->communicate<CartesianState, State>(CartesianState::Random("this"), State(StateType::STATE, "that"));
-  this->communicate<CartesianPose, State>(CartesianPose::Random("this"), State(StateType::STATE, "that"));
-  this->communicate<JointState, State>(JointState::Random("this", 3), State(StateType::STATE, "that"));
-  this->communicate<JointPositions, State>(JointPositions::Random("this", 3), State(StateType::STATE, "that"));
-  this->communicate<Jacobian, State>(Jacobian::Random("this", 3, "ee"), State(StateType::STATE, "that"));
+  this->communicate<CartesianState, State>(CartesianState::Random("this"), State("that"));
+  this->communicate<CartesianPose, State>(CartesianPose::Random("this"), State("that"));
+  this->communicate<JointState, State>(JointState::Random("this", 3), State("that"));
+  this->communicate<JointPositions, State>(JointPositions::Random("this", 3), State("that"));
+  this->communicate<Jacobian, State>(Jacobian::Random("this", 3, "ee"), State("that"));
 
   // SpatialState is compatible with Cartesian types
   this->communicate<CartesianState, SpatialState>(CartesianState::Random("this"), SpatialState("that"));
@@ -189,7 +188,7 @@ TEST_F(EncodedCommunicationTest, CompatibleType) {
 TEST_F(EncodedCommunicationTest, IncompatibleType) {
   // SpatialState is incompatible with State, JointState and Jacobian
   this->communicate<State, SpatialState>(
-      State(StateType::STATE, "this"), SpatialState("that"), false
+      State("this"), SpatialState("that"), false
   );
   this->communicate<JointState, SpatialState>(
       JointState::Random("this", 3), SpatialState("that"), false
@@ -200,7 +199,7 @@ TEST_F(EncodedCommunicationTest, IncompatibleType) {
 
   // Jacobian is incompatible with State, SpatialState, CartesianState and JointState
   this->communicate<State, Jacobian>(
-      State(StateType::STATE, "this"), Jacobian("that", 3, "base"), false,
+      State("this"), Jacobian("that", 3, "base"), false,
       [](const std::shared_ptr<State>&, const std::shared_ptr<Jacobian>& recv_state) {
         EXPECT_EQ(recv_state->get_frame(), "base");
         EXPECT_NEAR(recv_state->data().norm(), 0, tol);
@@ -232,7 +231,7 @@ TEST_F(EncodedCommunicationTest, IncompatibleType) {
 TEST_F(EncodedCommunicationTest, IncompatibleTypeCartesian) {
   // CartesianState is incompatible with State, SpatialState, JointState and Jacobian
   this->communicate<State, CartesianState>(
-      State(StateType::STATE, "this"), CartesianState::Identity("that", "base"), false,
+      State("this"), CartesianState::Identity("that", "base"), false,
       [](const std::shared_ptr<State>&, const std::shared_ptr<CartesianState>& recv_state) {
         EXPECT_EQ(recv_state->get_reference_frame(), "base");
         EXPECT_NEAR(recv_state->data().norm(), 1, tol);
@@ -286,7 +285,7 @@ TEST_F(EncodedCommunicationTest, IncompatibleTypeCartesian) {
 TEST_F(EncodedCommunicationTest, IncompatibleTypeJoint) {
   // JointState is incompatible with State, SpatialState, CartesianState and Jacobian
   this->communicate<State, JointState>(
-      State(StateType::STATE, "this"), JointState::Zero("that", 3), false,
+      State("this"), JointState::Zero("that", 3), false,
       [](const std::shared_ptr<State>&, const std::shared_ptr<JointState>& recv_state) {
         EXPECT_EQ(recv_state->get_size(), 3u);
         EXPECT_NEAR(recv_state->data().norm(), 0, tol);

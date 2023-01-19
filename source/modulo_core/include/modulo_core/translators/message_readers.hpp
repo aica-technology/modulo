@@ -287,7 +287,7 @@ inline void read_message(std::shared_ptr<state_representation::State>& state, co
         if (new_state->get_type() == StateType::STATE) {
           *state = *new_state;
         } else {
-          *state = State(StateType::STATE, new_state->get_name(), new_state->is_empty());
+          *state = State(new_state->get_name());
         }
         break;
       }
