@@ -66,7 +66,13 @@ protected:
   ) {
     auto expected_type = receive_state.get_type();
     auto expected_name = expect_translation ? publish_state.get_name() : receive_state.get_name();
-    auto expected_empty = expect_translation ? publish_state.is_empty() : receive_state.is_empty();
+    bool expected_empty;
+    if (receive_state.get_type() == StateType::STATE || receive_state.get_type() == StateType::SPATIAL_STATE) {
+      // State and SpatialState are always empty so we expect them empty even if translation of the names happens
+      expected_empty = true;
+    } else {
+      expected_empty = expect_translation ? publish_state.is_empty() : receive_state.is_empty();
+    }
     auto pub_state = std::make_shared<PubT>(publish_state);
     auto recv_state = std::make_shared<RecvT>(receive_state);
     auto pub_message = make_shared_message_pair(pub_state, this->clock_);
@@ -117,14 +123,10 @@ protected:
 };
 
 TEST_F(EncodedCommunicationTest, SameType) {
+  // State and SpatialState are empty and won't be published
   this->communicate<State, State>(State("this"), State("that"), false);
-  this->communicate<SpatialState, SpatialState>(SpatialState("this"), SpatialState("that"), false);
-  this->communicate<SpatialState, SpatialState>(
-      SpatialState("this", "world", false), SpatialState("that", "base"), true,
-      [](const std::shared_ptr<SpatialState>& pub_state, const std::shared_ptr<SpatialState>& recv_state) {
-        EXPECT_EQ(pub_state->get_reference_frame(), recv_state->get_reference_frame());
-      }
-  );
+  this->communicate<SpatialState, SpatialState>(SpatialState("this", "world"), SpatialState("that", "base"), false);
+
   this->communicate_cartesian_state<CartesianState, CartesianState>(CartesianStateVariable::ALL);
   this->communicate_cartesian_state<CartesianPose, CartesianPose>(CartesianStateVariable::POSE);
   this->communicate_cartesian_state<CartesianTwist, CartesianTwist>(CartesianStateVariable::TWIST);
@@ -146,7 +148,7 @@ TEST_F(EncodedCommunicationTest, SameType) {
 }
 
 TEST_F(EncodedCommunicationTest, CompatibleType) {
-  // SpatialState is empty constructed and will not be published
+  // SpatialState is empty constructed and won't be published
   // this->communicate<SpatialState, State>(SpatialState("this", "world"), State(StateType::STATE, "that"));
 
   // State is compatible with everything
