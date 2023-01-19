@@ -16,6 +16,7 @@ Release Versions:
 - Add lookup transform variant with validity period (#2)
 - Update tests after removal of SpatialState constructor (#3)
 - Remove build-push workflow (#4)
+- Fixes to account for breaking changes in control libraries (#6)
 
 ## 2.1.1
 
