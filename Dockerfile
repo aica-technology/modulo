@@ -1,4 +1,4 @@
-ARG BASE_TAG=galactic
+ARG BASE_TAG=humble
 FROM ghcr.io/aica-technology/ros2-control-libraries:${BASE_TAG} as dependencies
 WORKDIR ${HOME}/ros2_ws
 
