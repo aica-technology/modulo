@@ -232,7 +232,6 @@ inline void safe_spatial_state_conversion(
   tmp_new_state.set_name(derived_new_state_ptr->get_name());
   tmp_new_state.set_reference_frame(derived_new_state_ptr->get_reference_frame());
   if (!derived_new_state_ptr->is_empty()) {
-    tmp_new_state.set_empty(derived_new_state_ptr->is_empty());
     if (conversion_callback) {
       conversion_callback(tmp_new_state, *derived_new_state_ptr);
     }
@@ -265,7 +264,6 @@ inline void safe_joint_state_conversion(
   auto derived_new_state_ptr = safe_dynamic_pointer_cast<NewStateT>(new_state);
   StateT tmp_new_state(derived_new_state_ptr->get_name(), derived_new_state_ptr->get_names());
   if (!derived_new_state_ptr->is_empty()) {
-    tmp_new_state.set_empty(derived_new_state_ptr->is_empty());
     if (conversion_callback) {
       conversion_callback(tmp_new_state, *derived_new_state_ptr);
     }
