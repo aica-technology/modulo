@@ -1,4 +1,3 @@
-from copy import copy
 from typing import Optional
 
 import clproto
@@ -183,7 +182,7 @@ def read_parameter_const(ros_parameter: Parameter, parameter: sr.Parameter) -> s
         raise ParameterTranslationError(f"The ROS parameter {ros_parameter.name} to be read does not have "
                                         f"the same name as the reference parameter {parameter.get_name()}")
     if ros_parameter.type_ == Parameter.Type.NOT_SET:
-        return copy(parameter)
+        return sr.Parameter(parameter.get_name(), parameter.get_parameter_type(), parameter.get_parameter_state_type())
     new_parameter = read_parameter(ros_parameter)
     if new_parameter.get_parameter_type() == parameter.get_parameter_type():
         if new_parameter.get_parameter_state_type() != parameter.get_parameter_state_type():
