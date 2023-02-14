@@ -17,6 +17,7 @@ Release Versions:
 - Update tests after removal of SpatialState constructor (#3)
 - Remove build-push workflow (#4)
 - Fixes to account for breaking changes in control libraries (#6)
+- Fix parameter translator after Parameter class changes (#8)
 
 ## 2.1.1
 
