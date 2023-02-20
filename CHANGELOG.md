@@ -18,6 +18,7 @@ Release Versions:
 - Remove build-push workflow (#4)
 - Fixes to account for breaking changes in control libraries (#6)
 - Fix parameter translator after Parameter class changes (#8)
+- Fix include of clproto header (#9)
 
 ## 2.1.1
 
