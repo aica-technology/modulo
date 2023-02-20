@@ -14,7 +14,7 @@
 #include <std_msgs/msg/string.hpp>
 #include <sensor_msgs/msg/joint_state.hpp>
 
-#include <clproto.h>
+#include <clproto.hpp>
 #include <state_representation/parameters/Parameter.hpp>
 #include <state_representation/space/cartesian/CartesianPose.hpp>
 #include <state_representation/space/joint/JointPositions.hpp>

@@ -14,7 +14,7 @@
 #include <std_msgs/msg/string.hpp>
 #include <tf2_msgs/msg/tf_message.hpp>
 
-#include <clproto.h>
+#include <clproto.hpp>
 #include <state_representation/space/cartesian/CartesianState.hpp>
 #include <state_representation/space/joint/JointState.hpp>
 #include <state_representation/parameters/Parameter.hpp>
