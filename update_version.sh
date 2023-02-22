@@ -111,12 +111,14 @@ SED_STR_DOXYGEN="s/PROJECT_NUMBER = ${VERSION}/PROJECT_NUMBER = ${NEW_VERSION}/g
 if [[ "$OSTYPE" == "darwin"* ]]; then
   sed -i '' "${SED_STR_VERSION}" ./VERSION
   sed -i '' "${SED_STR_PACKAGE}" ./source/modulo_component_interfaces/package.xml
+  sed -i '' "${SED_STR_PACKAGE}" ./source/modulo_utils/package.xml
   sed -i '' "${SED_STR_PACKAGE}" ./source/modulo_components/package.xml
   sed -i '' "${SED_STR_PACKAGE}" ./source/modulo_core/package.xml
   sed -i '' "${SED_STR_DOXYGEN}" ./doxygen/doxygen.conf
 else
   sed -i "${SED_STR_VERSION}" ./VERSION
   sed -i "${SED_STR_PACKAGE}" ./source/modulo_component_interfaces/package.xml
+  sed -i "${SED_STR_PACKAGE}" ./source/modulo_utils/package.xml
   sed -i "${SED_STR_PACKAGE}" ./source/modulo_components/package.xml
   sed -i "${SED_STR_PACKAGE}" ./source/modulo_core/package.xml
   sed -i "${SED_STR_DOXYGEN}" ./doxygen/doxygen.conf
@@ -124,7 +126,7 @@ fi
 
 if [ "${COMMIT}" == true ]; then
   echo "Committing changes to source control"
-  git add VERSION ./source/modulo_component_interfaces/package.xml ./source/modulo_components/package.xml \
-      ./source/modulo_core/package.xml ./doxygen/doxygen.conf
+  git add VERSION ./source/modulo_component_interfaces/package.xml ./source/modulo_utils/package.xml \
+      ./source/modulo_components/package.xml ./source/modulo_core/package.xml ./doxygen/doxygen.conf
   git commit -m "${VERSION} -> ${NEW_VERSION}"
 fi
