@@ -1,5 +1,6 @@
 import pytest
 import rclpy
+from rclpy.executors import SingleThreadedExecutor
 
 
 @pytest.fixture
@@ -12,6 +13,6 @@ def ros_context():
 @pytest.fixture
 def ros_exec():
     rclpy.init()
-    executor = rclpy.executors.SingleThreadedExecutor()
+    executor = SingleThreadedExecutor()
     yield executor
     rclpy.shutdown()
