@@ -1,6 +1,5 @@
 import clproto
 import pytest
-import rclpy
 import state_representation as sr
 from lifecycle_msgs.msg import Transition
 from lifecycle_msgs.srv import ChangeState
@@ -9,25 +8,12 @@ from modulo_core import EncodedState
 from rclpy.node import Node
 from rclpy.task import Future
 
+pytest_plugins = ["modulo_utils.testutils.ros"]
+
 
 @pytest.fixture
 def random_state():
     return sr.CartesianPose.Random("test")
-
-
-@pytest.fixture
-def ros_context():
-    rclpy.init()
-    yield
-    rclpy.shutdown()
-
-
-@pytest.fixture
-def ros_exec():
-    rclpy.init()
-    executor = rclpy.executors.SingleThreadedExecutor()
-    yield executor
-    rclpy.shutdown()
 
 
 @pytest.fixture

@@ -6,6 +6,7 @@ WORKDIR ${HOME}/ros2_ws
 FROM dependencies as modulo-component-interfaces
 
 COPY --chown=${USER} ./source/modulo_component_interfaces ./src/modulo_component_interfaces
+COPY --chown=${USER} ./source/modulo_utils ./src/modulo_utils
 RUN /bin/bash -c "source /opt/ros/$ROS_DISTRO/setup.bash; colcon build"
 
 

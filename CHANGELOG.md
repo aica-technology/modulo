@@ -19,6 +19,7 @@ Release Versions:
 - Fixes to account for breaking changes in control libraries (#6)
 - Fix parameter translator after Parameter class changes (#8)
 - Fix include of clproto header (#9)
+- Add modulo_utils package for shared test fixtures (#11)
 
 ## 2.1.1
 
