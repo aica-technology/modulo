@@ -1,6 +1,6 @@
 import pytest
 
-from modulo_component_interfaces.srv import EmptyTrigger
+from std_srvs.srv import Empty
 
 
 def test_ros_context(ros_context):
@@ -21,6 +21,7 @@ def test_predicates_listener(ros_exec, make_predicates_listener):
     ros_exec.spin_until_future_complete(listener.predicates_future, 0.1)
     assert not listener.predicates_future.done()
 
+
 def test_service_client(ros_context, make_service_client):
     with pytest.raises(RuntimeError):
-        make_service_client({"/test": EmptyTrigger})
+        make_service_client({"/test": Empty})
