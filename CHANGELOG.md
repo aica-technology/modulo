@@ -20,6 +20,7 @@ Release Versions:
 - Fix parameter translator after Parameter class changes (#8)
 - Fix include of clproto header (#9)
 - Add modulo_utils package for shared test fixtures (#11)
+- Add more test fixtures to modulo utils (#12)
 
 ## 2.1.1
 
