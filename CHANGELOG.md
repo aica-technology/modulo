@@ -21,6 +21,7 @@ Release Versions:
 - Fix include of clproto header (#9)
 - Add modulo_utils package for shared test fixtures (#11)
 - Add more test fixtures to modulo utils (#12)
+- Require CLA signatures with PR workflow (#14)
 
 ## 2.1.1
 
