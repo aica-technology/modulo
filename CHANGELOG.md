@@ -22,6 +22,7 @@ Release Versions:
 - Add modulo_utils package for shared test fixtures (#11)
 - Add more test fixtures to modulo utils (#12)
 - Require CLA signatures with PR workflow (#14)
+- Update control libraries version to 7.0.0 (#15)
 
 ## 2.1.1
 

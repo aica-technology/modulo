@@ -204,28 +204,28 @@ TEST_F(EncodedCommunicationTest, IncompatibleType) {
       State("this"), Jacobian("that", 3, "base"), false,
       [](const std::shared_ptr<State>&, const std::shared_ptr<Jacobian>& recv_state) {
         EXPECT_EQ(recv_state->get_frame(), "base");
-        EXPECT_NEAR(recv_state->data().norm(), 0, tol);
+        EXPECT_TRUE(recv_state->is_empty());
       }
   );
   this->communicate<SpatialState, Jacobian>(
       SpatialState("this"), Jacobian("that", 3, "base"), false,
       [](const std::shared_ptr<SpatialState>&, const std::shared_ptr<Jacobian>& recv_state) {
         EXPECT_EQ(recv_state->get_frame(), "base");
-        EXPECT_NEAR(recv_state->data().norm(), 0, tol);
+        EXPECT_TRUE(recv_state->is_empty());
       }
   );
   this->communicate<CartesianState, Jacobian>(
       CartesianState::Random("this", "world"), Jacobian("that", 3, "base"), false,
       [](const std::shared_ptr<CartesianState>&, const std::shared_ptr<Jacobian>& recv_state) {
         EXPECT_EQ(recv_state->get_frame(), "base");
-        EXPECT_NEAR(recv_state->data().norm(), 0, tol);
+        EXPECT_TRUE(recv_state->is_empty());
       }
   );
   this->communicate<JointState, Jacobian>(
       JointState::Random("this", 3), Jacobian("that", 3, "base"), false,
       [](const std::shared_ptr<JointState>&, const std::shared_ptr<Jacobian>& recv_state) {
         EXPECT_EQ(recv_state->get_frame(), "base");
-        EXPECT_NEAR(recv_state->data().norm(), 0, tol);
+        EXPECT_TRUE(recv_state->is_empty());
       }
   );
 }
