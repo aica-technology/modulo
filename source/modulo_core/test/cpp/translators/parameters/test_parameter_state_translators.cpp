@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include <clproto.h>
+#include <clproto.hpp>
 #include <state_representation/space/cartesian/CartesianState.hpp>
 #include <state_representation/space/cartesian/CartesianPose.hpp>
 #include <state_representation/space/joint/JointState.hpp>

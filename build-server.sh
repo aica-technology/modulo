@@ -1,7 +1,7 @@
 #!/bin/bash
-BASE_TAG=galactic
+BASE_TAG=humble-devel
 
-IMAGE_NAME=epfl-lasa/modulo
+IMAGE_NAME=aica-technology/modulo
 IMAGE_TAG=latest
 
 REMOTE_SSH_PORT=4440
@@ -15,7 +15,7 @@ Options:
   -c, --core             Only target the modulo core layer to prevent
                          modulo components from being built or tested
 
-  -r, --rebuild          Rebuild the image(s) using the docker
+  -r, --rebuild          Rebuild the image using the docker
                          --no-cache option
 
   -v, --verbose          Use the verbose option during the building
@@ -43,6 +43,6 @@ done
 docker pull ghcr.io/aica-technology/ros2-control-libraries:"${BASE_TAG}"
 DOCKER_BUILDKIT=1 docker build -t "${IMAGE_NAME}:${IMAGE_TAG}" "${BUILD_FLAGS[@]}" . || exit 1
 
-if [ "${SERVE_REMOTE}" = true ]; then
+if [[ "${SERVE_REMOTE}" == true ]]; then
   aica-docker server "${IMAGE_NAME}:${IMAGE_TAG}" -u ros2 -p "${REMOTE_SSH_PORT}"
 fi

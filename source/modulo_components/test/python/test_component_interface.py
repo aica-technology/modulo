@@ -1,3 +1,5 @@
+import time
+
 import numpy as np
 import pytest
 import rclpy
@@ -124,6 +126,10 @@ def test_tf(component_interface):
     assert np.linalg.norm(identity.data()) - 1 < 1e-3
     assert abs(identity.get_orientation().w) - 1 < 1e-3
 
+    time.sleep(1.0)
+    with pytest.raises(LookupTransformError):
+        component_interface.lookup_transform("test", "world", validity_period=0.9)
+
     lookup_tf = component_interface.lookup_transform("static_test", "world")
     identity = send_static_tf * lookup_tf.inverse()
     assert np.linalg.norm(identity.data()) - 1 < 1e-3
@@ -131,7 +137,7 @@ def test_tf(component_interface):
 
     send_tfs = []
     for idx in range(3):
-        send_tfs.append(sr.CartesianPose.Random("test_" + str(idx), "world"))
+        send_tfs.append(sr.CartesianPose().Random("test_" + str(idx), "world"))
     component_interface.send_transforms(send_tfs)
     for i in range(10):
         rclpy.spin_once(component_interface)
@@ -143,7 +149,7 @@ def test_tf(component_interface):
 
     send_static_tfs = []
     for idx in range(3):
-        send_static_tfs.append(sr.CartesianPose.Random("test_static_" + str(idx), "world"))
+        send_static_tfs.append(sr.CartesianPose().Random("test_static_" + str(idx), "world"))
     component_interface.send_static_transforms(send_static_tfs)
     for i in range(10):
         rclpy.spin_once(component_interface)

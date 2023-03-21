@@ -1,24 +1,16 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>modulo_core</name>
+  <name>modulo_utils</name>
   <version>2.2.0</version>
-  <description>Modulo Core communication and translation utilities for interoperability with AICA Control Libraries</description>
-  <maintainer email="baptiste@aica.tech">Baptiste Busch</maintainer>
-  <maintainer email="enrico@aica.tech">Enrico Eberhard</maintainer>
+  <description>Modulo utils package for shared test fixtures</description>
   <maintainer email="dominic@aica.tech">Dominic Reber</maintainer>
   <license>GPLv3</license>
 
-  <buildtool_depend>ament_cmake</buildtool_depend>
+  <buildtool_depend>ament_cmake_auto</buildtool_depend>
   <buildtool_depend>ament_cmake_python</buildtool_depend>
 
-  <depend>rclcpp</depend>
-  <depend>rclcpp_lifecycle</depend>
   <depend>rclpy</depend>
-  <depend>geometry_msgs</depend>
-  <depend>sensor_msgs</depend>
-  <depend>std_msgs</depend>
-  <depend>tf2_msgs</depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>

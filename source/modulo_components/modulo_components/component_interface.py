@@ -28,6 +28,9 @@ from tf2_ros import Buffer, StaticTransformBroadcaster, TransformBroadcaster, Tr
 
 MsgT = TypeVar('MsgT')
 T = TypeVar('T')
+NODE_KWARGS = ["context", "cli_args", "namespace", "use_global_arguments", "enable_rosout",
+               "start_parameter_services", "parameter_overrides", "allow_undeclared_parameters",
+               "automatically_declare_parameters_from_overrides"]
 
 
 class ComponentInterface(Node):
@@ -37,7 +40,8 @@ class ComponentInterface(Node):
     """
 
     def __init__(self, node_name: str, *args, **kwargs):
-        super().__init__(node_name, *args, **kwargs)
+        node_kwargs = {key: value for key, value in kwargs.items() if key in NODE_KWARGS}
+        super().__init__(node_name, *args, **node_kwargs)
         self._parameter_dict: Dict[str, Union[str, sr.Parameter]] = {}
         self._predicates: Dict[str, Union[bool, Callable[[], bool]]] = {}
         self._predicate_publishers: Dict[str, Publisher] = {}
@@ -489,8 +493,10 @@ class ComponentInterface(Node):
                 else:
                     if user_callback:
                         self.get_logger().warn("Provided user callback is not a callable, ignoring it.")
+
                     def default_callback():
                         return None
+
                     user_callback = default_callback
                 if message_type == Bool or message_type == Float64 or \
                         message_type == Float64MultiArray or message_type == Int32 or message_type == String:
@@ -635,26 +641,31 @@ class ComponentInterface(Node):
         """
         self.send_static_transforms([transform])
 
-    def lookup_transform(self, frame: str, reference_frame="world", time_point=Time(),
+    def lookup_transform(self, frame: str, reference_frame="world", validity_period=-1.0, time_point=Time(),
                          duration=Duration(nanoseconds=1e4)) -> sr.CartesianPose:
         """
         Look up a transform from TF.
 
         :param frame: The desired frame of the transform
         :param reference_frame: The desired reference frame of the transform
+        :param validity_period: The validity period of the latest transform from the time of lookup in seconds
         :param time_point: The time at which the value of the transform is desired (default: 0, will get the latest)
         :param duration: How long to block the lookup call before failing
-        :return: If it exists, the requested transform
+        :return: If it exists and is still valid, the requested transform
+        :raises LookupTransformError if TF buffer/listener are unconfigured if the lookupTransform call failed,
+        or if the transform is too old
         """
         if not self.__tf_buffer or not self.__tf_listener:
             raise LookupTransformError("Failed to lookup transform: To TF buffer / listener configured.")
         try:
-            result = sr.CartesianPose(frame, reference_frame)
             transform = self.__tf_buffer.lookup_transform(reference_frame, frame, time_point, duration)
-            modulo_readers.read_stamped_message(result, transform)
-            return result
         except TransformException as e:
             raise LookupTransformError(f"Failed to lookup transform: {e}")
+        if 0.0 < validity_period < (self.get_clock().now() - Time().from_msg(transform.header.stamp)).nanoseconds / 1e9:
+            raise LookupTransformError("Failed to lookup transform: Latest transform is too old!")
+        result = sr.CartesianPose(frame, reference_frame)
+        modulo_readers.read_stamped_message(result, transform)
+        return result
 
     def get_qos(self) -> QoSProfile:
         """
@@ -719,8 +730,11 @@ class ComponentInterface(Node):
         for signal, output_dict in self._outputs.items():
             try:
                 message = output_dict["message_type"]()
-                output_dict["translator"](message, self.__getattribute__(output_dict["attribute"]))
-                output_dict["publisher"].publish(message)
+                data = self.__getattribute__(output_dict["attribute"])
+                # only publish if the data is not empty
+                if not getattr(data, "is_empty", lambda: False)():
+                    output_dict["translator"](message, data)
+                    output_dict["publisher"].publish(message)
             except Exception as e:
                 self.get_logger().error(f"{e}")
 

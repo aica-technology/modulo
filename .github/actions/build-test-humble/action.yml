@@ -1,6 +1,6 @@
-name: 'Build and Test (galactic-devel)'
+name: 'Build and Test (humble)'
 description: 'Build the source packages and run all unit tests'
 runs:
   using: 'docker'
-  image: 'ghcr.io/aica-technology/ros2-control-libraries:galactic-devel'
+  image: 'ghcr.io/aica-technology/ros2-control-libraries:humble'
   entrypoint: '/github/workspace/.github/common/entrypoint.sh'

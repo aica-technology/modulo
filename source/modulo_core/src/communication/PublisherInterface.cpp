@@ -102,7 +102,11 @@ void PublisherInterface::publish() {
         this->publish(this->message_pair_->write<std_msgs::msg::String, std::string>());
         break;
       case MessageType::ENCODED_STATE:
-        this->publish(this->message_pair_->write<EncodedState, state_representation::State>());
+        if (!this->message_pair_->get_message_pair<
+            EncodedState, state_representation::State
+        >()->get_data()->is_empty()) {
+          this->publish(this->message_pair_->write<EncodedState, state_representation::State>());
+        }
         break;
     }
   } catch (const exceptions::CoreException& ex) {

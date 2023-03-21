@@ -1,4 +1,4 @@
-ARG BASE_TAG=galactic
+ARG BASE_TAG=humble
 FROM ghcr.io/aica-technology/ros2-control-libraries:${BASE_TAG} as dependencies
 WORKDIR ${HOME}/ros2_ws
 
@@ -6,6 +6,7 @@ WORKDIR ${HOME}/ros2_ws
 FROM dependencies as modulo-component-interfaces
 
 COPY --chown=${USER} ./source/modulo_component_interfaces ./src/modulo_component_interfaces
+COPY --chown=${USER} ./source/modulo_utils ./src/modulo_utils
 RUN /bin/bash -c "source /opt/ros/$ROS_DISTRO/setup.bash; colcon build"
 
 

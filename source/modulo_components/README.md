@@ -39,6 +39,6 @@ state transition callbacks should be overridden whenever custom transition behav
 
 ## Further reading
 
-See the [generated C++ documentation](https://epfl-lasa.github.io/modulo) for more details.
+See the [generated C++ documentation](https://aica-technology.github.io/modulo) for more details.
 Refer to the [AICA Component SDK](https://github.com/aica-technology/component-sdk) for usage examples and templates
 for creating custom components.

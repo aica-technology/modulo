@@ -29,9 +29,9 @@ class Component(ComponentInterface):
         Step function that is called periodically.
         """
         try:
-            self._publish_predicates()
-            self._publish_outputs()
             self._evaluate_periodic_callbacks()
+            self._publish_outputs()
+            self._publish_predicates()
         except Exception as e:
             self.get_logger().error(f"Failed to execute step function: {e}", throttle_duration_sec=1.0)
 

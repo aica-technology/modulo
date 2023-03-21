@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Check contributions
         if: ${{ github.event.pull_request.base.sha }}
         run: |
@@ -49,31 +49,18 @@ jobs:
           paths_ignore: '["**.md"]'
           skip_after_successful_duplicate: 'true'
 
-  build-test-galactic:
+  build-test-humble:
     needs: check-skippable-changes
     if: ${{ needs.check-skippable-changes.outputs.skip != 'true' }}
     runs-on: ubuntu-latest
-    name: Galactic build and test
+    name: Humble build and test
     steps:
       # First check out the repository
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       # Load the repository build-test action
       - name: Build and Test
-        uses: ./.github/actions/build-test-galactic
-
-  build-test-galactic-devel:
-    needs: check-skippable-changes
-    if: ${{ needs.check-skippable-changes.outputs.skip != 'true' }}
-    runs-on: ubuntu-latest
-    name: Galactic development build and test
-    steps:
-      # First check out the repository
-      - name: Checkout
-        uses: actions/checkout@v2
-      # Load the repository build-test action
-      - name: Build and Test
-        uses: ./.github/actions/build-test-galactic-devel
+        uses: ./.github/actions/build-test-humble
 
   build-test-humble-devel:
     needs: check-skippable-changes

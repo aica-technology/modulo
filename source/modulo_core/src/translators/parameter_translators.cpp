@@ -1,6 +1,6 @@
 #include "modulo_core/translators/parameter_translators.hpp"
 
-#include <clproto.h>
+#include <clproto.hpp>
 #include <state_representation/space/cartesian/CartesianPose.hpp>
 #include <state_representation/space/cartesian/CartesianState.hpp>
 #include <state_representation/space/joint/JointPositions.hpp>
