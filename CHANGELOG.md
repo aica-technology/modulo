@@ -2,10 +2,39 @@
 
 Release Versions:
 
+- [2.2.0](#220)
 - [2.1.1](#211)
 - [2.1.0](#210)
 
-## Upcoming changes (in development)
+## 2.2.0
+
+### March 21, 2023
+
+Version 2.2.0 is an update to support the latest release of
+[aica-technology/control-libraries version 7.0](https://github.com/aica-technology/control-libraries/releases/tag/v7.0.0).
+This release contains no breaking changes to the modulo API and includes a few additional features and improvements.
+
+### Features and improvements
+
+Since `rclpy.lifecycle` was introduced in ROS2 humble, the `LifecycleNode` is now used as base class for the
+`modulo_components.LifecycleComponent`.
+
+The 'lookup_transform' method has been overloaded with another signature that allows to specify the validity period for
+the requested transform.
+
+There is a new package `modulo_utils` that contains fixtures for creating tests for modulo components. 
+
+### Behind the scenes
+
+`state_representation` states will not be published unless they are not empty, i.e. contain data and information that
+are worth transmitting.
+
+A contributor license agreement and signature workflow have been added to protect and encourage open source development.
+
+The majority of changes were required to fix `modulo_core` after breaking changes on the develop branch of
+control libraries. In addition, there were some improvements in the CI actions and workflows.
+
+### Changes
 
 - Do not publish empty states (epfl-lasa#129)
 - Fix test actions and workflows (epfl-lasa#147, epfl-lasa#148)
