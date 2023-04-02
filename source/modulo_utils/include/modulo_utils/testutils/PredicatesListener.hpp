@@ -1,6 +1,7 @@
 #pragma once
 
-#include <chrono>
+#include <future>
+#include <map>
 
 #include <rclcpp/rclcpp.hpp>
 #include <std_msgs/msg/bool.hpp>
@@ -17,9 +18,9 @@ public:
 
   void reset_future();
 
-  const std::shared_future<void>& get_predicate_future() const;
+  [[nodiscard]] const std::shared_future<void>& get_predicate_future() const;
 
-  const std::map<std::string, bool>& get_predicate_values() const;
+  [[nodiscard]] const std::map<std::string, bool>& get_predicate_values() const;
 
 private:
   std::map<std::string, std::shared_ptr<rclcpp::Subscription<std_msgs::msg::Bool>>> subscriptions_;
