@@ -21,12 +21,24 @@ find_package(ament_cmake_python REQUIRED)
 
 ament_auto_find_build_dependencies()
 
+include_directories(include)
+
+ament_auto_add_library(${PROJECT_NAME} SHARED
+        ${PROJECT_SOURCE_DIR}/src/testutils/PredicatesListener.cpp)
+
 # Install Python modules
 ament_python_install_package(${PROJECT_NAME} SCRIPTS_DESTINATION lib/${PROJECT_NAME})
 
 if(BUILD_TESTING)
   find_package(ament_cmake_gtest REQUIRED)
   find_package(ament_cmake_pytest REQUIRED)
+
+  # add cpp tests
+  file(GLOB_RECURSE TEST_CPP_SOURCES ${PROJECT_SOURCE_DIR}/test/ test_*.cpp)
+
+  ament_add_gtest(test_modulo_utils ${TEST_CPP_SOURCES})
+  target_include_directories(test_modulo_utils PRIVATE include)
+  target_link_libraries(test_modulo_utils ${PROJECT_NAME})
 
   # run python tests
   file(GLOB_RECURSE TEST_PYTHON_SOURCES ${PROJECT_SOURCE_DIR}/test/test_*.py)

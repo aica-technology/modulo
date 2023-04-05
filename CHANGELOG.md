@@ -6,6 +6,10 @@ Release Versions:
 - [2.1.1](#211)
 - [2.1.0](#210)
 
+## Upcoming changes (in development)
+
+- Extend testutils with C++ classes (#19)
+
 ## 2.2.0
 
 ### March 21, 2023
