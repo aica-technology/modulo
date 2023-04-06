@@ -63,6 +63,18 @@ def test_declare_signal(component_interface):
     assert "test_again" not in component_interface._outputs.keys()
 
 
+def test_declare_add_input(component_interface):
+    component_interface.declare_input("input_1", "~/declared")
+    component_interface.add_input("input_1", "test", Bool, "~/added")
+    assert "input_1" in component_interface._inputs.keys()
+    assert component_interface.get_parameter_value("input_1_topic") == "~/added"
+
+    component_interface.declare_input("input_2", "~/declared")
+    component_interface.add_input("input_2", "test", Bool)
+    assert "input_2" in component_interface._inputs.keys()
+    assert component_interface.get_parameter_value("input_2_topic") == "~/declared"
+
+
 def test_add_remove_input(component_interface):
     component_interface.add_input("_tEsT_#1@3", "test", Bool)
     assert "test_13" in component_interface._inputs.keys()

@@ -90,6 +90,19 @@ TYPED_TEST(ComponentInterfaceTest, DeclareSignal) {
   EXPECT_TRUE(this->component_->outputs_.find("output") == this->component_->outputs_.end());
 }
 
+TYPED_TEST(ComponentInterfaceTest, DeclareAddInput) {
+  auto data = std::make_shared<bool>(true);
+  this->component_->declare_input("input_1", "~/declared");
+  EXPECT_NO_THROW(this->component_->add_input("input_1", data, "~/added"));
+  EXPECT_EQ(this->component_->template get_parameter_value<std::string>("input_1_topic"), "~/added");
+  EXPECT_FALSE(this->component_->inputs_.find("input_1") == this->component_->inputs_.end());
+
+  this->component_->declare_input("input_2", "~/declared");
+  EXPECT_NO_THROW(this->component_->add_input("input_2", data));
+  EXPECT_EQ(this->component_->template get_parameter_value<std::string>("input_2_topic"), "~/declared");
+  EXPECT_FALSE(this->component_->inputs_.find("input_2") == this->component_->inputs_.end());
+}
+
 TYPED_TEST(ComponentInterfaceTest, AddRemoveInput) {
   auto data = std::make_shared<bool>(true);
   EXPECT_NO_THROW(this->component_->add_input("_tEsT_#1@3", data));
