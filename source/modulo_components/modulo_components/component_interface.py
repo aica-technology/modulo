@@ -411,7 +411,7 @@ class ComponentInterface(Node):
             self.get_logger().error(f"Failed to execute user callback in subscription for attribute"
                                     f" '{attribute_name}': {e}", throttle_duration_sec=1.0)
 
-    def declare_signal(self, signal_name: str, signal_type: str, default_topic="", fixed_topic=False):
+    def __declare_signal(self, signal_name: str, signal_type: str, default_topic="", fixed_topic=False):
         """
         Declare an input to create the topic parameter without adding it to the map of inputs yet.
 
@@ -425,15 +425,13 @@ class ComponentInterface(Node):
         if not parsed_signal_name:
             raise AddSignalError(f"The parsed signal name for {signal_type} '{signal_name}' is empty. Provide a "
                                  f"string with valid characters for the signal name ([a-zA-Z0-9_]).")
-        if parsed_signal_name in self._inputs.keys():
-            raise AddSignalError(f"Signal with name '{parsed_signal_name}' already exists as input.")
-        if parsed_signal_name in self._outputs.keys():
-            raise AddSignalError(f"Signal with name '{parsed_signal_name}' already exists as output.")
+        if parsed_signal_name in self._inputs.keys() or parsed_signal_name in self._outputs.keys():
+            raise AddSignalError(f"Signal with name '{parsed_signal_name}' already exists as {signal_type}.")
         topic_name = default_topic if default_topic else "~/" + parsed_signal_name
         parameter_name = parsed_signal_name + "_topic"
-        if self.has_parameter(parameter_name) and self.get_parameter(parameter_name).is_empty():
+        if self.has_parameter(parameter_name) and default_topic:
             self.set_parameter_value(parameter_name, topic_name, sr.ParameterType.STRING)
-        else:
+        elif not self.has_parameter(parameter_name):
             self.add_parameter(sr.Parameter(parameter_name, topic_name, sr.ParameterType.STRING),
                                f"Signal topic name of {signal_type} '{parsed_signal_name}'", fixed_topic)
         self.get_logger().debug(
@@ -448,7 +446,7 @@ class ComponentInterface(Node):
         :param fixed_topic: If true, the topic name of the signal is fixed
         :raises AddSignalError: if the input could not be declared (empty name or already created)
         """
-        self.declare_signal(signal_name, "input", default_topic, fixed_topic)
+        self.__declare_signal(signal_name, "input", default_topic, fixed_topic)
 
     def declare_output(self, signal_name: str, default_topic="", fixed_topic=False):
         """
@@ -459,7 +457,7 @@ class ComponentInterface(Node):
         :param fixed_topic: If true, the topic name of the signal is fixed
         :raises AddSignalError: if the output could not be declared (empty name or already created)
         """
-        self.declare_signal(signal_name, "output", default_topic, fixed_topic)
+        self.__declare_signal(signal_name, "output", default_topic, fixed_topic)
 
     def add_input(self, signal_name: str, subscription: Union[str, Callable], message_type: MsgT, default_topic="",
                   fixed_topic=False, user_callback: Callable = None):

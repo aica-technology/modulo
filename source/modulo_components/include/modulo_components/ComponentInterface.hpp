@@ -915,9 +915,9 @@ inline void ComponentInterface<NodeT>::declare_signal(
   }
   std::string topic_name = default_topic.empty() ? "~/" + parsed_signal_name : default_topic;
   auto parameter_name = parsed_signal_name + "_topic";
-  if (NodeT::has_parameter(parameter_name) && this->get_parameter(parameter_name)->is_empty()) {
+  if (NodeT::has_parameter(parameter_name) && !default_topic.empty()) {
     this->set_parameter_value<std::string>(parameter_name, topic_name);
-  } else {
+  } else if (!NodeT::has_parameter(parameter_name)) {
     this->add_parameter(
         parameter_name, topic_name, "Signal topic name of " + type + " '" + parsed_signal_name + "'", fixed_topic
     );
