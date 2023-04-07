@@ -425,15 +425,17 @@ class ComponentInterface(Node):
         if not parsed_signal_name:
             raise AddSignalError(f"The parsed signal name for {signal_type} '{signal_name}' is empty. Provide a "
                                  f"string with valid characters for the signal name ([a-zA-Z0-9_]).")
-        if parsed_signal_name in self._inputs.keys() or parsed_signal_name in self._outputs.keys():
-            raise AddSignalError(f"Signal with name '{parsed_signal_name}' already exists as {signal_type}.")
+        if parsed_signal_name in self._inputs.keys():
+            raise AddSignalError(f"Signal with name '{parsed_signal_name}' already exists as input.")
+        if parsed_signal_name in self._outputs.keys():
+            raise AddSignalError(f"Signal with name '{parsed_signal_name}' already exists as output.")
         topic_name = default_topic if default_topic else "~/" + parsed_signal_name
         parameter_name = parsed_signal_name + "_topic"
-        if self.has_parameter(parameter_name) and default_topic:
-            self.set_parameter_value(parameter_name, topic_name, sr.ParameterType.STRING)
-        elif not self.has_parameter(parameter_name):
+        if not self.has_parameter(parameter_name):
             self.add_parameter(sr.Parameter(parameter_name, topic_name, sr.ParameterType.STRING),
                                f"Signal topic name of {signal_type} '{parsed_signal_name}'", fixed_topic)
+        elif self.has_parameter(parameter_name) and default_topic:
+            self.set_parameter_value(parameter_name, topic_name, sr.ParameterType.STRING)
         self.get_logger().debug(
             f"Declared signal '{parsed_signal_name}' and parameter '{parameter_name}' with value '{topic_name}'.")
 
