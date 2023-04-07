@@ -8,6 +8,7 @@ Release Versions:
 
 ## Upcoming changes (in development)
 
+- Fix incorrect parameter logic in declare signal (#22)
 - Extend testutils with C++ classes (#19)
 
 ## 2.2.0
