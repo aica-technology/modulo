@@ -920,6 +920,7 @@ inline void ComponentInterface<NodeT>::declare_signal(
           parameter_name, topic_name, "Signal topic name of " + type + " '" + parsed_signal_name + "'", fixed_topic);
   } else if (NodeT::has_parameter(parameter_name) && !default_topic.empty()) {
     this->set_parameter_value<std::string>(parameter_name, topic_name);
+  }
   RCLCPP_DEBUG_STREAM(this->get_logger(),
                       "Declared signal '" << parsed_signal_name << "' and parameter '" << parameter_name
                                           << "' with value '" << topic_name << "'.");
