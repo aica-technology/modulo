@@ -10,15 +10,15 @@ pytest_plugins = ["modulo_utils.testutils.ros", "modulo_utils.testutils.lifecycl
 
 
 @pytest.fixture
-def random_state():
-    return sr.CartesianPose.Random("test")
+def random_pose():
+    return sr.CartesianPose().Random("test")
 
 
 @pytest.fixture
-def minimal_cartesian_output(request, random_state):
+def minimal_cartesian_output(request, random_pose):
     def _make_minimal_cartesian_output(component_type, topic):
         component = component_type("minimal_cartesian_output")
-        component._output = random_state
+        component._output = random_pose
         component.add_output("cartesian_state", "_output", EncodedState, clproto.MessageType.CARTESIAN_STATE_MESSAGE,
                              topic)
         return component
