@@ -13,16 +13,14 @@ using namespace std::chrono_literals;
 
 class FixturesTest : public ::testing::Test {
 protected:
-  static void SetUpTestSuite() {
-    rclcpp::init(0, nullptr);
-  }
-
-  static void TearDownTestSuite() {
-    rclcpp::shutdown();
-  }
-
+protected:
   void SetUp() override {
+    rclcpp::init(0, nullptr);
     exec_ = std::make_shared<rclcpp::executors::SingleThreadedExecutor>();
+  }
+
+  void TearDown() override {
+    rclcpp::shutdown();
   }
 
   std::shared_ptr<rclcpp::executors::SingleThreadedExecutor> exec_;
