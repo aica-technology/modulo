@@ -106,11 +106,12 @@ protected:
    * @param data Data to transmit on the output signal
    * @param default_topic If set, the default value for the topic name to use
    * @param fixed_topic If true, the topic name of the output signal is fixed
+   * @param publish_manually If true, the output publishing has to be triggered manually
    */
   template<typename DataT>
   void add_output(
       const std::string& signal_name, const std::shared_ptr<DataT>& data, const std::string& default_topic = "",
-      bool fixed_topic = false
+      bool fixed_topic = false, bool publish_manually = false
   );
 
 private:
@@ -275,7 +276,7 @@ inline void LifecycleComponent::on_step_callback() {}
 template<typename DataT>
 inline void LifecycleComponent::add_output(
     const std::string& signal_name, const std::shared_ptr<DataT>& data, const std::string& default_topic,
-    bool fixed_topic
+    bool fixed_topic, bool publish_manually
 ) {
   if (this->get_current_state().id() != lifecycle_msgs::msg::State::PRIMARY_STATE_UNCONFIGURED
       && this->get_current_state().id() != lifecycle_msgs::msg::State::PRIMARY_STATE_INACTIVE) {
@@ -284,7 +285,7 @@ inline void LifecycleComponent::add_output(
     return;
   }
   try {
-    this->create_output(signal_name, data, default_topic, fixed_topic);
+    this->create_output(signal_name, data, default_topic, fixed_topic, publish_manually);
   } catch (const exceptions::AddSignalException& ex) {
     RCLCPP_ERROR_STREAM(this->get_logger(), "Failed to add output '" << signal_name << "': " << ex.what());
   }

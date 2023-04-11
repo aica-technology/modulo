@@ -58,11 +58,12 @@ protected:
    * @param data Data to transmit on the output signal
    * @param default_topic If set, the default value for the topic name to use
    * @param fixed_topic If true, the topic name of the output signal is fixed
+   * @param publish_manually If true, the output publishing has to be triggered manually
    */
   template<typename DataT>
   void add_output(
       const std::string& signal_name, const std::shared_ptr<DataT>& data, const std::string& default_topic = "",
-      bool fixed_topic = false
+      bool fixed_topic = false, bool publish_manually = false
   );
 
 private:
@@ -93,11 +94,11 @@ private:
 template<typename DataT>
 inline void Component::add_output(
     const std::string& signal_name, const std::shared_ptr<DataT>& data, const std::string& default_topic,
-    bool fixed_topic
+    bool fixed_topic, bool publish_manually
 ) {
   using namespace modulo_core::communication;
   try {
-    auto parsed_signal_name = this->create_output(signal_name, data, default_topic, fixed_topic);
+    auto parsed_signal_name = this->create_output(signal_name, data, default_topic, fixed_topic, publish_manually);
     auto topic_name = this->get_parameter_value<std::string>(parsed_signal_name + "_topic");
     RCLCPP_DEBUG_STREAM(this->get_logger(),
                         "Adding output '" << parsed_signal_name << "' with topic name '" << topic_name << "'.");

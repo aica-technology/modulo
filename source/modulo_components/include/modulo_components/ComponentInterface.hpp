@@ -346,6 +346,7 @@ protected:
    * @param data Data to transmit on the output signal
    * @param default_topic If set, the default value for the topic name to use
    * @param fixed_topic If true, the topic name of the output signal is fixed
+   * @param publish_manually If true, the output publishing has to be triggered manually
    * @throws modulo_components::exceptions::AddSignalException if the output could not be created
    * (empty name, already registered)
    * @return The parsed signal name
@@ -353,7 +354,7 @@ protected:
   template<typename DataT>
   std::string create_output(
       const std::string& signal_name, const std::shared_ptr<DataT>& data, const std::string& default_topic,
-      bool fixed_topic
+      bool fixed_topic, bool publish_manually
   );
 
   /**
@@ -462,6 +463,7 @@ protected:
 
   std::map<std::string, std::shared_ptr<modulo_core::communication::SubscriptionInterface>> inputs_; ///< Map of inputs
   std::map<std::string, std::shared_ptr<modulo_core::communication::PublisherInterface>> outputs_; ///< Map of outputs
+  std::map<std::string, bool> periodic_outputs_; ///< Map of outputs with periodic publishing flag
 
   rclcpp::QoS qos_ = rclcpp::QoS(10); ///< Quality of Service for ROS publishers and subscribers
 
@@ -1280,7 +1282,9 @@ template<class NodeT>
 inline void ComponentInterface<NodeT>::publish_outputs() {
   for (const auto& [signal, publisher]: this->outputs_) {
     try {
-      publisher->publish();
+      if (this->periodic_outputs_.at(signal)) {
+        publisher->publish();
+      }
     } catch (const modulo_core::exceptions::CoreException& ex) {
       RCLCPP_ERROR_STREAM_THROTTLE(this->get_logger(), *this->get_clock(), 1000,
                                    "Failed to publish output '" << signal << "': " << ex.what());
@@ -1304,7 +1308,7 @@ template<class NodeT>
 template<typename DataT>
 inline std::string ComponentInterface<NodeT>::create_output(
     const std::string& signal_name, const std::shared_ptr<DataT>& data, const std::string& default_topic,
-    bool fixed_topic
+    bool fixed_topic, bool publish_manually
 ) {
   using namespace modulo_core::communication;
   try {
@@ -1320,6 +1324,7 @@ inline std::string ComponentInterface<NodeT>::create_output(
     auto message_pair = make_shared_message_pair(data, this->get_clock());
     this->outputs_.insert_or_assign(
         parsed_signal_name, std::make_shared<PublisherInterface>(this->publisher_type_, message_pair));
+    this->periodic_outputs_.insert_or_assign(parsed_signal_name, !publish_manually);
     return parsed_signal_name;
   } catch (const exceptions::AddSignalException&) {
     throw;
