@@ -5,25 +5,19 @@ namespace modulo_utils::testutils {
 PredicatesListener::PredicatesListener(
     const rclcpp::NodeOptions& node_options, const std::string& ns, const std::vector<std::string>& predicates
 ) : rclcpp::Node("predicates_listener", node_options) {
+  this->received_future_ = this->received_.get_future();
   for (const auto& predicate : predicates) {
     this->predicates_.insert_or_assign(predicate, false);
     auto subscription = this->create_subscription<std_msgs::msg::Bool>(
         "/predicates/" + ns + "/" + predicate, 10,
         [this, predicate](const std::shared_ptr<std_msgs::msg::Bool> message) {
           this->predicates_.at(predicate) = message->data;
+          if (message->data) {
+            this->received_.set_value();
+          }
         });
     this->subscriptions_.insert_or_assign(predicate, subscription);
   }
-  this->received_future_ = this->received_.get_future();
-  this->create_wall_timer(
-      100ms, [this]() {
-        for (auto [first, second] : this->predicates_) {
-          if (second) {
-            this->received_.set_value();
-            break;
-          }
-        }
-      });
 }
 
 void PredicatesListener::reset_future() {
