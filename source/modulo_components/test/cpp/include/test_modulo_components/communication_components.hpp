@@ -23,9 +23,14 @@ template<class ComponentT>
 class MinimalCartesianOutput : public ComponentT {
 public:
   MinimalCartesianOutput(
-      const rclcpp::NodeOptions& node_options, const std::string& topic, const CartesianState& cartesian_state
+      const rclcpp::NodeOptions& node_options, const std::string& topic, const CartesianState& cartesian_state,
+      bool publish_manually
   ) : ComponentT(node_options, "minimal_cartesian_output"), output_(std::make_shared<CartesianState>(cartesian_state)) {
-    this->add_output("cartesian_state", this->output_, topic);
+    this->add_output("cartesian_state", this->output_, topic, true, publish_manually);
+  }
+
+  void publish() {
+    this->publish_output("cartesian_state");
   }
 
 private:
