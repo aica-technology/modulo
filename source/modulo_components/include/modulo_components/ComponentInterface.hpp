@@ -370,6 +370,13 @@ protected:
   void set_qos(const rclcpp::QoS& qos);
 
   /**
+   * @brief Manually trigger the publishing of an output
+   * @param signal_name The name of the output signal
+   * @throws ComponentException if the output is being published periodically or if the signal name could not be found
+   */
+  void publish_output(const std::string& signal_name);
+
+  /**
    * @brief Send a transform to TF.
    * @param transform The transform to send
    */
@@ -1275,6 +1282,23 @@ template<class NodeT>
 inline void ComponentInterface<NodeT>::publish_predicates() {
   for (const auto& predicate: this->predicates_) {
     this->publish_predicate(predicate.first);
+  }
+}
+
+template<class NodeT>
+inline void ComponentInterface<NodeT>::publish_output(const std::string& signal_name) {
+  auto parsed_signal_name = utilities::parse_topic_name(signal_name);
+  if (this->outputs_.find(parsed_signal_name) == this->outputs_.cend()) {
+    throw exceptions::ComponentException("Output with name '" + signal_name + "' doesn't exists.");
+  }
+  if (this->periodic_outputs_.at(parsed_signal_name)) {
+    throw exceptions::ComponentException("An output that is published periodically cannot be triggered manually.");
+  }
+  try {
+    this->outputs_.at(parsed_signal_name)->publish();
+  } catch (const modulo_core::exceptions::CoreException& ex) {
+    RCLCPP_ERROR_STREAM_THROTTLE(this->get_logger(), *this->get_clock(), 1000,
+                                 "Failed to publish output '" << parsed_signal_name << "': " << ex.what());
   }
 }
 
