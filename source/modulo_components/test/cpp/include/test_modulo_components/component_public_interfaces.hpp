@@ -35,11 +35,13 @@ public:
   using ComponentInterface<NodeT>::inputs_;
   using ComponentInterface<NodeT>::create_output;
   using ComponentInterface<NodeT>::outputs_;
+  using ComponentInterface<NodeT>::periodic_outputs_;
   using ComponentInterface<NodeT>::empty_services_;
   using ComponentInterface<NodeT>::string_services_;
   using ComponentInterface<NodeT>::add_tf_broadcaster;
   using ComponentInterface<NodeT>::add_static_tf_broadcaster;
   using ComponentInterface<NodeT>::add_tf_listener;
+  using ComponentInterface<NodeT>::publish_output;
   using ComponentInterface<NodeT>::send_transform;
   using ComponentInterface<NodeT>::send_transforms;
   using ComponentInterface<NodeT>::send_static_transform;
@@ -78,7 +80,9 @@ public:
   ) : Component(node_options, fallback_name) {}
   using Component::add_output;
   using Component::outputs_;
+  using Component::periodic_outputs_;
   using Component::remove_output;
+  using Component::publish_output;
 };
 
 class LifecycleComponentPublicInterface : public LifecycleComponent {
@@ -89,6 +93,8 @@ public:
   using LifecycleComponent::configure_outputs;
   using LifecycleComponent::activate_outputs;
   using LifecycleComponent::outputs_;
+  using LifecycleComponent::periodic_outputs_;
   using LifecycleComponent::remove_output;
+  using LifecycleComponent::publish_output;
 };
 }// namespace modulo_components

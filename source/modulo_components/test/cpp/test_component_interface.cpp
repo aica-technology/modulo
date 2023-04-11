@@ -223,9 +223,10 @@ TYPED_TEST(ComponentInterfaceTest, CallStringService) {
 
 TYPED_TEST(ComponentInterfaceTest, CreateOutput) {
   auto data = std::make_shared<bool>(true);
-  EXPECT_NO_THROW(this->component_->create_output("test", data, "/topic", true));
+  EXPECT_NO_THROW(this->component_->create_output("test", data, "/topic", true, false));
   EXPECT_FALSE(this->component_->outputs_.find("test") == this->component_->outputs_.end());
   EXPECT_EQ(this->component_->template get_parameter_value<std::string>("test_topic"), "/topic");
+  EXPECT_TRUE(this->component_->periodic_outputs_.at("test"));
 
   auto pub_interface = this->component_->outputs_.at("test");
   if (typeid(this->node_) == typeid(rclcpp::Node)) {
@@ -235,6 +236,12 @@ TYPED_TEST(ComponentInterfaceTest, CreateOutput) {
   }
   EXPECT_EQ(pub_interface->get_message_pair()->get_type(), modulo_core::communication::MessageType::BOOL);
   EXPECT_THROW(pub_interface->publish(), modulo_core::exceptions::CoreException);
+
+  EXPECT_NO_THROW(this->component_->create_output("_tEsT_#1@3", data, "", true, true));
+  EXPECT_FALSE(this->component_->periodic_outputs_.at("test_13"));
+  EXPECT_NO_THROW(this->component_->publish_output("_tEsT_#1@3"));
+  EXPECT_NO_THROW(this->component_->publish_output("test_13"));
+  EXPECT_THROW(this->component_->publish_output(""), exceptions::ComponentException);
 }
 
 TYPED_TEST(ComponentInterfaceTest, TF) {
