@@ -5,7 +5,8 @@ from modulo_components.component import Component
 from modulo_core import EncodedState
 from rclpy.task import Future
 
-pytest_plugins = ["modulo_utils.testutils.ros", "modulo_utils.testutils.lifecycle_change_client"]
+pytest_plugins = ["modulo_utils.testutils.ros", "modulo_utils.testutils.lifecycle_change_client",
+                  "modulo_utils.testutils.service_client", "modulo_utils.testutils.predicates_listener"]
 
 
 @pytest.fixture

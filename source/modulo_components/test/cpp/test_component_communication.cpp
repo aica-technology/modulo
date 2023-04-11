@@ -1,9 +1,23 @@
 #include <gtest/gtest.h>
 
+#include <modulo_utils/testutils/PredicatesListener.hpp>
+
 #include "modulo_components/Component.hpp"
 #include "test_modulo_components/communication_components.hpp"
 
 using namespace modulo_components;
+
+class Trigger : public Component {
+public:
+  explicit Trigger(const rclcpp::NodeOptions& node_options) : Component(node_options, "trigger") {
+    this->add_trigger("test");
+  }
+
+  void trigger() {
+    Component::trigger("test");
+  }
+};
+
 
 class ComponentCommunicationTest : public ::testing::Test {
 protected:
@@ -26,8 +40,23 @@ TEST_F(ComponentCommunicationTest, InputOutput) {
       std::make_shared<MinimalCartesianOutput<Component>>(rclcpp::NodeOptions(), "/topic", cartesian_state);
   this->exec_->add_node(input_node);
   this->exec_->add_node(output_node);
-  this->exec_->template spin_until_future_complete(input_node->received_future, 500ms);
+  this->exec_->spin_until_future_complete(input_node->received_future, 500ms);
   EXPECT_EQ(cartesian_state.get_name(), input_node->input->get_name());
   EXPECT_TRUE(cartesian_state.data().isApprox(input_node->input->data()));
   this->exec_.reset();
+}
+
+TEST_F(ComponentCommunicationTest, Trigger) {
+  auto trigger = std::make_shared<Trigger>(rclcpp::NodeOptions());
+  auto listener = std::make_shared<modulo_utils::testutils::PredicatesListener>(
+      rclcpp::NodeOptions(), "trigger", std::vector<std::string>{"test"});
+  this->exec_->add_node(listener);
+  this->exec_->add_node(trigger);
+  auto result_code = this->exec_->spin_until_future_complete(listener->get_predicate_future(), 500ms);
+  ASSERT_EQ(result_code, rclcpp::FutureReturnCode::TIMEOUT);
+  EXPECT_FALSE(listener->get_predicate_values().at("test"));
+  trigger->trigger();
+  result_code = this->exec_->spin_until_future_complete(listener->get_predicate_future(), 500ms);
+  ASSERT_EQ(result_code, rclcpp::FutureReturnCode::SUCCESS);
+  EXPECT_TRUE(listener->get_predicate_values().at("test"));
 }

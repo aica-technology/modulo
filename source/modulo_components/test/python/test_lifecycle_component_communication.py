@@ -2,6 +2,19 @@ import pytest
 from modulo_components.lifecycle_component import LifecycleComponent
 
 
+class Trigger(LifecycleComponent):
+    def __init__(self):
+        super().__init__("trigger")
+
+    def on_configure_callback(self) -> bool:
+        self.add_trigger("test")
+        return True
+
+    def on_activate_callback(self) -> bool:
+        self.trigger("test")
+        return True
+
+
 @pytest.mark.parametrize("minimal_cartesian_input", [[LifecycleComponent, "/topic"]], indirect=True)
 @pytest.mark.parametrize("minimal_cartesian_output", [[LifecycleComponent, "/topic"]], indirect=True)
 def test_input_output(ros_exec, make_lifecycle_change_client, random_state, minimal_cartesian_output,
@@ -34,3 +47,20 @@ def test_input_output_invalid(ros_exec, make_lifecycle_change_client, make_minim
     input_change_client.activate(ros_exec)
     ros_exec.spin_until_future_complete(minimal_cartesian_input.received_future, timeout_sec=0.5)
     assert not minimal_cartesian_input.received_future.result()
+
+
+def test_trigger(ros_exec, make_lifecycle_change_client, make_predicates_listener):
+    trigger = Trigger()
+    listener = make_predicates_listener("trigger", ["test"])
+    client = make_lifecycle_change_client("trigger")
+    ros_exec.add_node(trigger)
+    ros_exec.add_node(listener)
+    ros_exec.add_node(client)
+    client.configure(ros_exec)
+    ros_exec.spin_until_future_complete(listener.predicates_future, timeout_sec=0.5)
+    assert not listener.predicates_future.done()
+    assert not listener.predicate_values["test"]
+    client.activate(ros_exec)
+    ros_exec.spin_until_future_complete(listener.predicates_future, timeout_sec=0.5)
+    assert listener.predicates_future.done()
+    assert listener.predicate_values["test"]
