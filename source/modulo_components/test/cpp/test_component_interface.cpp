@@ -1,10 +1,15 @@
 #include <gtest/gtest.h>
 
+#include <chrono>
+
 #include "modulo_core/EncodedState.hpp"
 #include "modulo_core/translators/message_writers.hpp"
+#include "modulo_utils/testutils/ServiceClient.hpp"
 #include "test_modulo_components/component_public_interfaces.hpp"
 
 namespace modulo_components {
+
+using namespace std::chrono_literals;
 
 template<class NodeT>
 class ComponentInterfaceTest : public ::testing::Test {
@@ -18,17 +23,17 @@ protected:
   }
 
   void SetUp() override {
+    exec_ = std::make_shared<rclcpp::executors::SingleThreadedExecutor>();
     if (std::is_same<NodeT, rclcpp::Node>::value) {
       this->component_ = std::make_shared<ComponentInterfacePublicInterface<NodeT>>(
-          rclcpp::NodeOptions(), modulo_core::communication::PublisherType::PUBLISHER
-      );
+          rclcpp::NodeOptions(), modulo_core::communication::PublisherType::PUBLISHER);
     } else if (std::is_same<NodeT, rclcpp_lifecycle::LifecycleNode>::value) {
       this->component_ = std::make_shared<ComponentInterfacePublicInterface<NodeT>>(
-          rclcpp::NodeOptions(), modulo_core::communication::PublisherType::LIFECYCLE_PUBLISHER
-      );
+          rclcpp::NodeOptions(), modulo_core::communication::PublisherType::LIFECYCLE_PUBLISHER);
     }
   }
 
+  std::shared_ptr<rclcpp::executors::SingleThreadedExecutor> exec_;
   std::shared_ptr<ComponentInterfacePublicInterface<NodeT>> component_;
   std::shared_ptr<NodeT> node_;
 };
@@ -143,14 +148,14 @@ TYPED_TEST(ComponentInterfaceTest, AddService) {
   EXPECT_EQ(static_cast<int>(this->component_->string_services_.size()), 0);
 
   auto empty_callback = []() -> ComponentServiceResponse {
-    return ComponentServiceResponse();
+    return {true, "test"};
   };
   EXPECT_NO_THROW(this->component_->add_service("empty", empty_callback));
   EXPECT_EQ(static_cast<int>(this->component_->empty_services_.size()), 1);
   EXPECT_NE(this->component_->empty_services_.find("empty"), this->component_->empty_services_.cend());
 
-  auto string_callback = [](const std::string&) -> ComponentServiceResponse {
-    return ComponentServiceResponse();
+  auto string_callback = [](const std::string& payload) -> ComponentServiceResponse {
+    return {true, payload};
   };
   EXPECT_NO_THROW(this->component_->add_service("string", string_callback));
   EXPECT_EQ(static_cast<int>(this->component_->string_services_.size()), 1);
@@ -173,13 +178,51 @@ TYPED_TEST(ComponentInterfaceTest, AddService) {
   EXPECT_EQ(static_cast<int>(this->component_->empty_services_.size()), 1);
   EXPECT_EQ(static_cast<int>(this->component_->string_services_.size()), 1);
 
-
   // adding a mangled service name should succeed under a sanitized name
   EXPECT_NO_THROW(this->component_->add_service("_tEsT_#1@3", empty_callback));
   EXPECT_EQ(static_cast<int>(this->component_->empty_services_.size()), 2);
   EXPECT_NE(this->component_->empty_services_.find("test_13"), this->component_->empty_services_.cend());
+}
 
-  // TODO: use a service client to trigger the service and test the behaviour
+TYPED_TEST(ComponentInterfaceTest, CallEmptyService) {
+  using namespace modulo_utils::testutils;
+  auto empty_callback = []() -> ComponentServiceResponse {
+    return {true, "test"};
+  };
+  EXPECT_NO_THROW(this->component_->add_service("empty", empty_callback));
+
+  auto client = std::make_shared<ServiceClient<modulo_component_interfaces::srv::EmptyTrigger>>(
+      rclcpp::NodeOptions(), "/" + std::string(this->component_->get_name()) + "/empty");
+  this->exec_->add_node(this->component_->get_node_base_interface());
+  this->exec_->add_node(client);
+  auto request = std::make_shared<modulo_component_interfaces::srv::EmptyTrigger::Request>();
+  auto future = client->call_async(request);
+  auto success = this->exec_->spin_until_future_complete(future, 1s);
+  EXPECT_EQ(success, rclcpp::FutureReturnCode::SUCCESS);
+  auto response = future.get();
+  EXPECT_TRUE(response->success);
+  EXPECT_EQ(response->message, "test");
+}
+
+TYPED_TEST(ComponentInterfaceTest, CallStringService) {
+  using namespace modulo_utils::testutils;
+  auto string_callback = [](const std::string& payload) -> ComponentServiceResponse {
+    return {true, payload};
+  };
+  EXPECT_NO_THROW(this->component_->add_service("string", string_callback));
+
+  auto client = std::make_shared<ServiceClient<modulo_component_interfaces::srv::StringTrigger>>(
+      rclcpp::NodeOptions(), "/" + std::string(this->component_->get_name()) + "/string");
+  this->exec_->add_node(this->component_->get_node_base_interface());
+  this->exec_->add_node(client);
+  auto request = std::make_shared<modulo_component_interfaces::srv::StringTrigger::Request>();
+  request->payload = "payload";
+  auto future = client->call_async(request);
+  auto success = this->exec_->spin_until_future_complete(future, 0.5s);
+  EXPECT_EQ(success, rclcpp::FutureReturnCode::SUCCESS);
+  auto response = future.get();
+  EXPECT_TRUE(response->success);
+  EXPECT_EQ(response->message, "payload");
 }
 
 TYPED_TEST(ComponentInterfaceTest, CreateOutput) {
@@ -230,7 +273,7 @@ TYPED_TEST(ComponentInterfaceTest, TF) {
     send_tfs.emplace_back(state_representation::CartesianPose::Random("test_" + std::to_string(idx), "world"));
   }
   EXPECT_NO_THROW(this->component_->send_transforms(send_tfs));
-  for (const auto& tf: send_tfs) {
+  for (const auto& tf : send_tfs) {
     lookup_tf = this->component_->lookup_transform(tf.get_name(), tf.get_reference_frame());
     identity = tf * lookup_tf.inverse();
     EXPECT_FLOAT_EQ(identity.data().norm(), 1.);
@@ -244,7 +287,7 @@ TYPED_TEST(ComponentInterfaceTest, TF) {
         state_representation::CartesianPose::Random("test_static_" + std::to_string(idx), "world"));
   }
   EXPECT_NO_THROW(this->component_->send_static_transforms(send_static_tfs));
-  for (const auto& tf: send_static_tfs) {
+  for (const auto& tf : send_static_tfs) {
     lookup_tf = this->component_->lookup_transform(tf.get_name(), tf.get_reference_frame());
     identity = tf * lookup_tf.inverse();
     EXPECT_FLOAT_EQ(identity.data().norm(), 1.);
