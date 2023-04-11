@@ -1,5 +1,6 @@
 import time
 
+import clproto
 import numpy as np
 import pytest
 import rclpy
@@ -7,6 +8,7 @@ import state_representation as sr
 from modulo_component_interfaces.srv import EmptyTrigger, StringTrigger
 from modulo_components.component_interface import ComponentInterface
 from modulo_components.exceptions import LookupTransformError
+from rclpy.qos import QoSProfile
 from std_msgs.msg import Bool, String
 
 
@@ -129,6 +131,13 @@ def test_add_service(component_interface, ros_exec, make_service_client):
     assert future.result().message == "payload"
 
 
+def test_create_output(component_interface):
+    component_interface._create_output("test", "test", Bool, clproto.MessageType.UNKNOWN_MESSAGE, "/topic", True)
+    assert "test" in component_interface._outputs.keys()
+    assert component_interface.get_parameter_value("test_topic") == "/topic"
+    assert component_interface._outputs["test"]["message_type"] == Bool
+
+
 def test_tf(component_interface):
     component_interface.add_tf_broadcaster()
     component_interface.add_static_tf_broadcaster()
@@ -178,6 +187,18 @@ def test_tf(component_interface):
         identity = tf * lookup_tf.inverse()
         assert np.linalg.norm(identity.data()) - 1 < 1e-3
         assert abs(identity.get_orientation().w) - 1 < 1e-3
+
+
+def test_get_set_qos(component_interface):
+    qos = QoSProfile(depth=5)
+    component_interface.set_qos(qos)
+    assert qos == component_interface.get_qos()
+
+
+def test_raise_error(component_interface):
+    assert not component_interface.get_predicate("in_error_state")
+    component_interface.raise_error()
+    assert component_interface.get_predicate("in_error_state")
 
 
 def test_add_trigger(component_interface):

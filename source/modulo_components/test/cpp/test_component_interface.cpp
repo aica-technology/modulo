@@ -66,11 +66,7 @@ TYPED_TEST(ComponentInterfaceTest, GetPredicateValue) {
   EXPECT_FALSE(this->component_->get_predicate("test"));
   // error in callback function except false
   this->component_->add_predicate(
-      "error", [&]() {
-        throw std::runtime_error("An error occurred");
-        return false;
-      }
-  );
+      "error", [&]() -> bool { throw std::runtime_error("An error occurred"); });
   EXPECT_FALSE(this->component_->get_predicate("error"));
 }
 
