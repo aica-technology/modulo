@@ -106,12 +106,12 @@ protected:
    * @param data Data to transmit on the output signal
    * @param default_topic If set, the default value for the topic name to use
    * @param fixed_topic If true, the topic name of the output signal is fixed
-   * @param publish_manually If true, the output publishing has to be triggered manually
+   * @param publish_on_step If true, the output is published periodically on step
    */
   template<typename DataT>
   void add_output(
       const std::string& signal_name, const std::shared_ptr<DataT>& data, const std::string& default_topic = "",
-      bool fixed_topic = false, bool publish_manually = false
+      bool fixed_topic = false, bool publish_on_step = true
   );
 
 private:
@@ -276,7 +276,7 @@ inline void LifecycleComponent::on_step_callback() {}
 template<typename DataT>
 inline void LifecycleComponent::add_output(
     const std::string& signal_name, const std::shared_ptr<DataT>& data, const std::string& default_topic,
-    bool fixed_topic, bool publish_manually
+    bool fixed_topic, bool publish_on_step
 ) {
   if (this->get_current_state().id() != lifecycle_msgs::msg::State::PRIMARY_STATE_UNCONFIGURED
       && this->get_current_state().id() != lifecycle_msgs::msg::State::PRIMARY_STATE_INACTIVE) {
@@ -285,7 +285,7 @@ inline void LifecycleComponent::add_output(
     return;
   }
   try {
-    this->create_output(signal_name, data, default_topic, fixed_topic, publish_manually);
+    this->create_output(signal_name, data, default_topic, fixed_topic, publish_on_step);
   } catch (const exceptions::AddSignalException& ex) {
     RCLCPP_ERROR_STREAM(this->get_logger(), "Failed to add output '" << signal_name << "': " << ex.what());
   }

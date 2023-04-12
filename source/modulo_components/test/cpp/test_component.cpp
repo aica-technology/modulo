@@ -41,7 +41,7 @@ TEST_F(ComponentTest, AddRemoveOutput) {
   component_->remove_output("test_13");
   EXPECT_TRUE(component_->outputs_.find("test_13") == component_->outputs_.end());
 
-  component_->add_output("_tEsT_#1@3", data, "", true, true);
+  component_->add_output("_tEsT_#1@3", data, "", true, false);
   EXPECT_FALSE(component_->periodic_outputs_.at("test_13"));
   EXPECT_NO_THROW(component_->publish_output("_tEsT_#1@3"));
   EXPECT_NO_THROW(component_->publish_output("test_13"));

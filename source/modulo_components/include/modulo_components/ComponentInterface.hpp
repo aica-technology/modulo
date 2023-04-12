@@ -346,7 +346,7 @@ protected:
    * @param data Data to transmit on the output signal
    * @param default_topic If set, the default value for the topic name to use
    * @param fixed_topic If true, the topic name of the output signal is fixed
-   * @param publish_manually If true, the output publishing has to be triggered manually
+   * @param publish_on_step If true, the output is published periodically on step
    * @throws modulo_components::exceptions::AddSignalException if the output could not be created
    * (empty name, already registered)
    * @return The parsed signal name
@@ -354,7 +354,7 @@ protected:
   template<typename DataT>
   std::string create_output(
       const std::string& signal_name, const std::shared_ptr<DataT>& data, const std::string& default_topic,
-      bool fixed_topic, bool publish_manually
+      bool fixed_topic, bool publish_on_step
   );
 
   /**
@@ -370,7 +370,7 @@ protected:
   void set_qos(const rclcpp::QoS& qos);
 
   /**
-   * @brief Manually trigger the publishing of an output
+   * @brief Trigger the publishing of an output
    * @param signal_name The name of the output signal
    * @throws ComponentException if the output is being published periodically or if the signal name could not be found
    */
@@ -1332,7 +1332,7 @@ template<class NodeT>
 template<typename DataT>
 inline std::string ComponentInterface<NodeT>::create_output(
     const std::string& signal_name, const std::shared_ptr<DataT>& data, const std::string& default_topic,
-    bool fixed_topic, bool publish_manually
+    bool fixed_topic, bool publish_on_step
 ) {
   using namespace modulo_core::communication;
   try {
@@ -1348,7 +1348,7 @@ inline std::string ComponentInterface<NodeT>::create_output(
     auto message_pair = make_shared_message_pair(data, this->get_clock());
     this->outputs_.insert_or_assign(
         parsed_signal_name, std::make_shared<PublisherInterface>(this->publisher_type_, message_pair));
-    this->periodic_outputs_.insert_or_assign(parsed_signal_name, !publish_manually);
+    this->periodic_outputs_.insert_or_assign(parsed_signal_name, publish_on_step);
     return parsed_signal_name;
   } catch (const exceptions::AddSignalException&) {
     throw;
