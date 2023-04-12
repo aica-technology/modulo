@@ -138,6 +138,9 @@ def test_create_output(component_interface):
     assert component_interface._outputs["test"]["message_type"] == Bool
 
 
+# TODO create output tests with publish_on_step
+
+
 def test_tf(component_interface):
     component_interface.add_tf_broadcaster()
     component_interface.add_static_tf_broadcaster()

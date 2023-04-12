@@ -9,7 +9,8 @@ import modulo_core.translators.message_writers as modulo_writers
 import state_representation as sr
 from geometry_msgs.msg import TransformStamped
 from modulo_component_interfaces.srv import EmptyTrigger, StringTrigger
-from modulo_components.exceptions import AddServiceError, AddSignalError, ComponentParameterError, LookupTransformError
+from modulo_components.exceptions import AddServiceError, AddSignalError, ComponentError, ComponentParameterError, \
+    LookupTransformError
 from modulo_components.utilities import generate_predicate_topic, parse_topic_name
 from modulo_core import EncodedState
 from modulo_core.exceptions import MessageTranslationError, ParameterTranslationError
@@ -49,6 +50,7 @@ class ComponentInterface(Node):
         self._periodic_callbacks: Dict[str, Callable[[], None]] = {}
         self._inputs = {}
         self._outputs = {}
+        self._periodic_outputs: Dict[str, bool] = {}
         self._services_dict: Dict[str, Service] = {}
         self.__tf_buffer: Optional[Buffer] = None
         self.__tf_listener: Optional[TransformListener] = None
@@ -347,7 +349,7 @@ class ComponentInterface(Node):
         self.get_logger().debug(f"Removing signal '{signal_name}'.")
 
     def _create_output(self, signal_name: str, data: str, message_type: MsgT, clproto_message_type: clproto.MessageType,
-                       default_topic: str, fixed_topic: bool) -> str:
+                       default_topic: str, fixed_topic: bool, publish_on_step: bool) -> str:
         """
         Helper function to parse the signal name and add an output without Publisher to the dict of outputs.
 
@@ -357,6 +359,7 @@ class ComponentInterface(Node):
         :param clproto_message_type: The clproto message type, if applicable
         :param default_topic: If set, the default value for the topic name to use
         :param fixed_topic: If true, the topic name of the output signal is fixed
+        :param publish_on_step: If true, the output is published periodically on step
         :raises AddSignalError: if there is a problem adding the output
         :return: The parsed signal name
         """
@@ -375,6 +378,7 @@ class ComponentInterface(Node):
                 raise AddSignalError("The provided message type is not supported to create a component output.")
             self._outputs[parsed_signal_name] = {"attribute": data, "message_type": message_type,
                                                  "translator": translator}
+            self._periodic_outputs[parsed_signal_name] = publish_on_step
             return parsed_signal_name
         except AddSignalError:
             raise
@@ -723,18 +727,44 @@ class ComponentInterface(Node):
         for name in self._predicates.keys():
             self._publish_predicate(name)
 
+    def __translate_and_publish(self, output_name: str):
+        """
+        Translate and publish a message of an output
+
+        :param output_name: The name of the output
+        """
+        message = self._outputs[output_name]["message_type"]()
+        data = self.__getattribute__(self._outputs[output_name]["attribute"])
+        # only publish if the data is not empty
+        if not getattr(data, "is_empty", lambda: False)():
+            self._outputs[output_name]["translator"](message, data)
+            self._outputs[output_name]["publisher"].publish(message)
+
+    def publish_output(self, signal_name: str):
+        """
+        Trigger the publishing of an output
+
+        :param signal_name: The name of the output signal
+        :raises ComponentError: if the output is being published periodically or if the signal name could not be found
+        """
+        parsed_signal_name = parse_topic_name(signal_name)
+        if parsed_signal_name not in self._outputs.keys():
+            raise ComponentError(f"Output with name '{signal_name}' doesn't exist")
+        if self._periodic_outputs[parsed_signal_name]:
+            raise ComponentError("An output that is published periodically cannot be triggered manually")
+        try:
+            self.__translate_and_publish(parsed_signal_name)
+        except Exception as e:
+            self.get_logger().error(f"Failed to publish output '{parsed_signal_name}': {e}")
+
     def _publish_outputs(self):
         """
         Helper function to publish all outputs.
         """
-        for signal, output_dict in self._outputs.items():
+        for output in self._outputs.keys():
             try:
-                message = output_dict["message_type"]()
-                data = self.__getattribute__(output_dict["attribute"])
-                # only publish if the data is not empty
-                if not getattr(data, "is_empty", lambda: False)():
-                    output_dict["translator"](message, data)
-                    output_dict["publisher"].publish(message)
+                if self._periodic_outputs[output]:
+                    self.__translate_and_publish(output)
             except Exception as e:
                 self.get_logger().error(f"{e}")
 
