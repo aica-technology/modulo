@@ -8,6 +8,7 @@ Release Versions:
 
 ## Upcoming changes (in development)
 
+- Add unittests for modulo component service calls and triggers (#20)
 - Extend testutils with C++ classes (#19)
 
 ## 2.2.0

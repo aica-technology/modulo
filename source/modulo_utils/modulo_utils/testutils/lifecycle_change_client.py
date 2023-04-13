@@ -31,7 +31,7 @@ class LifecycleChangeClient(Node):
         """
         future = self._client.call_async(ChangeState.Request(transition=Transition(id=transition_id)))
         ros_exec.spin_until_future_complete(future, timeout_sec=timeout_sec)
-        assert future.result().success
+        assert future.done() and future.result().success
 
     def configure(self, ros_exec: rclpy.executors.Executor, timeout_sec=0.5):
         """

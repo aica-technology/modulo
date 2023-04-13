@@ -1,11 +1,14 @@
 import time
 
+import clproto
 import numpy as np
 import pytest
 import rclpy
 import state_representation as sr
+from modulo_component_interfaces.srv import EmptyTrigger, StringTrigger
 from modulo_components.component_interface import ComponentInterface
 from modulo_components.exceptions import LookupTransformError
+from rclpy.qos import QoSProfile
 from std_msgs.msg import Bool, String
 
 
@@ -79,15 +82,17 @@ def test_add_remove_input(component_interface):
     assert "test_13" not in component_interface._inputs.keys()
 
 
-def test_add_service(component_interface):
+def test_add_service(component_interface, ros_exec, make_service_client):
     def empty_callback():
         return {"success": True, "message": "test"}
+
     component_interface.add_service("empty", empty_callback)
     assert len(component_interface._services_dict) == 1
     assert "empty" in component_interface._services_dict.keys()
 
-    def string_callback():
-        return {"success": True, "message": "test"}
+    def string_callback(payload: str):
+        return {"success": True, "message": payload}
+
     component_interface.add_service("string", string_callback)
     assert len(component_interface._services_dict) == 2
     assert "string" in component_interface._services_dict.keys()
@@ -101,12 +106,36 @@ def test_add_service(component_interface):
     component_interface.add_service("string", string_callback)
     assert len(component_interface._services_dict) == 2
 
+    # adding an empty service name should fail
+    component_interface.add_service("", empty_callback)
+    component_interface.add_service("", string_callback)
+    assert len(component_interface._services_dict) == 2
+
     # adding a mangled service name should succeed under a sanitized name
     component_interface.add_service("_tEsT_#1@3", empty_callback)
     assert len(component_interface._services_dict) == 3
     assert "test_13" in component_interface._services_dict.keys()
 
-    # TODO: use a service client to trigger the service and test the behaviour
+    client = make_service_client(
+        {"/component_interface/empty": EmptyTrigger, "/component_interface/string": StringTrigger})
+    ros_exec.add_node(component_interface)
+    ros_exec.add_node(client)
+    future = client.call_async("/component_interface/empty", EmptyTrigger.Request())
+    ros_exec.spin_until_future_complete(future, timeout_sec=0.5)
+    assert future.done() and future.result().success
+    assert future.result().message == "test"
+
+    future = client.call_async("/component_interface/string", StringTrigger.Request(payload="payload"))
+    ros_exec.spin_until_future_complete(future, timeout_sec=0.5)
+    assert future.done() and future.result().success
+    assert future.result().message == "payload"
+
+
+def test_create_output(component_interface):
+    component_interface._create_output("test", "test", Bool, clproto.MessageType.UNKNOWN_MESSAGE, "/topic", True)
+    assert "test" in component_interface._outputs.keys()
+    assert component_interface.get_parameter_value("test_topic") == "/topic"
+    assert component_interface._outputs["test"]["message_type"] == Bool
 
 
 def test_tf(component_interface):
@@ -158,6 +187,18 @@ def test_tf(component_interface):
         identity = tf * lookup_tf.inverse()
         assert np.linalg.norm(identity.data()) - 1 < 1e-3
         assert abs(identity.get_orientation().w) - 1 < 1e-3
+
+
+def test_get_set_qos(component_interface):
+    qos = QoSProfile(depth=5)
+    component_interface.set_qos(qos)
+    assert qos == component_interface.get_qos()
+
+
+def test_raise_error(component_interface):
+    assert not component_interface.get_predicate("in_error_state")
+    component_interface.raise_error()
+    assert component_interface.get_predicate("in_error_state")
 
 
 def test_add_trigger(component_interface):

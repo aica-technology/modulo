@@ -41,8 +41,7 @@ if(BUILD_TESTING)
 
   ament_add_gtest(test_modulo_components ${TEST_CPP_SOURCES})
   target_include_directories(test_modulo_components PRIVATE include)
-  target_link_libraries(test_modulo_components ${PROJECT_NAME} state_representation clproto)
-  target_compile_definitions(test_modulo_components PRIVATE TEST_FIXTURES="${CMAKE_CURRENT_SOURCE_DIR}/test/fixtures/")
+  target_link_libraries(test_modulo_components ${PROJECT_NAME})
 
   # prevent pluginlib from using boost
   target_compile_definitions(test_modulo_components PUBLIC "PLUGINLIB__DISABLE_BOOST_FUNCTIONS")
