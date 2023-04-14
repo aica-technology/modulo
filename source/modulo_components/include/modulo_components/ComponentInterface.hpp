@@ -1289,7 +1289,7 @@ template<class NodeT>
 inline void ComponentInterface<NodeT>::publish_output(const std::string& signal_name) {
   auto parsed_signal_name = utilities::parse_topic_name(signal_name);
   if (this->outputs_.find(parsed_signal_name) == this->outputs_.cend()) {
-    throw exceptions::ComponentException("Output with name '" + signal_name + "' doesn't exists.");
+    throw exceptions::ComponentException("Output with name '" + signal_name + "' doesn't exist.");
   }
   if (this->periodic_outputs_.at(parsed_signal_name)) {
     throw exceptions::ComponentException("An output that is published periodically cannot be triggered manually.");
