@@ -7,7 +7,7 @@ import rclpy
 import state_representation as sr
 from modulo_component_interfaces.srv import EmptyTrigger, StringTrigger
 from modulo_components.component_interface import ComponentInterface
-from modulo_components.exceptions import LookupTransformError
+from modulo_components.exceptions import ComponentError, LookupTransformError
 from rclpy.qos import QoSProfile
 from std_msgs.msg import Bool, String
 
@@ -132,13 +132,18 @@ def test_add_service(component_interface, ros_exec, make_service_client):
 
 
 def test_create_output(component_interface):
-    component_interface._create_output("test", "test", Bool, clproto.MessageType.UNKNOWN_MESSAGE, "/topic", True)
+    component_interface._create_output("test", "test", Bool, clproto.MessageType.UNKNOWN_MESSAGE, "/topic", True, True)
     assert "test" in component_interface._outputs.keys()
     assert component_interface.get_parameter_value("test_topic") == "/topic"
     assert component_interface._outputs["test"]["message_type"] == Bool
+    assert component_interface._periodic_outputs["test"]
 
-
-# TODO create output tests with publish_on_step
+    component_interface._create_output("_tEsT_#1@3", "test", Bool, clproto.MessageType.UNKNOWN_MESSAGE, "", True, False)
+    assert not component_interface._periodic_outputs["test_13"]
+    component_interface.publish_output("_tEsT_#1@3")
+    component_interface.publish_output("test_13")
+    with pytest.raises(ComponentError):
+        component_interface.publish_output("")
 
 
 def test_tf(component_interface):
