@@ -39,14 +39,31 @@ protected:
 TEST_F(LifecycleComponentCommunicationTest, InputOutput) {
   auto cartesian_state = state_representation::CartesianState::Random("test");
   auto input_node = std::make_shared<MinimalCartesianInput<LifecycleComponent>>(rclcpp::NodeOptions(), "/topic");
-  auto output_node =
-      std::make_shared<MinimalCartesianOutput<LifecycleComponent>>(rclcpp::NodeOptions(), "/topic", cartesian_state);
+  auto output_node = std::make_shared<MinimalCartesianOutput<LifecycleComponent>>(
+      rclcpp::NodeOptions(), "/topic", cartesian_state, true);
   add_configure_activate(this->exec_, input_node);
   add_configure_activate(this->exec_, output_node);
-  this->exec_->spin_until_future_complete(input_node->received_future, 500ms);
+  auto return_code = this->exec_->spin_until_future_complete(input_node->received_future, 500ms);
+  ASSERT_EQ(return_code, rclcpp::FutureReturnCode::SUCCESS);
   EXPECT_EQ(cartesian_state.get_name(), input_node->input->get_name());
   EXPECT_TRUE(cartesian_state.data().isApprox(input_node->input->data()));
-  this->exec_.reset();
+  EXPECT_THROW(output_node->publish(), modulo_components::exceptions::ComponentException);
+}
+
+TEST_F(LifecycleComponentCommunicationTest, InputOutputManual) {
+  auto cartesian_state = state_representation::CartesianState::Random("test");
+  auto input_node = std::make_shared<MinimalCartesianInput<LifecycleComponent>>(rclcpp::NodeOptions(), "/topic");
+  auto output_node = std::make_shared<MinimalCartesianOutput<LifecycleComponent>>(
+      rclcpp::NodeOptions(), "/topic", cartesian_state, false);
+  add_configure_activate(this->exec_, input_node);
+  add_configure_activate(this->exec_, output_node);
+  auto return_code = this->exec_->spin_until_future_complete(input_node->received_future, 500ms);
+  ASSERT_EQ(return_code, rclcpp::FutureReturnCode::TIMEOUT);
+  output_node->publish();
+  return_code = this->exec_->template spin_until_future_complete(input_node->received_future, 500ms);
+  ASSERT_EQ(return_code, rclcpp::FutureReturnCode::SUCCESS);
+  EXPECT_EQ(cartesian_state.get_name(), input_node->input->get_name());
+  EXPECT_TRUE(cartesian_state.data().isApprox(input_node->input->data()));
 }
 
 TEST_F(LifecycleComponentCommunicationTest, Trigger) {

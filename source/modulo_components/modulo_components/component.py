@@ -71,7 +71,8 @@ class Component(ComponentInterface):
         return True
 
     def add_output(self, signal_name: str, data: str, message_type: MsgT,
-                   clproto_message_type=clproto.MessageType.UNKNOWN_MESSAGE, default_topic="", fixed_topic=False):
+                   clproto_message_type=clproto.MessageType.UNKNOWN_MESSAGE, default_topic="", fixed_topic=False,
+                   publish_on_step=True):
         """
         Add and configure an output signal of the component.
 
@@ -81,10 +82,11 @@ class Component(ComponentInterface):
         :param clproto_message_type: The clproto message type, if applicable
         :param default_topic: If set, the default value for the topic name to use
         :param fixed_topic: If true, the topic name of the output signal is fixed
+        :param publish_on_step: If true, the output is published periodically on step
         """
         try:
             parsed_signal_name = self._create_output(signal_name, data, message_type, clproto_message_type,
-                                                     default_topic, fixed_topic)
+                                                     default_topic, fixed_topic, publish_on_step)
             topic_name = self.get_parameter_value(parsed_signal_name + "_topic")
             self.get_logger().debug(f"Adding output '{parsed_signal_name}' with topic name '{topic_name}'.")
             publisher = self.create_publisher(message_type, topic_name, self._qos)

@@ -1,5 +1,6 @@
 import pytest
 from modulo_components.component import Component
+from modulo_components.exceptions import ComponentError
 
 
 class Trigger(Component):
@@ -12,14 +13,28 @@ class Trigger(Component):
 
 
 @pytest.mark.parametrize("minimal_cartesian_input", [[Component, "/topic"]], indirect=True)
-@pytest.mark.parametrize("minimal_cartesian_output", [[Component, "/topic"]], indirect=True)
+@pytest.mark.parametrize("minimal_cartesian_output", [[Component, "/topic", True]], indirect=True)
 def test_input_output(ros_exec, random_pose, minimal_cartesian_output, minimal_cartesian_input):
     ros_exec.add_node(minimal_cartesian_input)
     ros_exec.add_node(minimal_cartesian_output)
     ros_exec.spin_until_future_complete(minimal_cartesian_input.received_future, timeout_sec=0.5)
-    ros_exec.remove_node(minimal_cartesian_input)
-    ros_exec.remove_node(minimal_cartesian_output)
-    assert minimal_cartesian_input.received_future.result()
+    assert minimal_cartesian_input.received_future.done() and minimal_cartesian_input.received_future.result()
+    assert random_pose.get_name() == minimal_cartesian_input.input.get_name()
+    assert random_pose.dist(minimal_cartesian_input.input) < 1e-3
+    with pytest.raises(ComponentError):
+        minimal_cartesian_output.publish()
+
+
+@pytest.mark.parametrize("minimal_cartesian_input", [[Component, "/topic"]], indirect=True)
+@pytest.mark.parametrize("minimal_cartesian_output", [[Component, "/topic", False]], indirect=True)
+def test_input_output_manual(ros_exec, random_pose, minimal_cartesian_output, minimal_cartesian_input):
+    ros_exec.add_node(minimal_cartesian_input)
+    ros_exec.add_node(minimal_cartesian_output)
+    ros_exec.spin_until_future_complete(minimal_cartesian_input.received_future, timeout_sec=0.5)
+    assert not minimal_cartesian_input.received_future.done()
+    minimal_cartesian_output.publish()
+    ros_exec.spin_until_future_complete(minimal_cartesian_input.received_future, timeout_sec=0.5)
+    assert minimal_cartesian_input.received_future.done() and minimal_cartesian_input.received_future.result()
     assert random_pose.get_name() == minimal_cartesian_input.input.get_name()
     assert random_pose.dist(minimal_cartesian_input.input) < 1e-3
 

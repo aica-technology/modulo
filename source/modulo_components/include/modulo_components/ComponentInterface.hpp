@@ -346,6 +346,7 @@ protected:
    * @param data Data to transmit on the output signal
    * @param default_topic If set, the default value for the topic name to use
    * @param fixed_topic If true, the topic name of the output signal is fixed
+   * @param publish_on_step If true, the output is published periodically on step
    * @throws modulo_components::exceptions::AddSignalException if the output could not be created
    * (empty name, already registered)
    * @return The parsed signal name
@@ -353,7 +354,7 @@ protected:
   template<typename DataT>
   std::string create_output(
       const std::string& signal_name, const std::shared_ptr<DataT>& data, const std::string& default_topic,
-      bool fixed_topic
+      bool fixed_topic, bool publish_on_step
   );
 
   /**
@@ -367,6 +368,13 @@ protected:
    * @param qos The desired Quality of Service
    */
   void set_qos(const rclcpp::QoS& qos);
+
+  /**
+   * @brief Trigger the publishing of an output
+   * @param signal_name The name of the output signal
+   * @throws ComponentException if the output is being published periodically or if the signal name could not be found
+   */
+  void publish_output(const std::string& signal_name);
 
   /**
    * @brief Send a transform to TF.
@@ -462,6 +470,7 @@ protected:
 
   std::map<std::string, std::shared_ptr<modulo_core::communication::SubscriptionInterface>> inputs_; ///< Map of inputs
   std::map<std::string, std::shared_ptr<modulo_core::communication::PublisherInterface>> outputs_; ///< Map of outputs
+  std::map<std::string, bool> periodic_outputs_; ///< Map of outputs with periodic publishing flag
 
   rclcpp::QoS qos_ = rclcpp::QoS(10); ///< Quality of Service for ROS publishers and subscribers
 
@@ -1277,10 +1286,29 @@ inline void ComponentInterface<NodeT>::publish_predicates() {
 }
 
 template<class NodeT>
+inline void ComponentInterface<NodeT>::publish_output(const std::string& signal_name) {
+  auto parsed_signal_name = utilities::parse_topic_name(signal_name);
+  if (this->outputs_.find(parsed_signal_name) == this->outputs_.cend()) {
+    throw exceptions::ComponentException("Output with name '" + signal_name + "' doesn't exist.");
+  }
+  if (this->periodic_outputs_.at(parsed_signal_name)) {
+    throw exceptions::ComponentException("An output that is published periodically cannot be triggered manually.");
+  }
+  try {
+    this->outputs_.at(parsed_signal_name)->publish();
+  } catch (const modulo_core::exceptions::CoreException& ex) {
+    RCLCPP_ERROR_STREAM_THROTTLE(this->get_logger(), *this->get_clock(), 1000,
+                                 "Failed to publish output '" << parsed_signal_name << "': " << ex.what());
+  }
+}
+
+template<class NodeT>
 inline void ComponentInterface<NodeT>::publish_outputs() {
   for (const auto& [signal, publisher]: this->outputs_) {
     try {
-      publisher->publish();
+      if (this->periodic_outputs_.at(signal)) {
+        publisher->publish();
+      }
     } catch (const modulo_core::exceptions::CoreException& ex) {
       RCLCPP_ERROR_STREAM_THROTTLE(this->get_logger(), *this->get_clock(), 1000,
                                    "Failed to publish output '" << signal << "': " << ex.what());
@@ -1304,7 +1332,7 @@ template<class NodeT>
 template<typename DataT>
 inline std::string ComponentInterface<NodeT>::create_output(
     const std::string& signal_name, const std::shared_ptr<DataT>& data, const std::string& default_topic,
-    bool fixed_topic
+    bool fixed_topic, bool publish_on_step
 ) {
   using namespace modulo_core::communication;
   try {
@@ -1320,6 +1348,7 @@ inline std::string ComponentInterface<NodeT>::create_output(
     auto message_pair = make_shared_message_pair(data, this->get_clock());
     this->outputs_.insert_or_assign(
         parsed_signal_name, std::make_shared<PublisherInterface>(this->publisher_type_, message_pair));
+    this->periodic_outputs_.insert_or_assign(parsed_signal_name, publish_on_step);
     return parsed_signal_name;
   } catch (const exceptions::AddSignalException&) {
     throw;
