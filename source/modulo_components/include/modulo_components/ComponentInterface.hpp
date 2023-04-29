@@ -642,7 +642,7 @@ inline void ComponentInterface<NodeT>::add_parameter(
     RCLCPP_ERROR(this->get_logger(), "Failed to add parameter: Provide a non empty string as a name.");
     return;
   }
-  this->add_parameter(state_representation::make_shared_parameter(name), description, read_only);
+  this->add_parameter(state_representation::make_shared_parameter<T>(name), description, read_only);
 }
 
 template<class NodeT>
