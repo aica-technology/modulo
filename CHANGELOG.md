@@ -8,6 +8,7 @@ Release Versions:
 
 ## Upcoming changes (in development)
 
+- Refactor component predicates with a single Predicate publisher (#26)
 - Add overloaded method for adding empty parameters (#25)
 - Add option to publish outputs manually instead of periodically (#23)
 - Add unittests for modulo component service calls and triggers (#20)
