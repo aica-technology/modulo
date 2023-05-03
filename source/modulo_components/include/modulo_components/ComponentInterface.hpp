@@ -27,6 +27,7 @@
 
 #include <modulo_component_interfaces/srv/empty_trigger.hpp>
 #include <modulo_component_interfaces/srv/string_trigger.hpp>
+#include <modulo_component_interfaces/msg/predicate.hpp>
 
 #include "modulo_components/exceptions/AddServiceException.hpp"
 #include "modulo_components/exceptions/AddSignalException.hpp"
@@ -572,8 +573,8 @@ private:
       publisher_type_; ///< Type of the output publishers (one of PUBLISHER, LIFECYCLE_PUBLISHER)
 
   std::map<std::string, utilities::PredicateVariant> predicates_; ///< Map of predicates
-  std::map<std::string, std::shared_ptr<rclcpp::Publisher<std_msgs::msg::Bool>>>
-      predicate_publishers_; ///< Map of predicate publishers
+  std::shared_ptr<rclcpp::Publisher<modulo_component_interfaces::msg::Predicate>>
+  predicate_publisher_; ///< Predicate publisher
   std::map<std::string, bool> triggers_; ///< Map of triggers
 
   std::map<std::string, std::shared_ptr<rclcpp::Service<modulo_component_interfaces::srv::EmptyTrigger>>>
@@ -610,6 +611,8 @@ ComponentInterface<NodeT>::ComponentInterface(
   );
   this->add_parameter("period", 0.1, "The time interval in seconds for all periodic callbacks", true);
 
+  this->predicate_publisher_ =
+      rclcpp::create_publisher<modulo_component_interfaces::msg::Predicate>(*this, "/predicates", this->qos_);
   this->add_predicate("in_error_state", false);
 
   this->step_timer_ = this->create_wall_timer(
@@ -800,10 +803,6 @@ inline void ComponentInterface<NodeT>::add_variant_predicate(
     RCLCPP_WARN_STREAM(this->get_logger(), "Predicate with name '" << name << "' already exists, overwriting.");
   } else {
     RCLCPP_DEBUG_STREAM(this->get_logger(), "Adding predicate '" << name << "'.");
-    auto publisher = rclcpp::create_publisher<std_msgs::msg::Bool>(
-        *this, utilities::generate_predicate_topic(this->get_name(), name), this->qos_
-    );
-    this->predicate_publishers_.insert_or_assign(name, publisher);
   }
   this->predicates_.insert_or_assign(name, predicate);
 }
@@ -1293,14 +1292,11 @@ inline state_representation::CartesianPose ComponentInterface<NodeT>::lookup_tra
 
 template<class NodeT>
 inline void ComponentInterface<NodeT>::publish_predicate(const std::string& name) {
-  std_msgs::msg::Bool message;
-  message.data = this->get_predicate(name);
-  if (this->predicate_publishers_.find(name) == this->predicate_publishers_.end()) {
-    RCLCPP_ERROR_STREAM_THROTTLE(this->get_logger(), *this->get_clock(), 1000,
-                                 "No publisher for predicate '" << name << "' found.");
-    return;
-  }
-  predicate_publishers_.at(name)->publish(message);
+  modulo_component_interfaces::msg::Predicate message;
+  message.component = this->get_name();
+  message.predicate = name;
+  message.value = this->get_predicate(name);
+  this->predicate_publisher_->publish(message);
 }
 
 template<class NodeT>

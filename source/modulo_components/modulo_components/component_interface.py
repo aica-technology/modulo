@@ -8,6 +8,7 @@ import modulo_core.translators.message_readers as modulo_readers
 import modulo_core.translators.message_writers as modulo_writers
 import state_representation as sr
 from geometry_msgs.msg import TransformStamped
+from modulo_component_interfaces.msg import Predicate
 from modulo_component_interfaces.srv import EmptyTrigger, StringTrigger
 from modulo_components.exceptions import AddServiceError, AddSignalError, ComponentError, ComponentParameterError, \
     LookupTransformError
@@ -19,7 +20,6 @@ from rcl_interfaces.msg import ParameterDescriptor, SetParametersResult
 from rclpy.duration import Duration
 from rclpy.node import Node
 from rclpy.parameter import Parameter
-from rclpy.publisher import Publisher
 from rclpy.qos import QoSProfile
 from rclpy.service import Service
 from rclpy.time import Time
@@ -63,6 +63,7 @@ class ComponentInterface(Node):
         self.add_parameter(sr.Parameter("period", 0.1, sr.ParameterType.DOUBLE),
                            "Period (in s) between step function calls.")
 
+        self._predicate_publisher = self.create_publisher(Predicate, "/predicates", self._qos)
         self.add_predicate("in_error_state", False)
 
         self.create_timer(self.get_parameter_value("period"), self._step)
@@ -707,18 +708,17 @@ class ComponentInterface(Node):
 
         :param name: The name of the predicate to publish
         """
-        message = Bool()
+        message = Predicate()
         value = self.get_predicate(name)
         try:
-            message.data = value
+            message.value = value
         except AssertionError:
             self.get_logger().error(f"Predicate '{name}' has invalid type: expected 'bool', got '{type(value)}'.",
                                     throttle_duration_sec=1.0)
             return
-        if name not in self._predicate_publishers.keys():
-            self.get_logger().error(f"No publisher for predicate '{name}' found.", throttle_duration_sec=1.0)
-            return
-        self._predicate_publishers[name].publish(message)
+        message.component = self.get_name()
+        message.predicate = name
+        self._predicate_publisher.publish(message)
 
     def _publish_predicates(self):
         """
