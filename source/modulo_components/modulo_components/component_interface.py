@@ -12,7 +12,7 @@ from modulo_component_interfaces.msg import Predicate
 from modulo_component_interfaces.srv import EmptyTrigger, StringTrigger
 from modulo_components.exceptions import AddServiceError, AddSignalError, ComponentError, ComponentParameterError, \
     LookupTransformError
-from modulo_components.utilities import generate_predicate_topic, parse_topic_name
+from modulo_components.utilities import parse_topic_name
 from modulo_core import EncodedState
 from modulo_core.exceptions import MessageTranslationError, ParameterTranslationError
 from modulo_core.translators.parameter_translators import get_ros_parameter_type, read_parameter_const, write_parameter
@@ -45,7 +45,6 @@ class ComponentInterface(Node):
         super().__init__(node_name, *args, **node_kwargs)
         self._parameter_dict: Dict[str, Union[str, sr.Parameter]] = {}
         self._predicates: Dict[str, Union[bool, Callable[[], bool]]] = {}
-        self._predicate_publishers: Dict[str, Publisher] = {}
         self._triggers: Dict[str, bool] = {}
         self._periodic_callbacks: Dict[str, Callable[[], None]] = {}
         self._inputs = {}
@@ -252,9 +251,6 @@ class ComponentInterface(Node):
             self.get_logger().warn(f"Predicate with name '{name}' already exists, overwriting.")
         else:
             self.get_logger().debug(f"Adding predicate '{name}'.")
-            self._predicate_publishers[name] = self.create_publisher(Bool,
-                                                                     generate_predicate_topic(self.get_name(), name),
-                                                                     10)
         self._predicates[name] = value
 
     def get_predicate(self, name: str) -> bool:
