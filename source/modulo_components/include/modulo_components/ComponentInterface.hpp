@@ -126,6 +126,19 @@ protected:
   template<typename T>
   void add_parameter(const std::string& name, const T& value, const std::string& description, bool read_only = false);
 
+    /**
+     * @brief Add an empty parameter.
+     * @details This method creates a new empty Parameter object instance to reference in the local parameter map and
+     * declares the equivalent ROS parameter on the ROS interface.
+     * @tparam T The type of the parameter
+     * @param name The name of the parameter
+     * @param description The description of the parameter
+     * @param read_only If true, the value of the parameter cannot be changed after declaration
+     * @raise ComponentParameterError if the parameter could not be added
+     */
+    template<typename T>
+    void add_parameter(const std::string& name, const std::string& description, bool read_only = false);
+
   /**
    * @brief Get a parameter by name.
    * @param name The name of the parameter
@@ -618,6 +631,18 @@ inline void ComponentInterface<NodeT>::add_parameter(
     return;
   }
   this->add_parameter(state_representation::make_shared_parameter(name, value), description, read_only);
+}
+
+template<class NodeT>
+template<typename T>
+inline void ComponentInterface<NodeT>::add_parameter(
+    const std::string& name, const std::string& description, bool read_only
+) {
+  if (name.empty()) {
+    RCLCPP_ERROR(this->get_logger(), "Failed to add parameter: Provide a non empty string as a name.");
+    return;
+  }
+  this->add_parameter(state_representation::make_shared_parameter<T>(name), description, read_only);
 }
 
 template<class NodeT>
