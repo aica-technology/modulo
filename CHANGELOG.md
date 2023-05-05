@@ -7,6 +7,10 @@ Release Versions:
 - [2.1.1](#211)
 - [2.1.0](#210)
 
+## Upcoming changes (in development)
+
+- Refactor component predicates with a single Predicate publisher (#26)
+
 ## 2.3.0
 
 ### July 25, 2023
