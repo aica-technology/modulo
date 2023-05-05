@@ -32,8 +32,7 @@ TEST_F(FixturesTest, ServiceClient) {
 }
 
 TEST_F(FixturesTest, PredicatesListener) {
-  auto listener = std::make_shared<testutils::PredicatesListener>(
-      rclcpp::NodeOptions(), "test", std::vector<std::string>{"in_error_state"});
+  auto listener = std::make_shared<testutils::PredicatesListener>("test", std::vector<std::string>{"in_error_state"});
   exec_->add_node(listener->get_node_base_interface());
   auto result = exec_->spin_until_future_complete(listener->get_predicate_future(), 1s);
   EXPECT_EQ(result, rclcpp::FutureReturnCode::TIMEOUT);
