@@ -8,6 +8,7 @@ Release Versions:
 
 ## Upcoming changes (in development)
 
+- Refactor component predicates with a single Predicate publisher (#26)
 - Add and install component descriptions (#31)
 - Apply AICA C++ style guide (#30)
 - Add option to publish outputs manually instead of periodically (#23)

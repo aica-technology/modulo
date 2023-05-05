@@ -3,21 +3,25 @@
 namespace modulo_utils::testutils {
 
 PredicatesListener::PredicatesListener(
-    const rclcpp::NodeOptions& node_options, const std::string& ns, const std::vector<std::string>& predicates
+    const std::string& component, const std::vector<std::string>& predicates, const rclcpp::NodeOptions& node_options
 ) : rclcpp::Node("predicates_listener", node_options) {
   this->received_future_ = this->received_.get_future();
   for (const auto& predicate : predicates) {
     this->predicates_.insert_or_assign(predicate, false);
-    auto subscription = this->create_subscription<std_msgs::msg::Bool>(
-        "/predicates/" + ns + "/" + predicate, 10,
-        [this, predicate](const std::shared_ptr<std_msgs::msg::Bool> message) {
-          this->predicates_.at(predicate) = message->data;
-          if (message->data) {
-            this->received_.set_value();
-          }
-        });
-    this->subscriptions_.insert_or_assign(predicate, subscription);
   }
+  this->subscription_ = this->create_subscription<modulo_component_interfaces::msg::Predicate>(
+      "/predicates", 10, [this, component](const std::shared_ptr<modulo_component_interfaces::msg::Predicate> message) {
+        if (message->component == component) {
+          for (auto& predicate : this->predicates_) {
+            if (message->predicate == predicate.first) {
+              predicate.second = message->value;
+              if (message->value) {
+                this->received_.set_value();
+              }
+            }
+          }
+        }
+      });
 }
 
 void PredicatesListener::reset_future() {
