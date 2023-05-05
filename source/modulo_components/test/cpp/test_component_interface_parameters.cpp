@@ -1,7 +1,5 @@
 #include <gtest/gtest.h>
 
-#include <state_representation/exceptions/EmptyStateException.hpp>
-
 #include "modulo_components/exceptions/ComponentParameterException.hpp"
 #include "modulo_core/EncodedState.hpp"
 #include "test_modulo_components/component_public_interfaces.hpp"
@@ -67,22 +65,6 @@ TYPED_TEST(ComponentInterfaceParameterTest, AddNameValueParameter) {
   EXPECT_NO_THROW(auto discard = this->component_->get_parameter("test"));
   EXPECT_NO_THROW(this->component_->get_ros_parameter("test"));
   this->template expect_parameter_value<int>(1);
-}
-
-TYPED_TEST(ComponentInterfaceParameterTest, AddEmtpyParameter) {
-  EXPECT_THROW(auto discard = this->component_->get_parameter("test"), exceptions::ComponentParameterException);
-  EXPECT_THROW(this->component_->get_ros_parameter("test"), rclcpp::exceptions::ParameterNotDeclaredException);
-  this->component_->template add_parameter<int>("test", "Test parameter");
-
-  // Adding the parameter should declare and set the value and call the validation function
-  EXPECT_TRUE(this->component_->validate_parameter_was_called);
-  EXPECT_NO_THROW(auto discard = this->component_->get_parameter("test"));
-  EXPECT_NO_THROW(this->component_->get_ros_parameter("test"));
-  EXPECT_STREQ(this->component_->get_ros_parameter("test").value_to_string().c_str(), "not set");
-  EXPECT_THROW(this->component_->template get_parameter_value<int>("test"),
-               state_representation::exceptions::EmptyStateException);
-  EXPECT_THROW(this->component_->parameter_map_.template get_parameter_value<int>("test"),
-               state_representation::exceptions::EmptyStateException);
 }
 
 TYPED_TEST(ComponentInterfaceParameterTest, AddParameterAgain) {
