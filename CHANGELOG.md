@@ -8,6 +8,7 @@ Release Versions:
 
 ## Upcoming changes (in development)
 
+- Apply AICA C++ style guide (#30)
 - Add option to publish outputs manually instead of periodically (#23)
 - Add unittests for modulo component service calls and triggers (#20)
 - Extend testutils with C++ classes (#19)
