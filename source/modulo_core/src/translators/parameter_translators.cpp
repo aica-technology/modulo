@@ -175,8 +175,7 @@ std::shared_ptr<ParameterInterface> read_parameter(const rclcpp::Parameter& para
           return make_shared_parameter<JointPositions>(parameter.get_name(), clproto::decode<JointPositions>(encoding));
         default:
           throw exceptions::ParameterTranslationException(
-              "Parameter " + parameter.get_name() + " has an unsupported encoded message type"
-          );
+              "Parameter " + parameter.get_name() + " has an unsupported encoded message type");
       }
     }
     case rclcpp::PARAMETER_BYTE_ARRAY:
@@ -205,8 +204,7 @@ std::shared_ptr<ParameterInterface> read_parameter_const(
     if (new_parameter->get_parameter_state_type() != parameter->get_parameter_state_type()) {
       throw exceptions::ParameterTranslationException(
           "The received state parameter " + ros_parameter.get_name()
-              + " does not have the same state type as the reference parameter"
-      );
+              + " does not have the same state type as the reference parameter");
     }
     return new_parameter;
   }
@@ -235,15 +233,13 @@ std::shared_ptr<ParameterInterface> read_parameter_const(
           throw exceptions::ParameterTranslationException(
               "The ROS parameter " + ros_parameter.get_name()
                   + " with type double array cannot be interpreted by reference parameter " + parameter->get_name()
-                  + " (type code " + std::to_string(static_cast<int>(parameter->get_parameter_type())) + ")"
-          );
+                  + " (type code " + std::to_string(static_cast<int>(parameter->get_parameter_type())) + ")");
       }
       break;
     }
     default:
       throw exceptions::ParameterTranslationException(
-          "Incompatible parameter type encountered while reading parameter '" + parameter->get_name() + "'."
-      );
+          "Incompatible parameter type encountered while reading parameter '" + parameter->get_name() + "'.");
   }
   return new_parameter;
 }

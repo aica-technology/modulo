@@ -42,8 +42,7 @@ TEST_F(MessagePairTest, BasicTypes) {
   test_message_interface<std_msgs::msg::Bool, bool>(false, true, clock_);
   test_message_interface<std_msgs::msg::Float64, double>(0.1, 0.2, clock_);
   test_message_interface<std_msgs::msg::Float64MultiArray, std::vector<double>>(
-      {0.1, 0.2, 0.3}, {0.4, 0.5, 0.6}, clock_
-  );
+      {0.1, 0.2, 0.3}, {0.4, 0.5, 0.6}, clock_);
   test_message_interface<std_msgs::msg::Int32, int>(1, 2, clock_);
   test_message_interface<std_msgs::msg::String, std::string>("this", "that", clock_);
 }

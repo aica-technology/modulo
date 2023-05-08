@@ -28,8 +28,7 @@ static void write_quaternion(geometry_msgs::msg::Quaternion& message, const Eige
 void write_message(geometry_msgs::msg::Accel& message, const CartesianState& state, const rclcpp::Time&) {
   if (!state) {
     throw exceptions::MessageTranslationException(
-        state.get_name() + " state is empty while attempting to write it to message"
-    );
+        state.get_name() + " state is empty while attempting to write it to message");
   }
   write_vector3(message.linear, state.get_linear_acceleration());
   write_vector3(message.angular, state.get_angular_acceleration());
@@ -44,8 +43,7 @@ void write_message(geometry_msgs::msg::AccelStamped& message, const CartesianSta
 void write_message(geometry_msgs::msg::Pose& message, const CartesianState& state, const rclcpp::Time&) {
   if (!state) {
     throw exceptions::MessageTranslationException(
-        state.get_name() + " state is empty while attempting to write it to message"
-    );
+        state.get_name() + " state is empty while attempting to write it to message");
   }
   write_point(message.position, state.get_position());
   write_quaternion(message.orientation, state.get_orientation());
@@ -60,8 +58,7 @@ void write_message(geometry_msgs::msg::PoseStamped& message, const CartesianStat
 void write_message(geometry_msgs::msg::Transform& message, const CartesianState& state, const rclcpp::Time&) {
   if (!state) {
     throw exceptions::MessageTranslationException(
-        state.get_name() + " state is empty while attempting to write it to message"
-    );
+        state.get_name() + " state is empty while attempting to write it to message");
   }
   write_vector3(message.translation, state.get_position());
   write_quaternion(message.rotation, state.get_orientation());
@@ -78,8 +75,7 @@ write_message(geometry_msgs::msg::TransformStamped& message, const CartesianStat
 void write_message(geometry_msgs::msg::Twist& message, const CartesianState& state, const rclcpp::Time&) {
   if (!state) {
     throw exceptions::MessageTranslationException(
-        state.get_name() + " state is empty while attempting to write it to message"
-    );
+        state.get_name() + " state is empty while attempting to write it to message");
   }
   write_vector3(message.linear, state.get_linear_velocity());
   write_vector3(message.angular, state.get_angular_velocity());
@@ -94,8 +90,7 @@ void write_message(geometry_msgs::msg::TwistStamped& message, const CartesianSta
 void write_message(geometry_msgs::msg::Wrench& message, const CartesianState& state, const rclcpp::Time&) {
   if (!state) {
     throw exceptions::MessageTranslationException(
-        state.get_name() + " state is empty while attempting to write it to message"
-    );
+        state.get_name() + " state is empty while attempting to write it to message");
   }
   write_vector3(message.force, state.get_force());
   write_vector3(message.torque, state.get_torque());
@@ -110,8 +105,7 @@ void write_message(geometry_msgs::msg::WrenchStamped& message, const CartesianSt
 void write_message(sensor_msgs::msg::JointState& message, const JointState& state, const rclcpp::Time& time) {
   if (!state) {
     throw exceptions::MessageTranslationException(
-        state.get_name() + " state is empty while attempting to write it to message"
-    );
+        state.get_name() + " state is empty while attempting to write it to message");
   }
   message.header.stamp = time;
   message.name = state.get_names();
@@ -126,8 +120,7 @@ void write_message(sensor_msgs::msg::JointState& message, const JointState& stat
 void write_message(tf2_msgs::msg::TFMessage& message, const CartesianState& state, const rclcpp::Time& time) {
   if (!state) {
     throw exceptions::MessageTranslationException(
-        state.get_name() + " state is empty while attempting to write it to message"
-    );
+        state.get_name() + " state is empty while attempting to write it to message");
   }
   geometry_msgs::msg::TransformStamped transform;
   write_message(transform, state, time);
@@ -138,8 +131,7 @@ template<typename U, typename T>
 void write_message(U& message, const Parameter<T>& state, const rclcpp::Time&) {
   if (!state) {
     throw exceptions::MessageTranslationException(
-        state.get_name() + " state is empty while attempting to write it to message"
-    );
+        state.get_name() + " state is empty while attempting to write it to message");
   }
   message.data = state.get_value();
 }
