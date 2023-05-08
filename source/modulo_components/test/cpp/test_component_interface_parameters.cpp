@@ -20,12 +20,10 @@ protected:
   void SetUp() override {
     if (std::is_same<NodeT, rclcpp::Node>::value) {
       this->component_ = std::make_shared<ComponentInterfacePublicInterface<NodeT>>(
-          rclcpp::NodeOptions(), modulo_core::communication::PublisherType::PUBLISHER
-      );
+          rclcpp::NodeOptions(), modulo_core::communication::PublisherType::PUBLISHER);
     } else if (std::is_same<NodeT, rclcpp_lifecycle::LifecycleNode>::value) {
       this->component_ = std::make_shared<ComponentInterfacePublicInterface<NodeT>>(
-          rclcpp::NodeOptions(), modulo_core::communication::PublisherType::LIFECYCLE_PUBLISHER
-      );
+          rclcpp::NodeOptions(), modulo_core::communication::PublisherType::LIFECYCLE_PUBLISHER);
     }
     param_ = state_representation::make_shared_parameter("test", 1);
   }

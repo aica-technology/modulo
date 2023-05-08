@@ -18,7 +18,6 @@ public:
   }
 };
 
-
 class ComponentCommunicationTest : public ::testing::Test {
 protected:
   void SetUp() override {

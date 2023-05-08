@@ -8,28 +8,23 @@ namespace modulo_components {
 
 LifecycleComponent::LifecycleComponent(const rclcpp::NodeOptions& node_options, const std::string& fallback_name) :
     ComponentInterface<rclcpp_lifecycle::LifecycleNode>(
-        node_options, PublisherType::LIFECYCLE_PUBLISHER, fallback_name
-    ) {
+        node_options, PublisherType::LIFECYCLE_PUBLISHER, fallback_name) {
   this->add_predicate(
       "is_unconfigured", [this] {
         return this->get_current_state().id() == lifecycle_msgs::msg::State::PRIMARY_STATE_UNCONFIGURED;
-      }
-  );
+      });
   this->add_predicate(
       "is_inactive", [this] {
         return this->get_current_state().id() == lifecycle_msgs::msg::State::PRIMARY_STATE_INACTIVE;
-      }
-  );
+      });
   this->add_predicate(
       "is_active", [this] {
         return this->get_current_state().id() == lifecycle_msgs::msg::State::PRIMARY_STATE_ACTIVE;
-      }
-  );
+      });
   this->add_predicate(
       "is_finalized", [this] {
         return this->get_current_state().id() == lifecycle_msgs::msg::State::PRIMARY_STATE_FINALIZED;
-      }
-  );
+      });
 }
 
 void LifecycleComponent::step() {
@@ -227,7 +222,7 @@ bool LifecycleComponent::on_error_callback() {
 
 bool LifecycleComponent::configure_outputs() {
   bool success = true;
-  for (auto& [name, interface]: this->outputs_) {
+  for (auto& [name, interface] : this->outputs_) {
     try {
       auto topic_name = this->get_parameter_value<std::string>(name + "_topic");
       RCLCPP_DEBUG_STREAM(this->get_logger(),
@@ -236,53 +231,52 @@ bool LifecycleComponent::configure_outputs() {
       switch (message_pair->get_type()) {
         case MessageType::BOOL: {
           auto publisher = this->create_publisher<std_msgs::msg::Bool>(topic_name, this->qos_);
-          interface = std::make_shared<PublisherHandler<rclcpp_lifecycle::LifecyclePublisher<std_msgs::msg::Bool>,
-                                                        std_msgs::msg::Bool>>(
-              PublisherType::LIFECYCLE_PUBLISHER, publisher
-          )->create_publisher_interface(message_pair);
+          interface = std::make_shared<
+              PublisherHandler<
+                  rclcpp_lifecycle::LifecyclePublisher<std_msgs::msg::Bool>, std_msgs::msg::Bool>>(
+              PublisherType::LIFECYCLE_PUBLISHER, publisher)->create_publisher_interface(message_pair);
           break;
         }
         case MessageType::FLOAT64: {
           auto publisher = this->create_publisher<std_msgs::msg::Float64>(topic_name, this->qos_);
-          interface = std::make_shared<PublisherHandler<rclcpp_lifecycle::LifecyclePublisher<std_msgs::msg::Float64>,
-                                                        std_msgs::msg::Float64>>(
-              PublisherType::LIFECYCLE_PUBLISHER, publisher
-          )->create_publisher_interface(message_pair);
+          interface = std::make_shared<
+              PublisherHandler<
+                  rclcpp_lifecycle::LifecyclePublisher<std_msgs::msg::Float64>, std_msgs::msg::Float64>>(
+              PublisherType::LIFECYCLE_PUBLISHER, publisher)->create_publisher_interface(message_pair);
           break;
         }
         case MessageType::FLOAT64_MULTI_ARRAY: {
           auto publisher = this->create_publisher<std_msgs::msg::Float64MultiArray>(
-              topic_name, this->qos_
-          );
-          interface =
-              std::make_shared<PublisherHandler<rclcpp_lifecycle::LifecyclePublisher<std_msgs::msg::Float64MultiArray>,
-                                                std_msgs::msg::Float64MultiArray>>(
-                  PublisherType::LIFECYCLE_PUBLISHER, publisher
-              )->create_publisher_interface(message_pair);
+              topic_name, this->qos_);
+          interface = std::make_shared<
+              PublisherHandler<
+                  rclcpp_lifecycle::LifecyclePublisher<std_msgs::msg::Float64MultiArray>,
+                  std_msgs::msg::Float64MultiArray>>(
+              PublisherType::LIFECYCLE_PUBLISHER, publisher)->create_publisher_interface(message_pair);
           break;
         }
         case MessageType::INT32: {
           auto publisher = this->create_publisher<std_msgs::msg::Int32>(topic_name, this->qos_);
-          interface = std::make_shared<PublisherHandler<rclcpp_lifecycle::LifecyclePublisher<std_msgs::msg::Int32>,
-                                                        std_msgs::msg::Int32>>(
-              PublisherType::LIFECYCLE_PUBLISHER, publisher
-          )->create_publisher_interface(message_pair);
+          interface = std::make_shared<
+              PublisherHandler<
+                  rclcpp_lifecycle::LifecyclePublisher<std_msgs::msg::Int32>, std_msgs::msg::Int32>>(
+              PublisherType::LIFECYCLE_PUBLISHER, publisher)->create_publisher_interface(message_pair);
           break;
         }
         case MessageType::STRING: {
           auto publisher = this->create_publisher<std_msgs::msg::String>(topic_name, this->qos_);
-          interface = std::make_shared<PublisherHandler<rclcpp_lifecycle::LifecyclePublisher<std_msgs::msg::String>,
-                                                        std_msgs::msg::String>>(
-              PublisherType::LIFECYCLE_PUBLISHER, publisher
-          )->create_publisher_interface(message_pair);
+          interface = std::make_shared<
+              PublisherHandler<
+                  rclcpp_lifecycle::LifecyclePublisher<std_msgs::msg::String>, std_msgs::msg::String>>(
+              PublisherType::LIFECYCLE_PUBLISHER, publisher)->create_publisher_interface(message_pair);
           break;
         }
         case MessageType::ENCODED_STATE: {
           auto publisher = this->create_publisher<modulo_core::EncodedState>(topic_name, this->qos_);
-          interface = std::make_shared<PublisherHandler<rclcpp_lifecycle::LifecyclePublisher<modulo_core::EncodedState>,
-                                                        modulo_core::EncodedState>>(
-              PublisherType::LIFECYCLE_PUBLISHER, publisher
-          )->create_publisher_interface(message_pair);
+          interface = std::make_shared<
+              PublisherHandler<
+                  rclcpp_lifecycle::LifecyclePublisher<modulo_core::EncodedState>, modulo_core::EncodedState>>(
+              PublisherType::LIFECYCLE_PUBLISHER, publisher)->create_publisher_interface(message_pair);
           break;
         }
       }
@@ -303,7 +297,7 @@ bool LifecycleComponent::clear_signals() {
 
 bool LifecycleComponent::activate_outputs() {
   bool success = true;
-  for (auto const& [name, interface]: this->outputs_) {
+  for (auto const& [name, interface] : this->outputs_) {
     try {
       interface->activate();
     } catch (const modulo_core::exceptions::CoreException& ex) {
@@ -317,7 +311,7 @@ bool LifecycleComponent::activate_outputs() {
 
 bool LifecycleComponent::deactivate_outputs() {
   bool success = true;
-  for (auto const& [name, interface]: this->outputs_) {
+  for (auto const& [name, interface] : this->outputs_) {
     try {
       interface->deactivate();
     } catch (const modulo_core::exceptions::CoreException& ex) {
