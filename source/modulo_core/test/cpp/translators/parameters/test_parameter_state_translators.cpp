@@ -14,13 +14,16 @@ using namespace modulo_core::translators;
 // Parameterized test fixture by type and expected value
 // See also: http://www.ashermancinelli.com/gtest-type-val-param
 
-static std::tuple<state_representation::CartesianState,
-                  state_representation::CartesianPose,
-                  state_representation::JointState,
-                  state_representation::JointPositions> parameter_state_test_cases{
+static std::tuple<
+    state_representation::CartesianState,
+    state_representation::CartesianPose,
+    state_representation::JointState,
+    state_representation::JointPositions
+> parameter_state_test_cases{
     state_representation::CartesianState::Random("frame", "reference"),
     state_representation::CartesianPose::Random("frame", "reference"),
-    state_representation::JointState::Random("robot", 3), state_representation::JointPositions::Random("robot", 3),};
+    state_representation::JointState::Random("robot", 3), state_representation::JointPositions::Random("robot", 3),
+};
 
 template<typename T>
 class ParameterStateTranslationTest : public testing::Test {
@@ -94,8 +97,10 @@ TYPED_TEST_P(ParameterStateTranslationTest, ConstRead) {
 
 REGISTER_TYPED_TEST_SUITE_P(ParameterStateTranslationTest, Write, ReadAndReWrite, ConstRead);
 
-using ParameterStateTestTypes = testing::Types<state_representation::CartesianState,
-                                               state_representation::CartesianPose,
-                                               state_representation::JointState,
-                                               state_representation::JointPositions>;
+using ParameterStateTestTypes = testing::Types<
+    state_representation::CartesianState,
+    state_representation::CartesianPose,
+    state_representation::JointState,
+    state_representation::JointPositions
+>;
 INSTANTIATE_TYPED_TEST_SUITE_P(TestPrefix, ParameterStateTranslationTest, ParameterStateTestTypes);

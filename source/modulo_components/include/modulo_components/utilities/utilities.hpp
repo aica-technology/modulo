@@ -19,7 +19,7 @@ namespace modulo_components::utilities {
  */
 [[maybe_unused]] static std::string
 parse_string_argument(const std::vector<std::string>& args, const std::string& pattern, std::string& result) {
-  for (const auto& arg: args) {
+  for (const auto& arg : args) {
     std::string::size_type index = arg.find(pattern);
     if (index != std::string::npos) {
       result = arg;
@@ -52,7 +52,7 @@ parse_node_name(const rclcpp::NodeOptions& options, const std::string& fallback 
  */
 [[maybe_unused]] static std::string parse_topic_name(const std::string& topic_name) {
   std::string output;
-  for (char c: topic_name) {
+  for (char c : topic_name) {
     if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '_') {
       if (!(c == '_' && output.empty())) {
         output.insert(output.end(), std::tolower(c));

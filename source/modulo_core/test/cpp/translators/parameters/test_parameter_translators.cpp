@@ -20,28 +20,28 @@ static std::tuple<
     ParamT<std::string>,
     ParamT<std::vector<std::string>>
 > parameter_test_cases{{
-                       std::make_tuple(true, state_representation::ParameterType::BOOL),
-                       std::make_tuple(false, state_representation::ParameterType::BOOL),
-                   }, {
-                       std::make_tuple(
-                           std::vector<bool>({true, false, true}), state_representation::ParameterType::BOOL_ARRAY),
-                   }, {
-                       std::make_tuple(0, state_representation::ParameterType::INT),
-                       std::make_tuple(1, state_representation::ParameterType::INT),
-                   }, {
-                       std::make_tuple(std::vector<int>({1, 2, 3}), state_representation::ParameterType::INT_ARRAY),
-                   }, {
-                       std::make_tuple(1.0, state_representation::ParameterType::DOUBLE),
-                   }, {
-                       std::make_tuple(
-                           std::vector<double>({1.0, 2.0, 3.0}), state_representation::ParameterType::DOUBLE_ARRAY),
-                   }, {
-                       std::make_tuple("test", state_representation::ParameterType::STRING),
-                   }, {
-                       std::make_tuple(
-                           std::vector<std::string>({"1", "2", "3"}),
-                           state_representation::ParameterType::STRING_ARRAY),
-                   },
+                           std::make_tuple(true, state_representation::ParameterType::BOOL),
+                           std::make_tuple(false, state_representation::ParameterType::BOOL),
+                       }, {
+                           std::make_tuple(
+                               std::vector<bool>({true, false, true}), state_representation::ParameterType::BOOL_ARRAY),
+                       }, {
+                           std::make_tuple(0, state_representation::ParameterType::INT),
+                           std::make_tuple(1, state_representation::ParameterType::INT),
+                       }, {
+                           std::make_tuple(std::vector<int>({1, 2, 3}), state_representation::ParameterType::INT_ARRAY),
+                       }, {
+                           std::make_tuple(1.0, state_representation::ParameterType::DOUBLE),
+                       }, {
+                           std::make_tuple(
+                               std::vector<double>({1.0, 2.0, 3.0}), state_representation::ParameterType::DOUBLE_ARRAY),
+                       }, {
+                           std::make_tuple("test", state_representation::ParameterType::STRING),
+                       }, {
+                           std::make_tuple(
+                               std::vector<std::string>({"1", "2", "3"}),
+                               state_representation::ParameterType::STRING_ARRAY),
+                       },
 };
 
 template<typename T>
@@ -68,7 +68,7 @@ TYPED_TEST_P(ParameterTranslationTest, Write) {
 TYPED_TEST_P(ParameterTranslationTest, ReadAndReWrite) {
   auto ros_param = rclcpp::Parameter("test");
   EXPECT_THROW(read_parameter(ros_param), modulo_core::exceptions::ParameterTranslationException);
-  for (auto const& [value, type]: this->test_cases_) {
+  for (auto const& [value, type] : this->test_cases_) {
     ros_param = rclcpp::Parameter("test", value);
     std::shared_ptr<state_representation::ParameterInterface> param;
     ASSERT_NO_THROW(param = read_parameter(ros_param));
@@ -83,7 +83,7 @@ TYPED_TEST_P(ParameterTranslationTest, ReadAndReWrite) {
 }
 
 TYPED_TEST_P(ParameterTranslationTest, ConstRead) {
-  for (auto const& [value, type]: this->test_cases_) {
+  for (auto const& [value, type] : this->test_cases_) {
     auto param = state_representation::make_shared_parameter("test", value);
     rclcpp::Parameter ros_param("test", value);
 
@@ -101,7 +101,7 @@ TYPED_TEST_P(ParameterTranslationTest, ConstRead) {
 }
 
 TYPED_TEST_P(ParameterTranslationTest, NonConstRead) {
-  for (auto const& [value, type]: this->test_cases_) {
+  for (auto const& [value, type] : this->test_cases_) {
     auto param = std::make_shared<state_representation::Parameter<TypeParam>>("test");
     rclcpp::Parameter ros_param("test", value);
 

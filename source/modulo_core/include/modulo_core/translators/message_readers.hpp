@@ -277,7 +277,7 @@ inline void read_message(std::shared_ptr<state_representation::State>& state, co
   std::string tmp(message.data.begin(), message.data.end());
   std::shared_ptr<State> new_state;
   try {
-    new_state = clproto::decode<std::shared_ptr<State>>(tmp);
+    new_state = clproto::decode<std::shared_ptr<State >>(tmp);
   } catch (const std::exception& ex) {
     throw exceptions::MessageTranslationException(ex.what());
   }

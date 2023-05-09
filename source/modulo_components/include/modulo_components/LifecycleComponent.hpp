@@ -280,8 +280,9 @@ inline void LifecycleComponent::add_output(
 ) {
   if (this->get_current_state().id() != lifecycle_msgs::msg::State::PRIMARY_STATE_UNCONFIGURED
       && this->get_current_state().id() != lifecycle_msgs::msg::State::PRIMARY_STATE_INACTIVE) {
-    RCLCPP_WARN_STREAM_THROTTLE(this->get_logger(), *this->get_clock(), 1000,
-                                "Adding output in state " << this->get_current_state().label() << " is not allowed.");
+    RCLCPP_WARN_STREAM_THROTTLE(
+        this->get_logger(), *this->get_clock(), 1000,
+        "Adding output in state " << this->get_current_state().label() << " is not allowed.");
     return;
   }
   try {

@@ -111,8 +111,7 @@ template<typename DataT>
 inline std::shared_ptr<MessagePairInterface>
 make_shared_message_pair(const std::shared_ptr<DataT>& data, const std::shared_ptr<rclcpp::Clock>& clock) {
   return std::make_shared<MessagePair<EncodedState, state_representation::State>>(
-      std::dynamic_pointer_cast<state_representation::State>(data), clock
-  );
+      std::dynamic_pointer_cast<state_representation::State>(data), clock);
 }
 
 template<>
@@ -131,7 +130,7 @@ template<>
 inline std::shared_ptr<MessagePairInterface> make_shared_message_pair(
     const std::shared_ptr<std::vector<double>>& data, const std::shared_ptr<rclcpp::Clock>& clock
 ) {
-  return std::make_shared<MessagePair<std_msgs::msg::Float64MultiArray, std::vector<double>>>(data, clock);
+  return std::make_shared < MessagePair<std_msgs::msg::Float64MultiArray, std::vector < double>>>(data, clock);
 }
 
 template<>

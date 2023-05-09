@@ -137,8 +137,7 @@ inline std::shared_ptr<PublisherHandler<PubT, MsgT>> PublisherInterface::get_han
   }
   if (publisher_ptr == nullptr && validate_pointer) {
     throw exceptions::InvalidPointerCastException(
-        "Unable to cast publisher interface to a publisher pointer of requested type"
-    );
+        "Unable to cast publisher interface to a publisher pointer of requested type");
   }
   return publisher_ptr;
 }
