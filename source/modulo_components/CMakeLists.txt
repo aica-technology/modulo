@@ -30,6 +30,10 @@ ament_auto_add_library(${PROJECT_NAME} SHARED
 # Install Python modules
 ament_python_install_package(${PROJECT_NAME} SCRIPTS_DESTINATION lib/${PROJECT_NAME})
 
+# Install descriptions
+install(DIRECTORY ./component_descriptions
+        DESTINATION .)
+
 if(BUILD_TESTING)
   find_package(ament_cmake_gtest REQUIRED)
   find_package(ament_cmake_pytest REQUIRED)

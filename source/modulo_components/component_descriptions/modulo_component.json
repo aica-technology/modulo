@@ -1,0 +1,31 @@
+{
+  "name": "Component",
+  "description": {
+    "brief": "A wrapper for rclcpp::Node to simplify application composition through unified component interfaces.",
+    "details": "This class is intended for direct inheritance to implement custom components that perform one-shot or externally triggered operations."
+  },
+  "virtual": true,
+  "registration":  "modulo_components::Component",
+  "inherits": "",
+  "parameters": [
+    {
+      "display_name": "Period",
+      "description": "the time interval in seconds for all periodic callbacks",
+      "parameter_name": "period",
+      "parameter_type": "double",
+      "default_value": "0.1"
+    }
+  ],
+  "predicates": [
+    {
+      "display_name": "In error state",
+      "description": "True if the component is in error state",
+      "predicate_name": "in_error_state"
+    },
+    {
+      "display_name": "Is finished",
+      "description": "True if the on_execute_callback() method of one-shot components successfully finished",
+      "predicate_name": "is_finished"
+    }
+  ]
+}
