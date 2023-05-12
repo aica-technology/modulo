@@ -10,7 +10,7 @@
   "parameters": [
     {
       "display_name": "Period",
-      "description": "the time interval in seconds for all periodic callbacks",
+      "description": "The time interval in seconds for all periodic callbacks",
       "parameter_name": "period",
       "parameter_type": "double",
       "default_value": "0.1"
