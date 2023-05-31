@@ -344,8 +344,8 @@ protected:
    */
   template<typename DataT>
   std::string create_output(
-      const std::string& signal_name, const std::shared_ptr<DataT>& data, const std::string& default_topic,
-      bool fixed_topic, bool publish_on_step
+      modulo_core::communication::PublisherType publisher_type, const std::string& signal_name,
+      const std::shared_ptr<DataT>& data, const std::string& default_topic, bool fixed_topic, bool publish_on_step
   );
 
   /**
@@ -546,9 +546,6 @@ private:
       const tf2::Duration& duration
   );
 
-  modulo_core::communication::PublisherType
-      publisher_type_; ///< Type of the output publishers (one of PUBLISHER, LIFECYCLE_PUBLISHER)
-
   std::map<std::string, utilities::PredicateVariant> predicates_; ///< Map of predicates
   std::shared_ptr<rclcpp::Publisher<modulo_component_interfaces::msg::Predicate>>
       predicate_publisher_; ///< Predicate publisher
@@ -577,7 +574,7 @@ private:
 inline void ComponentInterface::step() {}
 
 template<typename T>
-inline void ComponentInterface<NodeT>::add_parameter(
+inline void ComponentInterface::add_parameter(
     const std::string& name, const T& value, const std::string& description, bool read_only
 ) {
   if (name.empty()) {
@@ -1236,8 +1233,8 @@ inline void ComponentInterface::evaluate_periodic_callbacks() {
 
 template<typename DataT>
 inline std::string ComponentInterface::create_output(
-    const std::string& signal_name, const std::shared_ptr<DataT>& data, const std::string& default_topic,
-    bool fixed_topic, bool publish_on_step
+    modulo_core::communication::PublisherType publisher_type, const std::string& signal_name,
+    const std::shared_ptr<DataT>& data, const std::string& default_topic, bool fixed_topic, bool publish_on_step
 ) {
   using namespace modulo_core::communication;
   try {
@@ -1252,7 +1249,7 @@ inline std::string ComponentInterface::create_output(
                                             << "').");
     auto message_pair = make_shared_message_pair(data, this->get_clock());
     this->outputs_.insert_or_assign(
-        parsed_signal_name, std::make_shared<PublisherInterface>(this->publisher_type_, message_pair));
+        parsed_signal_name, std::make_shared<PublisherInterface>(publisher_type, message_pair));
     this->periodic_outputs_.insert_or_assign(parsed_signal_name, publish_on_step);
     return parsed_signal_name;
   } catch (const exceptions::AddSignalException&) {
