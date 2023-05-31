@@ -919,49 +919,55 @@ inline void ComponentInterface::add_input(
     auto topic_name = this->get_parameter_value<std::string>(parsed_signal_name + "_topic");
     RCLCPP_DEBUG_STREAM(this->node_logging_->get_logger(),
                         "Adding input '" << parsed_signal_name << "' with topic name '" << topic_name << "'.");
-    auto message_pair = make_shared_message_pair(data, this->get_clock());
+    auto message_pair = make_shared_message_pair(data, this->node_clock_->get_clock());
     std::shared_ptr<SubscriptionInterface> subscription_interface;
     switch (message_pair->get_type()) {
       case MessageType::BOOL: {
         auto subscription_handler = std::make_shared<SubscriptionHandler<std_msgs::msg::Bool>>(message_pair);
-        auto subscription = NodeT::template create_subscription<std_msgs::msg::Bool>(
-            topic_name, this->qos_, subscription_handler->get_callback(user_callback));
+        auto subscription = rclcpp::create_subscription<std_msgs::msg::Bool>(
+            this->node_parameters_, this->node_topics_, topic_name, this->qos_,
+            subscription_handler->get_callback(user_callback));
         subscription_interface = subscription_handler->create_subscription_interface(subscription);
         break;
       }
       case MessageType::FLOAT64: {
         auto subscription_handler = std::make_shared<SubscriptionHandler<std_msgs::msg::Float64>>(message_pair);
-        auto subscription = NodeT::template create_subscription<std_msgs::msg::Float64>(
-            topic_name, this->qos_, subscription_handler->get_callback(user_callback));
+        auto subscription = rclcpp::create_subscription<std_msgs::msg::Float64>(
+            this->node_parameters_, this->node_topics_, topic_name, this->qos_,
+            subscription_handler->get_callback(user_callback));
         subscription_interface = subscription_handler->create_subscription_interface(subscription);
         break;
       }
       case MessageType::FLOAT64_MULTI_ARRAY: {
         auto subscription_handler =
             std::make_shared<SubscriptionHandler<std_msgs::msg::Float64MultiArray>>(message_pair);
-        auto subscription = NodeT::template create_subscription<std_msgs::msg::Float64MultiArray>(
-            topic_name, this->qos_, subscription_handler->get_callback(user_callback));
+        auto subscription = rclcpp::create_subscription<std_msgs::msg::Float64MultiArray>(
+            this->node_parameters_, this->node_topics_, topic_name, this->qos_,
+            subscription_handler->get_callback(user_callback));
         subscription_interface = subscription_handler->create_subscription_interface(subscription);
         break;
       }
       case MessageType::INT32: {
         auto subscription_handler = std::make_shared<SubscriptionHandler<std_msgs::msg::Int32>>(message_pair);
-        auto subscription = NodeT::template create_subscription<std_msgs::msg::Int32>(
-            topic_name, this->qos_, subscription_handler->get_callback(user_callback));
+        auto subscription = rclcpp::create_subscription<std_msgs::msg::Int32>(
+            this->node_parameters_, this->node_topics_, topic_name, this->qos_,
+            subscription_handler->get_callback(user_callback));
         subscription_interface = subscription_handler->create_subscription_interface(subscription);
         break;
       }
       case MessageType::STRING: {
         auto subscription_handler = std::make_shared<SubscriptionHandler<std_msgs::msg::String>>(message_pair);
-        auto subscription = NodeT::template create_subscription<std_msgs::msg::String>(
-            topic_name, this->qos_, subscription_handler->get_callback(user_callback));
+        auto subscription = rclcpp::create_subscription<std_msgs::msg::String>(
+            this->node_parameters_, this->node_topics_, topic_name, this->qos_,
+            subscription_handler->get_callback(user_callback));
         subscription_interface = subscription_handler->create_subscription_interface(subscription);
         break;
       }
       case MessageType::ENCODED_STATE: {
         auto subscription_handler = std::make_shared<SubscriptionHandler<modulo_core::EncodedState>>(message_pair);
-        auto subscription = NodeT::template create_subscription<modulo_core::EncodedState>(
-            topic_name, this->qos_, subscription_handler->get_callback(user_callback));
+        auto subscription = rclcpp::create_subscription<modulo_core::EncodedState>(
+            this->node_parameters_, this->node_topics_, topic_name, this->qos_,
+            subscription_handler->get_callback(user_callback));
         subscription_interface = subscription_handler->create_subscription_interface(subscription);
         break;
       }
@@ -985,7 +991,8 @@ inline void ComponentInterface::add_input(
     auto topic_name = this->get_parameter_value<std::string>(parsed_signal_name + "_topic");
     RCLCPP_DEBUG_STREAM(this->node_logging_->get_logger(),
                         "Adding input '" << parsed_signal_name << "' with topic name '" << topic_name << "'.");
-    auto subscription = NodeT::template create_subscription<MsgT>(topic_name, this->qos_, callback);
+    auto subscription = rclcpp::create_subscription<MsgT>(
+        this->node_parameters_, this->node_topics_, topic_name, this->qos_, callback);
     auto subscription_interface =
         std::make_shared<SubscriptionHandler<MsgT>>()->create_subscription_interface(subscription);
     this->inputs_.insert_or_assign(parsed_signal_name, subscription_interface);
@@ -1014,9 +1021,9 @@ inline void ComponentInterface::add_service(
 ) {
   try {
     std::string parsed_service_name = this->validate_service_name(service_name);
-    RCLCPP_DEBUG_STREAM(this->get_logger(), "Adding empty service '" << parsed_service_name << "'.");
-    auto service = NodeT::template create_service<modulo_component_interfaces::srv::EmptyTrigger>(
-        "~/" + parsed_service_name, [callback](
+    RCLCPP_DEBUG_STREAM(this->node_logging_->get_logger(), "Adding empty service '" << parsed_service_name << "'.");
+    auto service = rclcpp::create_service<modulo_component_interfaces::srv::EmptyTrigger>(
+        this->node_base_, this->node_services_, "~/" + parsed_service_name, [callback](
             const std::shared_ptr<modulo_component_interfaces::srv::EmptyTrigger::Request>,
             std::shared_ptr<modulo_component_interfaces::srv::EmptyTrigger::Response> response
         ) {
@@ -1028,7 +1035,7 @@ inline void ComponentInterface::add_service(
             response->success = false;
             response->message = ex.what();
           }
-        });
+        }, this->qos_, this->cb_group_);
     this->empty_services_.insert_or_assign(parsed_service_name, service);
   } catch (const std::exception& ex) {
     RCLCPP_ERROR_STREAM(this->node_logging_->get_logger(),
@@ -1041,9 +1048,9 @@ inline void ComponentInterface::add_service(
 ) {
   try {
     std::string parsed_service_name = this->validate_service_name(service_name);
-    RCLCPP_DEBUG_STREAM(this->get_logger(), "Adding string service '" << parsed_service_name << "'.");
-    auto service = NodeT::template create_service<modulo_component_interfaces::srv::StringTrigger>(
-        "~/" + parsed_service_name, [callback](
+    RCLCPP_DEBUG_STREAM(this->node_logging_->get_logger(), "Adding string service '" << parsed_service_name << "'.");
+    auto service = rclcpp::create_service<modulo_component_interfaces::srv::StringTrigger>(
+        this->node_base_, this->node_services_, "~/" + parsed_service_name, [callback](
             const std::shared_ptr<modulo_component_interfaces::srv::StringTrigger::Request> request,
             std::shared_ptr<modulo_component_interfaces::srv::StringTrigger::Response> response
         ) {
@@ -1055,7 +1062,7 @@ inline void ComponentInterface::add_service(
             response->success = false;
             response->message = ex.what();
           }
-        });
+        }, this->qos_, this->cb_group_);
     this->string_services_.insert_or_assign(parsed_service_name, service);
   } catch (const std::exception& ex) {
     RCLCPP_ERROR_STREAM(this->node_logging_->get_logger(),
@@ -1082,7 +1089,8 @@ inline void ComponentInterface::add_tf_broadcaster() {
   if (this->tf_broadcaster_ == nullptr) {
     RCLCPP_DEBUG(this->node_logging_->get_logger(), "Adding TF broadcaster.");
     console_bridge::setLogLevel(console_bridge::CONSOLE_BRIDGE_LOG_NONE);
-    this->tf_broadcaster_ = std::make_shared<tf2_ros::TransformBroadcaster>(*this);
+    this->tf_broadcaster_ = std::make_shared<tf2_ros::TransformBroadcaster>(
+        this->node_parameters_, this->node_topics_, tf2_ros::DynamicBroadcasterQoS());
   } else {
     RCLCPP_DEBUG(this->node_logging_->get_logger(), "TF broadcaster already exists.");
   }
@@ -1094,7 +1102,8 @@ inline void ComponentInterface::add_static_tf_broadcaster() {
     console_bridge::setLogLevel(console_bridge::CONSOLE_BRIDGE_LOG_NONE);
     tf2_ros::StaticBroadcasterQoS qos;
     rclcpp::PublisherOptionsWithAllocator<std::allocator<void>> options;
-    this->static_tf_broadcaster_ = std::make_shared<tf2_ros::StaticTransformBroadcaster>(*this, qos, options);
+    this->static_tf_broadcaster_ =
+        std::make_shared<tf2_ros::StaticTransformBroadcaster>(this->node_parameters_, this->node_topics_, qos, options);
   } else {
     RCLCPP_DEBUG(this->node_logging_->get_logger(), "Static TF broadcaster already exists.");
   }
@@ -1104,7 +1113,7 @@ inline void ComponentInterface::add_tf_listener() {
   if (this->tf_buffer_ == nullptr || this->tf_listener_ == nullptr) {
     RCLCPP_DEBUG(this->node_logging_->get_logger(), "Adding TF buffer and listener.");
     console_bridge::setLogLevel(console_bridge::CONSOLE_BRIDGE_LOG_NONE);
-    this->tf_buffer_ = std::make_shared<tf2_ros::Buffer>(this->get_clock());
+    this->tf_buffer_ = std::make_shared<tf2_ros::Buffer>(this->node_clock_->get_clock());
     this->tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*this->tf_buffer_);
   } else {
     RCLCPP_DEBUG(this->node_logging_->get_logger(), "TF buffer and listener already exist.");
@@ -1145,7 +1154,8 @@ inline void ComponentInterface::publish_transforms(
     transform_messages.reserve(transforms.size());
     for (const auto& tf : transforms) {
       geometry_msgs::msg::TransformStamped transform_message;
-      modulo_core::translators::write_message(transform_message, tf, this->get_clock()->now());
+      modulo_core::translators::write_message(
+          transform_message, tf, this->node_clock_->get_clock()->now());
       transform_messages.emplace_back(transform_message);
     }
     tf_broadcaster->sendTransform(transform_messages);
@@ -1184,7 +1194,8 @@ inline state_representation::CartesianPose ComponentInterface::lookup_transform(
 ) {
   auto transform =
       this->lookup_ros_transform(frame, reference_frame, tf2::TimePoint(std::chrono::microseconds(0)), duration);
-  if (validity_period > 0.0 && (this->get_clock()->now() - transform.header.stamp).seconds() > validity_period) {
+  if (validity_period > 0.0
+      && (this->node_clock_->get_clock()->now() - transform.header.stamp).seconds() > validity_period) {
     throw exceptions::LookupTransformException("Failed to lookup transform: Latest transform is too old!");
   }
   state_representation::CartesianPose result(frame, reference_frame);
@@ -1262,7 +1273,7 @@ inline std::string ComponentInterface::create_output(
     RCLCPP_DEBUG_STREAM(this->node_logging_->get_logger(),
                         "Creating output '" << parsed_signal_name << "' (provided signal name was '" << signal_name
                                             << "').");
-    auto message_pair = make_shared_message_pair(data, this->get_clock());
+    auto message_pair = make_shared_message_pair(data, this->node_clock_->get_clock());
     this->outputs_.insert_or_assign(
         parsed_signal_name, std::make_shared<PublisherInterface>(publisher_type, message_pair));
     this->periodic_outputs_.insert_or_assign(parsed_signal_name, publish_on_step);
