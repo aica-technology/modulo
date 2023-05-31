@@ -608,8 +608,8 @@ inline void ComponentInterface::add_parameter(
   } catch (const modulo_core::exceptions::ParameterTranslationException& ex) {
     throw exceptions::ComponentParameterException("Failed to add parameter: " + std::string(ex.what()));
   }
-  if (!NodeT::has_parameter(parameter->get_name())) {
-    RCLCPP_DEBUG_STREAM(this->get_logger(), "Adding parameter '" << parameter->get_name() << "'.");
+  if (!this->node_parameters_->has_parameter(parameter->get_name())) {
+    RCLCPP_DEBUG_STREAM(this->node_logging_->get_logger(), "Adding parameter '" << parameter->get_name() << "'.");
     this->parameter_map_.set_parameter(parameter);
     try {
       rcl_interfaces::msg::ParameterDescriptor descriptor;
@@ -618,14 +618,15 @@ inline void ComponentInterface::add_parameter(
       if (parameter->is_empty()) {
         descriptor.dynamic_typing = true;
         descriptor.type = modulo_core::translators::get_ros_parameter_type(parameter->get_parameter_type());
-        NodeT::declare_parameter(parameter->get_name(), rclcpp::ParameterValue{}, descriptor);
+        this->node_parameters_->declare_parameter(parameter->get_name(), rclcpp::ParameterValue{}, descriptor);
       } else {
-        NodeT::declare_parameter(parameter->get_name(), ros_param.get_parameter_value(), descriptor);
+        this->node_parameters_->declare_parameter(parameter->get_name(), ros_param.get_parameter_value(), descriptor);
       }
       if (!this->set_parameter_callback_called_) {
-        auto result = this->on_set_parameters_callback({NodeT::get_parameters({parameter->get_name()})});
+        auto result =
+            this->on_set_parameters_callback({this->node_parameters_->get_parameters({parameter->get_name()})});
         if (!result.successful) {
-          NodeT::undeclare_parameter(parameter->get_name());
+          this->node_parameters_->undeclare_parameter(parameter->get_name());
           throw exceptions::ComponentParameterException(result.reason);
         }
       }
@@ -651,8 +652,10 @@ ComponentInterface::get_parameter(const std::string& name) const {
 template<typename T>
 inline void ComponentInterface::set_parameter_value(const std::string& name, const T& value) {
   try {
-    rcl_interfaces::msg::SetParametersResult result = NodeT::set_parameter(
-        modulo_core::translators::write_parameter(state_representation::make_shared_parameter(name, value)));
+    rcl_interfaces::msg::SetParametersResult result = this->node_parameters_->set_parameters(
+        {
+            modulo_core::translators::write_parameter(state_representation::make_shared_parameter(name, value))
+        }).at(0);
     if (!result.successful) {
       RCLCPP_ERROR_STREAM_THROTTLE(this->node_logging_->get_logger(), *this->node_clock_->get_clock(), 1000,
                                    "Failed to set parameter value of parameter '" << name << "': " << result.reason);
@@ -869,7 +872,7 @@ inline void ComponentInterface::declare_signal(
   }
   std::string topic_name = default_topic.empty() ? "~/" + parsed_signal_name : default_topic;
   auto parameter_name = parsed_signal_name + "_topic";
-  if (NodeT::has_parameter(parameter_name) && this->get_parameter(parameter_name)->is_empty()) {
+  if (this->node_parameters_->has_parameter(parameter_name) && this->get_parameter(parameter_name)->is_empty()) {
     this->set_parameter_value<std::string>(parameter_name, topic_name);
   } else {
     this->add_parameter(
