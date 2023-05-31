@@ -1,10 +1,6 @@
 #pragma once
 
-// TODO sort includes
-#include <rclcpp/parameter.hpp>
-#include <rclcpp/create_timer.hpp>
-#include <rclcpp/node.hpp>
-#include <rclcpp_lifecycle/lifecycle_node.hpp>
+#include <rclcpp/node_interfaces/node_interfaces.hpp>
 
 #include <console_bridge/console.h>
 #include <tf2_msgs/msg/tf_message.hpp>
@@ -14,9 +10,7 @@
 #include <tf2_ros/transform_listener.h>
 
 #include <state_representation/parameters/ParameterMap.hpp>
-#include <state_representation/space/cartesian/CartesianPose.hpp>
 
-#include <modulo_core/communication/MessagePair.hpp>
 #include <modulo_core/communication/PublisherHandler.hpp>
 #include <modulo_core/communication/PublisherType.hpp>
 #include <modulo_core/communication/SubscriptionHandler.hpp>
@@ -547,8 +541,8 @@ private:
   );
 
   std::map<std::string, utilities::PredicateVariant> predicates_; ///< Map of predicates
-  std::shared_ptr<rclcpp::Publisher<modulo_component_interfaces::msg::Predicate>>
-      predicate_publisher_; ///< Predicate publisher
+  std::map<std::string, std::shared_ptr<rclcpp::Publisher<std_msgs::msg::Bool>>>
+      predicate_publishers_; ///< Map of predicate publishers
   std::map<std::string, bool> triggers_; ///< Map of triggers
 
   std::map<std::string, std::shared_ptr<rclcpp::Service<modulo_component_interfaces::srv::EmptyTrigger>>>
@@ -562,11 +556,20 @@ private:
   std::shared_ptr<rclcpp::node_interfaces::OnSetParametersCallbackHandle>
       parameter_cb_handle_; ///< ROS callback function handle for setting parameters
 
+  std::shared_ptr<rclcpp::CallbackGroup> cb_group_;
   std::shared_ptr<rclcpp::TimerBase> step_timer_; ///< Timer for the step function
   std::shared_ptr<tf2_ros::Buffer> tf_buffer_; ///< TF buffer
   std::shared_ptr<tf2_ros::TransformListener> tf_listener_; ///< TF listener
   std::shared_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_; ///< TF broadcaster
   std::shared_ptr<tf2_ros::StaticTransformBroadcaster> static_tf_broadcaster_; ///< TF static broadcaster
+
+  std::shared_ptr<rclcpp::node_interfaces::NodeBaseInterface> node_base_;
+  std::shared_ptr<rclcpp::node_interfaces::NodeClockInterface> node_clock_;
+  std::shared_ptr<rclcpp::node_interfaces::NodeLoggingInterface> node_logging_;
+  std::shared_ptr<rclcpp::node_interfaces::NodeParametersInterface> node_parameters_;
+  std::shared_ptr<rclcpp::node_interfaces::NodeServicesInterface> node_services_;
+  std::shared_ptr<rclcpp::node_interfaces::NodeTimersInterface> node_timers_;
+  std::shared_ptr<rclcpp::node_interfaces::NodeTopicsInterface> node_topics_;
 
   bool set_parameter_callback_called_ = false; ///< Flag to indicate if on_set_parameter_callback was called
 };
@@ -578,7 +581,7 @@ inline void ComponentInterface::add_parameter(
     const std::string& name, const T& value, const std::string& description, bool read_only
 ) {
   if (name.empty()) {
-    RCLCPP_ERROR(this->get_logger(), "Failed to add parameter: Provide a non empty string as a name.");
+    RCLCPP_ERROR(this->node_logging_->get_logger(), "Failed to add parameter: Provide a non empty string as a name.");
     return;
   }
   this->add_parameter(state_representation::make_shared_parameter(name, value), description, read_only);
@@ -631,7 +634,8 @@ inline void ComponentInterface::add_parameter(
       throw exceptions::ComponentParameterException("Failed to add parameter: " + std::string(ex.what()));
     }
   } else {
-    RCLCPP_DEBUG_STREAM(this->get_logger(), "Parameter '" << parameter->get_name() << "' already exists.");
+    RCLCPP_DEBUG_STREAM(this->node_logging_->get_logger(),
+                        "Parameter '" << parameter->get_name() << "' already exists.");
   }
 }
 
@@ -650,11 +654,11 @@ inline void ComponentInterface::set_parameter_value(const std::string& name, con
     rcl_interfaces::msg::SetParametersResult result = NodeT::set_parameter(
         modulo_core::translators::write_parameter(state_representation::make_shared_parameter(name, value)));
     if (!result.successful) {
-      RCLCPP_ERROR_STREAM_THROTTLE(this->get_logger(), *this->get_clock(), 1000,
+      RCLCPP_ERROR_STREAM_THROTTLE(this->node_logging_->get_logger(), *this->node_clock_->get_clock(), 1000,
                                    "Failed to set parameter value of parameter '" << name << "': " << result.reason);
     }
   } catch (const std::exception& ex) {
-    RCLCPP_ERROR_STREAM_THROTTLE(this->get_logger(), *this->get_clock(), 1000,
+    RCLCPP_ERROR_STREAM_THROTTLE(this->node_logging_->get_logger(), *this->node_clock_->get_clock(), 1000,
                                  "Failed to set parameter value of parameter '" << name << "': " << ex.what());
   }
 }
@@ -665,7 +669,8 @@ inline bool ComponentInterface::validate_parameter(
   if (parameter->get_name() == "period") {
     auto value = parameter->get_parameter_value<double>();
     if (value <= 0.0 || !std::isfinite(value)) {
-      RCLCPP_ERROR(this->get_logger(), "Value for parameter 'period' has to be a positive finite number.");
+      RCLCPP_ERROR(this->node_logging_->get_logger(),
+                   "Value for parameter 'period' has to be a positive finite number.");
       return false;
     }
   }
@@ -722,13 +727,14 @@ inline void ComponentInterface::add_variant_predicate(
     const std::string& name, const utilities::PredicateVariant& predicate
 ) {
   if (name.empty()) {
-    RCLCPP_ERROR(this->get_logger(), "Failed to add predicate: Provide a non empty string as a name.");
+    RCLCPP_ERROR(this->node_logging_->get_logger(), "Failed to add predicate: Provide a non empty string as a name.");
     return;
   }
   if (this->predicates_.find(name) != this->predicates_.end()) {
-    RCLCPP_WARN_STREAM(this->get_logger(), "Predicate with name '" << name << "' already exists, overwriting.");
+    RCLCPP_WARN_STREAM(this->node_logging_->get_logger(),
+                       "Predicate with name '" << name << "' already exists, overwriting.");
   } else {
-    RCLCPP_DEBUG_STREAM(this->get_logger(), "Adding predicate '" << name << "'.");
+    RCLCPP_DEBUG_STREAM(this->node_logging_->get_logger(), "Adding predicate '" << name << "'.");
   }
   this->predicates_.insert_or_assign(name, predicate);
 }
@@ -737,7 +743,7 @@ inline bool ComponentInterface::get_predicate(const std::string& predicate_name)
   auto predicate_iterator = this->predicates_.find(predicate_name);
   // if there is no predicate with that name simply return false with an error message
   if (predicate_iterator == this->predicates_.end()) {
-    RCLCPP_ERROR_STREAM_THROTTLE(this->get_logger(), *this->get_clock(), 1000,
+    RCLCPP_ERROR_STREAM_THROTTLE(this->node_logging_->get_logger(), *this->node_clock_->get_clock(), 1000,
                                  "Failed to get predicate '" << predicate_name
                                                              << "': Predicate does not exists, returning false.");
     return false;
@@ -753,7 +759,7 @@ inline bool ComponentInterface::get_predicate(const std::string& predicate_name)
   try {
     value = (callback_function)();
   } catch (const std::exception& ex) {
-    RCLCPP_ERROR_STREAM_THROTTLE(this->get_logger(), *this->get_clock(), 1000,
+    RCLCPP_ERROR_STREAM_THROTTLE(this->node_logging_->get_logger(), *this->node_clock_->get_clock(), 1000,
                                  "Failed to evaluate callback of predicate '" << predicate_name
                                                                               << "', returning false: " << ex.what());
   }
@@ -762,13 +768,13 @@ inline bool ComponentInterface::get_predicate(const std::string& predicate_name)
 
 inline void ComponentInterface::add_trigger(const std::string& trigger_name) {
   if (trigger_name.empty()) {
-    RCLCPP_ERROR(this->get_logger(), "Failed to add trigger: Provide a non empty string as a name.");
+    RCLCPP_ERROR(this->node_logging_->get_logger(), "Failed to add trigger: Provide a non empty string as a name.");
     return;
   }
   if (this->triggers_.find(trigger_name) != this->triggers_.end()
       || this->predicates_.find(trigger_name) != this->predicates_.end()) {
-    RCLCPP_ERROR_STREAM(this->get_logger(), "Failed to add trigger: there is already a trigger or "
-                                            "predicate with name '" << trigger_name << "'.");
+    RCLCPP_ERROR_STREAM(this->node_logging_->get_logger(), "Failed to add trigger: there is already a trigger or "
+                                                           "predicate with name '" << trigger_name << "'.");
     return;
   }
   this->triggers_.insert_or_assign(trigger_name, false);
@@ -782,8 +788,8 @@ inline void ComponentInterface::add_trigger(const std::string& trigger_name) {
 
 inline void ComponentInterface::trigger(const std::string& trigger_name) {
   if (this->triggers_.find(trigger_name) == this->triggers_.end()) {
-    RCLCPP_ERROR_STREAM(this->get_logger(), "Failed to trigger: could not find trigger"
-                                            " with name  '" << trigger_name << "'.");
+    RCLCPP_ERROR_STREAM(this->node_logging_->get_logger(), "Failed to trigger: could not find trigger"
+                                                           " with name  '" << trigger_name << "'.");
     return;
   }
   this->triggers_.at(trigger_name) = true;
@@ -795,7 +801,7 @@ inline void ComponentInterface::set_variant_predicate(
 ) {
   auto predicate_iterator = this->predicates_.find(name);
   if (predicate_iterator == this->predicates_.end()) {
-    RCLCPP_ERROR_STREAM_THROTTLE(this->get_logger(), *this->get_clock(), 1000,
+    RCLCPP_ERROR_STREAM_THROTTLE(this->node_logging_->get_logger(), *this->node_clock_->get_clock(), 1000,
                                  "Failed to set predicate '" << name << "': Predicate does not exist.");
     return;
   }
@@ -820,7 +826,7 @@ inline bool ComponentInterface::remove_signal(
   if (!skip_check && signal_map.find(signal_name) == signal_map.cend()) {
     return false;
   } else {
-    RCLCPP_DEBUG_STREAM(this->get_logger(), "Removing signal '" << signal_name << "'.");
+    RCLCPP_DEBUG_STREAM(this->node_logging_->get_logger(), "Removing signal '" << signal_name << "'.");
     signal_map.at(signal_name).reset();
     return signal_map.erase(signal_name);
   }
@@ -830,7 +836,7 @@ inline void ComponentInterface::remove_input(const std::string& signal_name) {
   if (!this->template remove_signal(signal_name, this->inputs_)) {
     auto parsed_signal_name = utilities::parse_topic_name(signal_name);
     if (!this->template remove_signal(parsed_signal_name, this->inputs_)) {
-      RCLCPP_DEBUG_STREAM(this->get_logger(),
+      RCLCPP_DEBUG_STREAM(this->node_logging_->get_logger(),
                           "Unknown input '" << signal_name << "' (parsed name was '" << parsed_signal_name << "').");
     }
   }
@@ -840,7 +846,7 @@ inline void ComponentInterface::remove_output(const std::string& signal_name) {
   if (!this->template remove_signal(signal_name, this->outputs_)) {
     auto parsed_signal_name = utilities::parse_topic_name(signal_name);
     if (!this->template remove_signal(parsed_signal_name, this->outputs_)) {
-      RCLCPP_DEBUG_STREAM(this->get_logger(),
+      RCLCPP_DEBUG_STREAM(this->node_logging_->get_logger(),
                           "Unknown output '" << signal_name << "' (parsed name was '" << parsed_signal_name << "').");
     }
   }
@@ -869,7 +875,7 @@ inline void ComponentInterface::declare_signal(
     this->add_parameter(
         parameter_name, topic_name, "Signal topic name of " + type + " '" + parsed_signal_name + "'", fixed_topic);
   }
-  RCLCPP_DEBUG_STREAM(this->get_logger(),
+  RCLCPP_DEBUG_STREAM(this->node_logging_->get_logger(),
                       "Declared signal '" << parsed_signal_name << "' and parameter '" << parameter_name
                                           << "' with value '" << topic_name << "'.");
 }
@@ -908,7 +914,7 @@ inline void ComponentInterface::add_input(
     }
     this->declare_input(parsed_signal_name, default_topic, fixed_topic);
     auto topic_name = this->get_parameter_value<std::string>(parsed_signal_name + "_topic");
-    RCLCPP_DEBUG_STREAM(this->get_logger(),
+    RCLCPP_DEBUG_STREAM(this->node_logging_->get_logger(),
                         "Adding input '" << parsed_signal_name << "' with topic name '" << topic_name << "'.");
     auto message_pair = make_shared_message_pair(data, this->get_clock());
     std::shared_ptr<SubscriptionInterface> subscription_interface;
@@ -959,7 +965,8 @@ inline void ComponentInterface::add_input(
     }
     this->inputs_.insert_or_assign(parsed_signal_name, subscription_interface);
   } catch (const std::exception& ex) {
-    RCLCPP_ERROR_STREAM(this->get_logger(), "Failed to add input '" << signal_name << "': " << ex.what());
+    RCLCPP_ERROR_STREAM(this->node_logging_->get_logger(),
+                        "Failed to add input '" << signal_name << "': " << ex.what());
   }
 }
 
@@ -973,14 +980,15 @@ inline void ComponentInterface::add_input(
     std::string parsed_signal_name = utilities::parse_topic_name(signal_name);
     this->declare_input(parsed_signal_name, default_topic, fixed_topic);
     auto topic_name = this->get_parameter_value<std::string>(parsed_signal_name + "_topic");
-    RCLCPP_DEBUG_STREAM(this->get_logger(),
+    RCLCPP_DEBUG_STREAM(this->node_logging_->get_logger(),
                         "Adding input '" << parsed_signal_name << "' with topic name '" << topic_name << "'.");
     auto subscription = NodeT::template create_subscription<MsgT>(topic_name, this->qos_, callback);
     auto subscription_interface =
         std::make_shared<SubscriptionHandler<MsgT>>()->create_subscription_interface(subscription);
     this->inputs_.insert_or_assign(parsed_signal_name, subscription_interface);
   } catch (const std::exception& ex) {
-    RCLCPP_ERROR_STREAM(this->get_logger(), "Failed to add input '" << signal_name << "': " << ex.what());
+    RCLCPP_ERROR_STREAM(this->node_logging_->get_logger(),
+                        "Failed to add input '" << signal_name << "': " << ex.what());
   }
 }
 
@@ -1020,7 +1028,8 @@ inline void ComponentInterface::add_service(
         });
     this->empty_services_.insert_or_assign(parsed_service_name, service);
   } catch (const std::exception& ex) {
-    RCLCPP_ERROR_STREAM(this->get_logger(), "Failed to add service '" << service_name << "': " << ex.what());
+    RCLCPP_ERROR_STREAM(this->node_logging_->get_logger(),
+                        "Failed to add service '" << service_name << "': " << ex.what());
   }
 }
 
@@ -1046,53 +1055,56 @@ inline void ComponentInterface::add_service(
         });
     this->string_services_.insert_or_assign(parsed_service_name, service);
   } catch (const std::exception& ex) {
-    RCLCPP_ERROR_STREAM(this->get_logger(), "Failed to add service '" << service_name << "': " << ex.what());
+    RCLCPP_ERROR_STREAM(this->node_logging_->get_logger(),
+                        "Failed to add service '" << service_name << "': " << ex.what());
   }
 }
 
 inline void ComponentInterface::add_periodic_callback(const std::string& name, const std::function<void()>& callback) {
   if (name.empty()) {
-    RCLCPP_ERROR(this->get_logger(), "Failed to add periodic function: Provide a non empty string as a name.");
+    RCLCPP_ERROR(this->node_logging_->get_logger(),
+                 "Failed to add periodic function: Provide a non empty string as a name.");
     return;
   }
   if (this->periodic_callbacks_.find(name) != this->periodic_callbacks_.end()) {
-    RCLCPP_WARN_STREAM(this->get_logger(), "Periodic function '" << name << "' already exists, overwriting.");
+    RCLCPP_WARN_STREAM(this->node_logging_->get_logger(),
+                       "Periodic function '" << name << "' already exists, overwriting.");
   } else {
-    RCLCPP_DEBUG_STREAM(this->get_logger(), "Adding periodic function '" << name << "'.");
+    RCLCPP_DEBUG_STREAM(this->node_logging_->get_logger(), "Adding periodic function '" << name << "'.");
   }
   this->periodic_callbacks_.template insert_or_assign(name, callback);
 }
 
 inline void ComponentInterface::add_tf_broadcaster() {
   if (this->tf_broadcaster_ == nullptr) {
-    RCLCPP_DEBUG(this->get_logger(), "Adding TF broadcaster.");
+    RCLCPP_DEBUG(this->node_logging_->get_logger(), "Adding TF broadcaster.");
     console_bridge::setLogLevel(console_bridge::CONSOLE_BRIDGE_LOG_NONE);
     this->tf_broadcaster_ = std::make_shared<tf2_ros::TransformBroadcaster>(*this);
   } else {
-    RCLCPP_DEBUG(this->get_logger(), "TF broadcaster already exists.");
+    RCLCPP_DEBUG(this->node_logging_->get_logger(), "TF broadcaster already exists.");
   }
 }
 
 inline void ComponentInterface::add_static_tf_broadcaster() {
   if (this->static_tf_broadcaster_ == nullptr) {
-    RCLCPP_DEBUG(this->get_logger(), "Adding static TF broadcaster.");
+    RCLCPP_DEBUG(this->node_logging_->get_logger(), "Adding static TF broadcaster.");
     console_bridge::setLogLevel(console_bridge::CONSOLE_BRIDGE_LOG_NONE);
     tf2_ros::StaticBroadcasterQoS qos;
     rclcpp::PublisherOptionsWithAllocator<std::allocator<void>> options;
     this->static_tf_broadcaster_ = std::make_shared<tf2_ros::StaticTransformBroadcaster>(*this, qos, options);
   } else {
-    RCLCPP_DEBUG(this->get_logger(), "Static TF broadcaster already exists.");
+    RCLCPP_DEBUG(this->node_logging_->get_logger(), "Static TF broadcaster already exists.");
   }
 }
 
 inline void ComponentInterface::add_tf_listener() {
   if (this->tf_buffer_ == nullptr || this->tf_listener_ == nullptr) {
-    RCLCPP_DEBUG(this->get_logger(), "Adding TF buffer and listener.");
+    RCLCPP_DEBUG(this->node_logging_->get_logger(), "Adding TF buffer and listener.");
     console_bridge::setLogLevel(console_bridge::CONSOLE_BRIDGE_LOG_NONE);
     this->tf_buffer_ = std::make_shared<tf2_ros::Buffer>(this->get_clock());
     this->tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*this->tf_buffer_);
   } else {
-    RCLCPP_DEBUG(this->get_logger(), "TF buffer and listener already exist.");
+    RCLCPP_DEBUG(this->node_logging_->get_logger(), "TF buffer and listener already exist.");
   }
 }
 
@@ -1120,7 +1132,7 @@ inline void ComponentInterface::publish_transforms(
 ) {
   std::string modifier = is_static ? "static " : "";
   if (tf_broadcaster == nullptr) {
-    RCLCPP_ERROR_STREAM_THROTTLE(this->get_logger(), *this->get_clock(), 1000,
+    RCLCPP_ERROR_STREAM_THROTTLE(this->node_logging_->get_logger(), *this->node_clock_->get_clock(), 1000,
                                  "Failed to send " << modifier << "transform: No " << modifier
                                                    << "TF broadcaster configured.");
     return;
@@ -1135,7 +1147,7 @@ inline void ComponentInterface::publish_transforms(
     }
     tf_broadcaster->sendTransform(transform_messages);
   } catch (const std::exception& ex) {
-    RCLCPP_ERROR_STREAM_THROTTLE(this->get_logger(), *this->get_clock(), 1000,
+    RCLCPP_ERROR_STREAM_THROTTLE(this->node_logging_->get_logger(), *this->node_clock_->get_clock(), 1000,
                                  "Failed to send " << modifier << "transform: " << ex.what());
   }
 }
@@ -1179,7 +1191,7 @@ inline state_representation::CartesianPose ComponentInterface::lookup_transform(
 
 inline void ComponentInterface::publish_predicate(const std::string& name) {
   modulo_component_interfaces::msg::Predicate message;
-  message.component = this->get_node_base_interface()->get_fully_qualified_name();
+  message.component = this->node_base_->get_fully_qualified_name();
   message.predicate = name;
   message.value = this->get_predicate(name);
   this->predicate_publisher_->publish(message);
@@ -1202,7 +1214,7 @@ inline void ComponentInterface::publish_output(const std::string& signal_name) {
   try {
     this->outputs_.at(parsed_signal_name)->publish();
   } catch (const modulo_core::exceptions::CoreException& ex) {
-    RCLCPP_ERROR_STREAM_THROTTLE(this->get_logger(), *this->get_clock(), 1000,
+    RCLCPP_ERROR_STREAM_THROTTLE(this->node_logging_->get_logger(), *this->node_clock_->get_clock(), 1000,
                                  "Failed to publish output '" << parsed_signal_name << "': " << ex.what());
   }
 }
@@ -1214,7 +1226,7 @@ inline void ComponentInterface::publish_outputs() {
         publisher->publish();
       }
     } catch (const modulo_core::exceptions::CoreException& ex) {
-      RCLCPP_ERROR_STREAM_THROTTLE(this->get_logger(), *this->get_clock(), 1000,
+      RCLCPP_ERROR_STREAM_THROTTLE(this->node_logging_->get_logger(), *this->node_clock_->get_clock(), 1000,
                                    "Failed to publish output '" << signal << "': " << ex.what());
     }
   }
@@ -1225,7 +1237,7 @@ inline void ComponentInterface::evaluate_periodic_callbacks() {
     try {
       callback();
     } catch (const std::exception& ex) {
-      RCLCPP_ERROR_STREAM_THROTTLE(this->get_logger(), *this->get_clock(), 1000,
+      RCLCPP_ERROR_STREAM_THROTTLE(this->node_logging_->get_logger(), *this->node_clock_->get_clock(), 1000,
                                    "Failed to evaluate periodic function callback '" << name << "': " << ex.what());
     }
   }
@@ -1244,7 +1256,7 @@ inline std::string ComponentInterface::create_output(
           "Invalid data pointer for output '" + parsed_signal_name + "'.");
     }
     this->declare_output(parsed_signal_name, default_topic, fixed_topic);
-    RCLCPP_DEBUG_STREAM(this->get_logger(),
+    RCLCPP_DEBUG_STREAM(this->node_logging_->get_logger(),
                         "Creating output '" << parsed_signal_name << "' (provided signal name was '" << signal_name
                                             << "').");
     auto message_pair = make_shared_message_pair(data, this->get_clock());
