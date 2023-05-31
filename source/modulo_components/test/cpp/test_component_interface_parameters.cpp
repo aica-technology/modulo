@@ -18,13 +18,8 @@ protected:
   }
 
   void SetUp() override {
-    if (std::is_same<NodeT, rclcpp::Node>::value) {
-      this->component_ = std::make_shared<ComponentInterfacePublicInterface<NodeT>>(
-          rclcpp::NodeOptions(), modulo_core::communication::PublisherType::PUBLISHER);
-    } else if (std::is_same<NodeT, rclcpp_lifecycle::LifecycleNode>::value) {
-      this->component_ = std::make_shared<ComponentInterfacePublicInterface<NodeT>>(
-          rclcpp::NodeOptions(), modulo_core::communication::PublisherType::LIFECYCLE_PUBLISHER);
-    }
+    this->component_ = std::make_shared<ComponentInterfacePublicInterface>(
+        std::make_shared<NodeT>("ComponentInterfacePublicInterface", rclcpp::NodeOptions()));
     param_ = state_representation::make_shared_parameter("test", 1);
   }
 
@@ -35,7 +30,7 @@ protected:
     EXPECT_EQ(this->component_->parameter_map_.template get_parameter_value<T>("test"), value);
   }
 
-  std::shared_ptr<ComponentInterfacePublicInterface<NodeT>> component_;
+  std::shared_ptr<ComponentInterfacePublicInterface> component_;
   std::shared_ptr<state_representation::Parameter<int>> param_;
 };
 using NodeTypes = ::testing::Types<rclcpp::Node, rclcpp_lifecycle::LifecycleNode>;

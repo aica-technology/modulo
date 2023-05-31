@@ -24,18 +24,20 @@ protected:
 
   void SetUp() override {
     exec_ = std::make_shared<rclcpp::executors::SingleThreadedExecutor>();
+    this->node_ = std::make_shared<NodeT>("ComponentInterfacePublicInterface", rclcpp::NodeOptions());
     if (std::is_same<NodeT, rclcpp::Node>::value) {
-      this->component_ = std::make_shared<ComponentInterfacePublicInterface<NodeT>>(
-          rclcpp::NodeOptions(), modulo_core::communication::PublisherType::PUBLISHER);
+      this->pub_type_ = modulo_core::communication::PublisherType::PUBLISHER;
+      this->component_ = std::make_shared<ComponentInterfacePublicInterface>(this->node_);
     } else if (std::is_same<NodeT, rclcpp_lifecycle::LifecycleNode>::value) {
-      this->component_ = std::make_shared<ComponentInterfacePublicInterface<NodeT>>(
-          rclcpp::NodeOptions(), modulo_core::communication::PublisherType::LIFECYCLE_PUBLISHER);
+      this->pub_type_ = modulo_core::communication::PublisherType::LIFECYCLE_PUBLISHER;
+      this->component_ = std::make_shared<ComponentInterfacePublicInterface>(this->node_);
     }
   }
 
   std::shared_ptr<rclcpp::executors::SingleThreadedExecutor> exec_;
-  std::shared_ptr<ComponentInterfacePublicInterface<NodeT>> component_;
+  std::shared_ptr<ComponentInterfacePublicInterface> component_;
   std::shared_ptr<NodeT> node_;
+  modulo_core::communication::PublisherType pub_type_;
 };
 
 using NodeTypes = ::testing::Types<rclcpp::Node, rclcpp_lifecycle::LifecycleNode>;
@@ -126,7 +128,8 @@ TYPED_TEST(ComponentInterfaceTest, AddInputWithUserCallback) {
       this->component_->inputs_.at("state")->template get_handler<modulo_core::EncodedState>()->get_callback();
   state_representation::CartesianState new_state("B");
   auto message = std::make_shared<modulo_core::EncodedState>();
-  modulo_core::translators::write_message(*message, new_state, this->component_->get_clock()->now());
+  modulo_core::translators::write_message(
+      *message, new_state, this->component_->node_clock_->get_clock()->now());
   EXPECT_STREQ(state_data->get_name().c_str(), "A");
   EXPECT_NO_THROW(callback(message));
   EXPECT_TRUE(callback_triggered);
@@ -188,8 +191,8 @@ TYPED_TEST(ComponentInterfaceTest, CallEmptyService) {
   EXPECT_NO_THROW(this->component_->add_service("empty", empty_callback));
 
   auto client = std::make_shared<ServiceClient<modulo_component_interfaces::srv::EmptyTrigger>>(
-      rclcpp::NodeOptions(), "/" + std::string(this->component_->get_name()) + "/empty");
-  this->exec_->add_node(this->component_->get_node_base_interface());
+      rclcpp::NodeOptions(), "/" + std::string(this->component_->node_base_->get_name()) + "/empty");
+  this->exec_->add_node(this->component_->node_base_);
   this->exec_->add_node(client);
   auto request = std::make_shared<modulo_component_interfaces::srv::EmptyTrigger::Request>();
   auto future = client->call_async(request);
@@ -208,8 +211,8 @@ TYPED_TEST(ComponentInterfaceTest, CallStringService) {
   EXPECT_NO_THROW(this->component_->add_service("string", string_callback));
 
   auto client = std::make_shared<ServiceClient<modulo_component_interfaces::srv::StringTrigger>>(
-      rclcpp::NodeOptions(), "/" + std::string(this->component_->get_name()) + "/string");
-  this->exec_->add_node(this->component_->get_node_base_interface());
+      rclcpp::NodeOptions(), "/" + std::string(this->component_->node_base_->get_name()) + "/string");
+  this->exec_->add_node(this->component_->node_base_);
   this->exec_->add_node(client);
   auto request = std::make_shared<modulo_component_interfaces::srv::StringTrigger::Request>();
   request->payload = "payload";
@@ -223,7 +226,7 @@ TYPED_TEST(ComponentInterfaceTest, CallStringService) {
 
 TYPED_TEST(ComponentInterfaceTest, CreateOutput) {
   auto data = std::make_shared<bool>(true);
-  EXPECT_NO_THROW(this->component_->create_output("test", data, "/topic", true, true));
+  EXPECT_NO_THROW(this->component_->create_output(this->pub_type_, "test", data, "/topic", true, true));
   EXPECT_FALSE(this->component_->outputs_.find("test") == this->component_->outputs_.end());
   EXPECT_EQ(this->component_->template get_parameter_value<std::string>("test_topic"), "/topic");
   EXPECT_TRUE(this->component_->periodic_outputs_.at("test"));
@@ -237,7 +240,7 @@ TYPED_TEST(ComponentInterfaceTest, CreateOutput) {
   EXPECT_EQ(pub_interface->get_message_pair()->get_type(), modulo_core::communication::MessageType::BOOL);
   EXPECT_THROW(pub_interface->publish(), modulo_core::exceptions::CoreException);
 
-  EXPECT_NO_THROW(this->component_->create_output("_tEsT_#1@3", data, "", true, false));
+  EXPECT_NO_THROW(this->component_->create_output(this->pub_type_, "_tEsT_#1@3", data, "", true, false));
   EXPECT_FALSE(this->component_->periodic_outputs_.at("test_13"));
   EXPECT_NO_THROW(this->component_->publish_output("_tEsT_#1@3"));
   EXPECT_NO_THROW(this->component_->publish_output("test_13"));
