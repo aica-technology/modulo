@@ -50,7 +50,7 @@ def test_input_output_invalid(ros_exec, make_minimal_invalid_encoded_state_publi
 
 def test_trigger(ros_exec, make_predicates_listener):
     trigger = Trigger()
-    listener = make_predicates_listener("trigger", ["test"])
+    listener = make_predicates_listener("/trigger", ["test"])
     ros_exec.add_node(listener)
     ros_exec.add_node(trigger)
     ros_exec.spin_until_future_complete(listener.predicates_future, timeout_sec=0.5)
