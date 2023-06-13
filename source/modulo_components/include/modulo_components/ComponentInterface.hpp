@@ -1256,10 +1256,19 @@ inline state_representation::CartesianPose ComponentInterface<NodeT>::lookup_tra
   return result;
 }
 
-template<class NodeT>
-inline void ComponentInterface<NodeT>::publish_predicate(const std::string& name) {
+template<>
+inline void ComponentInterface<rclcpp::Node>::publish_predicate(const std::string& name) {
   modulo_component_interfaces::msg::Predicate message;
   message.component = this->get_fully_qualified_name();
+  message.predicate = name;
+  message.value = this->get_predicate(name);
+  this->predicate_publisher_->publish(message);
+}
+
+template<>
+inline void ComponentInterface<rclcpp_lifecycle::LifecycleNode>::publish_predicate(const std::string& name) {
+  modulo_component_interfaces::msg::Predicate message;
+  message.component = this->get_node_base_interface()->get_fully_qualified_name();
   message.predicate = name;
   message.value = this->get_predicate(name);
   this->predicate_publisher_->publish(message);
