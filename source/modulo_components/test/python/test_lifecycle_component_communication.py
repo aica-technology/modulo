@@ -77,7 +77,7 @@ def test_input_output_invalid(ros_exec, make_lifecycle_change_client, make_minim
 
 def test_trigger(ros_exec, make_lifecycle_change_client, make_predicates_listener):
     trigger = Trigger()
-    listener = make_predicates_listener("trigger", ["test"])
+    listener = make_predicates_listener("/trigger", ["test"])
     client = make_lifecycle_change_client("trigger")
     ros_exec.add_node(trigger)
     ros_exec.add_node(listener)
