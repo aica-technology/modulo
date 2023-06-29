@@ -712,7 +712,7 @@ class ComponentInterface(Node):
             self.get_logger().error(f"Predicate '{name}' has invalid type: expected 'bool', got '{type(value)}'.",
                                     throttle_duration_sec=1.0)
             return
-        message.component = self.get_name()
+        message.component = self.get_fully_qualified_name()
         message.predicate = name
         self._predicate_publisher.publish(message)
 
