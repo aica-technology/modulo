@@ -24,7 +24,7 @@ jobs:
     needs: [get-tag]
     strategy:
       matrix:
-        arch: [amd64, arm64]
+        arch: [arm64]
         include:
           - image: ubuntu-latest
           - image: buildjet-2vcpu-ubuntu-2204-arm
