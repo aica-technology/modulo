@@ -8,6 +8,7 @@ Release Versions:
 
 ## Upcoming changes (in development)
 
+- Refactor ComponentInterface to use node interfaces (#33)
 - Refactor component predicates with a single Predicate publisher (#26)
 - Add and install component descriptions (#31)
 - Apply AICA C++ style guide (#30)
