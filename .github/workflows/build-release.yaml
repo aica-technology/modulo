@@ -27,7 +27,8 @@ jobs:
         arch: [arm64]
         include:
           - image: ubuntu-latest
-          - image: buildjet-2vcpu-ubuntu-2204-arm
+          # FIXME (#33): high memory usage during build
+          - image: buildjet-4vcpu-ubuntu-2204-arm
             arch: arm64
 
     runs-on: ${{ matrix.image }}
