@@ -541,8 +541,8 @@ private:
   );
 
   std::map<std::string, utilities::PredicateVariant> predicates_; ///< Map of predicates
-  std::map<std::string, std::shared_ptr<rclcpp::Publisher<std_msgs::msg::Bool>>>
-      predicate_publishers_; ///< Map of predicate publishers
+  std::shared_ptr<rclcpp::Publisher<modulo_component_interfaces::msg::Predicate>>
+      predicate_publisher_; ///< Predicate publisher
   std::map<std::string, bool> triggers_; ///< Map of triggers
 
   std::map<std::string, std::shared_ptr<rclcpp::Service<modulo_component_interfaces::srv::EmptyTrigger>>>
