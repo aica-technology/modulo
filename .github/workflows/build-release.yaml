@@ -24,11 +24,12 @@ jobs:
     needs: [get-tag]
     strategy:
       matrix:
-        arch: [arm64]
+        arch: [amd64, arm64]
         include:
-          - image: ubuntu-latest
           # FIXME (#33): high memory usage during build
-          - image: buildjet-4vcpu-ubuntu-2204-arm
+          - image: buildjet-8vcpu-ubuntu-2204
+            arch: amd64
+          - image: buildjet-8vcpu-ubuntu-2204-arm
             arch: arm64
 
     runs-on: ${{ matrix.image }}
