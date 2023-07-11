@@ -46,7 +46,7 @@ jobs:
 
       - uses: aica-technology/.github/.github/actions/ghcr-build@v0.6.1
         with:
-          image_name: aica-technology/network-interfaces
+          image_name: aica-technology/modulo
           image_tags: ${{ steps.merge-tags.outputs.list }}
           dockerfile_path: Dockerfile.ci
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -58,7 +58,7 @@ jobs:
     steps:
       - uses: aica-technology/.github/.github/actions/ghcr-manifest-merge@v0.6.1
         with:
-          image_name: aica-technology/network-interfaces
+          image_name: aica-technology/modulo
           image_tags: ${{ needs.get-tag.outputs.tag }}
           archs: amd64,arm64
           token: ${{ secrets.GITHUB_TOKEN }}
