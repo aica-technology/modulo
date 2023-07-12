@@ -8,6 +8,7 @@ Release Versions:
 
 ## Upcoming changes (in development)
 
+- Update component classes to inherit from new ComponentInterface (#38)
 - Refactor ComponentInterface to use node interfaces (#33)
 - Refactor component predicates with a single Predicate publisher (#26)
 - Add and install component descriptions (#31)
