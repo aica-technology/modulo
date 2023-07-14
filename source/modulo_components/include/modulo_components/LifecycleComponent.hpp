@@ -4,7 +4,6 @@
 #include <rclcpp_lifecycle/lifecycle_node.hpp>
 
 #include "modulo_components/ComponentInterface.hpp"
-#include "modulo_core/EncodedState.hpp"
 
 namespace modulo_components {
 
@@ -27,7 +26,7 @@ namespace modulo_components {
  * - on_step_callback()
  * @see Component for a stateless composition alternative
  */
-class LifecycleComponent : public ComponentInterface<rclcpp_lifecycle::LifecycleNode> {
+class LifecycleComponent : public rclcpp_lifecycle::LifecycleNode, public ComponentInterface {
 public:
   friend class LifecycleComponentPublicInterface;
 
@@ -262,13 +261,13 @@ private:
   bool clear_signals();
 
   // TODO hide ROS methods
-  using ComponentInterface<rclcpp_lifecycle::LifecycleNode>::create_output;
-  using ComponentInterface<rclcpp_lifecycle::LifecycleNode>::inputs_;
-  using ComponentInterface<rclcpp_lifecycle::LifecycleNode>::outputs_;
-  using ComponentInterface<rclcpp_lifecycle::LifecycleNode>::qos_;
-  using ComponentInterface<rclcpp_lifecycle::LifecycleNode>::publish_predicates;
-  using ComponentInterface<rclcpp_lifecycle::LifecycleNode>::publish_outputs;
-  using ComponentInterface<rclcpp_lifecycle::LifecycleNode>::evaluate_periodic_callbacks;
+  using ComponentInterface::create_output;
+  using ComponentInterface::inputs_;
+  using ComponentInterface::outputs_;
+  using ComponentInterface::periodic_outputs_;
+  using ComponentInterface::publish_predicates;
+  using ComponentInterface::publish_outputs;
+  using ComponentInterface::evaluate_periodic_callbacks;
 };
 
 inline void LifecycleComponent::on_step_callback() {}
@@ -280,13 +279,14 @@ inline void LifecycleComponent::add_output(
 ) {
   if (this->get_current_state().id() != lifecycle_msgs::msg::State::PRIMARY_STATE_UNCONFIGURED
       && this->get_current_state().id() != lifecycle_msgs::msg::State::PRIMARY_STATE_INACTIVE) {
-    RCLCPP_WARN_STREAM_THROTTLE(
-        this->get_logger(), *this->get_clock(), 1000,
-        "Adding output in state " << this->get_current_state().label() << " is not allowed.");
+    RCLCPP_WARN_STREAM_THROTTLE(this->get_logger(), *this->get_clock(), 1000,
+                                "Adding output in state " << this->get_current_state().label() << " is not allowed.");
     return;
   }
   try {
-    this->create_output(signal_name, data, default_topic, fixed_topic, publish_on_step);
+    this->create_output(
+        modulo_core::communication::PublisherType::LIFECYCLE_PUBLISHER, signal_name, data, default_topic, fixed_topic,
+        publish_on_step);
   } catch (const exceptions::AddSignalException& ex) {
     RCLCPP_ERROR_STREAM(this->get_logger(), "Failed to add output '" << signal_name << "': " << ex.what());
   }

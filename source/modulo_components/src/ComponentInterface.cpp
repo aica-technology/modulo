@@ -21,8 +21,8 @@ ComponentInterface::ComponentInterface(
         return this->on_set_parameters_callback(parameters);
       });
   this->add_parameter("period", 0.1, "The time interval in seconds for all periodic callbacks", true);
-  this->predicate_publisher_ =
-      rclcpp::create_publisher<modulo_component_interfaces::msg::Predicate>(*this, "/predicates", this->qos_);
+  this->predicate_publisher_ = rclcpp::create_publisher<modulo_component_interfaces::msg::Predicate>(
+      this->node_parameters_, this->node_topics_, "/predicates", this->qos_);
 
   this->add_predicate("in_error_state", false);
 
