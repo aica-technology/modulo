@@ -2,8 +2,6 @@
 
 #include <rclcpp/node_interfaces/node_interfaces.hpp>
 
-#include <console_bridge/console.h>
-#include <tf2_msgs/msg/tf_message.hpp>
 #include <tf2_ros/transform_broadcaster.h>
 #include <tf2_ros/static_transform_broadcaster.h>
 #include <tf2_ros/buffer.h>
@@ -14,19 +12,14 @@
 #include <modulo_core/communication/PublisherHandler.hpp>
 #include <modulo_core/communication/PublisherType.hpp>
 #include <modulo_core/communication/SubscriptionHandler.hpp>
-#include <modulo_core/exceptions/ParameterTranslationException.hpp>
-#include <modulo_core/translators/message_readers.hpp>
-#include <modulo_core/translators/message_writers.hpp>
 #include <modulo_core/translators/parameter_translators.hpp>
 
 #include <modulo_component_interfaces/srv/empty_trigger.hpp>
 #include <modulo_component_interfaces/srv/string_trigger.hpp>
 #include <modulo_component_interfaces/msg/predicate.hpp>
 
-#include "modulo_components/exceptions/AddServiceException.hpp"
 #include "modulo_components/exceptions/AddSignalException.hpp"
 #include "modulo_components/exceptions/ComponentParameterException.hpp"
-#include "modulo_components/exceptions/LookupTransformException.hpp"
 #include "modulo_components/utilities/utilities.hpp"
 #include "modulo_components/utilities/predicate_variant.hpp"
 
@@ -127,7 +120,7 @@ protected:
    * @return The value of the parameter
    */
   template<typename T>
-  T get_parameter_value(const std::string& name) const;
+  [[nodiscard]] T get_parameter_value(const std::string& name) const;
 
   /**
    * @brief Set the value of a parameter.

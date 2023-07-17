@@ -1,5 +1,15 @@
 #include "modulo_components/ComponentInterface.hpp"
 
+#include <console_bridge/console.h>
+#include <tf2_msgs/msg/tf_message.hpp>
+
+#include <modulo_core/exceptions/ParameterTranslationException.hpp>
+#include <modulo_core/translators/message_readers.hpp>
+#include <modulo_core/translators/message_writers.hpp>
+
+#include "modulo_components/exceptions/AddServiceException.hpp"
+#include "modulo_components/exceptions/LookupTransformException.hpp"
+
 using namespace modulo_core::communication;
 
 namespace modulo_components {
