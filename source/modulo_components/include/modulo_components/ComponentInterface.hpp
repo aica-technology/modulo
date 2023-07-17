@@ -90,7 +90,7 @@ protected:
    * @param parameter A ParameterInterface pointer to a Parameter instance
    * @param description The description of the parameter
    * @param read_only If true, the value of the parameter cannot be changed after declaration
-   * @raise ComponentParameterError if the parameter could not be added
+   * @throws ComponentParameterError if the parameter could not be added
    */
   void add_parameter(
       const std::shared_ptr<state_representation::ParameterInterface>& parameter, const std::string& description,
@@ -106,7 +106,7 @@ protected:
    * @param value The value of the parameter
    * @param description The description of the parameter
    * @param read_only If true, the value of the parameter cannot be changed after declaration
-   * @raise ComponentParameterError if the parameter could not be added
+   * @throws ComponentParameterError if the parameter could not be added
    */
   template<typename T>
   void add_parameter(const std::string& name, const T& value, const std::string& description, bool read_only = false);
