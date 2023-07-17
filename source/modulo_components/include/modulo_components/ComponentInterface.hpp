@@ -367,19 +367,6 @@ protected:
   void send_static_transforms(const std::vector<state_representation::CartesianPose>& transforms);
 
   /**
-   * @brief Helper function to send a vector of transforms through a transform broadcaster
-   * @tparam T The type of the broadcaster (tf2_ros::TransformBroadcaster or tf2_ros::StaticTransformBroadcaster)
-   * @param transforms The transforms to send
-   * @param tf_broadcaster A pointer to a configured transform broadcaster object
-   * @param is_static If true, treat the broadcaster as a static frame broadcaster for the sake of log messages
-   */
-  template<typename T>
-  void publish_transforms(
-      const std::vector<state_representation::CartesianPose>& transforms, const std::shared_ptr<T>& tf_broadcaster,
-      bool is_static = false
-  );
-
-  /**
    * @brief Look up a transform from TF.
    * @param frame The desired frame of the transform
    * @param reference_frame The desired reference frame of the transform
@@ -515,6 +502,19 @@ private:
    * @return The parsed service name
    */
   std::string validate_service_name(const std::string& service_name);
+
+  /**
+   * @brief Helper function to send a vector of transforms through a transform broadcaster
+   * @tparam T The type of the broadcaster (tf2_ros::TransformBroadcaster or tf2_ros::StaticTransformBroadcaster)
+   * @param transforms The transforms to send
+   * @param tf_broadcaster A pointer to a configured transform broadcaster object
+   * @param is_static If true, treat the broadcaster as a static frame broadcaster for the sake of log messages
+   */
+  template<typename T>
+  void publish_transforms(
+      const std::vector<state_representation::CartesianPose>& transforms, const std::shared_ptr<T>& tf_broadcaster,
+      bool is_static = false
+  );
 
   /**
  * @brief Helper method to look up a transform from TF.

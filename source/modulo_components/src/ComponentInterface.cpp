@@ -10,8 +10,6 @@
 #include "modulo_components/exceptions/AddServiceException.hpp"
 #include "modulo_components/exceptions/LookupTransformException.hpp"
 
-using namespace modulo_core::communication;
-
 namespace modulo_components {
 
 ComponentInterface::ComponentInterface(
@@ -485,7 +483,7 @@ geometry_msgs::msg::TransformStamped ComponentInterface::lookup_ros_transform(
     throw exceptions::LookupTransformException("Failed to lookup transform: To TF buffer / listener configured.");
   }
   try {
-    return this->tf_buffer_->lookupTransform(reference_frame, frame, time_point, duration);;
+    return this->tf_buffer_->lookupTransform(reference_frame, frame, time_point, duration);
   } catch (const tf2::TransformException& ex) {
     throw exceptions::LookupTransformException(std::string("Failed to lookup transform: ").append(ex.what()));
   }

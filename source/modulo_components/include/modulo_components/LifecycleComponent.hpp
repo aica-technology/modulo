@@ -265,12 +265,11 @@ private:
   using ComponentInterface::inputs_;
   using ComponentInterface::outputs_;
   using ComponentInterface::periodic_outputs_;
+  using ComponentInterface::publish_predicate;
   using ComponentInterface::publish_predicates;
   using ComponentInterface::publish_outputs;
   using ComponentInterface::evaluate_periodic_callbacks;
 };
-
-inline void LifecycleComponent::on_step_callback() {}
 
 template<typename DataT>
 inline void LifecycleComponent::add_output(

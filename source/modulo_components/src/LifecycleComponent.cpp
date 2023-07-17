@@ -33,6 +33,8 @@ LifecycleComponent::LifecycleComponent(const rclcpp::NodeOptions& node_options, 
       });
 }
 
+void LifecycleComponent::on_step_callback() {}
+
 void LifecycleComponent::step() {
   try {
     if (this->get_predicate("is_active")) {
