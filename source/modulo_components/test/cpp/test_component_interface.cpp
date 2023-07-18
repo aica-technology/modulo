@@ -5,6 +5,7 @@
 #include "modulo_core/EncodedState.hpp"
 #include "modulo_core/translators/message_writers.hpp"
 #include "modulo_utils/testutils/ServiceClient.hpp"
+#include "modulo_components/exceptions/LookupTransformException.hpp"
 #include "test_modulo_components/component_public_interfaces.hpp"
 
 namespace modulo_components {
