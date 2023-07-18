@@ -84,6 +84,7 @@ private:
   using ComponentInterface::publish_predicates;
   using ComponentInterface::publish_outputs;
   using ComponentInterface::evaluate_periodic_callbacks;
+  using rclcpp::Node::get_parameter;
 
   std::thread execute_thread_; ///< The execution thread of the component
   bool started_; ///< Flag that indicates if execution has started or not

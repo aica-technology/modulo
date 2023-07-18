@@ -269,6 +269,7 @@ private:
   using ComponentInterface::publish_predicates;
   using ComponentInterface::publish_outputs;
   using ComponentInterface::evaluate_periodic_callbacks;
+  using rclcpp_lifecycle::LifecycleNode::get_parameter;
 };
 
 template<typename DataT>
