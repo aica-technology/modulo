@@ -53,4 +53,9 @@ void Component::on_execute() {
 bool Component::on_execute_callback() {
   return true;
 }
+
+std::shared_ptr<state_representation::ParameterInterface>
+Component::get_parameter(const std::string& name) const {
+  return ComponentInterface::get_parameter(name);
+}
 }// namespace modulo_components

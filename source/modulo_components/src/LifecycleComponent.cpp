@@ -33,6 +33,11 @@ LifecycleComponent::LifecycleComponent(const rclcpp::NodeOptions& node_options, 
       });
 }
 
+std::shared_ptr<state_representation::ParameterInterface>
+LifecycleComponent::get_parameter(const std::string& name) const {
+    return ComponentInterface::get_parameter(name);
+}
+
 void LifecycleComponent::on_step_callback() {}
 
 void LifecycleComponent::step() {

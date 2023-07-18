@@ -46,6 +46,11 @@ public:
 
 protected:
   /**
+   * @copydoc ComponentInterface::get_parameter
+   */
+  [[nodiscard]] std::shared_ptr<state_representation::ParameterInterface> get_parameter(const std::string& name) const;
+
+  /**
    * @brief Steps to execute when configuring the component.
    * @details This method can be overridden by derived Component classes.
    * Configuration generally involves reading parameters and adding inputs and outputs.
@@ -261,6 +266,7 @@ private:
   bool clear_signals();
 
   // TODO hide ROS methods
+  using ComponentInterface::get_parameter;
   using ComponentInterface::create_output;
   using ComponentInterface::inputs_;
   using ComponentInterface::outputs_;
