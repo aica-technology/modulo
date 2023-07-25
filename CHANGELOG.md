@@ -8,6 +8,7 @@ Release Versions:
 
 ## Upcoming changes (in development)
 
+- feat(ci): add prebuilt modulo image akin to other internal ones (#36)
 - Add and install component descriptions (#31)
 - Apply AICA C++ style guide (#30)
 - Add option to publish outputs manually instead of periodically (#23)
