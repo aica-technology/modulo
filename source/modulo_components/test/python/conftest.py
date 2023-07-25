@@ -5,24 +5,29 @@ from modulo_components.component import Component
 from modulo_core import EncodedState
 from rclpy.task import Future
 
-pytest_plugins = ["modulo_utils.testutils.ros", "modulo_utils.testutils.lifecycle_change_client"]
+pytest_plugins = ["modulo_utils.testutils.ros", "modulo_utils.testutils.lifecycle_change_client",
+                  "modulo_utils.testutils.service_client", "modulo_utils.testutils.predicates_listener"]
 
 
 @pytest.fixture
-def random_state():
-    return sr.CartesianPose.Random("test")
+def random_pose():
+    return sr.CartesianPose().Random("test")
 
 
 @pytest.fixture
-def minimal_cartesian_output(request, random_state):
-    def _make_minimal_cartesian_output(component_type, topic):
+def minimal_cartesian_output(request, random_pose):
+    def _make_minimal_cartesian_output(component_type, topic, publish_on_step):
+        def publish(self):
+            self.publish_output("cartesian_pose")
+
         component = component_type("minimal_cartesian_output")
-        component._output = random_state
-        component.add_output("cartesian_state", "_output", EncodedState, clproto.MessageType.CARTESIAN_STATE_MESSAGE,
-                             topic)
+        component._output = random_pose
+        component.add_output("cartesian_pose", "_output", EncodedState, clproto.MessageType.CARTESIAN_STATE_MESSAGE,
+                             topic, publish_on_step=publish_on_step)
+        component.publish = publish.__get__(component)
         return component
 
-    yield _make_minimal_cartesian_output(request.param[0], request.param[1])
+    yield _make_minimal_cartesian_output(request.param[0], request.param[1], request.param[2])
 
 
 class MinimalInvalidEncodedStatePublisher(Component):
@@ -52,7 +57,7 @@ def minimal_cartesian_input(request):
         component = component_type("minimal_cartesian_input")
         component.received_future = Future()
         component.input = sr.CartesianState()
-        component.add_input("cartesian_state", "input", EncodedState, topic,
+        component.add_input("cartesian_pose", "input", EncodedState, topic,
                             user_callback=lambda: component.received_future.set_result(True))
         return component
 

@@ -83,8 +83,7 @@ inline std::shared_ptr<SubscriptionHandler<MsgT>> SubscriptionInterface::get_han
   }
   if (subscription_ptr == nullptr && validate_pointer) {
     throw exceptions::InvalidPointerCastException(
-        "Unable to cast subscription interface to a subscription pointer of requested type"
-    );
+        "Unable to cast subscription interface to a subscription pointer of requested type");
   }
   return subscription_ptr;
 }

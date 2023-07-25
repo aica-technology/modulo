@@ -24,12 +24,15 @@ ament_auto_find_build_dependencies()
 include_directories(include)
 
 ament_auto_add_library(${PROJECT_NAME} SHARED
-    ${PROJECT_SOURCE_DIR}/src/ComponentInterface.cpp
     ${PROJECT_SOURCE_DIR}/src/Component.cpp
     ${PROJECT_SOURCE_DIR}/src/LifecycleComponent.cpp)
 
 # Install Python modules
 ament_python_install_package(${PROJECT_NAME} SCRIPTS_DESTINATION lib/${PROJECT_NAME})
+
+# Install descriptions
+install(DIRECTORY ./component_descriptions
+        DESTINATION .)
 
 if(BUILD_TESTING)
   find_package(ament_cmake_gtest REQUIRED)
@@ -41,8 +44,7 @@ if(BUILD_TESTING)
 
   ament_add_gtest(test_modulo_components ${TEST_CPP_SOURCES})
   target_include_directories(test_modulo_components PRIVATE include)
-  target_link_libraries(test_modulo_components ${PROJECT_NAME} state_representation clproto)
-  target_compile_definitions(test_modulo_components PRIVATE TEST_FIXTURES="${CMAKE_CURRENT_SOURCE_DIR}/test/fixtures/")
+  target_link_libraries(test_modulo_components ${PROJECT_NAME})
 
   # prevent pluginlib from using boost
   target_compile_definitions(test_modulo_components PUBLIC "PLUGINLIB__DISABLE_BOOST_FUNCTIONS")

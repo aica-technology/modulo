@@ -25,7 +25,6 @@ class PredicatesListener(Node):
             self.__subscriptions[predicate] = self.create_subscription(Bool, f'/predicates/{namespace}/{predicate}',
                                                                        partial(self.__callback,
                                                                                predicate_name=predicate), 10)
-        self.create_timer(0.1, self.__check_future)
 
     @property
     def predicates_future(self) -> Future:
@@ -43,9 +42,7 @@ class PredicatesListener(Node):
 
     def __callback(self, msg, predicate_name):
         self.__predicates[predicate_name] = msg.data
-
-    def __check_future(self):
-        if any([value for value in self.__predicates.values()]):
+        if msg.data:
             self.__future.set_result(True)
 
 

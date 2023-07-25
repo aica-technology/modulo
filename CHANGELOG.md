@@ -1,9 +1,27 @@
 # CHANGELOG
 
 Release Versions:
+
+- [2.3.0](#230)
 - [2.2.0](#220)
 - [2.1.1](#211)
 - [2.1.0](#210)
+
+## 2.3.0
+
+### July 25, 2023
+
+Version 2.3.0 is a minor update to modulo that improves test coverage and adds a feature to publish outputs manually.
+It also contains behind-the-scenes structural improvements to the build system and the CI.
+
+### Changes
+
+- feat(ci): add prebuilt modulo image akin to other internal ones (#36)
+- Add and install component descriptions (#31)
+- Apply AICA C++ style guide (#30)
+- Add option to publish outputs manually instead of periodically (#23)
+- Add unittests for modulo component service calls and triggers (#20)
+- Extend testutils with C++ classes (#19)
 
 ## 2.2.0
 

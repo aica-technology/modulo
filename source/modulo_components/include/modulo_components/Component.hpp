@@ -58,11 +58,12 @@ protected:
    * @param data Data to transmit on the output signal
    * @param default_topic If set, the default value for the topic name to use
    * @param fixed_topic If true, the topic name of the output signal is fixed
+   * @param publish_on_step If true, the output is published periodically on step
    */
   template<typename DataT>
   void add_output(
       const std::string& signal_name, const std::shared_ptr<DataT>& data, const std::string& default_topic = "",
-      bool fixed_topic = false
+      bool fixed_topic = false, bool publish_on_step = true
   );
 
 private:
@@ -93,11 +94,11 @@ private:
 template<typename DataT>
 inline void Component::add_output(
     const std::string& signal_name, const std::shared_ptr<DataT>& data, const std::string& default_topic,
-    bool fixed_topic
+    bool fixed_topic, bool publish_on_step
 ) {
   using namespace modulo_core::communication;
   try {
-    auto parsed_signal_name = this->create_output(signal_name, data, default_topic, fixed_topic);
+    auto parsed_signal_name = this->create_output(signal_name, data, default_topic, fixed_topic, publish_on_step);
     auto topic_name = this->get_parameter_value<std::string>(parsed_signal_name + "_topic");
     RCLCPP_DEBUG_STREAM(this->get_logger(),
                         "Adding output '" << parsed_signal_name << "' with topic name '" << topic_name << "'.");
@@ -107,49 +108,43 @@ inline void Component::add_output(
         auto publisher = this->create_publisher<std_msgs::msg::Bool>(topic_name, this->qos_);
         this->outputs_.at(parsed_signal_name) =
             std::make_shared<PublisherHandler<rclcpp::Publisher<std_msgs::msg::Bool>, std_msgs::msg::Bool>>(
-                PublisherType::PUBLISHER, publisher
-            )->create_publisher_interface(message_pair);
+                PublisherType::PUBLISHER, publisher)->create_publisher_interface(message_pair);
         break;
       }
       case MessageType::FLOAT64: {
         auto publisher = this->create_publisher<std_msgs::msg::Float64>(topic_name, this->qos_);
         this->outputs_.at(parsed_signal_name) =
             std::make_shared<PublisherHandler<rclcpp::Publisher<std_msgs::msg::Float64>, std_msgs::msg::Float64>>(
-                PublisherType::PUBLISHER, publisher
-            )->create_publisher_interface(message_pair);
+                PublisherType::PUBLISHER, publisher)->create_publisher_interface(message_pair);
         break;
       }
       case MessageType::FLOAT64_MULTI_ARRAY: {
         auto publisher = this->create_publisher<std_msgs::msg::Float64MultiArray>(topic_name, this->qos_);
-        this->outputs_.at(parsed_signal_name) =
-            std::make_shared<PublisherHandler<rclcpp::Publisher<std_msgs::msg::Float64MultiArray>,
-                                              std_msgs::msg::Float64MultiArray>>(
-                PublisherType::PUBLISHER, publisher
-            )->create_publisher_interface(message_pair);
+        this->outputs_.at(parsed_signal_name) = std::make_shared<
+            PublisherHandler<
+                rclcpp::Publisher<std_msgs::msg::Float64MultiArray>, std_msgs::msg::Float64MultiArray>>(
+            PublisherType::PUBLISHER, publisher)->create_publisher_interface(message_pair);
         break;
       }
       case MessageType::INT32: {
         auto publisher = this->create_publisher<std_msgs::msg::Int32>(topic_name, this->qos_);
         this->outputs_.at(parsed_signal_name) =
             std::make_shared<PublisherHandler<rclcpp::Publisher<std_msgs::msg::Int32>, std_msgs::msg::Int32>>(
-                PublisherType::PUBLISHER, publisher
-            )->create_publisher_interface(message_pair);
+                PublisherType::PUBLISHER, publisher)->create_publisher_interface(message_pair);
         break;
       }
       case MessageType::STRING: {
         auto publisher = this->create_publisher<std_msgs::msg::String>(topic_name, this->qos_);
         this->outputs_.at(parsed_signal_name) =
             std::make_shared<PublisherHandler<rclcpp::Publisher<std_msgs::msg::String>, std_msgs::msg::String>>(
-                PublisherType::PUBLISHER, publisher
-            )->create_publisher_interface(message_pair);
+                PublisherType::PUBLISHER, publisher)->create_publisher_interface(message_pair);
         break;
       }
       case MessageType::ENCODED_STATE: {
         auto publisher = this->create_publisher<modulo_core::EncodedState>(topic_name, this->qos_);
         this->outputs_.at(parsed_signal_name) =
             std::make_shared<PublisherHandler<rclcpp::Publisher<modulo_core::EncodedState>, modulo_core::EncodedState>>(
-                PublisherType::PUBLISHER, publisher
-            )->create_publisher_interface(message_pair);
+                PublisherType::PUBLISHER, publisher)->create_publisher_interface(message_pair);
         break;
       }
     }

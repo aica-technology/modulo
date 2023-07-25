@@ -102,8 +102,7 @@ inline std::shared_ptr<MessagePair<MsgT, DataT>> MessagePairInterface::get_messa
   }
   if (message_pair_ptr == nullptr && validate_pointer) {
     throw exceptions::InvalidPointerCastException(
-        "Unable to cast message pair interface to a message pair pointer of requested type"
-    );
+        "Unable to cast message pair interface to a message pair pointer of requested type");
   }
   return message_pair_ptr;
 }

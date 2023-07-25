@@ -17,8 +17,7 @@ public:
       Node("minimal_publisher") {
     auto publisher = this->create_publisher<MsgT>(topic_name, 10);
     this->publisher_interface_ = std::make_shared<PublisherHandler<rclcpp::Publisher<MsgT>, MsgT>>(
-        PublisherType::PUBLISHER, publisher
-    )->create_publisher_interface(message_pair);
+        PublisherType::PUBLISHER, publisher)->create_publisher_interface(message_pair);
     timer_ = this->create_wall_timer(10ms, [this]() { this->publisher_interface_->publish(); });
   }
 

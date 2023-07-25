@@ -66,8 +66,7 @@ TEST_F(PublisherTest, EncodedState) {
   auto publisher = node->create_publisher<modulo_core::EncodedState>("topic", 10);
   auto publisher_handler =
       std::make_shared<PublisherHandler<rclcpp::Publisher<modulo_core::EncodedState>, modulo_core::EncodedState>>(
-          PublisherType::PUBLISHER, publisher
-      );
+          PublisherType::PUBLISHER, publisher);
 
   // use in publisher interface
   std::shared_ptr<PublisherInterface> publisher_interface(publisher_handler);

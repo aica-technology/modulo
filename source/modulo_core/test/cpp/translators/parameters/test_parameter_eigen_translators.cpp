@@ -34,9 +34,8 @@ TEST(ParameterEigenTranslationTest, EigenVector) {
   EXPECT_EQ(new_vec, vec);
 }
 
-
 TEST(ParameterEigenTranslationTest, EigenMatrix) {
-  Eigen::MatrixXd mat = Eigen::MatrixXd::Random(3,4);
+  Eigen::MatrixXd mat = Eigen::MatrixXd::Random(3, 4);
   auto param = state_representation::make_shared_parameter("matrix", mat);
 
   // writing the eigen parameter converts it to a double array

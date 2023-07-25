@@ -42,8 +42,7 @@ protected:
     this->add_nodes<MsgT>("/test_topic", pub_message, sub_message);
 
     this->exec_->template spin_until_future_complete(
-        std::dynamic_pointer_cast<MinimalSubscriber<MsgT>>(this->sub_node_)->received_future, 500ms
-    );
+        std::dynamic_pointer_cast<MinimalSubscriber<MsgT>>(this->sub_node_)->received_future, 500ms);
 
     EXPECT_EQ(*pub_data, *sub_data);
     this->clear_nodes();
