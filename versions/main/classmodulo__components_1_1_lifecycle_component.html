@@ -21,7 +21,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Modulo<span id="projectnumber">&#160;2.2.0</span>
+   <div id="projectname">Modulo<span id="projectnumber">&#160;2.3.0</span>
    </div>
   </td>
  </tr>
@@ -137,10 +137,10 @@ Protected Member Functions</h2></td></tr>
 <tr class="memitem:a97b12c65867fd38310c86974722af49a"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmodulo__components_1_1_lifecycle_component.html#a97b12c65867fd38310c86974722af49a">on_step_callback</a> ()</td></tr>
 <tr class="memdesc:a97b12c65867fd38310c86974722af49a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Steps to execute periodically. To be redefined by derived <a class="el" href="classmodulo__components_1_1_component.html" title="A wrapper for rclcpp::Node to simplify application composition through unified component interfaces.">Component</a> classes.  <a href="classmodulo__components_1_1_lifecycle_component.html#a97b12c65867fd38310c86974722af49a">More...</a><br /></td></tr>
 <tr class="separator:a97b12c65867fd38310c86974722af49a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a50e9f3b88e4865743648b89dfdc621ee"><td class="memTemplParams" colspan="2">template&lt;typename DataT &gt; </td></tr>
-<tr class="memitem:a50e9f3b88e4865743648b89dfdc621ee"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmodulo__components_1_1_lifecycle_component.html#a50e9f3b88e4865743648b89dfdc621ee">add_output</a> (const std::string &amp;signal_name, const std::shared_ptr&lt; DataT &gt; &amp;data, const std::string &amp;default_topic=&quot;&quot;, bool fixed_topic=false)</td></tr>
-<tr class="memdesc:a50e9f3b88e4865743648b89dfdc621ee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add an output signal of the component.  <a href="classmodulo__components_1_1_lifecycle_component.html#a50e9f3b88e4865743648b89dfdc621ee">More...</a><br /></td></tr>
-<tr class="separator:a50e9f3b88e4865743648b89dfdc621ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a22d31bd5f8a713b0ce757bea8622cbf3"><td class="memTemplParams" colspan="2">template&lt;typename DataT &gt; </td></tr>
+<tr class="memitem:a22d31bd5f8a713b0ce757bea8622cbf3"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmodulo__components_1_1_lifecycle_component.html#a22d31bd5f8a713b0ce757bea8622cbf3">add_output</a> (const std::string &amp;signal_name, const std::shared_ptr&lt; DataT &gt; &amp;data, const std::string &amp;default_topic=&quot;&quot;, bool fixed_topic=false, bool publish_on_step=true)</td></tr>
+<tr class="memdesc:a22d31bd5f8a713b0ce757bea8622cbf3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add an output signal of the component.  <a href="classmodulo__components_1_1_lifecycle_component.html#a22d31bd5f8a713b0ce757bea8622cbf3">More...</a><br /></td></tr>
+<tr class="separator:a22d31bd5f8a713b0ce757bea8622cbf3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_methods_classmodulo__components_1_1_component_interface"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_classmodulo__components_1_1_component_interface')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="classmodulo__components_1_1_component_interface.html">modulo_components::ComponentInterface&lt; rclcpp_lifecycle::LifecycleNode &gt;</a></td></tr>
 <tr class="memitem:a21de4a30b2a51e66574600c9b04f27cb inherit pro_methods_classmodulo__components_1_1_component_interface"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmodulo__components_1_1_component_interface.html#a21de4a30b2a51e66574600c9b04f27cb">step</a> ()</td></tr>
 <tr class="memdesc:a21de4a30b2a51e66574600c9b04f27cb inherit pro_methods_classmodulo__components_1_1_component_interface"><td class="mdescLeft">&#160;</td><td class="mdescRight">Step function that is called periodically.  <a href="classmodulo__components_1_1_component_interface.html#a21de4a30b2a51e66574600c9b04f27cb">More...</a><br /></td></tr>
@@ -223,15 +223,18 @@ Protected Member Functions</h2></td></tr>
 <tr class="memitem:abcc9679e8c32c9b702d00bf30d1c46cf inherit pro_methods_classmodulo__components_1_1_component_interface"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmodulo__components_1_1_component_interface.html#abcc9679e8c32c9b702d00bf30d1c46cf">add_tf_listener</a> ()</td></tr>
 <tr class="memdesc:abcc9679e8c32c9b702d00bf30d1c46cf inherit pro_methods_classmodulo__components_1_1_component_interface"><td class="mdescLeft">&#160;</td><td class="mdescRight">Configure a transform buffer and listener.  <a href="classmodulo__components_1_1_component_interface.html#abcc9679e8c32c9b702d00bf30d1c46cf">More...</a><br /></td></tr>
 <tr class="separator:abcc9679e8c32c9b702d00bf30d1c46cf inherit pro_methods_classmodulo__components_1_1_component_interface"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8c41afaf38f405fd56be2292e6171e49 inherit pro_methods_classmodulo__components_1_1_component_interface"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmodulo__components_1_1_component_interface.html#a8c41afaf38f405fd56be2292e6171e49">create_output</a> (const std::string &amp;signal_name, const std::shared_ptr&lt; DataT &gt; &amp;data, const std::string &amp;default_topic, bool fixed_topic)</td></tr>
-<tr class="memdesc:a8c41afaf38f405fd56be2292e6171e49 inherit pro_methods_classmodulo__components_1_1_component_interface"><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper function to parse the signal name and add an unconfigured PublisherInterface to the map of outputs.  <a href="classmodulo__components_1_1_component_interface.html#a8c41afaf38f405fd56be2292e6171e49">More...</a><br /></td></tr>
-<tr class="separator:a8c41afaf38f405fd56be2292e6171e49 inherit pro_methods_classmodulo__components_1_1_component_interface"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0f14ec870d465c291575c013bb1cedd4 inherit pro_methods_classmodulo__components_1_1_component_interface"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmodulo__components_1_1_component_interface.html#a0f14ec870d465c291575c013bb1cedd4">create_output</a> (const std::string &amp;signal_name, const std::shared_ptr&lt; DataT &gt; &amp;data, const std::string &amp;default_topic, bool fixed_topic, bool publish_on_step)</td></tr>
+<tr class="memdesc:a0f14ec870d465c291575c013bb1cedd4 inherit pro_methods_classmodulo__components_1_1_component_interface"><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper function to parse the signal name and add an unconfigured PublisherInterface to the map of outputs.  <a href="classmodulo__components_1_1_component_interface.html#a0f14ec870d465c291575c013bb1cedd4">More...</a><br /></td></tr>
+<tr class="separator:a0f14ec870d465c291575c013bb1cedd4 inherit pro_methods_classmodulo__components_1_1_component_interface"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a857308be739a6f5222c875792973ddd0 inherit pro_methods_classmodulo__components_1_1_component_interface"><td class="memItemLeft" align="right" valign="top">rclcpp::QoS&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmodulo__components_1_1_component_interface.html#a857308be739a6f5222c875792973ddd0">get_qos</a> () const</td></tr>
 <tr class="memdesc:a857308be739a6f5222c875792973ddd0 inherit pro_methods_classmodulo__components_1_1_component_interface"><td class="mdescLeft">&#160;</td><td class="mdescRight">Getter of the Quality of Service attribute.  <a href="classmodulo__components_1_1_component_interface.html#a857308be739a6f5222c875792973ddd0">More...</a><br /></td></tr>
 <tr class="separator:a857308be739a6f5222c875792973ddd0 inherit pro_methods_classmodulo__components_1_1_component_interface"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af186b997fea0fec1604b777b7b74a77d inherit pro_methods_classmodulo__components_1_1_component_interface"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmodulo__components_1_1_component_interface.html#af186b997fea0fec1604b777b7b74a77d">set_qos</a> (const rclcpp::QoS &amp;qos)</td></tr>
 <tr class="memdesc:af186b997fea0fec1604b777b7b74a77d inherit pro_methods_classmodulo__components_1_1_component_interface"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the Quality of Service for ROS publishers and subscribers.  <a href="classmodulo__components_1_1_component_interface.html#af186b997fea0fec1604b777b7b74a77d">More...</a><br /></td></tr>
 <tr class="separator:af186b997fea0fec1604b777b7b74a77d inherit pro_methods_classmodulo__components_1_1_component_interface"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a76988b2516adf6b44f823c4bb394a153 inherit pro_methods_classmodulo__components_1_1_component_interface"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmodulo__components_1_1_component_interface.html#a76988b2516adf6b44f823c4bb394a153">publish_output</a> (const std::string &amp;signal_name)</td></tr>
+<tr class="memdesc:a76988b2516adf6b44f823c4bb394a153 inherit pro_methods_classmodulo__components_1_1_component_interface"><td class="mdescLeft">&#160;</td><td class="mdescRight">Trigger the publishing of an output.  <a href="classmodulo__components_1_1_component_interface.html#a76988b2516adf6b44f823c4bb394a153">More...</a><br /></td></tr>
+<tr class="separator:a76988b2516adf6b44f823c4bb394a153 inherit pro_methods_classmodulo__components_1_1_component_interface"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9365d3bcde8e5abf243606a7f532678d inherit pro_methods_classmodulo__components_1_1_component_interface"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmodulo__components_1_1_component_interface.html#a9365d3bcde8e5abf243606a7f532678d">send_transform</a> (const state_representation::CartesianPose &amp;transform)</td></tr>
 <tr class="memdesc:a9365d3bcde8e5abf243606a7f532678d inherit pro_methods_classmodulo__components_1_1_component_interface"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send a transform to TF.  <a href="classmodulo__components_1_1_component_interface.html#a9365d3bcde8e5abf243606a7f532678d">More...</a><br /></td></tr>
 <tr class="separator:a9365d3bcde8e5abf243606a7f532678d inherit pro_methods_classmodulo__components_1_1_component_interface"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -283,6 +286,9 @@ Additional Inherited Members</h2></td></tr>
 <tr class="memitem:a83c398521d2e7bab7f1da18f2bf074a4 inherit pro_attribs_classmodulo__components_1_1_component_interface"><td class="memItemLeft" align="right" valign="top">std::map&lt; std::string, std::shared_ptr&lt; <a class="el" href="classmodulo__core_1_1communication_1_1_publisher_interface.html">modulo_core::communication::PublisherInterface</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmodulo__components_1_1_component_interface.html#a83c398521d2e7bab7f1da18f2bf074a4">outputs_</a></td></tr>
 <tr class="memdesc:a83c398521d2e7bab7f1da18f2bf074a4 inherit pro_attribs_classmodulo__components_1_1_component_interface"><td class="mdescLeft">&#160;</td><td class="mdescRight">Map of outputs.  <a href="classmodulo__components_1_1_component_interface.html#a83c398521d2e7bab7f1da18f2bf074a4">More...</a><br /></td></tr>
 <tr class="separator:a83c398521d2e7bab7f1da18f2bf074a4 inherit pro_attribs_classmodulo__components_1_1_component_interface"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac3bf14549864c61871dae269589f3d1e inherit pro_attribs_classmodulo__components_1_1_component_interface"><td class="memItemLeft" align="right" valign="top">std::map&lt; std::string, bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmodulo__components_1_1_component_interface.html#ac3bf14549864c61871dae269589f3d1e">periodic_outputs_</a></td></tr>
+<tr class="memdesc:ac3bf14549864c61871dae269589f3d1e inherit pro_attribs_classmodulo__components_1_1_component_interface"><td class="mdescLeft">&#160;</td><td class="mdescRight">Map of outputs with periodic publishing flag.  <a href="classmodulo__components_1_1_component_interface.html#ac3bf14549864c61871dae269589f3d1e">More...</a><br /></td></tr>
+<tr class="separator:ac3bf14549864c61871dae269589f3d1e inherit pro_attribs_classmodulo__components_1_1_component_interface"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6d4c3baf25cb63597f5e2565d47120cd inherit pro_attribs_classmodulo__components_1_1_component_interface"><td class="memItemLeft" align="right" valign="top">rclcpp::QoS&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmodulo__components_1_1_component_interface.html#a6d4c3baf25cb63597f5e2565d47120cd">qos_</a></td></tr>
 <tr class="memdesc:a6d4c3baf25cb63597f5e2565d47120cd inherit pro_attribs_classmodulo__components_1_1_component_interface"><td class="mdescLeft">&#160;</td><td class="mdescRight">Quality of Service for ROS publishers and subscribers.  <a href="classmodulo__components_1_1_component_interface.html#a6d4c3baf25cb63597f5e2565d47120cd">More...</a><br /></td></tr>
 <tr class="separator:a6d4c3baf25cb63597f5e2565d47120cd inherit pro_attribs_classmodulo__components_1_1_component_interface"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -350,8 +356,8 @@ Additional Inherited Members</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a50e9f3b88e4865743648b89dfdc621ee" name="a50e9f3b88e4865743648b89dfdc621ee"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a50e9f3b88e4865743648b89dfdc621ee">&#9670;&#160;</a></span>add_output()</h2>
+<a id="a22d31bd5f8a713b0ce757bea8622cbf3" name="a22d31bd5f8a713b0ce757bea8622cbf3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a22d31bd5f8a713b0ce757bea8622cbf3">&#9670;&#160;</a></span>add_output()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -383,7 +389,13 @@ template&lt;typename DataT &gt; </div>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>fixed_topic</em> = <code>false</code>&#160;</td>
+          <td class="paramname"><em>fixed_topic</em> = <code>false</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>publish_on_step</em> = <code>true</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -411,11 +423,12 @@ template&lt;typename DataT &gt; </div>
     <tr><td class="paramname">data</td><td>Data to transmit on the output signal </td></tr>
     <tr><td class="paramname">default_topic</td><td>If set, the default value for the topic name to use </td></tr>
     <tr><td class="paramname">fixed_topic</td><td>If true, the topic name of the output signal is fixed </td></tr>
+    <tr><td class="paramname">publish_on_step</td><td>If true, the output is published periodically on step </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_lifecycle_component_8hpp_source.html#l00276">276</a> of file <a class="el" href="_lifecycle_component_8hpp_source.html">LifecycleComponent.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_lifecycle_component_8hpp_source.html#l00277">277</a> of file <a class="el" href="_lifecycle_component_8hpp_source.html">LifecycleComponent.hpp</a>.</p>
 
 </div>
 </div>
@@ -445,7 +458,7 @@ template&lt;typename DataT &gt; </div>
 <p>Steps to execute when activating the component. </p>
 <p >This method can be overridden by derived <a class="el" href="classmodulo__components_1_1_component.html" title="A wrapper for rclcpp::Node to simplify application composition through unified component interfaces.">Component</a> classes. Activation generally involves final setup steps before the on_step callback is periodically evaluated. </p><dl class="section return"><dt>Returns</dt><dd>True if activation is successful, false otherwise </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_lifecycle_component_8cpp_source.html#l00128">128</a> of file <a class="el" href="_lifecycle_component_8cpp_source.html">LifecycleComponent.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_lifecycle_component_8cpp_source.html#l00123">123</a> of file <a class="el" href="_lifecycle_component_8cpp_source.html">LifecycleComponent.cpp</a>.</p>
 
 </div>
 </div>
@@ -475,7 +488,7 @@ template&lt;typename DataT &gt; </div>
 <p>Steps to execute when cleaning up the component. </p>
 <p >This method can be overridden by derived <a class="el" href="classmodulo__components_1_1_component.html" title="A wrapper for rclcpp::Node to simplify application composition through unified component interfaces.">Component</a> classes. Cleanup generally involves resetting the properties and states to initial conditions. </p><dl class="section return"><dt>Returns</dt><dd>True if cleanup is successful, false otherwise </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_lifecycle_component_8cpp_source.html#l00098">98</a> of file <a class="el" href="_lifecycle_component_8cpp_source.html">LifecycleComponent.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_lifecycle_component_8cpp_source.html#l00093">93</a> of file <a class="el" href="_lifecycle_component_8cpp_source.html">LifecycleComponent.cpp</a>.</p>
 
 </div>
 </div>
@@ -505,7 +518,7 @@ template&lt;typename DataT &gt; </div>
 <p>Steps to execute when configuring the component. </p>
 <p >This method can be overridden by derived <a class="el" href="classmodulo__components_1_1_component.html" title="A wrapper for rclcpp::Node to simplify application composition through unified component interfaces.">Component</a> classes. Configuration generally involves reading parameters and adding inputs and outputs. </p><dl class="section return"><dt>Returns</dt><dd>True if configuration is successful, false otherwise </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_lifecycle_component_8cpp_source.html#l00076">76</a> of file <a class="el" href="_lifecycle_component_8cpp_source.html">LifecycleComponent.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_lifecycle_component_8cpp_source.html#l00071">71</a> of file <a class="el" href="_lifecycle_component_8cpp_source.html">LifecycleComponent.cpp</a>.</p>
 
 </div>
 </div>
@@ -535,7 +548,7 @@ template&lt;typename DataT &gt; </div>
 <p>Steps to execute when deactivating the component. </p>
 <p >This method can be overridden by derived <a class="el" href="classmodulo__components_1_1_component.html" title="A wrapper for rclcpp::Node to simplify application composition through unified component interfaces.">Component</a> classes. Deactivation generally involves any steps to reset the component to an inactive state. </p><dl class="section return"><dt>Returns</dt><dd>True if deactivation is successful, false otherwise </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_lifecycle_component_8cpp_source.html#l00151">151</a> of file <a class="el" href="_lifecycle_component_8cpp_source.html">LifecycleComponent.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_lifecycle_component_8cpp_source.html#l00146">146</a> of file <a class="el" href="_lifecycle_component_8cpp_source.html">LifecycleComponent.cpp</a>.</p>
 
 </div>
 </div>
@@ -565,7 +578,7 @@ template&lt;typename DataT &gt; </div>
 <p>Steps to execute when handling errors. </p>
 <p >This method can be overridden by derived <a class="el" href="classmodulo__components_1_1_component.html" title="A wrapper for rclcpp::Node to simplify application composition through unified component interfaces.">Component</a> classes. Error handling generally involves recovering and resetting the component to an unconfigured state. </p><dl class="section return"><dt>Returns</dt><dd>True if error handling is successful, false otherwise </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_lifecycle_component_8cpp_source.html#l00224">224</a> of file <a class="el" href="_lifecycle_component_8cpp_source.html">LifecycleComponent.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_lifecycle_component_8cpp_source.html#l00219">219</a> of file <a class="el" href="_lifecycle_component_8cpp_source.html">LifecycleComponent.cpp</a>.</p>
 
 </div>
 </div>
@@ -595,7 +608,7 @@ template&lt;typename DataT &gt; </div>
 <p>Steps to execute when shutting down the component. </p>
 <p >This method can be overridden by derived <a class="el" href="classmodulo__components_1_1_component.html" title="A wrapper for rclcpp::Node to simplify application composition through unified component interfaces.">Component</a> classes. Shutdown generally involves the destruction of any threads or properties not handled by the base class. </p><dl class="section return"><dt>Returns</dt><dd>True if shutdown is successful, false otherwise </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_lifecycle_component_8cpp_source.html#l00196">196</a> of file <a class="el" href="_lifecycle_component_8cpp_source.html">LifecycleComponent.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_lifecycle_component_8cpp_source.html#l00191">191</a> of file <a class="el" href="_lifecycle_component_8cpp_source.html">LifecycleComponent.cpp</a>.</p>
 
 </div>
 </div>
@@ -624,7 +637,7 @@ template&lt;typename DataT &gt; </div>
 
 <p>Steps to execute periodically. To be redefined by derived <a class="el" href="classmodulo__components_1_1_component.html" title="A wrapper for rclcpp::Node to simplify application composition through unified component interfaces.">Component</a> classes. </p>
 
-<p class="definition">Definition at line <a class="el" href="_lifecycle_component_8hpp_source.html#l00273">273</a> of file <a class="el" href="_lifecycle_component_8hpp_source.html">LifecycleComponent.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_lifecycle_component_8hpp_source.html#l00274">274</a> of file <a class="el" href="_lifecycle_component_8hpp_source.html">LifecycleComponent.hpp</a>.</p>
 
 </div>
 </div>
