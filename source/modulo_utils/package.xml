@@ -2,7 +2,7 @@
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>modulo_utils</name>
-  <version>2.3.0</version>
+  <version>3.0.0</version>
   <description>Modulo utils package for shared test fixtures</description>
   <maintainer email="dominic@aica.tech">Dominic Reber</maintainer>
   <license>GPLv3</license>
@@ -12,8 +12,9 @@
 
   <depend>rclcpp</depend>
   <depend>rclpy</depend>
-  <depend>std_msgs</depend>
   <depend>std_srvs</depend>
+
+  <depend>modulo_component_interfaces</depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>

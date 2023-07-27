@@ -64,8 +64,8 @@ TEST_F(ComponentCommunicationTest, InputOutputManual) {
 
 TEST_F(ComponentCommunicationTest, Trigger) {
   auto trigger = std::make_shared<Trigger>(rclcpp::NodeOptions());
-  auto listener = std::make_shared<modulo_utils::testutils::PredicatesListener>(
-      rclcpp::NodeOptions(), "trigger", std::vector<std::string>{"test"});
+  auto listener =
+      std::make_shared<modulo_utils::testutils::PredicatesListener>("/trigger", std::vector<std::string>{"test"});
   this->exec_->add_node(listener);
   this->exec_->add_node(trigger);
   auto result_code = this->exec_->spin_until_future_complete(listener->get_predicate_future(), 500ms);

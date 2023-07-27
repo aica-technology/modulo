@@ -8,10 +8,11 @@ import modulo_core.translators.message_readers as modulo_readers
 import modulo_core.translators.message_writers as modulo_writers
 import state_representation as sr
 from geometry_msgs.msg import TransformStamped
+from modulo_component_interfaces.msg import Predicate
 from modulo_component_interfaces.srv import EmptyTrigger, StringTrigger
 from modulo_components.exceptions import AddServiceError, AddSignalError, ComponentError, ComponentParameterError, \
     LookupTransformError
-from modulo_components.utilities import generate_predicate_topic, parse_topic_name
+from modulo_components.utilities import parse_topic_name
 from modulo_core import EncodedState
 from modulo_core.exceptions import MessageTranslationError, ParameterTranslationError
 from modulo_core.translators.parameter_translators import get_ros_parameter_type, read_parameter_const, write_parameter
@@ -19,7 +20,6 @@ from rcl_interfaces.msg import ParameterDescriptor, SetParametersResult
 from rclpy.duration import Duration
 from rclpy.node import Node
 from rclpy.parameter import Parameter
-from rclpy.publisher import Publisher
 from rclpy.qos import QoSProfile
 from rclpy.service import Service
 from rclpy.time import Time
@@ -45,7 +45,6 @@ class ComponentInterface(Node):
         super().__init__(node_name, *args, **node_kwargs)
         self._parameter_dict: Dict[str, Union[str, sr.Parameter]] = {}
         self._predicates: Dict[str, Union[bool, Callable[[], bool]]] = {}
-        self._predicate_publishers: Dict[str, Publisher] = {}
         self._triggers: Dict[str, bool] = {}
         self._periodic_callbacks: Dict[str, Callable[[], None]] = {}
         self._inputs = {}
@@ -63,6 +62,7 @@ class ComponentInterface(Node):
         self.add_parameter(sr.Parameter("period", 0.1, sr.ParameterType.DOUBLE),
                            "Period (in s) between step function calls.")
 
+        self._predicate_publisher = self.create_publisher(Predicate, "/predicates", self._qos)
         self.add_predicate("in_error_state", False)
 
         self.create_timer(self.get_parameter_value("period"), self._step)
@@ -251,9 +251,6 @@ class ComponentInterface(Node):
             self.get_logger().warn(f"Predicate with name '{name}' already exists, overwriting.")
         else:
             self.get_logger().debug(f"Adding predicate '{name}'.")
-            self._predicate_publishers[name] = self.create_publisher(Bool,
-                                                                     generate_predicate_topic(self.get_name(), name),
-                                                                     10)
         self._predicates[name] = value
 
     def get_predicate(self, name: str) -> bool:
@@ -707,18 +704,17 @@ class ComponentInterface(Node):
 
         :param name: The name of the predicate to publish
         """
-        message = Bool()
+        message = Predicate()
         value = self.get_predicate(name)
         try:
-            message.data = value
+            message.value = value
         except AssertionError:
             self.get_logger().error(f"Predicate '{name}' has invalid type: expected 'bool', got '{type(value)}'.",
                                     throttle_duration_sec=1.0)
             return
-        if name not in self._predicate_publishers.keys():
-            self.get_logger().error(f"No publisher for predicate '{name}' found.", throttle_duration_sec=1.0)
-            return
-        self._predicate_publishers[name].publish(message)
+        message.component = self.get_fully_qualified_name()
+        message.predicate = name
+        self._predicate_publisher.publish(message)
 
     def _publish_predicates(self):
         """

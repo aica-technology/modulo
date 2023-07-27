@@ -68,8 +68,8 @@ TEST_F(LifecycleComponentCommunicationTest, InputOutputManual) {
 
 TEST_F(LifecycleComponentCommunicationTest, Trigger) {
   auto trigger = std::make_shared<LifecycleTrigger>(rclcpp::NodeOptions());
-  auto listener = std::make_shared<modulo_utils::testutils::PredicatesListener>(
-      rclcpp::NodeOptions(), "trigger", std::vector<std::string>{"test"});
+  auto listener =
+      std::make_shared<modulo_utils::testutils::PredicatesListener>("/trigger", std::vector<std::string>{"test"});
   this->exec_->add_node(trigger->get_node_base_interface());
   trigger->configure();
   this->exec_->add_node(listener);

@@ -32,6 +32,10 @@ See the package documentation for more information.
 
 This package defines custom standard interfaces for modulo components.
 
+## Modulo Utils
+
+This package contains shared test fixtures.
+
 ---
 
 ## Additional resources

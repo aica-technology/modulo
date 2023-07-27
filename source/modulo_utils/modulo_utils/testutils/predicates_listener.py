@@ -1,30 +1,28 @@
-from functools import partial
 from typing import List
 
 import pytest
 from rclpy import Future
 from rclpy.node import Node
-from std_msgs.msg import Bool
+
+from modulo_component_interfaces.msg import Predicate
 
 
 class PredicatesListener(Node):
-    def __init__(self, namespace: str, predicates: List[str]):
+    def __init__(self, component: str, predicates: List[str]):
         """
         Listener node subscribing to predicate topics and setting its Future to done once at least one of the predicates
         is True
 
-        :param namespace: Namespace of the publishing component (usually '<component_name>')
+        :param component: Name of the publishing component
         :param predicates: A list of predicates to subscribe to
         """
         super().__init__('predicates_listener')
         self.__future = Future()
+        self.__component = component
         self.__predicates = {}
-        self.__subscriptions = {}
         for predicate in predicates:
             self.__predicates[predicate] = None
-            self.__subscriptions[predicate] = self.create_subscription(Bool, f'/predicates/{namespace}/{predicate}',
-                                                                       partial(self.__callback,
-                                                                               predicate_name=predicate), 10)
+        self.__subscription = self.create_subscription(Predicate, "/predicates", self.__callback, 10)
 
     @property
     def predicates_future(self) -> Future:
@@ -40,10 +38,13 @@ class PredicatesListener(Node):
         """
         return self.__predicates
 
-    def __callback(self, msg, predicate_name):
-        self.__predicates[predicate_name] = msg.data
-        if msg.data:
-            self.__future.set_result(True)
+    def __callback(self, message):
+        if message.component == self.__component:
+            for predicate in self.__predicates.keys():
+                if message.predicate == predicate:
+                    self.__predicates[predicate] = message.value
+                    if message.value:
+                        self.__future.set_result(True)
 
 
 @pytest.fixture
@@ -51,11 +52,11 @@ def make_predicates_listener():
     """
     Create a listener node subscribing to predicate topics and setting its Future to done once at least one of the
     predicates is True. Provide\n
-    namespace (str): Namespace of the publishing component (usually '<component_name>')\n
+    component (str): Name of the publishing component\n
     predicates (List[str]): A list of predicates to subscribe to
     """
 
-    def _make_predicates_listener(namespace: str, predicates: List[str]):
-        return PredicatesListener(namespace, predicates)
+    def _make_predicates_listener(component: str, predicates: List[str]):
+        return PredicatesListener(component, predicates)
 
     return _make_predicates_listener
