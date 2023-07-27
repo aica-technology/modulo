@@ -13,7 +13,7 @@ Release Versions:
 ### July 26, 2023
 
 Version 3.0.0 is a major update to modulo with a breaking change in the way predicates are handled. Instead of
-individual topic per predicate, predicates are now published to a global predicates topic.
+individual topics per predicate, predicates are now published to a global `/predicates` topic.
 
 ### Breaking changes
 
