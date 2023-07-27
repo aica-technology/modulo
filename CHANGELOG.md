@@ -2,12 +2,20 @@
 
 Release Versions:
 
+- [3.0.0](#300)
 - [2.3.0](#230)
 - [2.2.0](#220)
 - [2.1.1](#211)
 - [2.1.0](#210)
 
-## Upcoming changes (in development)
+## 3.0.0
+
+### July 26, 2023
+
+Version 3.0.0 is a major update to modulo with a breaking change in the way predicates are handled. Instead of
+individual topics per predicate, predicates are now published to a global `/predicates` topic.
+
+### Breaking changes
 
 - Refactor component predicates with a single Predicate publisher (#26)
 
