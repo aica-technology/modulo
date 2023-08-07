@@ -31,7 +31,7 @@ RUN --mount=type=cache,target=./build,id=${TARGETPLATFORM},uid=1000 \
 
 FROM build as test
 ARG TARGETPLATFORM
-RUN --mount=type=cache,target=./build,id=${TARGETPLATFORM},uid=1000 colcon test
+RUN --mount=type=cache,target=./build,id=${TARGETPLATFORM},uid=1000 colcon test && colcon test-result --verbose
 
 FROM scratch as production
 COPY --from=build /home/ros2/ws/install /colcon
