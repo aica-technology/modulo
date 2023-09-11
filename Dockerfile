@@ -18,11 +18,28 @@ COPY --from=cl / /
 # install sources
 COPY --chown=${USER}:${USER} ./source ${WORKSPACE}/src
 
-FROM base as development
+FROM base as utils-development
+ARG TARGETPLATFORM
+ARG CACHEID
+RUN --mount=type=cache,target=./build,id=${TARGETPLATFORM}-${CACHEID},uid=1000 \
+  colcon build --packages-select modulo_component_interfaces
+
+FROM utils-development as core-development
+ARG TARGETPLATFORM
+ARG CACHEID
+RUN --mount=type=cache,target=./build,id=${TARGETPLATFORM}-${CACHEID},uid=1000 \
+  colcon build --packages-select modulo_utils
+
+FROM core-development as development
+ARG TARGETPLATFORM
+ARG CACHEID
+RUN --mount=type=cache,target=./build,id=${TARGETPLATFORM}-${CACHEID},uid=1000 \
+  colcon build --packages-select modulo_core
 
 FROM base as build
 ARG TARGETPLATFORM
-RUN --mount=type=cache,target=./build,id=${TARGETPLATFORM},uid=1000 \
+ARG CACHEID
+RUN --mount=type=cache,target=./build,id=${TARGETPLATFORM}-${CACHEID},uid=1000 \
   sudo apt-get update && rosdep update \
   && rosdep install --from-paths src --ignore-src -r -y \
   --skip-keys "ros2_control ros2_controllers controller_interface hardware_interface controller_manager" \
@@ -31,7 +48,9 @@ RUN --mount=type=cache,target=./build,id=${TARGETPLATFORM},uid=1000 \
 
 FROM build as test
 ARG TARGETPLATFORM
-RUN --mount=type=cache,target=./build,id=${TARGETPLATFORM},uid=1000 colcon test && colcon test-result --verbose
+ARG CACHEID
+RUN --mount=type=cache,target=./build,id=${TARGETPLATFORM}-${CACHEID},uid=1000 \
+  colcon test && colcon test-result --verbose
 
 FROM scratch as production
 COPY --from=build /home/ros2/ws/install /colcon
