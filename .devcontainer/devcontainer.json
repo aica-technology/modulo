@@ -2,8 +2,8 @@
   "name": "modulo",
   "privileged": true,
   "remoteUser": "ros2",
-  "dockerFile": "../Dockerfile",
   "build": {
+    "dockerfile": "../Dockerfile",
     "context": "..",
     "target": "development",
     "args": { "CL_VERSION": "v7.1.1" }
