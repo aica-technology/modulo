@@ -21,7 +21,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Modulo<span id="projectnumber">&#160;3.0.1</span>
+   <div id="projectname">Modulo<span id="projectnumber">&#160;3.0.2</span>
    </div>
   </td>
  </tr>
@@ -73,6 +73,10 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><p >This package defines custom standard interfaces for modulo components.</p>
+<h1>Messages</h1>
+<p >Modulo component classes broadcast predicates to a global channel in a predicate message.</p>
+<h2>Predicate</h2>
+<p >The predicate message contains the component name, the predicate name, and the current value (true or false) of the predicate.</p>
 <h1>Services</h1>
 <p >Modulo component classes provide a simplified method to add services which trigger a pre-defined callback function. Services are either empty (with no request payload) or carry a string request. They return a common <a class="el" href="structmodulo__components_1_1_component_service_response.html" title="Response structure to be returned by component services.">modulo_components::ComponentServiceResponse</a> structure with a success flag and status message.</p>
 <h2>EmptyTrigger</h2>
