@@ -8,7 +8,7 @@ CL_VERSION=v7.1.1
 
 SSH_PORT=4440
 
-HELP_MESSAGE="Usage: build-server.sh [options]
+HELP_MESSAGE="Usage: build.sh [options]
 Options:
   --test                   Target the test layer to run the tests.
 
