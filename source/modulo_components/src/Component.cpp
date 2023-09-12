@@ -12,6 +12,7 @@ Component::Component(const rclcpp::NodeOptions& node_options, const std::string&
 void Component::step() {
   try {
     this->evaluate_periodic_callbacks();
+    this->on_step_callback();
     this->publish_outputs();
     this->publish_predicates();
   } catch (const std::exception& ex) {
