@@ -10,7 +10,6 @@
                 "/home/ros2/ws/src/modulo_core/include",
                 "/home/ros2/ws/src/modulo_components/include"
             ],
-            "defines": [],
             "compilerPath": "/usr/bin/gcc",
             "cStandard": "c17",
             "cppStandard": "gnu++17",
