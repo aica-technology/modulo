@@ -10,6 +10,7 @@ Release Versions:
 
 ## Upcoming changes (in development)
 
+- build: unify dockerfiles and add vs code configuration (#50)
 - Revise test stage to fail on test errors (#48)
 
 ## 3.0.0
