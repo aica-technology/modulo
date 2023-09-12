@@ -307,12 +307,6 @@ class LifecycleComponent(ComponentInterface, LifecycleNodeMixin):
             self.get_logger().error(f"Failed to execute step function: {e}", throttle_duration_sec=1.0)
             # TODO handle error in lifecycle component
 
-    def on_step_callback(self):
-        """
-        Steps to execute periodically. To be redefined by derived classes.
-        """
-        pass
-
     def __configure_outputs(self) -> bool:
         """
         Configure all outputs.

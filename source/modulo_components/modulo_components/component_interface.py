@@ -72,6 +72,12 @@ class ComponentInterface(Node):
         Step function that is called periodically.
         """
         pass
+    
+    def on_step_callback(self):
+        """
+        Steps to execute periodically. To be redefined by derived classes.
+        """
+        pass
 
     def add_parameter(self, parameter: Union[str, sr.Parameter], description: str, read_only=False) -> None:
         """

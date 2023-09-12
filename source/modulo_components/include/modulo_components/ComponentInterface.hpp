@@ -100,6 +100,11 @@ protected:
   virtual void step();
 
   /**
+   * @brief Steps to execute periodically. To be redefined by derived Component classes.
+   */
+  virtual void on_step_callback();
+
+  /**
    * @brief Add a parameter.
    * @details This method stores a pointer reference to an existing Parameter object in the local parameter map and
    * declares the equivalent ROS parameter on the ROS interface.
@@ -608,6 +613,9 @@ ComponentInterface<NodeT>::ComponentInterface(
 
 template<class NodeT>
 inline void ComponentInterface<NodeT>::step() {}
+
+template<class NodeT>
+inline void ComponentInterface<NodeT>::on_step_callback() {}
 
 template<class NodeT>
 template<typename T>
