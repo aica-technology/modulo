@@ -2,7 +2,12 @@
   "name": "modulo",
   "privileged": true,
   "remoteUser": "ros2",
-  "image": "ghcr.io/aica-technology/modulo:development",
+  "dockerFile": "../Dockerfile",
+  "build": {
+    "context": "..",
+    "target": "development",
+    "args": { "CL_VERSION": "v7.1.1" }
+  },
   "workspaceMount": "source=${localWorkspaceFolder},target=/home/ros2/.devcontainer,type=bind,consistency=cached",
   "workspaceFolder": "/home/ros2/.devcontainer",
   "mounts": [

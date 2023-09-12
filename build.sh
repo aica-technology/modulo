@@ -4,21 +4,12 @@ IMAGE_NAME=ghcr.io/aica-technology/modulo
 IMAGE_TAG=latest
 
 ROS2_VERSION=humble
-CL_VERSION=v7.1.0
+CL_VERSION=v7.1.1
 
 SSH_PORT=4440
 
 HELP_MESSAGE="Usage: build-server.sh [options]
 Options:
-  -d|--development         Only target the components development layer to prevent
-                           component sources from being built or tested.
-
-  --core-development       Only target the core development layer to prevent
-                           core sources from being built or tested.
-
-  --utils-development      Only target the utils development layer to prevent
-                           utils sources from being built or tested.
-
   --test                   Target the test layer to run the tests.
 
   -s|--serve               Start the remote development server on port $SSH_PORT.
@@ -36,15 +27,11 @@ Options:
   -h|--help                Show this help message.
 "
 
-DEVELOPMENT_STAGE=""
 TEST=0
 SERVE_REMOTE=0
 BUILD_FLAGS=()
 while [ "$#" -gt 0 ]; do
   case "$1" in
-    -d|--development) DEVELOPMENT_STAGE=development; shift 1;;
-    --core-development) DEVELOPMENT_STAGE=core-development; shift 1;;
-    --utils-development) DEVELOPMENT_STAGE=utils-development; shift 1;;
     --test) BUILD_FLAGS+=(--target=test); TEST=1; IMAGE_TAG=test; shift 1;;
     -s|--serve) BUILD_FLAGS+=(--target build); SERVE_REMOTE=1; IMAGE_TAG=build; shift 1;;
     --cl-version) CL_VERSION=$2; shift 2;;
@@ -56,15 +43,9 @@ while [ "$#" -gt 0 ]; do
   esac
 done
 
-DEVELOPMENT=0
-if ! [ -z "${DEVELOPMENT_STAGE}" ]; then
-  DEVELOPMENT=1
-  BUILD_FLAGS+=(--target="${DEVELOPMENT_STAGE}")
-  IMAGE_TAG="development"
-fi
-if [ "$((DEVELOPMENT + TEST + SERVE_REMOTE))" -gt 1 ]; then
+if [ "$((TEST + SERVE_REMOTE))" -gt 1 ]; then
   echo "Error in command line arguments:" >&2
-  echo "${DEVELOPMENT_STAGE}, --test, and --serve options are mutually exclusive." >&2
+  echo "--test and --serve options are mutually exclusive." >&2
   exit 1
 fi
 
