@@ -21,7 +21,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Modulo<span id="projectnumber">&#160;3.0.2</span>
+   <div id="projectname">Modulo<span id="projectnumber">&#160;3.0.3</span>
    </div>
   </td>
  </tr>
@@ -134,9 +134,6 @@ Protected Member Functions</h2></td></tr>
 <tr class="memitem:aa06d7c56d3cd549f20e550958eeac6c6"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmodulo__components_1_1_lifecycle_component.html#aa06d7c56d3cd549f20e550958eeac6c6">on_error_callback</a> ()</td></tr>
 <tr class="memdesc:aa06d7c56d3cd549f20e550958eeac6c6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Steps to execute when handling errors.  <a href="classmodulo__components_1_1_lifecycle_component.html#aa06d7c56d3cd549f20e550958eeac6c6">More...</a><br /></td></tr>
 <tr class="separator:aa06d7c56d3cd549f20e550958eeac6c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a97b12c65867fd38310c86974722af49a"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmodulo__components_1_1_lifecycle_component.html#a97b12c65867fd38310c86974722af49a">on_step_callback</a> ()</td></tr>
-<tr class="memdesc:a97b12c65867fd38310c86974722af49a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Steps to execute periodically. To be redefined by derived <a class="el" href="classmodulo__components_1_1_component.html" title="A wrapper for rclcpp::Node to simplify application composition through unified component interfaces.">Component</a> classes.  <a href="classmodulo__components_1_1_lifecycle_component.html#a97b12c65867fd38310c86974722af49a">More...</a><br /></td></tr>
-<tr class="separator:a97b12c65867fd38310c86974722af49a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a22d31bd5f8a713b0ce757bea8622cbf3"><td class="memTemplParams" colspan="2">template&lt;typename DataT &gt; </td></tr>
 <tr class="memitem:a22d31bd5f8a713b0ce757bea8622cbf3"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmodulo__components_1_1_lifecycle_component.html#a22d31bd5f8a713b0ce757bea8622cbf3">add_output</a> (const std::string &amp;signal_name, const std::shared_ptr&lt; DataT &gt; &amp;data, const std::string &amp;default_topic=&quot;&quot;, bool fixed_topic=false, bool publish_on_step=true)</td></tr>
 <tr class="memdesc:a22d31bd5f8a713b0ce757bea8622cbf3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add an output signal of the component.  <a href="classmodulo__components_1_1_lifecycle_component.html#a22d31bd5f8a713b0ce757bea8622cbf3">More...</a><br /></td></tr>
@@ -145,6 +142,9 @@ Protected Member Functions</h2></td></tr>
 <tr class="memitem:a21de4a30b2a51e66574600c9b04f27cb inherit pro_methods_classmodulo__components_1_1_component_interface"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmodulo__components_1_1_component_interface.html#a21de4a30b2a51e66574600c9b04f27cb">step</a> ()</td></tr>
 <tr class="memdesc:a21de4a30b2a51e66574600c9b04f27cb inherit pro_methods_classmodulo__components_1_1_component_interface"><td class="mdescLeft">&#160;</td><td class="mdescRight">Step function that is called periodically.  <a href="classmodulo__components_1_1_component_interface.html#a21de4a30b2a51e66574600c9b04f27cb">More...</a><br /></td></tr>
 <tr class="separator:a21de4a30b2a51e66574600c9b04f27cb inherit pro_methods_classmodulo__components_1_1_component_interface"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0cd3ac4edd2420d68b0c5516077f6e3b inherit pro_methods_classmodulo__components_1_1_component_interface"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmodulo__components_1_1_component_interface.html#a0cd3ac4edd2420d68b0c5516077f6e3b">on_step_callback</a> ()</td></tr>
+<tr class="memdesc:a0cd3ac4edd2420d68b0c5516077f6e3b inherit pro_methods_classmodulo__components_1_1_component_interface"><td class="mdescLeft">&#160;</td><td class="mdescRight">Steps to execute periodically. To be redefined by derived Component classes.  <a href="classmodulo__components_1_1_component_interface.html#a0cd3ac4edd2420d68b0c5516077f6e3b">More...</a><br /></td></tr>
+<tr class="separator:a0cd3ac4edd2420d68b0c5516077f6e3b inherit pro_methods_classmodulo__components_1_1_component_interface"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a060729fbb4c67c3284d302e34662e26a inherit pro_methods_classmodulo__components_1_1_component_interface"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmodulo__components_1_1_component_interface.html#a060729fbb4c67c3284d302e34662e26a">add_parameter</a> (const std::shared_ptr&lt; state_representation::ParameterInterface &gt; &amp;parameter, const std::string &amp;description, bool read_only=false)</td></tr>
 <tr class="memdesc:a060729fbb4c67c3284d302e34662e26a inherit pro_methods_classmodulo__components_1_1_component_interface"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a parameter.  <a href="classmodulo__components_1_1_component_interface.html#a060729fbb4c67c3284d302e34662e26a">More...</a><br /></td></tr>
 <tr class="separator:a060729fbb4c67c3284d302e34662e26a inherit pro_methods_classmodulo__components_1_1_component_interface"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -302,7 +302,7 @@ Additional Inherited Members</h2></td></tr>
 <li><a class="el" href="classmodulo__components_1_1_lifecycle_component.html#a4dba41e6a556184546ae3244077d3eab" title="Steps to execute when cleaning up the component.">on_cleanup_callback()</a></li>
 <li><a class="el" href="classmodulo__components_1_1_lifecycle_component.html#a05b5dfdf28ebf0d2a9f69cdad9d29eb3" title="Steps to execute when shutting down the component.">on_shutdown_callback()</a></li>
 <li><a class="el" href="classmodulo__components_1_1_lifecycle_component.html#aa06d7c56d3cd549f20e550958eeac6c6" title="Steps to execute when handling errors.">on_error_callback()</a></li>
-<li><a class="el" href="classmodulo__components_1_1_lifecycle_component.html#a97b12c65867fd38310c86974722af49a" title="Steps to execute periodically. To be redefined by derived Component classes.">on_step_callback()</a> <dl class="section see"><dt>See also</dt><dd><a class="el" href="classmodulo__components_1_1_component.html" title="A wrapper for rclcpp::Node to simplify application composition through unified component interfaces.">Component</a> for a stateless composition alternative </dd></dl>
+<li><a class="el" href="classmodulo__components_1_1_component_interface.html#a0cd3ac4edd2420d68b0c5516077f6e3b" title="Steps to execute periodically. To be redefined by derived Component classes.">on_step_callback()</a> <dl class="section see"><dt>See also</dt><dd><a class="el" href="classmodulo__components_1_1_component.html" title="A wrapper for rclcpp::Node to simplify application composition through unified component interfaces.">Component</a> for a stateless composition alternative </dd></dl>
 </li>
 </ul>
 
@@ -428,7 +428,7 @@ template&lt;typename DataT &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_lifecycle_component_8hpp_source.html#l00277">277</a> of file <a class="el" href="_lifecycle_component_8hpp_source.html">LifecycleComponent.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_lifecycle_component_8hpp_source.html#l00270">270</a> of file <a class="el" href="_lifecycle_component_8hpp_source.html">LifecycleComponent.hpp</a>.</p>
 
 </div>
 </div>
@@ -609,35 +609,6 @@ template&lt;typename DataT &gt; </div>
 <p >This method can be overridden by derived <a class="el" href="classmodulo__components_1_1_component.html" title="A wrapper for rclcpp::Node to simplify application composition through unified component interfaces.">Component</a> classes. Shutdown generally involves the destruction of any threads or properties not handled by the base class. </p><dl class="section return"><dt>Returns</dt><dd>True if shutdown is successful, false otherwise </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="_lifecycle_component_8cpp_source.html#l00191">191</a> of file <a class="el" href="_lifecycle_component_8cpp_source.html">LifecycleComponent.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a97b12c65867fd38310c86974722af49a" name="a97b12c65867fd38310c86974722af49a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a97b12c65867fd38310c86974722af49a">&#9670;&#160;</a></span>on_step_callback()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void modulo_components::LifecycleComponent::on_step_callback </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">protected</span><span class="mlabel">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Steps to execute periodically. To be redefined by derived <a class="el" href="classmodulo__components_1_1_component.html" title="A wrapper for rclcpp::Node to simplify application composition through unified component interfaces.">Component</a> classes. </p>
-
-<p class="definition">Definition at line <a class="el" href="_lifecycle_component_8hpp_source.html#l00274">274</a> of file <a class="el" href="_lifecycle_component_8hpp_source.html">LifecycleComponent.hpp</a>.</p>
 
 </div>
 </div>
