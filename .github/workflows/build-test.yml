@@ -12,7 +12,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Check changelog
-        if: ${{ github.event.pull_request.base.sha }}
         run: |
           git fetch origin main ${{ github.event.pull_request.base.sha }}
           VER_DIFF=$(git diff ${{ github.event.pull_request.base.sha }} ${{ github.sha }} -- ./VERSION)
