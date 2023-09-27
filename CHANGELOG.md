@@ -14,6 +14,7 @@ Release Versions:
 - build: unify dockerfiles and add vs code configuration (#50)
 - feat: add on_step_callback for component (#51)
 - build: use iron as ros2 distro (#53)
+- ci: change test workflow to docker build (#55)
 
 ## 3.0.0
 
