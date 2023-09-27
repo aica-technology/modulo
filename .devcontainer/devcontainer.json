@@ -5,7 +5,7 @@
     "dockerfile": "../Dockerfile",
     "context": "..",
     "target": "development",
-    "args": { "CL_VERSION": "v7.1.1" }
+    "args": { "CL_VERSION": "v7.2.0" }
   },
   "workspaceMount": "source=${localWorkspaceFolder},target=/home/ros2/.devcontainer,type=bind,consistency=cached",
   "workspaceFolder": "/home/ros2/.devcontainer",
