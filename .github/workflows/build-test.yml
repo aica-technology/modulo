@@ -1,40 +1,32 @@
 name: Build and Test
 
-# Run workflow on pushes to main and develop branches, on any pull request, or by manual dispatch
 on:
-  push:
-    branches:
-      - main
-      - develop
   pull_request:
   workflow_dispatch:
 
-# Define the build test jobs
 jobs:
-
-  check-contribution:
+  check:
     name: Check if changelog and version have been updated
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Check contributions
+      - name: Check changelog
         if: ${{ github.event.pull_request.base.sha }}
         run: |
           git fetch origin main ${{ github.event.pull_request.base.sha }}
           VER_DIFF=$(git diff ${{ github.event.pull_request.base.sha }} ${{ github.sha }} -- ./VERSION)
           if ! [ "${VER_DIFF}" ]; then
-            echo "::warning title=Contribution check failed::VERSION must be updated!"
+            echo "::warning title=Version check failed::VERSION must be updated!"
             exit 1
           fi
           CL_DIFF=$(git diff ${{ github.event.pull_request.base.sha }} ${{ github.sha }} -- ./CHANGELOG.md)
           if ! [ "${CL_DIFF}" ]; then
-            echo "::warning title=Contribution check failed::CHANGELOG.md must be updated!"
+            echo "::warning title=CHEANGELOG check failed::CHANGELOG.md must be updated!"
             exit 1
           fi
         shell: bash
 
-  # check if jobs can be skipped
   check-skippable-changes:
     name: Check skippable changes
     runs-on: ubuntu-latest
@@ -49,28 +41,17 @@ jobs:
           paths_ignore: '["**.md"]'
           skip_after_successful_duplicate: 'true'
 
-  build-test-humble:
+  test:
     needs: check-skippable-changes
     if: ${{ needs.check-skippable-changes.outputs.skip != 'true' }}
     runs-on: ubuntu-latest
-    name: Humble build and test
+    name: Run tests
     steps:
-      # First check out the repository
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v3
-      # Load the repository build-test action
-      - name: Build and Test
-        uses: ./.github/actions/build-test-humble
 
-  build-test-humble-devel:
-    needs: check-skippable-changes
-    if: ${{ needs.check-skippable-changes.outputs.skip != 'true' }}
-    runs-on: ubuntu-latest
-    name: Humble development build and test
-    steps:
-      # First check out the repository
-      - name: Checkout
-        uses: actions/checkout@v2
-      # Load the repository build-test action
-      - name: Build and Test
-        uses: ./.github/actions/build-test-humble-devel
+      - name: Test
+        run: |
+          DOCKER_BUILDKIT=1 docker build --target test .
+        shell: bash
+        
