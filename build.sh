@@ -3,8 +3,8 @@
 IMAGE_NAME=ghcr.io/aica-technology/modulo
 IMAGE_TAG=latest
 
-ROS2_VERSION=humble
-CL_VERSION=v7.1.1
+ROS2_VERSION=iron
+CL_VERSION=v7.2.0
 
 SSH_PORT=4440
 
@@ -16,6 +16,12 @@ Options:
 
   --cl-version <VERSION>   Specify the version of the control libraries image to use.
                            (default: $CL_VERSION)
+
+  --ros2-version <VERSION> Specify the version of ROS 2 to use.
+                           (default: $ROS2_VERSION)
+
+  --tag <TAG>              Specify the tag of the generated image.
+                           (default: $IMAGE_TAG)
 
   -v|--verbose             Set the build output to verbose.
 
@@ -35,6 +41,8 @@ while [ "$#" -gt 0 ]; do
     --test) BUILD_FLAGS+=(--target=test); TEST=1; IMAGE_TAG=test; shift 1;;
     -s|--serve) BUILD_FLAGS+=(--target build); SERVE_REMOTE=1; IMAGE_TAG=build; shift 1;;
     --cl-version) CL_VERSION=$2; shift 2;;
+    --ros2-version) ROS2_VERSION=$2; shift 2;;
+    --tag) IMAGE_TAG=$2; shift 2;;
     -v|--verbose) BUILD_FLAGS+=(--progress=plain); shift 1;;
     --cache-id) BUILD_FLAGS+=(--build-arg CACHEID=$2); shift 2;;
     -r|--no-cache) BUILD_FLAGS+=(--no-cache); BUILD_FLAGS+=(--build-arg CACHEID=$(date +%s)); shift 1;;
@@ -50,6 +58,7 @@ if [ "$((TEST + SERVE_REMOTE))" -gt 1 ]; then
 fi
 
 BUILD_FLAGS+=(--build-arg CL_VERSION="${CL_VERSION}")
+BUILD_FLAGS+=(--build-arg ROS2_VERSION="${ROS2_VERSION}")
 BUILD_FLAGS+=(-t "${IMAGE_NAME}:${IMAGE_TAG}")
 
 DOCKER_BUILDKIT=1 docker build "${BUILD_FLAGS[@]}" . || exit 1

@@ -10,9 +10,10 @@ Release Versions:
 
 ## Upcoming changes (in development)
 
-- feat: add on_step_callback for component (#51)
-- build: unify dockerfiles and add vs code configuration (#50)
 - Revise test stage to fail on test errors (#48)
+- build: unify dockerfiles and add vs code configuration (#50)
+- feat: add on_step_callback for component (#51)
+- build: use iron as ros2 distro (#53)
 
 ## 3.0.0
 
