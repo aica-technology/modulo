@@ -95,11 +95,6 @@ protected:
   virtual bool on_error_callback();
 
   /**
-   * @brief Steps to execute periodically. To be redefined by derived Component classes.
-   */
-  virtual void on_step_callback();
-
-  /**
    * @brief Add an output signal of the component.
    * @tparam DataT Type of the data pointer
    * @param signal_name Name of the output signal
@@ -270,8 +265,6 @@ private:
   using ComponentInterface<rclcpp_lifecycle::LifecycleNode>::publish_outputs;
   using ComponentInterface<rclcpp_lifecycle::LifecycleNode>::evaluate_periodic_callbacks;
 };
-
-inline void LifecycleComponent::on_step_callback() {}
 
 template<typename DataT>
 inline void LifecycleComponent::add_output(

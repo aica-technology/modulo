@@ -1,0 +1,4 @@
+{
+    "C_Cpp.clang_format_style": "file:/home/ros2/.clang-format",
+    "cmake.sourceDirectory": "/home/ros2/ws/src/modulo_components",
+}

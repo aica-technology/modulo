@@ -30,6 +30,7 @@ class Component(ComponentInterface):
         """
         try:
             self._evaluate_periodic_callbacks()
+            self.on_step_callback()
             self._publish_outputs()
             self._publish_predicates()
         except Exception as e:

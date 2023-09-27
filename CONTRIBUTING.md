@@ -27,3 +27,22 @@ Similar to the exceptions, the logging of debug, info, and error messages should
 - `add_xxx` methods use non-throttled logging
 - Setters and getters as well as all other methods that are expected to be called at a high frequency use throttled
   logging
+
+
+## Development Environment
+
+Our development and testing workflow uses a Docker container to host the project build dependencies.
+
+The following section describes the configuration steps to use this workflow. Of course, contributors may use whatever
+development environment they prefer, as long as they adhere to the overall contribution guidelines.
+
+### Configuring the development environment
+
+Prerequisites: Install Docker and Visual Studio Code.
+
+Step 1: Open VS Code and install the [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension.
+
+Step 2: Use **Dev Containers: Open Folder in Container...** from the command palette and select this directory.
+
+Step 3: The CMake profile should be automatically selected, now you can run and debug library and test targets entirely
+with the devcontainer toolchain.

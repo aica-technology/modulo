@@ -46,7 +46,6 @@ jobs:
         with:
           image_name: aica-technology/modulo
           image_tags: ${{ steps.merge-tags.outputs.list }}
-          dockerfile_path: Dockerfile.ci
           token: ${{ secrets.GITHUB_TOKEN }}
 
   multi-arch:

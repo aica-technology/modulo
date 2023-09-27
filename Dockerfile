@@ -1,25 +1,56 @@
-ARG BASE_TAG=humble
-FROM ghcr.io/aica-technology/ros2-control-libraries:${BASE_TAG} as dependencies
-WORKDIR ${HOME}/ros2_ws
+#syntax=docker/dockerfile:1.4.0
+ARG CL_VERSION=v7.2.0
+ARG ROS2_VERSION=iron
+FROM ghcr.io/aica-technology/control-libraries:${CL_VERSION} as cl
+FROM ghcr.io/aica-technology/ros2-ws:${ROS2_VERSION} as base
+# setup the environment
+USER ${USER}
+ENV WORKSPACE ${HOME}/ws
+WORKDIR ${WORKSPACE}
+SHELL ["/bin/bash", "-l", "-c"]
 
+# create a workspace
+RUN source ${HOME}/ros2_ws/install/setup.bash && colcon build
+# source the new workspace on login
+RUN echo "source ${WORKSPACE}/install/setup.bash" | cat - ${HOME}/.bashrc > tmp && mv tmp ${HOME}/.bashrc
+# install deps
+COPY --from=cl / /
+# install sources
+COPY --chown=${USER}:${USER} ./source ${WORKSPACE}/src
 
-FROM dependencies as modulo-component-interfaces
+FROM base as utils-development
+ARG TARGETPLATFORM
+ARG CACHEID
+RUN --mount=type=cache,target=./build,id=${TARGETPLATFORM}-${CACHEID},uid=1000 \
+  colcon build --packages-select modulo_component_interfaces
 
-COPY --chown=${USER} ./source/modulo_component_interfaces ./src/modulo_component_interfaces
-COPY --chown=${USER} ./source/modulo_utils ./src/modulo_utils
-RUN /bin/bash -c "source /opt/ros/$ROS_DISTRO/setup.bash; colcon build"
+FROM utils-development as core-development
+ARG TARGETPLATFORM
+ARG CACHEID
+RUN --mount=type=cache,target=./build,id=${TARGETPLATFORM}-${CACHEID},uid=1000 \
+  colcon build --packages-select modulo_utils
 
+FROM core-development as development
+ARG TARGETPLATFORM
+ARG CACHEID
+RUN --mount=type=cache,target=./build,id=${TARGETPLATFORM}-${CACHEID},uid=1000 \
+  colcon build --packages-select modulo_core
 
-FROM modulo-component-interfaces as modulo-core
+FROM base as build
+ARG TARGETPLATFORM
+ARG CACHEID
+RUN --mount=type=cache,target=./build,id=${TARGETPLATFORM}-${CACHEID},uid=1000 \
+  sudo apt-get update && rosdep update \
+  && rosdep install --from-paths src --ignore-src -r -y \
+  --skip-keys "ros2_control ros2_controllers controller_interface hardware_interface controller_manager" \
+  && sudo rm -rf /var/lib/apt/lists/* \
+  && colcon build
 
-COPY --chown=${USER} ./source/modulo_core ./src/modulo_core
-RUN /bin/bash -c "source /opt/ros/$ROS_DISTRO/setup.bash; colcon build --packages-select modulo_core"
+FROM build as test
+ARG TARGETPLATFORM
+ARG CACHEID
+RUN --mount=type=cache,target=./build,id=${TARGETPLATFORM}-${CACHEID},uid=1000 \
+  colcon test && colcon test-result --verbose
 
-
-FROM modulo-core as modulo-components
-
-COPY --chown=${USER} ./source/modulo_components ./src/modulo_components
-RUN /bin/bash -c "source /opt/ros/$ROS_DISTRO/setup.bash; colcon build --packages-select modulo_components"
-
-# clean image
-RUN sudo apt-get clean && sudo rm -rf /var/lib/apt/lists/*
+FROM scratch as production
+COPY --from=build /home/ros2/ws/install /colcon

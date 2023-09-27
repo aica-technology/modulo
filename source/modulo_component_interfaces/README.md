@@ -2,6 +2,15 @@
 
 This package defines custom standard interfaces for modulo components.
 
+## Messages
+
+Modulo component classes broadcast predicates to a global channel in a predicate message.
+
+### Predicate
+
+The predicate message contains the component name, the predicate name, and the current value (true or false) of the
+predicate.
+
 ## Services
 
 Modulo component classes provide a simplified method to add services which trigger a pre-defined callback function.

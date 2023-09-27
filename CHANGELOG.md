@@ -2,11 +2,29 @@
 
 Release Versions:
 
+- [3.1.0](#300)
 - [3.0.0](#300)
 - [2.3.0](#230)
 - [2.2.0](#220)
 - [2.1.1](#211)
 - [2.1.0](#210)
+## 3.1.0
+
+### September 27, 2023
+
+Version 3.1.0 is a minor update to modulo with a new feature in the components and it marks the first official version
+that uses `iron` as its ROS2 distribution.
+
+### Features
+
+- Add the on_step_callback for components (#51)
+
+### Behind the scenes
+
+- Revise test stage to fail on test errors (#48)
+- Unify dockerfiles and add vs code configuration (#50)
+- Use iron as ros2 distro (#53)
+- Change test workflow to docker build (#55)
 
 ## 3.0.0
 

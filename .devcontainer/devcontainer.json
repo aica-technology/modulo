@@ -1,0 +1,23 @@
+{
+  "name": "modulo",
+  "remoteUser": "ros2",
+  "build": {
+    "dockerfile": "../Dockerfile",
+    "context": "..",
+    "target": "development",
+    "args": { "CL_VERSION": "v7.2.0" }
+  },
+  "workspaceMount": "source=${localWorkspaceFolder},target=/home/ros2/.devcontainer,type=bind,consistency=cached",
+  "workspaceFolder": "/home/ros2/.devcontainer",
+  "mounts": [
+    "source=${localWorkspaceFolder}/source,target=/home/ros2/ws/src,type=bind,consistency=cached"
+  ],
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-vscode.cpptools-extension-pack",
+        "eamodio.gitlens"
+      ]
+    }
+  }
+}
