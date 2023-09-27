@@ -20,7 +20,7 @@ Options:
   --ros2-version <VERSION> Specify the version of ROS 2 to use.
                            (default: $ROS2_VERSION)
 
-  --tag                    The tag of the generated image.
+  --tag <TAG>              Specify the tag of the generated image.
                            (default: $IMAGE_TAG)
 
   -v|--verbose             Set the build output to verbose.
