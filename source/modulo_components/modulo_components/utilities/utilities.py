@@ -26,8 +26,8 @@ def modify_parameter_overrides(parameter_overrides: List[Parameter]) -> List[Par
     :param parameter_overrides: The parameter overrides passed to the component constructor
     :return: The modified parameter overrides 
     """
-    rate = None
-    period = None
+    rate = Parameter("rate", type_=Parameter.Type.NOT_SET)
+    period = Parameter("period", type_=Parameter.Type.NOT_SET)
     parameters = []
     for parameter in parameter_overrides:
         if parameter.name == "rate":
@@ -37,11 +37,9 @@ def modify_parameter_overrides(parameter_overrides: List[Parameter]) -> List[Par
         else:
             parameters.append(parameter)
     
-    if rate is not None and period is not None:
-        rate = Parameter("rate", value=rate.get_parameter_value().integer_value)
+    if rate.type_ != Parameter.Type.NOT_SET:
         period = Parameter("period", value=1.0 / rate.get_parameter_value().integer_value)
-    elif period is not None:
-        period = Parameter("period", value=period.get_parameter_value().double_value)
+    elif period.type_ != Parameter.Type.NOT_SET:
         rate = Parameter("rate", value=int(1.0 / period.get_parameter_value().double_value))
     else:
         return parameters

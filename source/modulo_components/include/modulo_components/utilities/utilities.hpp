@@ -85,10 +85,8 @@ parse_node_name(const rclcpp::NodeOptions& options, const std::string& fallback 
     }
   }
   if (rate.get_type() != rclcpp::ParameterType::PARAMETER_NOT_SET) {
-    rate = rclcpp::Parameter("rate", rate.as_int());
     period = rclcpp::Parameter("period", 1.0 / rate.as_int());
   } else if (period.get_type() != rclcpp::ParameterType::PARAMETER_NOT_SET) {
-    period = rclcpp::Parameter("period", period.as_double());
     rate = rclcpp::Parameter("rate", static_cast<int>(1.0 / period.as_double()));
   } else {
     modified.parameter_overrides() = parameters;

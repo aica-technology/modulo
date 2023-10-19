@@ -26,6 +26,11 @@ def test_rate_period_parameters(ros_context):
     assert component_interface.get_parameter_value("rate") == 10
     assert component_interface.get_parameter_value("period") == 0.1
 
+    parameter_overrides=[rclpy.Parameter("rate", value=200)]
+    component_interface = ComponentInterface('component_interface', parameter_overrides=parameter_overrides)
+    assert component_interface.get_parameter_value("rate") == 200
+    assert component_interface.get_parameter_value("period") == 0.005
+
     parameter_overrides=[rclpy.Parameter("period", value=0.01)]
     component_interface = ComponentInterface('component_interface', parameter_overrides=parameter_overrides)
     assert component_interface.get_parameter_value("rate") == 100
