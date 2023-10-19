@@ -12,6 +12,7 @@ Release Versions:
 ## Upcoming changes (in development)
 
 - feat: add rate parameter to component interface (#57)
+- build: prepare workflows for deletion of develop branch (#58)
 
 ## 3.1.0
 
