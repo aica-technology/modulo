@@ -41,6 +41,44 @@ protected:
 using NodeTypes = ::testing::Types<rclcpp::Node, rclcpp_lifecycle::LifecycleNode>;
 TYPED_TEST_SUITE(ComponentInterfaceTest, NodeTypes);
 
+TYPED_TEST(ComponentInterfaceTest, RatePeriodParameters) {
+  std::shared_ptr<ComponentInterfacePublicInterface<TypeParam>> component;
+  auto node_options = rclcpp::NodeOptions();
+  if (std::is_same<TypeParam, rclcpp::Node>::value) {
+    component = std::make_shared<ComponentInterfacePublicInterface<TypeParam>>(
+        node_options, modulo_core::communication::PublisherType::PUBLISHER);
+  } else if (std::is_same<TypeParam, rclcpp_lifecycle::LifecycleNode>::value) {
+    component = std::make_shared<ComponentInterfacePublicInterface<TypeParam>>(
+        node_options, modulo_core::communication::PublisherType::LIFECYCLE_PUBLISHER);
+  }
+  EXPECT_EQ(component->template get_parameter_value<int>("rate"), 10);
+  EXPECT_EQ(component->template get_parameter_value<double>("period"), 0.1);
+
+  double period = 0.01;
+  node_options = rclcpp::NodeOptions().parameter_overrides({rclcpp::Parameter("period", period)});
+  if (std::is_same<TypeParam, rclcpp::Node>::value) {
+    component = std::make_shared<ComponentInterfacePublicInterface<TypeParam>>(
+        node_options, modulo_core::communication::PublisherType::PUBLISHER);
+  } else if (std::is_same<TypeParam, rclcpp_lifecycle::LifecycleNode>::value) {
+    component = std::make_shared<ComponentInterfacePublicInterface<TypeParam>>(
+        node_options, modulo_core::communication::PublisherType::LIFECYCLE_PUBLISHER);
+  }
+  EXPECT_EQ(component->template get_parameter_value<int>("rate"), 100);
+  EXPECT_EQ(component->template get_parameter_value<double>("period"), period);
+
+  node_options =
+      rclcpp::NodeOptions().parameter_overrides({rclcpp::Parameter("rate", 200), rclcpp::Parameter("period", period)});
+  if (std::is_same<TypeParam, rclcpp::Node>::value) {
+    component = std::make_shared<ComponentInterfacePublicInterface<TypeParam>>(
+        node_options, modulo_core::communication::PublisherType::PUBLISHER);
+  } else if (std::is_same<TypeParam, rclcpp_lifecycle::LifecycleNode>::value) {
+    component = std::make_shared<ComponentInterfacePublicInterface<TypeParam>>(
+        node_options, modulo_core::communication::PublisherType::LIFECYCLE_PUBLISHER);
+  }
+  EXPECT_EQ(component->template get_parameter_value<int>("rate"), 200);
+  EXPECT_EQ(component->template get_parameter_value<double>("period"), 0.005);
+}
+
 TYPED_TEST(ComponentInterfaceTest, AddBoolPredicate) {
   this->component_->add_predicate("foo", true);
   auto predicate_iterator = this->component_->predicates_.find("foo");
