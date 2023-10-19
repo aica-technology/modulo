@@ -592,14 +592,15 @@ private:
 template<class NodeT>
 ComponentInterface<NodeT>::ComponentInterface(
     const rclcpp::NodeOptions& options, modulo_core::communication::PublisherType publisher_type,
-    const std::string& fallback_name
-) :
-    NodeT(utilities::parse_node_name(options, fallback_name), options), publisher_type_(publisher_type) {
+    const std::string& fallback_name)
+    : NodeT(utilities::parse_node_name(options, fallback_name), utilities::modify_parameter_overrides(options)),
+      publisher_type_(publisher_type) {
   // register the parameter change callback handler
   parameter_cb_handle_ = NodeT::add_on_set_parameters_callback(
       [this](const std::vector<rclcpp::Parameter>& parameters) -> rcl_interfaces::msg::SetParametersResult {
         return this->on_set_parameters_callback(parameters);
       });
+  this->add_parameter("rate", 10, "The rate in Hertz for all periodic callbacks", true);
   this->add_parameter("period", 0.1, "The time interval in seconds for all periodic callbacks", true);
 
   this->predicate_publisher_ =
@@ -712,6 +713,13 @@ template<class NodeT>
 inline bool ComponentInterface<NodeT>::validate_parameter(
     const std::shared_ptr<state_representation::ParameterInterface>& parameter
 ) {
+  if (parameter->get_name() == "rate") {
+    auto value = parameter->get_parameter_value<int>();
+    if (value <= 0 || !std::isfinite(value)) {
+      RCLCPP_ERROR(this->get_logger(), "Value for parameter 'rate' has to be a positive finite number.");
+      return false;
+    }
+  }
   if (parameter->get_name() == "period") {
     auto value = parameter->get_parameter_value<double>();
     if (value <= 0.0 || !std::isfinite(value)) {

@@ -9,6 +9,10 @@ Release Versions:
 - [2.1.1](#211)
 - [2.1.0](#210)
 
+## Upcoming changes (in development)
+
+- feat: add rate parameter to component interface (#57)
+
 ## 3.1.0
 
 ### September 27, 2023

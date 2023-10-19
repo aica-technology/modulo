@@ -12,7 +12,7 @@ from modulo_component_interfaces.msg import Predicate
 from modulo_component_interfaces.srv import EmptyTrigger, StringTrigger
 from modulo_components.exceptions import AddServiceError, AddSignalError, ComponentError, ComponentParameterError, \
     LookupTransformError
-from modulo_components.utilities import parse_topic_name
+from modulo_components.utilities import parse_topic_name, modify_parameter_overrides
 from modulo_core import EncodedState
 from modulo_core.exceptions import MessageTranslationError, ParameterTranslationError
 from modulo_core.translators.parameter_translators import get_ros_parameter_type, read_parameter_const, write_parameter
@@ -42,6 +42,8 @@ class ComponentInterface(Node):
 
     def __init__(self, node_name: str, *args, **kwargs):
         node_kwargs = {key: value for key, value in kwargs.items() if key in NODE_KWARGS}
+        if "parameter_overrides" in node_kwargs.keys():
+            node_kwargs["parameter_overrides"] = modify_parameter_overrides(node_kwargs["parameter_overrides"])
         super().__init__(node_name, *args, **node_kwargs)
         self._parameter_dict: Dict[str, Union[str, sr.Parameter]] = {}
         self._predicates: Dict[str, Union[bool, Callable[[], bool]]] = {}
@@ -59,8 +61,10 @@ class ComponentInterface(Node):
         self._qos = QoSProfile(depth=10)
 
         self.add_on_set_parameters_callback(self.__on_set_parameters_callback)
+        self.add_parameter(sr.Parameter("rate", 10, sr.ParameterType.INT),
+                           "The rate in Hertz for all periodic callbacks")
         self.add_parameter(sr.Parameter("period", 0.1, sr.ParameterType.DOUBLE),
-                           "Period (in s) between step function calls.")
+                           "The time interval in seconds for all periodic callbacks")
 
         self._predicate_publisher = self.create_publisher(Predicate, "/predicates", self._qos)
         self.add_predicate("in_error_state", False)
@@ -200,6 +204,11 @@ class ComponentInterface(Node):
         :param parameter: The parameter to be validated
         :return: The validation result
         """
+        if parameter.get_name() == "rate":
+            value = parameter.get_value()
+            if value <= 0 or value > sys.float_info.max:
+                self.get_logger().error("Value for parameter 'rate' has to be a positive finite number.")
+                return False
         if parameter.get_name() == "period":
             value = parameter.get_value()
             if value <= 0.0 or value > sys.float_info.max:
