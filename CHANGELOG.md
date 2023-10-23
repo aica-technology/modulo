@@ -9,9 +9,23 @@ Release Versions:
 - [2.1.1](#211)
 - [2.1.0](#210)
 
-## Upcoming changes (in development)
+## 3.2.0
+
+### October 23, 2023
+
+Version 3.2.0 is a minor update to modulo with a new feature that allows the component period parameter to be set
+through a new parameter called 'rate'. In the future, the period parameter will be deprecated.
+
+Additionally, this is the last release with the current release strategy of creating release branches from develop and
+merging them to main. From now on, branches will be directly created from main and merged back to main. If there is a
+version update in such a PR, the CI will automatically create a new tag and push a tagged image.
+
+### Features
 
 - feat: add rate parameter to component interface (#57)
+
+### Behind the scenes
+
 - build: prepare workflows for deletion of develop branch (#58)
 
 ## 3.1.0
