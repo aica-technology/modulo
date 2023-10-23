@@ -1,0 +1,48 @@
+name: Check CHANGELOG update and run tests
+
+on:
+  pull_request:
+
+jobs:
+  check-changelog:
+    name: Check if changelog has been updated
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: |
+          git fetch origin main ${{ github.event.pull_request.base.sha }}
+          PACKAGE_DIFF=$(git diff ${{ github.event.pull_request.base.sha }} ${{ github.sha }} -- ./source)
+          CL_DIFF=$(git diff ${{ github.event.pull_request.base.sha }} ${{ github.sha }} -- CHANGELOG.md)
+          if [ "${PACKAGE_DIFF}" ] && ! [ "${CL_DIFF}" ]; then
+            echo "::error file="CHANGELOG.md",title=Check failed::CHANGELOG.md must be updated!"
+            exit 1
+          fi
+        shell: bash
+
+  check-skippable-changes:
+    name: Check skippable changes
+    runs-on: ubuntu-latest
+    outputs:
+      skip: ${{ steps.check.outputs.should_skip }}
+    steps:
+      - id: check
+        uses: fkirc/skip-duplicate-actions@master
+        with:
+          cancel_others: 'true'
+          paths_ignore: '["**.md", ".**/**", "**.gitignore", "**.sh"]'
+          skip_after_successful_duplicate: 'true'
+
+  test:
+    needs: check-skippable-changes
+    if: ${{ needs.check-skippable-changes.outputs.skip != 'true' }}
+    runs-on: ubuntu-latest
+    name: Run tests
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Test
+        run: |
+          DOCKER_BUILDKIT=1 docker build --target test .
+        shell: bash
+        
