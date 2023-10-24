@@ -12,6 +12,7 @@ Release Versions:
 
 ## Upcoming changes (in development)
 
+- Update component classes to inherit from new ComponentInterface (#38)
 - Refactor ComponentInterface to use node interfaces (#33)
 
 ## 3.2.0

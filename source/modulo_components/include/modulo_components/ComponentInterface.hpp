@@ -462,8 +462,6 @@ protected:
   std::map<std::string, std::shared_ptr<modulo_core::communication::PublisherInterface>> outputs_; ///< Map of outputs
   std::map<std::string, bool> periodic_outputs_; ///< Map of outputs with periodic publishing flag
 
-  rclcpp::QoS qos_ = rclcpp::QoS(10); ///< Quality of Service for ROS publishers and subscribers
-
 private:
   /**
    * @brief Callback function to validate and update parameters on change.
@@ -575,6 +573,7 @@ private:
   std::shared_ptr<rclcpp::node_interfaces::NodeServicesInterface> node_services_;
   std::shared_ptr<rclcpp::node_interfaces::NodeTimersInterface> node_timers_;
   std::shared_ptr<rclcpp::node_interfaces::NodeTopicsInterface> node_topics_;
+  rclcpp::QoS qos_ = rclcpp::QoS(10); ///< Quality of Service for ROS publishers and subscribers
 
   bool set_parameter_callback_called_ = false; ///< Flag to indicate if on_set_parameter_callback was called
 };

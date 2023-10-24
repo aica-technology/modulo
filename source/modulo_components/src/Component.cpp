@@ -1,11 +1,19 @@
 #include "modulo_components/Component.hpp"
 
 using namespace modulo_core::communication;
+using namespace rclcpp;
 
 namespace modulo_components {
 
-Component::Component(const rclcpp::NodeOptions& node_options, const std::string& fallback_name) :
-    ComponentInterface<rclcpp::Node>(node_options, PublisherType::PUBLISHER, fallback_name), started_(false) {
+Component::Component(const NodeOptions& node_options, const std::string& fallback_name)
+    : Node(
+        utilities::parse_node_name(node_options, fallback_name), utilities::modify_parameter_overrides(node_options)),
+      ComponentInterface(std::make_shared<node_interfaces::NodeInterfaces<ALL_RCLCPP_NODE_INTERFACES>>(
+          Node::get_node_base_interface(), Node::get_node_clock_interface(), Node::get_node_graph_interface(),
+          Node::get_node_logging_interface(), Node::get_node_parameters_interface(),
+          Node::get_node_services_interface(), Node::get_node_time_source_interface(),
+          Node::get_node_timers_interface(), Node::get_node_topics_interface(), Node::get_node_waitables_interface())),
+      started_(false) {
   this->add_predicate("is_finished", false);
 }
 
