@@ -552,7 +552,6 @@ private:
   std::shared_ptr<rclcpp::node_interfaces::OnSetParametersCallbackHandle>
       parameter_cb_handle_; ///< ROS callback function handle for setting parameters
 
-  std::shared_ptr<rclcpp::CallbackGroup> cb_group_;
   std::shared_ptr<rclcpp::TimerBase> step_timer_; ///< Timer for the step function
   std::shared_ptr<tf2_ros::Buffer> tf_buffer_; ///< TF buffer
   std::shared_ptr<tf2_ros::TransformListener> tf_listener_; ///< TF listener
