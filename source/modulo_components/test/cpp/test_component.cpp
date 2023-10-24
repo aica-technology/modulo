@@ -26,6 +26,30 @@ protected:
   std::shared_ptr<ComponentPublicInterface> component_;
 };
 
+TEST_F(ComponentTest, RatePeriodParameters) {
+  std::shared_ptr<ComponentPublicInterface> component;
+  auto node_options = rclcpp::NodeOptions();
+  component = std::make_shared<ComponentPublicInterface>(node_options);
+  EXPECT_EQ(component->template get_parameter_value<int>("rate"), 10);
+  EXPECT_EQ(component->template get_parameter_value<double>("period"), 0.1);
+
+  node_options = rclcpp::NodeOptions().parameter_overrides({rclcpp::Parameter("rate", 200)});
+  component = std::make_shared<ComponentPublicInterface>(node_options);
+  EXPECT_EQ(component->template get_parameter_value<int>("rate"), 200);
+  EXPECT_EQ(component->template get_parameter_value<double>("period"), 0.005);
+
+  node_options = rclcpp::NodeOptions().parameter_overrides({rclcpp::Parameter("period", 0.01)});
+  component = std::make_shared<ComponentPublicInterface>(node_options);
+  EXPECT_EQ(component->template get_parameter_value<int>("rate"), 100);
+  EXPECT_EQ(component->template get_parameter_value<double>("period"), 0.01);
+
+  node_options =
+      rclcpp::NodeOptions().parameter_overrides({rclcpp::Parameter("rate", 200), rclcpp::Parameter("period", 0.01)});
+  component = std::make_shared<ComponentPublicInterface>(node_options);
+  EXPECT_EQ(component->template get_parameter_value<int>("rate"), 200);
+  EXPECT_EQ(component->template get_parameter_value<double>("period"), 0.005);
+}
+
 TEST_F(ComponentTest, AddRemoveOutput) {
   std::shared_ptr<State> data = make_shared_state(CartesianState::Random("test"));
   component_->add_output("_tEsT_#1@3", data);
