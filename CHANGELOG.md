@@ -12,6 +12,7 @@ Release Versions:
 
 ## Upcoming changes (in development)
 
+- Avoid conflict with get_parameter (#42)
 - Revise ComponentInterface by moving implementations to source file (#39)
 - Update component classes to inherit from new ComponentInterface (#38)
 - Refactor ComponentInterface to use node interfaces (#33)

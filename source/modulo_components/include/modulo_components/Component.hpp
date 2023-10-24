@@ -38,6 +38,11 @@ public:
 
 protected:
   /**
+   * @copydoc ComponentInterface::get_parameter
+   */
+  [[nodiscard]] std::shared_ptr<state_representation::ParameterInterface> get_parameter(const std::string& name) const;
+
+  /**
    * @brief Start the execution thread.
    */
   void execute();
@@ -76,6 +81,7 @@ private:
   void on_execute();
 
   // TODO hide ROS methods
+  using ComponentInterface::get_parameter;
   using ComponentInterface::create_output;
   using ComponentInterface::inputs_;
   using ComponentInterface::outputs_;
@@ -84,6 +90,7 @@ private:
   using ComponentInterface::publish_predicates;
   using ComponentInterface::publish_outputs;
   using ComponentInterface::evaluate_periodic_callbacks;
+  using rclcpp::Node::get_parameter;
 
   std::thread execute_thread_; ///< The execution thread of the component
   bool started_; ///< Flag that indicates if execution has started or not
