@@ -34,6 +34,11 @@ LifecycleComponent::LifecycleComponent(const rclcpp::NodeOptions& node_options, 
       });
 }
 
+std::shared_ptr<state_representation::ParameterInterface>
+LifecycleComponent::get_parameter(const std::string& name) const {
+    return ComponentInterface::get_parameter(name);
+}
+
 void LifecycleComponent::step() {
   try {
     if (this->get_predicate("is_active")) {

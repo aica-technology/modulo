@@ -46,6 +46,11 @@ public:
 
 protected:
   /**
+   * @copydoc ComponentInterface::get_parameter
+   */
+  [[nodiscard]] std::shared_ptr<state_representation::ParameterInterface> get_parameter(const std::string& name) const;
+
+  /**
    * @brief Steps to execute when configuring the component.
    * @details This method can be overridden by derived Component classes.
    * Configuration generally involves reading parameters and adding inputs and outputs.
@@ -256,6 +261,7 @@ private:
   bool clear_signals();
 
   // TODO hide ROS methods
+  using ComponentInterface::get_parameter;
   using ComponentInterface::create_output;
   using ComponentInterface::inputs_;
   using ComponentInterface::outputs_;
@@ -264,6 +270,7 @@ private:
   using ComponentInterface::publish_predicates;
   using ComponentInterface::publish_outputs;
   using ComponentInterface::evaluate_periodic_callbacks;
+  using rclcpp_lifecycle::LifecycleNode::get_parameter;
 };
 
 template<typename DataT>
