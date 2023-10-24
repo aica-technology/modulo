@@ -10,6 +10,10 @@ Release Versions:
 - [2.1.1](#211)
 - [2.1.0](#210)
 
+## Upcoming changes (in development)
+
+- Refactor ComponentInterface to use node interfaces (#33)
+
 ## 3.2.0
 
 ### October 23, 2023

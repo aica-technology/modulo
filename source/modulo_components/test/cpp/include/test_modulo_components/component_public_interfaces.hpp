@@ -8,49 +8,55 @@ using namespace state_representation;
 
 namespace modulo_components {
 
-template<class NodeT>
-class ComponentInterfacePublicInterface : public ComponentInterface<NodeT> {
+class ComponentInterfacePublicInterface : public ComponentInterface {
 public:
-  explicit ComponentInterfacePublicInterface(
-      const rclcpp::NodeOptions& node_options, modulo_core::communication::PublisherType publisher_type,
-      const std::string& fallback_name = "ComponentInterfacePublicInterface"
-  ) : ComponentInterface<NodeT>(node_options, publisher_type, fallback_name) {}
-  using ComponentInterface<NodeT>::add_parameter;
-  using ComponentInterface<NodeT>::get_parameter;
-  using ComponentInterface<NodeT>::get_parameter_value;
-  using ComponentInterface<NodeT>::set_parameter_value;
-  using ComponentInterface<NodeT>::parameter_map_;
-  using ComponentInterface<NodeT>::add_predicate;
-  using ComponentInterface<NodeT>::get_predicate;
-  using ComponentInterface<NodeT>::set_predicate;
-  using ComponentInterface<NodeT>::predicates_;
-  using ComponentInterface<NodeT>::add_trigger;
-  using ComponentInterface<NodeT>::trigger;
-  using ComponentInterface<NodeT>::triggers_;
-  using ComponentInterface<NodeT>::declare_input;
-  using ComponentInterface<NodeT>::declare_output;
-  using ComponentInterface<NodeT>::remove_input;
-  using ComponentInterface<NodeT>::add_input;
-  using ComponentInterface<NodeT>::add_service;
-  using ComponentInterface<NodeT>::inputs_;
-  using ComponentInterface<NodeT>::create_output;
-  using ComponentInterface<NodeT>::outputs_;
-  using ComponentInterface<NodeT>::periodic_outputs_;
-  using ComponentInterface<NodeT>::empty_services_;
-  using ComponentInterface<NodeT>::string_services_;
-  using ComponentInterface<NodeT>::add_tf_broadcaster;
-  using ComponentInterface<NodeT>::add_static_tf_broadcaster;
-  using ComponentInterface<NodeT>::add_tf_listener;
-  using ComponentInterface<NodeT>::publish_output;
-  using ComponentInterface<NodeT>::send_transform;
-  using ComponentInterface<NodeT>::send_transforms;
-  using ComponentInterface<NodeT>::send_static_transform;
-  using ComponentInterface<NodeT>::send_static_transforms;
-  using ComponentInterface<NodeT>::lookup_transform;
-  using ComponentInterface<NodeT>::raise_error;
-  using ComponentInterface<NodeT>::get_qos;
-  using ComponentInterface<NodeT>::set_qos;
-  using ComponentInterface<NodeT>::get_clock;
+  template<typename NodeT>
+  explicit ComponentInterfacePublicInterface(const std::shared_ptr<NodeT>& node) : ComponentInterface(
+      std::make_shared<rclcpp::node_interfaces::NodeInterfaces<ALL_RCLCPP_NODE_INTERFACES>>(
+          node->get_node_base_interface(), node->get_node_clock_interface(), node->get_node_graph_interface(),
+          node->get_node_logging_interface(), node->get_node_parameters_interface(),
+          node->get_node_services_interface(), node->get_node_time_source_interface(),
+          node->get_node_timers_interface(), node->get_node_topics_interface(),
+          node->get_node_waitables_interface())) {}
+  using ComponentInterface::node_base_;
+  using ComponentInterface::node_clock_;
+  using ComponentInterface::node_logging_;
+  using ComponentInterface::node_parameters_;
+  using ComponentInterface::add_parameter;
+  using ComponentInterface::get_parameter;
+  using ComponentInterface::get_parameter_value;
+  using ComponentInterface::set_parameter_value;
+  using ComponentInterface::parameter_map_;
+  using ComponentInterface::add_predicate;
+  using ComponentInterface::get_predicate;
+  using ComponentInterface::set_predicate;
+  using ComponentInterface::predicates_;
+  using ComponentInterface::add_trigger;
+  using ComponentInterface::trigger;
+  using ComponentInterface::triggers_;
+  using ComponentInterface::declare_input;
+  using ComponentInterface::declare_output;
+  using ComponentInterface::remove_input;
+  using ComponentInterface::add_input;
+  using ComponentInterface::add_service;
+  using ComponentInterface::inputs_;
+  using ComponentInterface::create_output;
+  using ComponentInterface::outputs_;
+  using ComponentInterface::periodic_outputs_;
+  using ComponentInterface::empty_services_;
+  using ComponentInterface::string_services_;
+  using ComponentInterface::add_tf_broadcaster;
+  using ComponentInterface::add_static_tf_broadcaster;
+  using ComponentInterface::add_tf_listener;
+  using ComponentInterface::publish_output;
+  using ComponentInterface::send_transform;
+  using ComponentInterface::send_transforms;
+  using ComponentInterface::send_static_transform;
+  using ComponentInterface::send_static_transforms;
+  using ComponentInterface::lookup_transform;
+  using ComponentInterface::raise_error;
+  using ComponentInterface::get_qos;
+  using ComponentInterface::set_qos;
 
   bool on_validate_parameter_callback(const std::shared_ptr<state_representation::ParameterInterface>&) override {
     validate_parameter_was_called = true;
@@ -58,15 +64,16 @@ public:
   }
 
   rclcpp::Parameter get_ros_parameter(const std::string& name) {
-    return NodeT::get_parameter(name);
+    return this->node_parameters_->get_parameter(name);
   }
 
   rcl_interfaces::msg::SetParametersResult set_ros_parameter(const rclcpp::Parameter& parameter) {
-    return NodeT::set_parameter(parameter);
+    return this->node_parameters_->set_parameters({parameter}).at(
+        0);
   }
 
   std::string get_parameter_description(const std::string& name) {
-    return NodeT::describe_parameter(name).description;
+    return this->node_parameters_->describe_parameters({name}).at(0).description;
   }
 
   bool validate_parameter_was_called = false;
