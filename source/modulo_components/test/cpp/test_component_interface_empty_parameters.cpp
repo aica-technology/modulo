@@ -1,19 +1,17 @@
 #include <gtest/gtest.h>
 
 #include "modulo_components/exceptions/ComponentParameterException.hpp"
-#include "modulo_core/EncodedState.hpp"
 #include "test_modulo_components/component_public_interfaces.hpp"
 
 namespace modulo_components {
 
 template<class NodeT>
-class EmptyParameterInterface : public ComponentInterfacePublicInterface<NodeT> {
+class EmptyParameterInterface : public ComponentInterfacePublicInterface {
 public:
   explicit EmptyParameterInterface(
-      const rclcpp::NodeOptions& node_options, modulo_core::communication::PublisherType publisher_type,
-      const std::string& fallback_name = "EmptyParameterInterface", bool allow_empty = true, bool add_parameter = true,
+      const std::shared_ptr<NodeT>& node, bool allow_empty = true, bool add_parameter = true,
       bool empty_parameter = true
-  ) : ComponentInterfacePublicInterface<NodeT>(node_options, publisher_type, fallback_name), allow_empty_(allow_empty) {
+  ) : ComponentInterfacePublicInterface(node), allow_empty_(allow_empty) {
     if (add_parameter) {
       if (empty_parameter) {
         this->add_parameter(std::make_shared<Parameter<std::string>>("name"), "Test parameter");
@@ -30,7 +28,7 @@ private:
       if (parameter->is_empty()) {
         return this->allow_empty_;
       } else if (parameter->get_parameter_value<std::string>().empty()) {
-        RCLCPP_ERROR(this->get_logger(), "Provide a non empty value for parameter 'name'");
+        RCLCPP_ERROR(this->node_logging_->get_logger(), "Provide a non empty value for parameter 'name'");
         return false;
       }
     }
@@ -52,13 +50,8 @@ protected:
   }
 
   void SetUp() override {
-    if (std::is_same<NodeT, rclcpp::Node>::value) {
-      this->component_ = std::make_shared<EmptyParameterInterface<NodeT>>(
-          rclcpp::NodeOptions(), modulo_core::communication::PublisherType::PUBLISHER);
-    } else if (std::is_same<NodeT, rclcpp_lifecycle::LifecycleNode>::value) {
-      this->component_ = std::make_shared<EmptyParameterInterface<NodeT>>(
-          rclcpp::NodeOptions(), modulo_core::communication::PublisherType::LIFECYCLE_PUBLISHER);
-    }
+    this->component_ = std::make_shared<EmptyParameterInterface<NodeT>>(
+        std::make_shared<NodeT>("EmptyParameterInterface", rclcpp::NodeOptions()));
   }
 
   std::shared_ptr<EmptyParameterInterface<NodeT>> component_;
@@ -67,28 +60,15 @@ using NodeTypes = ::testing::Types<rclcpp::Node, rclcpp_lifecycle::LifecycleNode
 TYPED_TEST_SUITE(ComponentInterfaceEmptyParameterTest, NodeTypes);
 
 TYPED_TEST(ComponentInterfaceEmptyParameterTest, NotAllowEmptyOnConstruction) {
-  if (std::is_same<TypeParam, rclcpp::Node>::value) {
-    EXPECT_THROW(std::make_shared<EmptyParameterInterface<TypeParam>>(
-        rclcpp::NodeOptions(), modulo_core::communication::PublisherType::PUBLISHER, "EmptyParameterComponent", false),
-                 modulo_components::exceptions::ComponentParameterException);
-  } else if (std::is_same<TypeParam, rclcpp_lifecycle::LifecycleNode>::value) {
-    EXPECT_THROW(std::make_shared<EmptyParameterInterface<TypeParam>>(
-        rclcpp::NodeOptions(), modulo_core::communication::PublisherType::LIFECYCLE_PUBLISHER,
-        "EmptyParameterComponent", false), modulo_components::exceptions::ComponentParameterException);
-  }
+  auto node = std::make_shared<TypeParam>("EmptyParameterComponent", rclcpp::NodeOptions());
+  EXPECT_THROW(std::make_shared<EmptyParameterInterface<TypeParam>>(node, false),
+               modulo_components::exceptions::ComponentParameterException);
 }
 
 TYPED_TEST(ComponentInterfaceEmptyParameterTest, NotAllowEmpty) {
   std::shared_ptr<EmptyParameterInterface<TypeParam>> component;
-  if (std::is_same<TypeParam, rclcpp::Node>::value) {
-    component = std::make_shared<EmptyParameterInterface<TypeParam>>(
-        rclcpp::NodeOptions(), modulo_core::communication::PublisherType::PUBLISHER, "EmptyParameterComponent", false,
-        false);
-  } else if (std::is_same<TypeParam, rclcpp_lifecycle::LifecycleNode>::value) {
-    component = std::make_shared<EmptyParameterInterface<TypeParam>>(
-        rclcpp::NodeOptions(), modulo_core::communication::PublisherType::LIFECYCLE_PUBLISHER,
-        "EmptyParameterComponent", false, false);
-  }
+  auto node = std::make_shared<TypeParam>("EmptyParameterComponent", rclcpp::NodeOptions());
+  component = std::make_shared<EmptyParameterInterface<TypeParam>>(node, false, false);
   EXPECT_THROW(component->add_parameter(std::make_shared<Parameter<std::string>>("name"), "Test parameter"),
                exceptions::ComponentParameterException);
   EXPECT_THROW(auto param = component->get_parameter("name"), exceptions::ComponentParameterException);
@@ -96,16 +76,8 @@ TYPED_TEST(ComponentInterfaceEmptyParameterTest, NotAllowEmpty) {
 }
 
 TYPED_TEST(ComponentInterfaceEmptyParameterTest, AllowEmpty) {
-  std::shared_ptr<EmptyParameterInterface<TypeParam>> component;
-  if (std::is_same<TypeParam, rclcpp::Node>::value) {
-    component = std::make_shared<EmptyParameterInterface<TypeParam>>(
-        rclcpp::NodeOptions(), modulo_core::communication::PublisherType::PUBLISHER, "EmptyParameterComponent", true,
-        false);
-  } else if (std::is_same<TypeParam, rclcpp_lifecycle::LifecycleNode>::value) {
-    component = std::make_shared<EmptyParameterInterface<TypeParam>>(
-        rclcpp::NodeOptions(), modulo_core::communication::PublisherType::LIFECYCLE_PUBLISHER,
-        "EmptyParameterComponent", true, false);
-  }
+  auto node = std::make_shared<TypeParam>("EmptyParameterInterface", rclcpp::NodeOptions());
+  auto component = std::make_shared<EmptyParameterInterface<TypeParam>>(node, true, false);
   EXPECT_NO_THROW(component->add_parameter(std::make_shared<Parameter<std::string>>("name"), "Test parameter"));
   EXPECT_EQ(component->get_parameter("name")->get_parameter_type(), ParameterType::STRING);
   EXPECT_TRUE(component->get_parameter("name")->is_empty());
@@ -168,7 +140,7 @@ TYPED_TEST(ComponentInterfaceEmptyParameterTest, ValidateEmptyParameter) {
 TYPED_TEST(ComponentInterfaceEmptyParameterTest, ChangeParameterType) {
   // Add parameter from component interface
   this->component_->add_parameter(std::make_shared<Parameter<int>>("int"), "Test parameter");
-  EXPECT_TRUE(this->component_->describe_parameter("int").dynamic_typing);
+  EXPECT_TRUE(this->component_->node_parameters_->describe_parameters({"int"}).at(0).dynamic_typing);
   this->component_->template set_parameter_value<int>("int", 1);
   EXPECT_EQ(this->component_->get_parameter("int")->get_parameter_type(), ParameterType::INT);
   EXPECT_EQ(this->component_->get_parameter("int")->template get_parameter_value<int>(), 1);
@@ -197,30 +169,16 @@ TYPED_TEST(ComponentInterfaceEmptyParameterTest, ChangeParameterType) {
 
 TYPED_TEST(ComponentInterfaceEmptyParameterTest, ParameterOverrides) {
   // Construction with not allowing empty parameters but providing the parameter override should succeed
-  if (std::is_same<TypeParam, rclcpp::Node>::value) {
-    EXPECT_NO_THROW(std::make_shared<EmptyParameterInterface<TypeParam>>(
-        rclcpp::NodeOptions().parameter_overrides({rclcpp::Parameter("name", "test")}),
-        modulo_core::communication::PublisherType::PUBLISHER, "EmptyParameterComponent", false));
-  } else if (std::is_same<TypeParam, rclcpp_lifecycle::LifecycleNode>::value) {
-    EXPECT_NO_THROW(std::make_shared<EmptyParameterInterface<TypeParam>>(
-        rclcpp::NodeOptions().parameter_overrides({rclcpp::Parameter("name", "test")}),
-        modulo_core::communication::PublisherType::LIFECYCLE_PUBLISHER, "EmptyParameterComponent", false));
-  }
+  auto node = std::make_shared<TypeParam>(
+      "EmptyParameterInterface", rclcpp::NodeOptions().parameter_overrides({rclcpp::Parameter("name", "test")}));
+  EXPECT_NO_THROW(std::make_shared<EmptyParameterInterface<TypeParam>>(node, false));
 }
 
 TYPED_TEST(ComponentInterfaceEmptyParameterTest, ParameterOverridesEmpty) {
   // Construction with not allowing empty parameters and providing an uninitialized parameter override should not succeed
-  std::shared_ptr<EmptyParameterInterface<TypeParam>> component;
-  if (std::is_same<TypeParam, rclcpp::Node>::value) {
-    EXPECT_THROW(component = std::make_shared<EmptyParameterInterface<TypeParam>>(
-        rclcpp::NodeOptions().parameter_overrides({rclcpp::Parameter("name")}),
-        modulo_core::communication::PublisherType::PUBLISHER, "EmptyParameterComponent", false, true, false),
-                 modulo_components::exceptions::ComponentParameterException);
-  } else if (std::is_same<TypeParam, rclcpp_lifecycle::LifecycleNode>::value) {
-    EXPECT_THROW(std::make_shared<EmptyParameterInterface<TypeParam>>(
-        rclcpp::NodeOptions().parameter_overrides({rclcpp::Parameter("name")}),
-        modulo_core::communication::PublisherType::LIFECYCLE_PUBLISHER, "EmptyParameterComponent", false, true, false),
-                 modulo_components::exceptions::ComponentParameterException);
-  }
+  auto node = std::make_shared<TypeParam>(
+      "EmptyParameterInterface", rclcpp::NodeOptions().parameter_overrides({rclcpp::Parameter("name")}));
+  EXPECT_THROW(std::make_shared<EmptyParameterInterface<TypeParam>>(node, false, true, false),
+               modulo_components::exceptions::ComponentParameterException);
 }
 } // namespace modulo_components

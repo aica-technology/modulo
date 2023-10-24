@@ -1,10 +1,6 @@
 #pragma once
 
-// TODO sort includes
-#include <rclcpp/parameter.hpp>
-#include <rclcpp/create_timer.hpp>
-#include <rclcpp/node.hpp>
-#include <rclcpp_lifecycle/lifecycle_node.hpp>
+#include <rclcpp/node_interfaces/node_interfaces.hpp>
 
 #include <console_bridge/console.h>
 #include <tf2_msgs/msg/tf_message.hpp>
@@ -14,9 +10,7 @@
 #include <tf2_ros/transform_listener.h>
 
 #include <state_representation/parameters/ParameterMap.hpp>
-#include <state_representation/space/cartesian/CartesianPose.hpp>
 
-#include <modulo_core/communication/MessagePair.hpp>
 #include <modulo_core/communication/PublisherHandler.hpp>
 #include <modulo_core/communication/PublisherType.hpp>
 #include <modulo_core/communication/SubscriptionHandler.hpp>
@@ -56,9 +50,7 @@ struct ComponentServiceResponse {
 /**
  * @class ComponentInterfacePublicInterface
  * @brief Friend class to the ComponentInterface to allow test fixtures to access protected and private members.
- * @tparam NodeT The rclcpp Node type
  */
-template<class NodeT>
 class ComponentInterfacePublicInterface;
 
 /**
@@ -67,33 +59,25 @@ class ComponentInterfacePublicInterface;
  * @details This class is not intended for direct inheritance and usage by end-users. Instead, it defines the common
  * interfaces for the derived classes modulo_components::Component and modulo_components::LifecycleComponent.
  * @see Component, LifecycleComponent
- * @tparam NodeT The rclcpp Node type
  */
-template<class NodeT>
-class ComponentInterface : public NodeT {
+class ComponentInterface {
 public:
-  friend class ComponentInterfacePublicInterface<rclcpp::Node>;
-  friend class ComponentInterfacePublicInterface<rclcpp_lifecycle::LifecycleNode>;
-
-  /**
-   * @brief Constructor from node options.
-   * @param node_options Node options as used in ROS2 Node / LifecycleNode
-   * @param publisher_type The type of publisher that also indicates if the component is lifecycle or not
-   * @param fallback_name The name of the component if it was not provided through the node options
-   */
-  explicit ComponentInterface(
-      const rclcpp::NodeOptions& node_options, modulo_core::communication::PublisherType publisher_type,
-      const std::string& fallback_name = "ComponentInterface"
-  );
+  friend class ComponentInterfacePublicInterface;
 
   /**
    * @brief Virtual default destructor.
    */
   virtual ~ComponentInterface() = default;
 
-  // TODO hide ROS methods
-
 protected:
+  /**
+   * @brief Constructor with all node interfaces
+   * @param interfaces Shared pointer to all the node interfaces of parent class
+   */
+  explicit ComponentInterface(
+      const std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<ALL_RCLCPP_NODE_INTERFACES>>& interfaces
+  );
+
   /**
    * @brief Step function that is called periodically.
    */
@@ -359,8 +343,8 @@ protected:
    */
   template<typename DataT>
   std::string create_output(
-      const std::string& signal_name, const std::shared_ptr<DataT>& data, const std::string& default_topic,
-      bool fixed_topic, bool publish_on_step
+      modulo_core::communication::PublisherType publisher_type, const std::string& signal_name,
+      const std::shared_ptr<DataT>& data, const std::string& default_topic, bool fixed_topic, bool publish_on_step
   );
 
   /**
@@ -561,12 +545,9 @@ private:
       const tf2::Duration& duration
   );
 
-  modulo_core::communication::PublisherType
-      publisher_type_; ///< Type of the output publishers (one of PUBLISHER, LIFECYCLE_PUBLISHER)
-
   std::map<std::string, utilities::PredicateVariant> predicates_; ///< Map of predicates
   std::shared_ptr<rclcpp::Publisher<modulo_component_interfaces::msg::Predicate>>
-  predicate_publisher_; ///< Predicate publisher
+      predicate_publisher_; ///< Predicate publisher
   std::map<std::string, bool> triggers_; ///< Map of triggers
 
   std::map<std::string, std::shared_ptr<rclcpp::Service<modulo_component_interfaces::srv::EmptyTrigger>>>
@@ -580,59 +561,41 @@ private:
   std::shared_ptr<rclcpp::node_interfaces::OnSetParametersCallbackHandle>
       parameter_cb_handle_; ///< ROS callback function handle for setting parameters
 
+  std::shared_ptr<rclcpp::CallbackGroup> cb_group_;
   std::shared_ptr<rclcpp::TimerBase> step_timer_; ///< Timer for the step function
   std::shared_ptr<tf2_ros::Buffer> tf_buffer_; ///< TF buffer
   std::shared_ptr<tf2_ros::TransformListener> tf_listener_; ///< TF listener
   std::shared_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_; ///< TF broadcaster
   std::shared_ptr<tf2_ros::StaticTransformBroadcaster> static_tf_broadcaster_; ///< TF static broadcaster
 
+  std::shared_ptr<rclcpp::node_interfaces::NodeBaseInterface> node_base_;
+  std::shared_ptr<rclcpp::node_interfaces::NodeClockInterface> node_clock_;
+  std::shared_ptr<rclcpp::node_interfaces::NodeLoggingInterface> node_logging_;
+  std::shared_ptr<rclcpp::node_interfaces::NodeParametersInterface> node_parameters_;
+  std::shared_ptr<rclcpp::node_interfaces::NodeServicesInterface> node_services_;
+  std::shared_ptr<rclcpp::node_interfaces::NodeTimersInterface> node_timers_;
+  std::shared_ptr<rclcpp::node_interfaces::NodeTopicsInterface> node_topics_;
+
   bool set_parameter_callback_called_ = false; ///< Flag to indicate if on_set_parameter_callback was called
 };
 
-template<class NodeT>
-ComponentInterface<NodeT>::ComponentInterface(
-    const rclcpp::NodeOptions& options, modulo_core::communication::PublisherType publisher_type,
-    const std::string& fallback_name)
-    : NodeT(utilities::parse_node_name(options, fallback_name), utilities::modify_parameter_overrides(options)),
-      publisher_type_(publisher_type) {
-  // register the parameter change callback handler
-  parameter_cb_handle_ = NodeT::add_on_set_parameters_callback(
-      [this](const std::vector<rclcpp::Parameter>& parameters) -> rcl_interfaces::msg::SetParametersResult {
-        return this->on_set_parameters_callback(parameters);
-      });
-  this->add_parameter("rate", 10, "The rate in Hertz for all periodic callbacks", true);
-  this->add_parameter("period", 0.1, "The time interval in seconds for all periodic callbacks", true);
+inline void ComponentInterface::step() {}
 
-  this->predicate_publisher_ =
-      rclcpp::create_publisher<modulo_component_interfaces::msg::Predicate>(*this, "/predicates", this->qos_);
-  this->add_predicate("in_error_state", false);
+inline void ComponentInterface::on_step_callback() {}
 
-  this->step_timer_ = this->create_wall_timer(
-      std::chrono::nanoseconds(static_cast<int64_t>(this->get_parameter_value<double>("period") * 1e9)),
-      [this] { this->step(); });
-}
-
-template<class NodeT>
-inline void ComponentInterface<NodeT>::step() {}
-
-template<class NodeT>
-inline void ComponentInterface<NodeT>::on_step_callback() {}
-
-template<class NodeT>
 template<typename T>
-inline void ComponentInterface<NodeT>::add_parameter(
+inline void ComponentInterface::add_parameter(
     const std::string& name, const T& value, const std::string& description, bool read_only
 ) {
   if (name.empty()) {
-    RCLCPP_ERROR(this->get_logger(), "Failed to add parameter: Provide a non empty string as a name.");
+    RCLCPP_ERROR(this->node_logging_->get_logger(), "Failed to add parameter: Provide a non empty string as a name.");
     return;
   }
   this->add_parameter(state_representation::make_shared_parameter(name, value), description, read_only);
 }
 
-template<class NodeT>
 template<typename T>
-inline T ComponentInterface<NodeT>::get_parameter_value(const std::string& name) const {
+inline T ComponentInterface::get_parameter_value(const std::string& name) const {
   try {
     return this->parameter_map_.template get_parameter_value<T>(name);
   } catch (const state_representation::exceptions::InvalidParameterException& ex) {
@@ -641,8 +604,7 @@ inline T ComponentInterface<NodeT>::get_parameter_value(const std::string& name)
   }
 }
 
-template<class NodeT>
-inline void ComponentInterface<NodeT>::add_parameter(
+inline void ComponentInterface::add_parameter(
     const std::shared_ptr<state_representation::ParameterInterface>& parameter, const std::string& description,
     bool read_only
 ) {
@@ -653,8 +615,8 @@ inline void ComponentInterface<NodeT>::add_parameter(
   } catch (const modulo_core::exceptions::ParameterTranslationException& ex) {
     throw exceptions::ComponentParameterException("Failed to add parameter: " + std::string(ex.what()));
   }
-  if (!NodeT::has_parameter(parameter->get_name())) {
-    RCLCPP_DEBUG_STREAM(this->get_logger(), "Adding parameter '" << parameter->get_name() << "'.");
+  if (!this->node_parameters_->has_parameter(parameter->get_name())) {
+    RCLCPP_DEBUG_STREAM(this->node_logging_->get_logger(), "Adding parameter '" << parameter->get_name() << "'.");
     this->parameter_map_.set_parameter(parameter);
     try {
       rcl_interfaces::msg::ParameterDescriptor descriptor;
@@ -663,14 +625,15 @@ inline void ComponentInterface<NodeT>::add_parameter(
       if (parameter->is_empty()) {
         descriptor.dynamic_typing = true;
         descriptor.type = modulo_core::translators::get_ros_parameter_type(parameter->get_parameter_type());
-        NodeT::declare_parameter(parameter->get_name(), rclcpp::ParameterValue{}, descriptor);
+        this->node_parameters_->declare_parameter(parameter->get_name(), rclcpp::ParameterValue{}, descriptor);
       } else {
-        NodeT::declare_parameter(parameter->get_name(), ros_param.get_parameter_value(), descriptor);
+        this->node_parameters_->declare_parameter(parameter->get_name(), ros_param.get_parameter_value(), descriptor);
       }
       if (!this->set_parameter_callback_called_) {
-        auto result = this->on_set_parameters_callback({NodeT::get_parameters({parameter->get_name()})});
+        auto result =
+            this->on_set_parameters_callback({this->node_parameters_->get_parameters({parameter->get_name()})});
         if (!result.successful) {
-          NodeT::undeclare_parameter(parameter->get_name());
+          this->node_parameters_->undeclare_parameter(parameter->get_name());
           throw exceptions::ComponentParameterException(result.reason);
         }
       }
@@ -679,13 +642,13 @@ inline void ComponentInterface<NodeT>::add_parameter(
       throw exceptions::ComponentParameterException("Failed to add parameter: " + std::string(ex.what()));
     }
   } else {
-    RCLCPP_DEBUG_STREAM(this->get_logger(), "Parameter '" << parameter->get_name() << "' already exists.");
+    RCLCPP_DEBUG_STREAM(this->node_logging_->get_logger(),
+                        "Parameter '" << parameter->get_name() << "' already exists.");
   }
 }
 
-template<class NodeT>
 inline std::shared_ptr<state_representation::ParameterInterface>
-ComponentInterface<NodeT>::get_parameter(const std::string& name) const {
+ComponentInterface::get_parameter(const std::string& name) const {
   try {
     return this->parameter_map_.get_parameter(name);
   } catch (const state_representation::exceptions::InvalidParameterException& ex) {
@@ -693,53 +656,53 @@ ComponentInterface<NodeT>::get_parameter(const std::string& name) const {
   }
 }
 
-template<class NodeT>
 template<typename T>
-inline void ComponentInterface<NodeT>::set_parameter_value(const std::string& name, const T& value) {
+inline void ComponentInterface::set_parameter_value(const std::string& name, const T& value) {
   try {
-    rcl_interfaces::msg::SetParametersResult result = NodeT::set_parameter(
-        modulo_core::translators::write_parameter(state_representation::make_shared_parameter(name, value)));
+    rcl_interfaces::msg::SetParametersResult result = this->node_parameters_->set_parameters(
+        {
+            modulo_core::translators::write_parameter(state_representation::make_shared_parameter(name, value))
+        }).at(0);
     if (!result.successful) {
-      RCLCPP_ERROR_STREAM_THROTTLE(this->get_logger(), *this->get_clock(), 1000,
+      RCLCPP_ERROR_STREAM_THROTTLE(this->node_logging_->get_logger(), *this->node_clock_->get_clock(), 1000,
                                    "Failed to set parameter value of parameter '" << name << "': " << result.reason);
     }
   } catch (const std::exception& ex) {
-    RCLCPP_ERROR_STREAM_THROTTLE(this->get_logger(), *this->get_clock(), 1000,
+    RCLCPP_ERROR_STREAM_THROTTLE(this->node_logging_->get_logger(), *this->node_clock_->get_clock(), 1000,
                                  "Failed to set parameter value of parameter '" << name << "': " << ex.what());
   }
 }
 
-template<class NodeT>
-inline bool ComponentInterface<NodeT>::validate_parameter(
+inline bool ComponentInterface::validate_parameter(
     const std::shared_ptr<state_representation::ParameterInterface>& parameter
 ) {
   if (parameter->get_name() == "rate") {
     auto value = parameter->get_parameter_value<int>();
     if (value <= 0 || !std::isfinite(value)) {
-      RCLCPP_ERROR(this->get_logger(), "Value for parameter 'rate' has to be a positive finite number.");
+      RCLCPP_ERROR(this->node_logging_->get_logger(), 
+                   "Value for parameter 'rate' has to be a positive finite number.");
       return false;
     }
   }
   if (parameter->get_name() == "period") {
     auto value = parameter->get_parameter_value<double>();
     if (value <= 0.0 || !std::isfinite(value)) {
-      RCLCPP_ERROR(this->get_logger(), "Value for parameter 'period' has to be a positive finite number.");
+      RCLCPP_ERROR(this->node_logging_->get_logger(),
+                   "Value for parameter 'period' has to be a positive finite number.");
       return false;
     }
   }
   return this->on_validate_parameter_callback(parameter);
 }
 
-template<class NodeT>
-inline bool ComponentInterface<NodeT>::on_validate_parameter_callback(
+inline bool ComponentInterface::on_validate_parameter_callback(
     const std::shared_ptr<state_representation::ParameterInterface>&
 ) {
   return true;
 }
 
-template<class NodeT>
 inline rcl_interfaces::msg::SetParametersResult
-ComponentInterface<NodeT>::on_set_parameters_callback(const std::vector<rclcpp::Parameter>& parameters) {
+ComponentInterface::on_set_parameters_callback(const std::vector<rclcpp::Parameter>& parameters) {
   rcl_interfaces::msg::SetParametersResult result;
   result.successful = true;
   for (const auto& ros_parameter : parameters) {
@@ -768,40 +731,37 @@ ComponentInterface<NodeT>::on_set_parameters_callback(const std::vector<rclcpp::
   return result;
 }
 
-template<class NodeT>
-inline void ComponentInterface<NodeT>::add_predicate(const std::string& name, bool predicate) {
+inline void ComponentInterface::add_predicate(const std::string& name, bool predicate) {
   this->add_variant_predicate(name, utilities::PredicateVariant(predicate));
 }
 
-template<class NodeT>
-inline void ComponentInterface<NodeT>::add_predicate(
+inline void ComponentInterface::add_predicate(
     const std::string& name, const std::function<bool(void)>& predicate
 ) {
   this->add_variant_predicate(name, utilities::PredicateVariant(predicate));
 }
 
-template<class NodeT>
-inline void ComponentInterface<NodeT>::add_variant_predicate(
+inline void ComponentInterface::add_variant_predicate(
     const std::string& name, const utilities::PredicateVariant& predicate
 ) {
   if (name.empty()) {
-    RCLCPP_ERROR(this->get_logger(), "Failed to add predicate: Provide a non empty string as a name.");
+    RCLCPP_ERROR(this->node_logging_->get_logger(), "Failed to add predicate: Provide a non empty string as a name.");
     return;
   }
   if (this->predicates_.find(name) != this->predicates_.end()) {
-    RCLCPP_WARN_STREAM(this->get_logger(), "Predicate with name '" << name << "' already exists, overwriting.");
+    RCLCPP_WARN_STREAM(this->node_logging_->get_logger(),
+                       "Predicate with name '" << name << "' already exists, overwriting.");
   } else {
-    RCLCPP_DEBUG_STREAM(this->get_logger(), "Adding predicate '" << name << "'.");
+    RCLCPP_DEBUG_STREAM(this->node_logging_->get_logger(), "Adding predicate '" << name << "'.");
   }
   this->predicates_.insert_or_assign(name, predicate);
 }
 
-template<class NodeT>
-inline bool ComponentInterface<NodeT>::get_predicate(const std::string& predicate_name) {
+inline bool ComponentInterface::get_predicate(const std::string& predicate_name) {
   auto predicate_iterator = this->predicates_.find(predicate_name);
   // if there is no predicate with that name simply return false with an error message
   if (predicate_iterator == this->predicates_.end()) {
-    RCLCPP_ERROR_STREAM_THROTTLE(this->get_logger(), *this->get_clock(), 1000,
+    RCLCPP_ERROR_STREAM_THROTTLE(this->node_logging_->get_logger(), *this->node_clock_->get_clock(), 1000,
                                  "Failed to get predicate '" << predicate_name
                                                              << "': Predicate does not exists, returning false.");
     return false;
@@ -817,23 +777,22 @@ inline bool ComponentInterface<NodeT>::get_predicate(const std::string& predicat
   try {
     value = (callback_function)();
   } catch (const std::exception& ex) {
-    RCLCPP_ERROR_STREAM_THROTTLE(this->get_logger(), *this->get_clock(), 1000,
+    RCLCPP_ERROR_STREAM_THROTTLE(this->node_logging_->get_logger(), *this->node_clock_->get_clock(), 1000,
                                  "Failed to evaluate callback of predicate '" << predicate_name
                                                                               << "', returning false: " << ex.what());
   }
   return value;
 }
 
-template<class NodeT>
-inline void ComponentInterface<NodeT>::add_trigger(const std::string& trigger_name) {
+inline void ComponentInterface::add_trigger(const std::string& trigger_name) {
   if (trigger_name.empty()) {
-    RCLCPP_ERROR(this->get_logger(), "Failed to add trigger: Provide a non empty string as a name.");
+    RCLCPP_ERROR(this->node_logging_->get_logger(), "Failed to add trigger: Provide a non empty string as a name.");
     return;
   }
   if (this->triggers_.find(trigger_name) != this->triggers_.end()
       || this->predicates_.find(trigger_name) != this->predicates_.end()) {
-    RCLCPP_ERROR_STREAM(this->get_logger(), "Failed to add trigger: there is already a trigger or "
-                                            "predicate with name '" << trigger_name << "'.");
+    RCLCPP_ERROR_STREAM(this->node_logging_->get_logger(), "Failed to add trigger: there is already a trigger or "
+                                                           "predicate with name '" << trigger_name << "'.");
     return;
   }
   this->triggers_.insert_or_assign(trigger_name, false);
@@ -845,24 +804,22 @@ inline void ComponentInterface<NodeT>::add_trigger(const std::string& trigger_na
       });
 }
 
-template<class NodeT>
-inline void ComponentInterface<NodeT>::trigger(const std::string& trigger_name) {
+inline void ComponentInterface::trigger(const std::string& trigger_name) {
   if (this->triggers_.find(trigger_name) == this->triggers_.end()) {
-    RCLCPP_ERROR_STREAM(this->get_logger(), "Failed to trigger: could not find trigger"
-                                            " with name  '" << trigger_name << "'.");
+    RCLCPP_ERROR_STREAM(this->node_logging_->get_logger(), "Failed to trigger: could not find trigger"
+                                                           " with name  '" << trigger_name << "'.");
     return;
   }
   this->triggers_.at(trigger_name) = true;
   publish_predicate(trigger_name);
 }
 
-template<class NodeT>
-inline void ComponentInterface<NodeT>::set_variant_predicate(
+inline void ComponentInterface::set_variant_predicate(
     const std::string& name, const utilities::PredicateVariant& predicate
 ) {
   auto predicate_iterator = this->predicates_.find(name);
   if (predicate_iterator == this->predicates_.end()) {
-    RCLCPP_ERROR_STREAM_THROTTLE(this->get_logger(), *this->get_clock(), 1000,
+    RCLCPP_ERROR_STREAM_THROTTLE(this->node_logging_->get_logger(), *this->node_clock_->get_clock(), 1000,
                                  "Failed to set predicate '" << name << "': Predicate does not exist.");
     return;
   }
@@ -870,56 +827,50 @@ inline void ComponentInterface<NodeT>::set_variant_predicate(
   this->publish_predicate(name);
 }
 
-template<class NodeT>
-inline void ComponentInterface<NodeT>::set_predicate(const std::string& name, bool predicate) {
+inline void ComponentInterface::set_predicate(const std::string& name, bool predicate) {
   this->set_variant_predicate(name, utilities::PredicateVariant(predicate));
 }
 
-template<class NodeT>
-inline void ComponentInterface<NodeT>::set_predicate(
+inline void ComponentInterface::set_predicate(
     const std::string& name, const std::function<bool(void)>& predicate
 ) {
   this->set_variant_predicate(name, utilities::PredicateVariant(predicate));
 }
 
-template<class NodeT>
 template<typename T>
-inline bool ComponentInterface<NodeT>::remove_signal(
+inline bool ComponentInterface::remove_signal(
     const std::string& signal_name, std::map<std::string, std::shared_ptr<T>>& signal_map, bool skip_check
 ) {
   if (!skip_check && signal_map.find(signal_name) == signal_map.cend()) {
     return false;
   } else {
-    RCLCPP_DEBUG_STREAM(this->get_logger(), "Removing signal '" << signal_name << "'.");
+    RCLCPP_DEBUG_STREAM(this->node_logging_->get_logger(), "Removing signal '" << signal_name << "'.");
     signal_map.at(signal_name).reset();
     return signal_map.erase(signal_name);
   }
 }
 
-template<class NodeT>
-inline void ComponentInterface<NodeT>::remove_input(const std::string& signal_name) {
+inline void ComponentInterface::remove_input(const std::string& signal_name) {
   if (!this->template remove_signal(signal_name, this->inputs_)) {
     auto parsed_signal_name = utilities::parse_topic_name(signal_name);
     if (!this->template remove_signal(parsed_signal_name, this->inputs_)) {
-      RCLCPP_DEBUG_STREAM(this->get_logger(),
+      RCLCPP_DEBUG_STREAM(this->node_logging_->get_logger(),
                           "Unknown input '" << signal_name << "' (parsed name was '" << parsed_signal_name << "').");
     }
   }
 }
 
-template<class NodeT>
-inline void ComponentInterface<NodeT>::remove_output(const std::string& signal_name) {
+inline void ComponentInterface::remove_output(const std::string& signal_name) {
   if (!this->template remove_signal(signal_name, this->outputs_)) {
     auto parsed_signal_name = utilities::parse_topic_name(signal_name);
     if (!this->template remove_signal(parsed_signal_name, this->outputs_)) {
-      RCLCPP_DEBUG_STREAM(this->get_logger(),
+      RCLCPP_DEBUG_STREAM(this->node_logging_->get_logger(),
                           "Unknown output '" << signal_name << "' (parsed name was '" << parsed_signal_name << "').");
     }
   }
 }
 
-template<class NodeT>
-inline void ComponentInterface<NodeT>::declare_signal(
+inline void ComponentInterface::declare_signal(
     const std::string& signal_name, const std::string& type, const std::string& default_topic, bool fixed_topic
 ) {
   std::string parsed_signal_name = utilities::parse_topic_name(signal_name);
@@ -936,43 +887,39 @@ inline void ComponentInterface<NodeT>::declare_signal(
   }
   std::string topic_name = default_topic.empty() ? "~/" + parsed_signal_name : default_topic;
   auto parameter_name = parsed_signal_name + "_topic";
-  if (NodeT::has_parameter(parameter_name) && this->get_parameter(parameter_name)->is_empty()) {
+  if (this->node_parameters_->has_parameter(parameter_name) && this->get_parameter(parameter_name)->is_empty()) {
     this->set_parameter_value<std::string>(parameter_name, topic_name);
   } else {
     this->add_parameter(
         parameter_name, topic_name, "Signal topic name of " + type + " '" + parsed_signal_name + "'", fixed_topic);
   }
-  RCLCPP_DEBUG_STREAM(this->get_logger(),
+  RCLCPP_DEBUG_STREAM(this->node_logging_->get_logger(),
                       "Declared signal '" << parsed_signal_name << "' and parameter '" << parameter_name
                                           << "' with value '" << topic_name << "'.");
 }
 
-template<class NodeT>
-inline void ComponentInterface<NodeT>::declare_input(
+inline void ComponentInterface::declare_input(
     const std::string& signal_name, const std::string& default_topic, bool fixed_topic
 ) {
   this->declare_signal(signal_name, "input", default_topic, fixed_topic);
 }
 
-template<class NodeT>
-inline void ComponentInterface<NodeT>::declare_output(
+inline void ComponentInterface::declare_output(
     const std::string& signal_name, const std::string& default_topic, bool fixed_topic
 ) {
   this->declare_signal(signal_name, "output", default_topic, fixed_topic);
 }
 
-template<class NodeT>
 template<typename DataT>
-inline void ComponentInterface<NodeT>::add_input(
+inline void ComponentInterface::add_input(
     const std::string& signal_name, const std::shared_ptr<DataT>& data, const std::string& default_topic,
     bool fixed_topic
 ) {
   this->add_input(signal_name, data, [] {}, default_topic, fixed_topic);
 }
 
-template<class NodeT>
 template<typename DataT>
-inline void ComponentInterface<NodeT>::add_input(
+inline void ComponentInterface::add_input(
     const std::string& signal_name, const std::shared_ptr<DataT>& data, const std::function<void()>& user_callback,
     const std::string& default_topic, bool fixed_topic
 ) {
@@ -985,64 +932,70 @@ inline void ComponentInterface<NodeT>::add_input(
     }
     this->declare_input(parsed_signal_name, default_topic, fixed_topic);
     auto topic_name = this->get_parameter_value<std::string>(parsed_signal_name + "_topic");
-    RCLCPP_DEBUG_STREAM(this->get_logger(),
+    RCLCPP_DEBUG_STREAM(this->node_logging_->get_logger(),
                         "Adding input '" << parsed_signal_name << "' with topic name '" << topic_name << "'.");
-    auto message_pair = make_shared_message_pair(data, this->get_clock());
+    auto message_pair = make_shared_message_pair(data, this->node_clock_->get_clock());
     std::shared_ptr<SubscriptionInterface> subscription_interface;
     switch (message_pair->get_type()) {
       case MessageType::BOOL: {
         auto subscription_handler = std::make_shared<SubscriptionHandler<std_msgs::msg::Bool>>(message_pair);
-        auto subscription = NodeT::template create_subscription<std_msgs::msg::Bool>(
-            topic_name, this->qos_, subscription_handler->get_callback(user_callback));
+        auto subscription = rclcpp::create_subscription<std_msgs::msg::Bool>(
+            this->node_parameters_, this->node_topics_, topic_name, this->qos_,
+            subscription_handler->get_callback(user_callback));
         subscription_interface = subscription_handler->create_subscription_interface(subscription);
         break;
       }
       case MessageType::FLOAT64: {
         auto subscription_handler = std::make_shared<SubscriptionHandler<std_msgs::msg::Float64>>(message_pair);
-        auto subscription = NodeT::template create_subscription<std_msgs::msg::Float64>(
-            topic_name, this->qos_, subscription_handler->get_callback(user_callback));
+        auto subscription = rclcpp::create_subscription<std_msgs::msg::Float64>(
+            this->node_parameters_, this->node_topics_, topic_name, this->qos_,
+            subscription_handler->get_callback(user_callback));
         subscription_interface = subscription_handler->create_subscription_interface(subscription);
         break;
       }
       case MessageType::FLOAT64_MULTI_ARRAY: {
         auto subscription_handler =
             std::make_shared<SubscriptionHandler<std_msgs::msg::Float64MultiArray>>(message_pair);
-        auto subscription = NodeT::template create_subscription<std_msgs::msg::Float64MultiArray>(
-            topic_name, this->qos_, subscription_handler->get_callback(user_callback));
+        auto subscription = rclcpp::create_subscription<std_msgs::msg::Float64MultiArray>(
+            this->node_parameters_, this->node_topics_, topic_name, this->qos_,
+            subscription_handler->get_callback(user_callback));
         subscription_interface = subscription_handler->create_subscription_interface(subscription);
         break;
       }
       case MessageType::INT32: {
         auto subscription_handler = std::make_shared<SubscriptionHandler<std_msgs::msg::Int32>>(message_pair);
-        auto subscription = NodeT::template create_subscription<std_msgs::msg::Int32>(
-            topic_name, this->qos_, subscription_handler->get_callback(user_callback));
+        auto subscription = rclcpp::create_subscription<std_msgs::msg::Int32>(
+            this->node_parameters_, this->node_topics_, topic_name, this->qos_,
+            subscription_handler->get_callback(user_callback));
         subscription_interface = subscription_handler->create_subscription_interface(subscription);
         break;
       }
       case MessageType::STRING: {
         auto subscription_handler = std::make_shared<SubscriptionHandler<std_msgs::msg::String>>(message_pair);
-        auto subscription = NodeT::template create_subscription<std_msgs::msg::String>(
-            topic_name, this->qos_, subscription_handler->get_callback(user_callback));
+        auto subscription = rclcpp::create_subscription<std_msgs::msg::String>(
+            this->node_parameters_, this->node_topics_, topic_name, this->qos_,
+            subscription_handler->get_callback(user_callback));
         subscription_interface = subscription_handler->create_subscription_interface(subscription);
         break;
       }
       case MessageType::ENCODED_STATE: {
         auto subscription_handler = std::make_shared<SubscriptionHandler<modulo_core::EncodedState>>(message_pair);
-        auto subscription = NodeT::template create_subscription<modulo_core::EncodedState>(
-            topic_name, this->qos_, subscription_handler->get_callback(user_callback));
+        auto subscription = rclcpp::create_subscription<modulo_core::EncodedState>(
+            this->node_parameters_, this->node_topics_, topic_name, this->qos_,
+            subscription_handler->get_callback(user_callback));
         subscription_interface = subscription_handler->create_subscription_interface(subscription);
         break;
       }
     }
     this->inputs_.insert_or_assign(parsed_signal_name, subscription_interface);
   } catch (const std::exception& ex) {
-    RCLCPP_ERROR_STREAM(this->get_logger(), "Failed to add input '" << signal_name << "': " << ex.what());
+    RCLCPP_ERROR_STREAM(this->node_logging_->get_logger(),
+                        "Failed to add input '" << signal_name << "': " << ex.what());
   }
 }
 
-template<class NodeT>
 template<typename MsgT>
-inline void ComponentInterface<NodeT>::add_input(
+inline void ComponentInterface::add_input(
     const std::string& signal_name, const std::function<void(const std::shared_ptr<MsgT>)>& callback,
     const std::string& default_topic, bool fixed_topic
 ) {
@@ -1051,19 +1004,20 @@ inline void ComponentInterface<NodeT>::add_input(
     std::string parsed_signal_name = utilities::parse_topic_name(signal_name);
     this->declare_input(parsed_signal_name, default_topic, fixed_topic);
     auto topic_name = this->get_parameter_value<std::string>(parsed_signal_name + "_topic");
-    RCLCPP_DEBUG_STREAM(this->get_logger(),
+    RCLCPP_DEBUG_STREAM(this->node_logging_->get_logger(),
                         "Adding input '" << parsed_signal_name << "' with topic name '" << topic_name << "'.");
-    auto subscription = NodeT::template create_subscription<MsgT>(topic_name, this->qos_, callback);
+    auto subscription = rclcpp::create_subscription<MsgT>(
+        this->node_parameters_, this->node_topics_, topic_name, this->qos_, callback);
     auto subscription_interface =
         std::make_shared<SubscriptionHandler<MsgT>>()->create_subscription_interface(subscription);
     this->inputs_.insert_or_assign(parsed_signal_name, subscription_interface);
   } catch (const std::exception& ex) {
-    RCLCPP_ERROR_STREAM(this->get_logger(), "Failed to add input '" << signal_name << "': " << ex.what());
+    RCLCPP_ERROR_STREAM(this->node_logging_->get_logger(),
+                        "Failed to add input '" << signal_name << "': " << ex.what());
   }
 }
 
-template<class NodeT>
-inline std::string ComponentInterface<NodeT>::validate_service_name(const std::string& service_name) {
+inline std::string ComponentInterface::validate_service_name(const std::string& service_name) {
   std::string parsed_service_name = utilities::parse_topic_name(service_name);
   if (parsed_service_name.empty()) {
     throw exceptions::AddServiceException(
@@ -1077,15 +1031,14 @@ inline std::string ComponentInterface<NodeT>::validate_service_name(const std::s
   return parsed_service_name;
 }
 
-template<class NodeT>
-inline void ComponentInterface<NodeT>::add_service(
+inline void ComponentInterface::add_service(
     const std::string& service_name, const std::function<ComponentServiceResponse(void)>& callback
 ) {
   try {
     std::string parsed_service_name = this->validate_service_name(service_name);
-    RCLCPP_DEBUG_STREAM(this->get_logger(), "Adding empty service '" << parsed_service_name << "'.");
-    auto service = NodeT::template create_service<modulo_component_interfaces::srv::EmptyTrigger>(
-        "~/" + parsed_service_name, [callback](
+    RCLCPP_DEBUG_STREAM(this->node_logging_->get_logger(), "Adding empty service '" << parsed_service_name << "'.");
+    auto service = rclcpp::create_service<modulo_component_interfaces::srv::EmptyTrigger>(
+        this->node_base_, this->node_services_, "~/" + parsed_service_name, [callback](
             const std::shared_ptr<modulo_component_interfaces::srv::EmptyTrigger::Request>,
             std::shared_ptr<modulo_component_interfaces::srv::EmptyTrigger::Response> response
         ) {
@@ -1097,22 +1050,22 @@ inline void ComponentInterface<NodeT>::add_service(
             response->success = false;
             response->message = ex.what();
           }
-        });
+        }, this->qos_, this->cb_group_);
     this->empty_services_.insert_or_assign(parsed_service_name, service);
   } catch (const std::exception& ex) {
-    RCLCPP_ERROR_STREAM(this->get_logger(), "Failed to add service '" << service_name << "': " << ex.what());
+    RCLCPP_ERROR_STREAM(this->node_logging_->get_logger(),
+                        "Failed to add service '" << service_name << "': " << ex.what());
   }
 }
 
-template<class NodeT>
-inline void ComponentInterface<NodeT>::add_service(
+inline void ComponentInterface::add_service(
     const std::string& service_name, const std::function<ComponentServiceResponse(const std::string& string)>& callback
 ) {
   try {
     std::string parsed_service_name = this->validate_service_name(service_name);
-    RCLCPP_DEBUG_STREAM(this->get_logger(), "Adding string service '" << parsed_service_name << "'.");
-    auto service = NodeT::template create_service<modulo_component_interfaces::srv::StringTrigger>(
-        "~/" + parsed_service_name, [callback](
+    RCLCPP_DEBUG_STREAM(this->node_logging_->get_logger(), "Adding string service '" << parsed_service_name << "'.");
+    auto service = rclcpp::create_service<modulo_component_interfaces::srv::StringTrigger>(
+        this->node_base_, this->node_services_, "~/" + parsed_service_name, [callback](
             const std::shared_ptr<modulo_component_interfaces::srv::StringTrigger::Request> request,
             std::shared_ptr<modulo_component_interfaces::srv::StringTrigger::Response> response
         ) {
@@ -1124,95 +1077,89 @@ inline void ComponentInterface<NodeT>::add_service(
             response->success = false;
             response->message = ex.what();
           }
-        });
+        }, this->qos_, this->cb_group_);
     this->string_services_.insert_or_assign(parsed_service_name, service);
   } catch (const std::exception& ex) {
-    RCLCPP_ERROR_STREAM(this->get_logger(), "Failed to add service '" << service_name << "': " << ex.what());
+    RCLCPP_ERROR_STREAM(this->node_logging_->get_logger(),
+                        "Failed to add service '" << service_name << "': " << ex.what());
   }
 }
 
-template<class NodeT>
-inline void
-ComponentInterface<NodeT>::add_periodic_callback(const std::string& name, const std::function<void()>& callback) {
+inline void ComponentInterface::add_periodic_callback(const std::string& name, const std::function<void()>& callback) {
   if (name.empty()) {
-    RCLCPP_ERROR(this->get_logger(), "Failed to add periodic function: Provide a non empty string as a name.");
+    RCLCPP_ERROR(this->node_logging_->get_logger(),
+                 "Failed to add periodic function: Provide a non empty string as a name.");
     return;
   }
   if (this->periodic_callbacks_.find(name) != this->periodic_callbacks_.end()) {
-    RCLCPP_WARN_STREAM(this->get_logger(), "Periodic function '" << name << "' already exists, overwriting.");
+    RCLCPP_WARN_STREAM(this->node_logging_->get_logger(),
+                       "Periodic function '" << name << "' already exists, overwriting.");
   } else {
-    RCLCPP_DEBUG_STREAM(this->get_logger(), "Adding periodic function '" << name << "'.");
+    RCLCPP_DEBUG_STREAM(this->node_logging_->get_logger(), "Adding periodic function '" << name << "'.");
   }
   this->periodic_callbacks_.template insert_or_assign(name, callback);
 }
 
-template<class NodeT>
-inline void ComponentInterface<NodeT>::add_tf_broadcaster() {
+inline void ComponentInterface::add_tf_broadcaster() {
   if (this->tf_broadcaster_ == nullptr) {
-    RCLCPP_DEBUG(this->get_logger(), "Adding TF broadcaster.");
+    RCLCPP_DEBUG(this->node_logging_->get_logger(), "Adding TF broadcaster.");
     console_bridge::setLogLevel(console_bridge::CONSOLE_BRIDGE_LOG_NONE);
-    this->tf_broadcaster_ = std::make_shared<tf2_ros::TransformBroadcaster>(*this);
+    this->tf_broadcaster_ = std::make_shared<tf2_ros::TransformBroadcaster>(
+        this->node_parameters_, this->node_topics_, tf2_ros::DynamicBroadcasterQoS());
   } else {
-    RCLCPP_DEBUG(this->get_logger(), "TF broadcaster already exists.");
+    RCLCPP_DEBUG(this->node_logging_->get_logger(), "TF broadcaster already exists.");
   }
 }
 
-template<class NodeT>
-inline void ComponentInterface<NodeT>::add_static_tf_broadcaster() {
+inline void ComponentInterface::add_static_tf_broadcaster() {
   if (this->static_tf_broadcaster_ == nullptr) {
-    RCLCPP_DEBUG(this->get_logger(), "Adding static TF broadcaster.");
+    RCLCPP_DEBUG(this->node_logging_->get_logger(), "Adding static TF broadcaster.");
     console_bridge::setLogLevel(console_bridge::CONSOLE_BRIDGE_LOG_NONE);
     tf2_ros::StaticBroadcasterQoS qos;
     rclcpp::PublisherOptionsWithAllocator<std::allocator<void>> options;
-    this->static_tf_broadcaster_ = std::make_shared<tf2_ros::StaticTransformBroadcaster>(*this, qos, options);
+    this->static_tf_broadcaster_ =
+        std::make_shared<tf2_ros::StaticTransformBroadcaster>(this->node_parameters_, this->node_topics_, qos, options);
   } else {
-    RCLCPP_DEBUG(this->get_logger(), "Static TF broadcaster already exists.");
+    RCLCPP_DEBUG(this->node_logging_->get_logger(), "Static TF broadcaster already exists.");
   }
 }
 
-template<class NodeT>
-inline void ComponentInterface<NodeT>::add_tf_listener() {
+inline void ComponentInterface::add_tf_listener() {
   if (this->tf_buffer_ == nullptr || this->tf_listener_ == nullptr) {
-    RCLCPP_DEBUG(this->get_logger(), "Adding TF buffer and listener.");
+    RCLCPP_DEBUG(this->node_logging_->get_logger(), "Adding TF buffer and listener.");
     console_bridge::setLogLevel(console_bridge::CONSOLE_BRIDGE_LOG_NONE);
-    this->tf_buffer_ = std::make_shared<tf2_ros::Buffer>(this->get_clock());
+    this->tf_buffer_ = std::make_shared<tf2_ros::Buffer>(this->node_clock_->get_clock());
     this->tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*this->tf_buffer_);
   } else {
-    RCLCPP_DEBUG(this->get_logger(), "TF buffer and listener already exist.");
+    RCLCPP_DEBUG(this->node_logging_->get_logger(), "TF buffer and listener already exist.");
   }
 }
 
-template<class NodeT>
-inline void ComponentInterface<NodeT>::send_transform(const state_representation::CartesianPose& transform) {
+inline void ComponentInterface::send_transform(const state_representation::CartesianPose& transform) {
   this->send_transforms(std::vector<state_representation::CartesianPose>{transform});
 }
 
-template<class NodeT>
-inline void
-ComponentInterface<NodeT>::send_transforms(const std::vector<state_representation::CartesianPose>& transforms) {
+inline void ComponentInterface::send_transforms(const std::vector<state_representation::CartesianPose>& transforms) {
   this->template publish_transforms(transforms, this->tf_broadcaster_);
 }
 
-template<class NodeT>
-inline void ComponentInterface<NodeT>::send_static_transform(const state_representation::CartesianPose& transform) {
+inline void ComponentInterface::send_static_transform(const state_representation::CartesianPose& transform) {
   this->send_static_transforms(std::vector<state_representation::CartesianPose>{transform});
 }
 
-template<class NodeT>
 inline void
-ComponentInterface<NodeT>::send_static_transforms(const std::vector<state_representation::CartesianPose>& transforms) {
+ComponentInterface::send_static_transforms(const std::vector<state_representation::CartesianPose>& transforms) {
   this->template publish_transforms(transforms, this->static_tf_broadcaster_, true);
 }
 
-template<class NodeT>
 template<typename T>
-inline void ComponentInterface<NodeT>::publish_transforms(
+inline void ComponentInterface::publish_transforms(
     const std::vector<state_representation::CartesianPose>& transforms, const std::shared_ptr<T>& tf_broadcaster,
     bool is_static
 ) {
   std::string modifier = is_static ? "static " : "";
   if (tf_broadcaster == nullptr) {
-    RCLCPP_ERROR_STREAM_THROTTLE(this->get_logger(), *this->get_clock(), 1000,
+    RCLCPP_ERROR_STREAM_THROTTLE(this->node_logging_->get_logger(), *this->node_clock_->get_clock(), 1000,
                                  "Failed to send " << modifier << "transform: No " << modifier
                                                    << "TF broadcaster configured.");
     return;
@@ -1222,18 +1169,18 @@ inline void ComponentInterface<NodeT>::publish_transforms(
     transform_messages.reserve(transforms.size());
     for (const auto& tf : transforms) {
       geometry_msgs::msg::TransformStamped transform_message;
-      modulo_core::translators::write_message(transform_message, tf, this->get_clock()->now());
+      modulo_core::translators::write_message(
+          transform_message, tf, this->node_clock_->get_clock()->now());
       transform_messages.emplace_back(transform_message);
     }
     tf_broadcaster->sendTransform(transform_messages);
   } catch (const std::exception& ex) {
-    RCLCPP_ERROR_STREAM_THROTTLE(this->get_logger(), *this->get_clock(), 1000,
+    RCLCPP_ERROR_STREAM_THROTTLE(this->node_logging_->get_logger(), *this->node_clock_->get_clock(), 1000,
                                  "Failed to send " << modifier << "transform: " << ex.what());
   }
 }
 
-template<class NodeT>
-inline geometry_msgs::msg::TransformStamped ComponentInterface<NodeT>::lookup_ros_transform(
+inline geometry_msgs::msg::TransformStamped ComponentInterface::lookup_ros_transform(
     const std::string& frame, const std::string& reference_frame, const tf2::TimePoint& time_point,
     const tf2::Duration& duration
 ) {
@@ -1247,8 +1194,7 @@ inline geometry_msgs::msg::TransformStamped ComponentInterface<NodeT>::lookup_ro
   }
 }
 
-template<class NodeT>
-inline state_representation::CartesianPose ComponentInterface<NodeT>::lookup_transform(
+inline state_representation::CartesianPose ComponentInterface::lookup_transform(
     const std::string& frame, const std::string& reference_frame, const tf2::TimePoint& time_point,
     const tf2::Duration& duration
 ) {
@@ -1258,13 +1204,13 @@ inline state_representation::CartesianPose ComponentInterface<NodeT>::lookup_tra
   return result;
 }
 
-template<class NodeT>
-inline state_representation::CartesianPose ComponentInterface<NodeT>::lookup_transform(
+inline state_representation::CartesianPose ComponentInterface::lookup_transform(
     const std::string& frame, const std::string& reference_frame, double validity_period, const tf2::Duration& duration
 ) {
   auto transform =
       this->lookup_ros_transform(frame, reference_frame, tf2::TimePoint(std::chrono::microseconds(0)), duration);
-  if (validity_period > 0.0 && (this->get_clock()->now() - transform.header.stamp).seconds() > validity_period) {
+  if (validity_period > 0.0
+      && (this->node_clock_->get_clock()->now() - transform.header.stamp).seconds() > validity_period) {
     throw exceptions::LookupTransformException("Failed to lookup transform: Latest transform is too old!");
   }
   state_representation::CartesianPose result(frame, reference_frame);
@@ -1272,24 +1218,21 @@ inline state_representation::CartesianPose ComponentInterface<NodeT>::lookup_tra
   return result;
 }
 
-template<class NodeT>
-inline void ComponentInterface<NodeT>::publish_predicate(const std::string& name) {
+inline void ComponentInterface::publish_predicate(const std::string& name) {
   modulo_component_interfaces::msg::Predicate message;
-  message.component = this->get_node_base_interface()->get_fully_qualified_name();
+  message.component = this->node_base_->get_fully_qualified_name();
   message.predicate = name;
   message.value = this->get_predicate(name);
   this->predicate_publisher_->publish(message);
 }
 
-template<class NodeT>
-inline void ComponentInterface<NodeT>::publish_predicates() {
+inline void ComponentInterface::publish_predicates() {
   for (const auto& predicate : this->predicates_) {
     this->publish_predicate(predicate.first);
   }
 }
 
-template<class NodeT>
-inline void ComponentInterface<NodeT>::publish_output(const std::string& signal_name) {
+inline void ComponentInterface::publish_output(const std::string& signal_name) {
   auto parsed_signal_name = utilities::parse_topic_name(signal_name);
   if (this->outputs_.find(parsed_signal_name) == this->outputs_.cend()) {
     throw exceptions::ComponentException("Output with name '" + signal_name + "' doesn't exist.");
@@ -1300,42 +1243,39 @@ inline void ComponentInterface<NodeT>::publish_output(const std::string& signal_
   try {
     this->outputs_.at(parsed_signal_name)->publish();
   } catch (const modulo_core::exceptions::CoreException& ex) {
-    RCLCPP_ERROR_STREAM_THROTTLE(this->get_logger(), *this->get_clock(), 1000,
+    RCLCPP_ERROR_STREAM_THROTTLE(this->node_logging_->get_logger(), *this->node_clock_->get_clock(), 1000,
                                  "Failed to publish output '" << parsed_signal_name << "': " << ex.what());
   }
 }
 
-template<class NodeT>
-inline void ComponentInterface<NodeT>::publish_outputs() {
+inline void ComponentInterface::publish_outputs() {
   for (const auto& [signal, publisher] : this->outputs_) {
     try {
       if (this->periodic_outputs_.at(signal)) {
         publisher->publish();
       }
     } catch (const modulo_core::exceptions::CoreException& ex) {
-      RCLCPP_ERROR_STREAM_THROTTLE(this->get_logger(), *this->get_clock(), 1000,
+      RCLCPP_ERROR_STREAM_THROTTLE(this->node_logging_->get_logger(), *this->node_clock_->get_clock(), 1000,
                                    "Failed to publish output '" << signal << "': " << ex.what());
     }
   }
 }
 
-template<class NodeT>
-inline void ComponentInterface<NodeT>::evaluate_periodic_callbacks() {
+inline void ComponentInterface::evaluate_periodic_callbacks() {
   for (const auto& [name, callback] : this->periodic_callbacks_) {
     try {
       callback();
     } catch (const std::exception& ex) {
-      RCLCPP_ERROR_STREAM_THROTTLE(this->get_logger(), *this->get_clock(), 1000,
+      RCLCPP_ERROR_STREAM_THROTTLE(this->node_logging_->get_logger(), *this->node_clock_->get_clock(), 1000,
                                    "Failed to evaluate periodic function callback '" << name << "': " << ex.what());
     }
   }
 }
 
-template<class NodeT>
 template<typename DataT>
-inline std::string ComponentInterface<NodeT>::create_output(
-    const std::string& signal_name, const std::shared_ptr<DataT>& data, const std::string& default_topic,
-    bool fixed_topic, bool publish_on_step
+inline std::string ComponentInterface::create_output(
+    modulo_core::communication::PublisherType publisher_type, const std::string& signal_name,
+    const std::shared_ptr<DataT>& data, const std::string& default_topic, bool fixed_topic, bool publish_on_step
 ) {
   using namespace modulo_core::communication;
   try {
@@ -1345,12 +1285,12 @@ inline std::string ComponentInterface<NodeT>::create_output(
           "Invalid data pointer for output '" + parsed_signal_name + "'.");
     }
     this->declare_output(parsed_signal_name, default_topic, fixed_topic);
-    RCLCPP_DEBUG_STREAM(this->get_logger(),
+    RCLCPP_DEBUG_STREAM(this->node_logging_->get_logger(),
                         "Creating output '" << parsed_signal_name << "' (provided signal name was '" << signal_name
                                             << "').");
-    auto message_pair = make_shared_message_pair(data, this->get_clock());
+    auto message_pair = make_shared_message_pair(data, this->node_clock_->get_clock());
     this->outputs_.insert_or_assign(
-        parsed_signal_name, std::make_shared<PublisherInterface>(this->publisher_type_, message_pair));
+        parsed_signal_name, std::make_shared<PublisherInterface>(publisher_type, message_pair));
     this->periodic_outputs_.insert_or_assign(parsed_signal_name, publish_on_step);
     return parsed_signal_name;
   } catch (const exceptions::AddSignalException&) {
@@ -1360,19 +1300,16 @@ inline std::string ComponentInterface<NodeT>::create_output(
   }
 }
 
-template<class NodeT>
-inline void ComponentInterface<NodeT>::raise_error() {
-  RCLCPP_DEBUG(this->get_logger(), "raise_error called: Setting predicate 'in_error_state' to true.");
+inline void ComponentInterface::raise_error() {
+  RCLCPP_DEBUG(this->node_logging_->get_logger(), "raise_error called: Setting predicate 'in_error_state' to true.");
   this->set_predicate("in_error_state", true);
 }
 
-template<class NodeT>
-inline rclcpp::QoS ComponentInterface<NodeT>::get_qos() const {
+inline rclcpp::QoS ComponentInterface::get_qos() const {
   return this->qos_;
 }
 
-template<class NodeT>
-inline void ComponentInterface<NodeT>::set_qos(const rclcpp::QoS& qos) {
+inline void ComponentInterface::set_qos(const rclcpp::QoS& qos) {
   this->qos_ = qos;
 }
 }// namespace modulo_components
