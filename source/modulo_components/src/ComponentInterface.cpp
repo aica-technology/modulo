@@ -22,7 +22,6 @@ ComponentInterface::ComponentInterface(
     node_services_(interfaces->get_node_services_interface()),
     node_timers_(interfaces->get_node_timers_interface()),
     node_topics_(interfaces->get_node_topics_interface()) {
-  this->cb_group_ = node_base_->create_callback_group(rclcpp::CallbackGroupType::Reentrant);
   // register the parameter change callback handler
   this->parameter_cb_handle_ = this->node_parameters_->add_on_set_parameters_callback(
       [this](const std::vector<rclcpp::Parameter>& parameters) -> rcl_interfaces::msg::SetParametersResult {
@@ -38,7 +37,7 @@ ComponentInterface::ComponentInterface(
 
   this->step_timer_ = rclcpp::create_wall_timer(
       std::chrono::nanoseconds(static_cast<int64_t>(this->get_parameter_value<double>("period") * 1e9)),
-      [this] { this->step(); }, this->cb_group_, this->node_base_.get(), this->node_timers_.get());
+      [this] { this->step(); }, nullptr, this->node_base_.get(), this->node_timers_.get());
 }
 
 void ComponentInterface::step() {}
@@ -347,7 +346,7 @@ void ComponentInterface::add_service(
             response->success = false;
             response->message = ex.what();
           }
-        }, this->qos_, this->cb_group_);
+        }, this->qos_, nullptr);
     this->empty_services_.insert_or_assign(parsed_service_name, service);
   } catch (const std::exception& ex) {
     RCLCPP_ERROR_STREAM(this->node_logging_->get_logger(),
@@ -374,7 +373,7 @@ void ComponentInterface::add_service(
             response->success = false;
             response->message = ex.what();
           }
-        }, this->qos_, this->cb_group_);
+        }, this->qos_, nullptr);
     this->string_services_.insert_or_assign(parsed_service_name, service);
   } catch (const std::exception& ex) {
     RCLCPP_ERROR_STREAM(this->node_logging_->get_logger(),
