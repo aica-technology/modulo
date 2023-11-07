@@ -1,0 +1,710 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"install",
+			"ament_environment_hooks",
+			"_ament_cmake_python_register_environment_hook",
+			"ament_python_install_package",
+			"_ament_cmake_python_install_package",
+			"ament_auto_package",
+			"_ament_cmake_export_libraries_register_environment_hook",
+			"ament_export_libraries",
+			"ament_index_register_resource",
+			"ament_cmake_environment_generate_package_run_dependencies_marker",
+			"include",
+			"ament_execute_extensions",
+			"ament_package",
+			"ament_cmake_environment_generate_parent_prefix_path_marker",
+			"ament_generate_package_environment",
+			"ament_index_register_package",
+			"_ament_package"
+		],
+		"files" : 
+		[
+			"CMakeLists.txt",
+			"/opt/ros/iron/share/ament_cmake_core/cmake/environment_hooks/ament_environment_hooks.cmake",
+			"/opt/ros/iron/share/ament_cmake_python/cmake/ament_cmake_python-extras.cmake",
+			"/opt/ros/iron/share/ament_cmake_python/cmake/ament_python_install_package.cmake",
+			"/opt/ros/iron/share/ament_cmake_auto/cmake/ament_auto_package.cmake",
+			"/opt/ros/iron/share/ament_cmake_export_libraries/cmake/ament_cmake_export_libraries-extras.cmake",
+			"/opt/ros/iron/share/ament_cmake_export_libraries/cmake/ament_export_libraries.cmake",
+			"/opt/ros/iron/share/ament_cmake_core/cmake/index/ament_index_register_resource.cmake",
+			"/opt/ros/iron/share/ament_cmake_core/cmake/environment/ament_cmake_environment_package_hook.cmake",
+			"/opt/ros/iron/share/ament_cmake_core/cmake/core/ament_execute_extensions.cmake",
+			"/opt/ros/iron/share/ament_cmake_core/cmake/core/ament_package.cmake",
+			"/opt/ros/iron/share/ament_cmake_core/cmake/environment_hooks/ament_cmake_environment_hooks_package_hook.cmake",
+			"/opt/ros/iron/share/ament_cmake_core/cmake/environment_hooks/ament_generate_package_environment.cmake",
+			"/opt/ros/iron/share/ament_cmake_core/cmake/index/ament_index_register_package.cmake",
+			"/opt/ros/iron/share/ament_cmake_core/cmake/index/ament_cmake_index_package_hook.cmake",
+			"/opt/ros/iron/share/rclcpp_components/cmake/rclcpp_components_package_hook.cmake"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 32,
+				"parent" : 0
+			},
+			{
+				"command" : 3,
+				"file" : 0,
+				"line" : 38,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 3,
+				"line" : 38,
+				"parent" : 2
+			},
+			{
+				"command" : 1,
+				"file" : 2,
+				"line" : 36,
+				"parent" : 3
+			},
+			{
+				"command" : 0,
+				"file" : 1,
+				"line" : 70,
+				"parent" : 4
+			},
+			{
+				"command" : 0,
+				"file" : 1,
+				"line" : 87,
+				"parent" : 4
+			},
+			{
+				"command" : 4,
+				"file" : 3,
+				"line" : 39,
+				"parent" : 2
+			},
+			{
+				"command" : 0,
+				"file" : 3,
+				"line" : 154,
+				"parent" : 7
+			},
+			{
+				"command" : 0,
+				"file" : 3,
+				"line" : 174,
+				"parent" : 7
+			},
+			{
+				"command" : 0,
+				"file" : 3,
+				"line" : 181,
+				"parent" : 7
+			},
+			{
+				"command" : 0,
+				"file" : 3,
+				"line" : 191,
+				"parent" : 7
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 41,
+				"parent" : 0
+			},
+			{
+				"command" : 5,
+				"file" : 0,
+				"line" : 69,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 4,
+				"line" : 65,
+				"parent" : 13
+			},
+			{
+				"command" : 7,
+				"file" : 4,
+				"line" : 78,
+				"parent" : 13
+			},
+			{
+				"command" : 6,
+				"file" : 6,
+				"line" : 35,
+				"parent" : 15
+			},
+			{
+				"command" : 1,
+				"file" : 5,
+				"line" : 25,
+				"parent" : 16
+			},
+			{
+				"command" : 0,
+				"file" : 1,
+				"line" : 70,
+				"parent" : 17
+			},
+			{
+				"command" : 0,
+				"file" : 1,
+				"line" : 87,
+				"parent" : 17
+			},
+			{
+				"command" : 0,
+				"file" : 4,
+				"line" : 79,
+				"parent" : 13
+			},
+			{
+				"command" : 12,
+				"file" : 4,
+				"line" : 110,
+				"parent" : 13
+			},
+			{
+				"command" : 11,
+				"file" : 10,
+				"line" : 66,
+				"parent" : 21
+			},
+			{
+				"command" : 10,
+				"file" : 9,
+				"line" : 48,
+				"parent" : 22
+			},
+			{
+				"file" : 8,
+				"parent" : 23
+			},
+			{
+				"command" : 9,
+				"file" : 8,
+				"line" : 47,
+				"parent" : 24
+			},
+			{
+				"command" : 8,
+				"file" : 8,
+				"line" : 29,
+				"parent" : 25
+			},
+			{
+				"command" : 0,
+				"file" : 7,
+				"line" : 105,
+				"parent" : 26
+			},
+			{
+				"command" : 13,
+				"file" : 8,
+				"line" : 48,
+				"parent" : 24
+			},
+			{
+				"command" : 8,
+				"file" : 8,
+				"line" : 43,
+				"parent" : 28
+			},
+			{
+				"command" : 0,
+				"file" : 7,
+				"line" : 105,
+				"parent" : 29
+			},
+			{
+				"command" : 10,
+				"file" : 9,
+				"line" : 48,
+				"parent" : 22
+			},
+			{
+				"file" : 11,
+				"parent" : 31
+			},
+			{
+				"command" : 1,
+				"file" : 11,
+				"line" : 20,
+				"parent" : 32
+			},
+			{
+				"command" : 0,
+				"file" : 1,
+				"line" : 70,
+				"parent" : 33
+			},
+			{
+				"command" : 0,
+				"file" : 1,
+				"line" : 87,
+				"parent" : 33
+			},
+			{
+				"command" : 0,
+				"file" : 1,
+				"line" : 70,
+				"parent" : 33
+			},
+			{
+				"command" : 0,
+				"file" : 1,
+				"line" : 87,
+				"parent" : 33
+			},
+			{
+				"command" : 14,
+				"file" : 11,
+				"line" : 26,
+				"parent" : 32
+			},
+			{
+				"command" : 0,
+				"file" : 12,
+				"line" : 91,
+				"parent" : 38
+			},
+			{
+				"command" : 0,
+				"file" : 12,
+				"line" : 91,
+				"parent" : 38
+			},
+			{
+				"command" : 0,
+				"file" : 12,
+				"line" : 91,
+				"parent" : 38
+			},
+			{
+				"command" : 0,
+				"file" : 12,
+				"line" : 107,
+				"parent" : 38
+			},
+			{
+				"command" : 0,
+				"file" : 12,
+				"line" : 120,
+				"parent" : 38
+			},
+			{
+				"command" : 10,
+				"file" : 9,
+				"line" : 48,
+				"parent" : 22
+			},
+			{
+				"file" : 14,
+				"parent" : 44
+			},
+			{
+				"command" : 15,
+				"file" : 14,
+				"line" : 16,
+				"parent" : 45
+			},
+			{
+				"command" : 8,
+				"file" : 13,
+				"line" : 29,
+				"parent" : 46
+			},
+			{
+				"command" : 0,
+				"file" : 7,
+				"line" : 105,
+				"parent" : 47
+			},
+			{
+				"command" : 10,
+				"file" : 9,
+				"line" : 48,
+				"parent" : 22
+			},
+			{
+				"file" : 15,
+				"parent" : 49
+			},
+			{
+				"command" : 8,
+				"file" : 15,
+				"line" : 18,
+				"parent" : 50
+			},
+			{
+				"command" : 0,
+				"file" : 7,
+				"line" : 105,
+				"parent" : 51
+			},
+			{
+				"command" : 16,
+				"file" : 10,
+				"line" : 68,
+				"parent" : 21
+			},
+			{
+				"command" : 0,
+				"file" : 10,
+				"line" : 122,
+				"parent" : 53
+			},
+			{
+				"command" : 0,
+				"file" : 10,
+				"line" : 122,
+				"parent" : 53
+			},
+			{
+				"command" : 0,
+				"file" : 10,
+				"line" : 122,
+				"parent" : 53
+			},
+			{
+				"command" : 0,
+				"file" : 10,
+				"line" : 150,
+				"parent" : 53
+			},
+			{
+				"command" : 0,
+				"file" : 10,
+				"line" : 157,
+				"parent" : 53
+			}
+		]
+	},
+	"installers" : 
+	[
+		{
+			"backtrace" : 1,
+			"component" : "Unspecified",
+			"destination" : "lib",
+			"paths" : 
+			[
+				"libmodulo_components.so"
+			],
+			"targetId" : "modulo_components::@6890427a1f51a3e7e1df",
+			"targetIndex" : 6,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 5,
+			"component" : "Unspecified",
+			"destination" : "share/modulo_components/environment",
+			"paths" : 
+			[
+				"/home/ros2/.devcontainer/build/ament_cmake_environment_hooks/pythonpath.sh"
+			],
+			"type" : "file"
+		},
+		{
+			"backtrace" : 6,
+			"component" : "Unspecified",
+			"destination" : "share/modulo_components/environment",
+			"paths" : 
+			[
+				"/home/ros2/.devcontainer/build/ament_cmake_environment_hooks/pythonpath.dsv"
+			],
+			"type" : "file"
+		},
+		{
+			"backtrace" : 8,
+			"component" : "Unspecified",
+			"destination" : "lib/python3.10/site-packages/modulo_components-3.2.0-py3.10.egg-info",
+			"paths" : 
+			[
+				{
+					"from" : "/home/ros2/.devcontainer/build/ament_cmake_python/modulo_components/modulo_components.egg-info",
+					"to" : "."
+				}
+			],
+			"type" : "directory"
+		},
+		{
+			"backtrace" : 9,
+			"component" : "Unspecified",
+			"destination" : "lib/modulo_components/",
+			"paths" : 
+			[
+				{
+					"from" : "/home/ros2/.devcontainer/build/ament_cmake_python/modulo_components/scripts",
+					"to" : "."
+				}
+			],
+			"type" : "directory"
+		},
+		{
+			"backtrace" : 10,
+			"component" : "Unspecified",
+			"destination" : "lib/python3.10/site-packages/modulo_components",
+			"paths" : 
+			[
+				{
+					"from" : "modulo_components",
+					"to" : "."
+				}
+			],
+			"type" : "directory"
+		},
+		{
+			"backtrace" : 11,
+			"component" : "Unspecified",
+			"type" : "code"
+		},
+		{
+			"backtrace" : 12,
+			"component" : "Unspecified",
+			"destination" : ".",
+			"paths" : 
+			[
+				"./component_descriptions"
+			],
+			"type" : "directory"
+		},
+		{
+			"backtrace" : 14,
+			"component" : "Unspecified",
+			"destination" : "include",
+			"paths" : 
+			[
+				{
+					"from" : "include",
+					"to" : "."
+				}
+			],
+			"type" : "directory"
+		},
+		{
+			"backtrace" : 18,
+			"component" : "Unspecified",
+			"destination" : "share/modulo_components/environment",
+			"paths" : 
+			[
+				"/opt/ros/iron/lib/python3.10/site-packages/ament_package/template/environment_hook/library_path.sh"
+			],
+			"type" : "file"
+		},
+		{
+			"backtrace" : 19,
+			"component" : "Unspecified",
+			"destination" : "share/modulo_components/environment",
+			"paths" : 
+			[
+				"/home/ros2/.devcontainer/build/ament_cmake_environment_hooks/library_path.dsv"
+			],
+			"type" : "file"
+		},
+		{
+			"backtrace" : 20,
+			"component" : "Unspecified",
+			"destination" : "lib",
+			"paths" : 
+			[
+				"libmodulo_components.so"
+			],
+			"targetId" : "modulo_components::@6890427a1f51a3e7e1df",
+			"targetIndex" : 6,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 27,
+			"component" : "Unspecified",
+			"destination" : "share/ament_index/resource_index/package_run_dependencies",
+			"paths" : 
+			[
+				"/home/ros2/.devcontainer/build/ament_cmake_index/share/ament_index/resource_index/package_run_dependencies/modulo_components"
+			],
+			"type" : "file"
+		},
+		{
+			"backtrace" : 30,
+			"component" : "Unspecified",
+			"destination" : "share/ament_index/resource_index/parent_prefix_path",
+			"paths" : 
+			[
+				"/home/ros2/.devcontainer/build/ament_cmake_index/share/ament_index/resource_index/parent_prefix_path/modulo_components"
+			],
+			"type" : "file"
+		},
+		{
+			"backtrace" : 34,
+			"component" : "Unspecified",
+			"destination" : "share/modulo_components/environment",
+			"paths" : 
+			[
+				"/opt/ros/iron/share/ament_cmake_core/cmake/environment_hooks/environment/ament_prefix_path.sh"
+			],
+			"type" : "file"
+		},
+		{
+			"backtrace" : 35,
+			"component" : "Unspecified",
+			"destination" : "share/modulo_components/environment",
+			"paths" : 
+			[
+				"/home/ros2/.devcontainer/build/ament_cmake_environment_hooks/ament_prefix_path.dsv"
+			],
+			"type" : "file"
+		},
+		{
+			"backtrace" : 36,
+			"component" : "Unspecified",
+			"destination" : "share/modulo_components/environment",
+			"paths" : 
+			[
+				"/opt/ros/iron/share/ament_cmake_core/cmake/environment_hooks/environment/path.sh"
+			],
+			"type" : "file"
+		},
+		{
+			"backtrace" : 37,
+			"component" : "Unspecified",
+			"destination" : "share/modulo_components/environment",
+			"paths" : 
+			[
+				"/home/ros2/.devcontainer/build/ament_cmake_environment_hooks/path.dsv"
+			],
+			"type" : "file"
+		},
+		{
+			"backtrace" : 39,
+			"component" : "Unspecified",
+			"destination" : "share/modulo_components",
+			"paths" : 
+			[
+				"/home/ros2/.devcontainer/build/ament_cmake_environment_hooks/local_setup.bash"
+			],
+			"type" : "file"
+		},
+		{
+			"backtrace" : 40,
+			"component" : "Unspecified",
+			"destination" : "share/modulo_components",
+			"paths" : 
+			[
+				"/home/ros2/.devcontainer/build/ament_cmake_environment_hooks/local_setup.sh"
+			],
+			"type" : "file"
+		},
+		{
+			"backtrace" : 41,
+			"component" : "Unspecified",
+			"destination" : "share/modulo_components",
+			"paths" : 
+			[
+				"/home/ros2/.devcontainer/build/ament_cmake_environment_hooks/local_setup.zsh"
+			],
+			"type" : "file"
+		},
+		{
+			"backtrace" : 42,
+			"component" : "Unspecified",
+			"destination" : "share/modulo_components",
+			"paths" : 
+			[
+				"/home/ros2/.devcontainer/build/ament_cmake_environment_hooks/local_setup.dsv"
+			],
+			"type" : "file"
+		},
+		{
+			"backtrace" : 43,
+			"component" : "Unspecified",
+			"destination" : "share/modulo_components",
+			"paths" : 
+			[
+				"/home/ros2/.devcontainer/build/ament_cmake_environment_hooks/package.dsv"
+			],
+			"type" : "file"
+		},
+		{
+			"backtrace" : 48,
+			"component" : "Unspecified",
+			"destination" : "share/ament_index/resource_index/packages",
+			"paths" : 
+			[
+				"/home/ros2/.devcontainer/build/ament_cmake_index/share/ament_index/resource_index/packages/modulo_components"
+			],
+			"type" : "file"
+		},
+		{
+			"backtrace" : 52,
+			"component" : "Unspecified",
+			"destination" : "share/ament_index/resource_index/rclcpp_components",
+			"paths" : 
+			[
+				"/home/ros2/.devcontainer/build/ament_cmake_index/share/ament_index/resource_index/rclcpp_components/modulo_components"
+			],
+			"type" : "file"
+		},
+		{
+			"backtrace" : 54,
+			"component" : "Unspecified",
+			"destination" : "share/modulo_components/cmake",
+			"paths" : 
+			[
+				"/home/ros2/.devcontainer/build/ament_cmake_export_dependencies/ament_cmake_export_dependencies-extras.cmake"
+			],
+			"type" : "file"
+		},
+		{
+			"backtrace" : 55,
+			"component" : "Unspecified",
+			"destination" : "share/modulo_components/cmake",
+			"paths" : 
+			[
+				"/home/ros2/.devcontainer/build/ament_cmake_export_include_directories/ament_cmake_export_include_directories-extras.cmake"
+			],
+			"type" : "file"
+		},
+		{
+			"backtrace" : 56,
+			"component" : "Unspecified",
+			"destination" : "share/modulo_components/cmake",
+			"paths" : 
+			[
+				"/home/ros2/.devcontainer/build/ament_cmake_export_libraries/ament_cmake_export_libraries-extras.cmake"
+			],
+			"type" : "file"
+		},
+		{
+			"backtrace" : 57,
+			"component" : "Unspecified",
+			"destination" : "share/modulo_components/cmake",
+			"paths" : 
+			[
+				"/home/ros2/.devcontainer/build/ament_cmake_core/modulo_componentsConfig.cmake",
+				"/home/ros2/.devcontainer/build/ament_cmake_core/modulo_componentsConfig-version.cmake"
+			],
+			"type" : "file"
+		},
+		{
+			"backtrace" : 58,
+			"component" : "Unspecified",
+			"destination" : "share/modulo_components",
+			"paths" : 
+			[
+				"package.xml"
+			],
+			"type" : "file"
+		}
+	],
+	"paths" : 
+	{
+		"build" : ".",
+		"source" : "."
+	}
+}
