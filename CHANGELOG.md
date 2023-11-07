@@ -12,6 +12,7 @@ Release Versions:
 
 ## Upcoming changes (in development)
 
+- chore: remove unnecessary tests (#63)
 - Remove callback group for topics and services (#61)
 - Avoid conflict with get_parameter (#42)
 - Revise ComponentInterface by moving implementations to source file (#39)
