@@ -2,6 +2,7 @@
 
 Release Versions:
 
+- [4.0.0](#400)
 - [3.2.0](#320)
 - [3.1.0](#310)
 - [3.0.0](#300)
@@ -10,7 +11,19 @@ Release Versions:
 - [2.1.1](#211)
 - [2.1.0](#210)
 
-## Upcoming changes (in development)
+## 4.0.0
+
+### November 7, 2023
+
+Version 4.0.0 is a major update to modulo with a new non-templated component interface.
+
+### Breaking changes
+
+The component interface now uses node interfaces - a new feature in ROS2 Iron - instead of templated inheritance from
+nodes to interface with ROS. Due to that change in the components inheritance, C++ components built with modulo 3.x.x
+and below will not be compatible with modulo 4.0.0 and will need to be recompiled. Note that this only concerns the
+`modulo_components` package and that there is no need to change anything in the code, recompiling derived components
+will be sufficient.
 
 - chore: remove unnecessary tests (#63)
 - Remove callback group for topics and services (#61)
