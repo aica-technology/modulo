@@ -1,10 +1,10 @@
 # Modulo
 
 Modulo is an extension layer to ROS2 that adds interoperability support for [aica-technology/control-libraries](https://github.com/aica-technology/control-libraries)
-and provides a modular framework for [application composition](https://docs.ros.org/en/humble/Concepts/About-Composition.html)
+and provides a modular framework for [application composition](https://docs.ros.org/en/iron/Concepts/About-Composition.html)
 through custom component classes in both C++ and Python.
 
-Documentation is available at [aica-technology.github.io/modulo](aica-technology.github.io/modulo).
+Documentation is available at [aica-technology.github.io/modulo](https://aica-technology.github.io/modulo/).
 
 ## Modulo Core
 
@@ -58,8 +58,6 @@ root@docker-desktop:/# ros2 run ros1_bridge dynamic_bridge --bridge-all-topics
 
 - [aica-technology/control-libraries](https://github.com/aica-technology/control-libraries)
 - [aica-technology/docker-images](https://github.com/aica-technology/docker-images)
-- [aica-technology/component-sdk](https://github.com/aica-technology/component-sdk)
-- [ROS2 Composition](https://github.com/aica-technology/docker-images)
 - [ROS2 Managed Nodes](https://design.ros2.org/articles/node_lifecycle.html)
 
 ### Authors and maintainers
