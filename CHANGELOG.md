@@ -11,6 +11,10 @@ Release Versions:
 - [2.1.1](#211)
 - [2.1.0](#210)
 
+## Upcoming changes (in development)
+
+-  chore: fix links in readme (#68)
+
 ## 4.0.0
 
 ### November 7, 2023

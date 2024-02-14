@@ -1,4 +1,5 @@
 name: Generate and Deploy Documentation
+
 on:
   push:
     branches:
@@ -20,23 +21,12 @@ jobs:
           working-directory: 'doxygen'
           doxyfile-path: 'doxygen.conf'
 
-      - name: Tag release version
-        if: ${{ github.event_name == 'release' }}
+      - name: Tag version
         shell: bash
         run: |
-          TAG="${GITHUB_REF#refs/tags/}"
-          TAG="${TAG/\//-}"
+          TAG="${GITHUB_REF_NAME/\//-}"
           mkdir -p doxygen/docs/versions
           sudo mv doxygen/docs/html doxygen/docs/versions/${TAG}
-
-      - name: Tag branch version
-        if: ${{ github.event_name == 'push' || github.event_name == 'workflow_dispatch' }}
-        shell: bash
-        run: |
-          BRANCH="${GITHUB_REF#refs/heads/}"
-          BRANCH="${BRANCH/\//-}"
-          mkdir -p doxygen/docs/versions
-          sudo mv doxygen/docs/html doxygen/docs/versions/${BRANCH}
 
       - name: Deploy to documentation branch
         uses: peaceiris/actions-gh-pages@v3
