@@ -13,7 +13,8 @@ Release Versions:
 
 ## Upcoming changes (in development)
 
--  chore: fix links in readme (#68)
+- chore: fix links in readme (#68)
+- feat: add mutex around step callback (#67)
 
 ## 4.0.0
 
