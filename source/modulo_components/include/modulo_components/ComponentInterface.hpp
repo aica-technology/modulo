@@ -60,7 +60,7 @@ public:
   /**
    * @brief Destructor
    */
-  ~ComponentInterface();
+  virtual ~ComponentInterface();
 
 protected:
   /**
