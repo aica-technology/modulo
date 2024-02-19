@@ -38,15 +38,16 @@ ComponentInterface::ComponentInterface(
   this->step_timer_ = rclcpp::create_wall_timer(
       std::chrono::nanoseconds(static_cast<int64_t>(this->get_parameter_value<double>("period") * 1e9)),
       [this] {
-        std::unique_lock<std::mutex> lock(this->step_mutex_, std::try_to_lock);
-        this->step();
-        this->step_mutex_.unlock();
+        if (this->step_mutex_.try_lock()) {
+          this->step();
+          this->step_mutex_.unlock();
+        }
       },
       nullptr, this->node_base_.get(), this->node_timers_.get());
 }
 
 ComponentInterface::~ComponentInterface() {
-  std::lock_guard<std::mutex> lock(this->step_mutex_);
+  this->step_mutex_.lock();
 }
 
 void ComponentInterface::step() {}
