@@ -58,7 +58,7 @@ public:
   friend class ComponentInterfacePublicInterface;
 
   /**
-   * @brief Destructor
+   * @brief Virtual destructor
    */
   virtual ~ComponentInterface();
 
