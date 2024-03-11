@@ -15,6 +15,8 @@
 #include <sensor_msgs/msg/joint_state.hpp>
 
 #include <clproto.hpp>
+#include <state_representation/DigitalIOState.hpp>
+#include <state_representation/AnalogIOState.hpp>
 #include <state_representation/parameters/Parameter.hpp>
 #include <state_representation/space/cartesian/CartesianPose.hpp>
 #include <state_representation/space/joint/JointPositions.hpp>
@@ -256,7 +258,7 @@ inline void safe_spatial_state_conversion(
  * referenced StateT instance can be modified as needed from the NewStateT value
  */
 template<typename StateT, typename NewStateT>
-inline void safe_joint_state_conversion(
+inline void safe_state_with_names_conversion(
     std::shared_ptr<state_representation::State>& state, std::shared_ptr<state_representation::State>& new_state,
     std::function<void(StateT&, const NewStateT&)> conversion_callback = {}
 ) {
@@ -277,7 +279,7 @@ inline void read_message(std::shared_ptr<state_representation::State>& state, co
   std::string tmp(message.data.begin(), message.data.end());
   std::shared_ptr<State> new_state;
   try {
-    new_state = clproto::decode<std::shared_ptr<State >>(tmp);
+    new_state = clproto::decode<std::shared_ptr<State>>(tmp);
   } catch (const std::exception& ex) {
     throw exceptions::MessageTranslationException(ex.what());
   }
@@ -288,6 +290,28 @@ inline void read_message(std::shared_ptr<state_representation::State>& state, co
           *state = *new_state;
         } else {
           *state = State(new_state->get_name());
+        }
+        break;
+      }
+      case StateType::DIGITAL_IO_STATE: {
+        if (new_state->get_type() == StateType::DIGITAL_IO_STATE) {
+          safe_state_with_names_conversion<DigitalIOState, DigitalIOState>(
+              state, new_state, [](DigitalIOState& a, const DigitalIOState& b) {
+                a.set_data(b.data());
+              });
+        } else {
+          safe_dynamic_cast<DigitalIOState>(state, new_state);
+        }
+        break;
+      }
+      case StateType::ANALOG_IO_STATE: {
+        if (new_state->get_type() == StateType::ANALOG_IO_STATE) {
+          safe_state_with_names_conversion<AnalogIOState, AnalogIOState>(
+              state, new_state, [](AnalogIOState& a, const AnalogIOState& b) {
+                a.set_data(b.data());
+              });
+        } else {
+          safe_dynamic_cast<AnalogIOState>(state, new_state);
         }
         break;
       }
@@ -376,22 +400,22 @@ inline void read_message(std::shared_ptr<state_representation::State>& state, co
       case StateType::JOINT_STATE: {
         auto derived_state = safe_dynamic_pointer_cast<JointState>(state);
         if (new_state->get_type() == StateType::JOINT_POSITIONS) {
-          safe_joint_state_conversion<JointState, JointPositions>(
+          safe_state_with_names_conversion<JointState, JointPositions>(
               state, new_state, [](JointState& a, const JointPositions& b) {
                 a.set_positions(b.get_positions());
               });
         } else if (new_state->get_type() == StateType::JOINT_VELOCITIES) {
-          safe_joint_state_conversion<JointState, JointVelocities>(
+          safe_state_with_names_conversion<JointState, JointVelocities>(
               state, new_state, [](JointState& a, const JointVelocities& b) {
                 a.set_velocities(b.get_velocities());
               });
         } else if (new_state->get_type() == StateType::JOINT_ACCELERATIONS) {
-          safe_joint_state_conversion<JointState, JointAccelerations>(
+          safe_state_with_names_conversion<JointState, JointAccelerations>(
               state, new_state, [](JointState& a, const JointAccelerations& b) {
                 a.set_accelerations(b.get_accelerations());
               });
         } else if (new_state->get_type() == StateType::JOINT_TORQUES) {
-          safe_joint_state_conversion<JointState, JointTorques>(
+          safe_state_with_names_conversion<JointState, JointTorques>(
               state, new_state, [](JointState& a, const JointTorques& b) {
                 a.set_torques(b.get_torques());
               });
@@ -402,7 +426,7 @@ inline void read_message(std::shared_ptr<state_representation::State>& state, co
       }
       case StateType::JOINT_POSITIONS: {
         if (new_state->get_type() == StateType::JOINT_STATE) {
-          safe_joint_state_conversion<JointPositions, JointState>(
+          safe_state_with_names_conversion<JointPositions, JointState>(
               state, new_state, [](JointPositions& a, const JointState& b) {
                 a.set_positions(b.get_positions());
               });
@@ -413,7 +437,7 @@ inline void read_message(std::shared_ptr<state_representation::State>& state, co
       }
       case StateType::JOINT_VELOCITIES: {
         if (new_state->get_type() == StateType::JOINT_STATE) {
-          safe_joint_state_conversion<JointVelocities, JointState>(
+          safe_state_with_names_conversion<JointVelocities, JointState>(
               state, new_state, [](JointVelocities& a, const JointState& b) {
                 a.set_velocities(b.get_velocities());
               });
@@ -424,7 +448,7 @@ inline void read_message(std::shared_ptr<state_representation::State>& state, co
       }
       case StateType::JOINT_ACCELERATIONS: {
         if (new_state->get_type() == StateType::JOINT_STATE) {
-          safe_joint_state_conversion<JointAccelerations, JointState>(
+          safe_state_with_names_conversion<JointAccelerations, JointState>(
               state, new_state, [](JointAccelerations& a, const JointState& b) {
                 a.set_accelerations(b.get_accelerations());
               });
@@ -435,7 +459,7 @@ inline void read_message(std::shared_ptr<state_representation::State>& state, co
       }
       case StateType::JOINT_TORQUES: {
         if (new_state->get_type() == StateType::JOINT_STATE) {
-          safe_joint_state_conversion<JointTorques, JointState>(
+          safe_state_with_names_conversion<JointTorques, JointState>(
               state, new_state, [](JointTorques& a, const JointState& b) {
                 a.set_torques(b.get_torques());
               });
