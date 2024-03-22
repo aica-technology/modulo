@@ -95,12 +95,12 @@ TYPED_TEST(ComponentInterfaceTest, DeclareSignal) {
 
 TYPED_TEST(ComponentInterfaceTest, AddRemoveInput) {
   auto data = std::make_shared<bool>(true);
-  EXPECT_NO_THROW(this->component_->add_input("_tEsT_#1@3", data));
+  EXPECT_NO_THROW(this->component_->add_input("8_tEsT_#1@3", data));
   EXPECT_FALSE(this->component_->inputs_.find("test_13") == this->component_->inputs_.end());
   EXPECT_EQ(this->component_->template get_parameter_value<std::string>("test_13_topic"), "~/test_13");
 
   EXPECT_NO_THROW(this->component_->template add_input<std_msgs::msg::Bool>(
-      "_tEsT_#1@5", [](const std::shared_ptr<std_msgs::msg::Bool>) {}, "/topic", true));
+      "9_tEsT_#1@5", [](const std::shared_ptr<std_msgs::msg::Bool>) {}, "/topic", true));
   EXPECT_FALSE(this->component_->inputs_.find("test_15") == this->component_->inputs_.end());
   EXPECT_EQ(this->component_->template get_parameter_value<std::string>("test_15_topic"), "/topic");
 
@@ -178,7 +178,7 @@ TYPED_TEST(ComponentInterfaceTest, AddService) {
   EXPECT_EQ(static_cast<int>(this->component_->string_services_.size()), 1);
 
   // adding a mangled service name should succeed under a sanitized name
-  EXPECT_NO_THROW(this->component_->add_service("_tEsT_#1@3", empty_callback));
+  EXPECT_NO_THROW(this->component_->add_service("8_tEsT_#1@3", empty_callback));
   EXPECT_EQ(static_cast<int>(this->component_->empty_services_.size()), 2);
   EXPECT_NE(this->component_->empty_services_.find("test_13"), this->component_->empty_services_.cend());
 }
@@ -240,9 +240,9 @@ TYPED_TEST(ComponentInterfaceTest, CreateOutput) {
   EXPECT_EQ(pub_interface->get_message_pair()->get_type(), modulo_core::communication::MessageType::BOOL);
   EXPECT_THROW(pub_interface->publish(), modulo_core::exceptions::CoreException);
 
-  EXPECT_NO_THROW(this->component_->create_output(this->pub_type_, "_tEsT_#1@3", data, "", true, false));
+  EXPECT_NO_THROW(this->component_->create_output(this->pub_type_, "8_tEsT_#1@3", data, "", true, false));
   EXPECT_FALSE(this->component_->periodic_outputs_.at("test_13"));
-  EXPECT_NO_THROW(this->component_->publish_output("_tEsT_#1@3"));
+  EXPECT_NO_THROW(this->component_->publish_output("8_tEsT_#1@3"));
   EXPECT_NO_THROW(this->component_->publish_output("test_13"));
   EXPECT_THROW(this->component_->publish_output(""), exceptions::ComponentException);
 }
