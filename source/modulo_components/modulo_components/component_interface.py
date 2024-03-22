@@ -451,6 +451,10 @@ class ComponentInterface(Node):
         if not parsed_signal_name:
             raise AddSignalError(f"The parsed signal name for {signal_type} '{signal_name}' is empty. Provide a "
                                  f"string with valid characters for the signal name ([a-zA-Z0-9_]).")
+        if signal_name != parsed_signal_name:
+            self.get_logger().warn(
+                f"The parsed signal name for {type} '{signal_name}' is '{parsed_signal_name}'."
+                  "Use the parsed signal name to refer to this {type} and its topic parameter.")
         if parsed_signal_name in self._inputs.keys():
             raise AddSignalError(f"Signal with name '{parsed_signal_name}' already exists as input.")
         if parsed_signal_name in self._outputs.keys():
@@ -589,6 +593,10 @@ class ComponentInterface(Node):
             if not parsed_service_name:
                 raise AddServiceError(f"The parsed signal name for service {service_name} is empty. Provide a "
                                       f"string with valid characters for the service name ([a-zA-Z0-9_]).")
+            if service_name != parsed_service_name:
+                self.get_logger().warn(
+                    f"The parsed name for service '{service_name}' is '{parsed_service_name}'."
+                    "Use the parsed name to refer to this service.")
             if parsed_service_name in self._services_dict.keys():
                 raise AddServiceError(f"Service with name '{parsed_service_name}' already exists.")
             signature = inspect.signature(callback)
