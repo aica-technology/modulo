@@ -112,10 +112,10 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>[[maybe_unused]] <span class="keyword">static</span> std::string parse_topic_name(<span class="keyword">const</span> std::string&amp; topic_name) {</div>
 <div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>  std::string output;</div>
 <div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>  <span class="keywordflow">for</span> (<span class="keywordtype">char</span> c : topic_name) {</div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>    <span class="keywordflow">if</span> ((c &gt;= <span class="charliteral">&#39;a&#39;</span> &amp;&amp; c &lt;= <span class="charliteral">&#39;z&#39;</span>) || (c &gt;= <span class="charliteral">&#39;A&#39;</span> &amp;&amp; c &lt;= <span class="charliteral">&#39;Z&#39;</span>) || (c &gt;= <span class="charliteral">&#39;0&#39;</span> &amp;&amp; c &lt;= <span class="charliteral">&#39;9&#39;</span>) || c == <span class="charliteral">&#39;_&#39;</span>) {</div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>      <span class="keywordflow">if</span> (!(c == <span class="charliteral">&#39;_&#39;</span> &amp;&amp; output.empty())) {</div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>        output.insert(output.end(), std::tolower(c));</div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>      }</div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>    <span class="keywordflow">if</span> ((c &gt;= <span class="charliteral">&#39;a&#39;</span> &amp;&amp; c &lt;= <span class="charliteral">&#39;z&#39;</span>) || (c &gt;= <span class="charliteral">&#39;A&#39;</span> &amp;&amp; c &lt;= <span class="charliteral">&#39;Z&#39;</span>)) {</div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>      output.insert(output.end(), std::tolower(c));</div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>    } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (!output.empty() &amp;&amp; ((c &gt;= <span class="charliteral">&#39;0&#39;</span> &amp;&amp; c &lt;= <span class="charliteral">&#39;9&#39;</span>) || c == <span class="charliteral">&#39;_&#39;</span>)) {</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>      output.insert(output.end(), std::tolower(c));</div>
 <div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>    }</div>
 <div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>  }</div>
 <div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>  <span class="keywordflow">return</span> output;</div>
