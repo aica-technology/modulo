@@ -53,10 +53,10 @@ parse_node_name(const rclcpp::NodeOptions& options, const std::string& fallback 
 [[maybe_unused]] static std::string parse_topic_name(const std::string& topic_name) {
   std::string output;
   for (char c : topic_name) {
-    if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '_') {
-      if (!(c == '_' && output.empty())) {
-        output.insert(output.end(), std::tolower(c));
-      }
+    if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')) {
+      output.insert(output.end(), std::tolower(c));
+    } else if (!output.empty() && ((c >= '0' && c <= '9') || c == '_')) {
+      output.insert(output.end(), std::tolower(c));
     }
   }
   return output;

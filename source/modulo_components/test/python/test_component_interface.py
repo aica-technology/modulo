@@ -88,11 +88,11 @@ def test_declare_signal(component_interface):
 
 
 def test_add_remove_input(component_interface):
-    component_interface.add_input("_tEsT_#1@3", "test", Bool)
+    component_interface.add_input("8_tEsT_#1@3", "test", Bool)
     assert "test_13" in component_interface._inputs.keys()
     assert component_interface.get_parameter_value("test_13_topic") == "~/test_13"
 
-    component_interface.add_input("_tEsT_#1@5", "test", Bool, default_topic="/topic")
+    component_interface.add_input("9_tEsT_#1@5", "test", Bool, default_topic="/topic")
     assert "test_15" in component_interface._inputs.keys()
     assert component_interface.get_parameter_value("test_15_topic") == "/topic"
 
@@ -133,7 +133,7 @@ def test_add_service(component_interface, ros_exec, make_service_client):
     assert len(component_interface._services_dict) == 2
 
     # adding a mangled service name should succeed under a sanitized name
-    component_interface.add_service("_tEsT_#1@3", empty_callback)
+    component_interface.add_service("8_tEsT_#1@3", empty_callback)
     assert len(component_interface._services_dict) == 3
     assert "test_13" in component_interface._services_dict.keys()
 
@@ -159,9 +159,9 @@ def test_create_output(component_interface):
     assert component_interface._outputs["test"]["message_type"] == Bool
     assert component_interface._periodic_outputs["test"]
 
-    component_interface._create_output("_tEsT_#1@3", "test", Bool, clproto.MessageType.UNKNOWN_MESSAGE, "", True, False)
+    component_interface._create_output("8_tEsT_#1@3", "test", Bool, clproto.MessageType.UNKNOWN_MESSAGE, "", True, False)
     assert not component_interface._periodic_outputs["test_13"]
-    component_interface.publish_output("_tEsT_#1@3")
+    component_interface.publish_output("8_tEsT_#1@3")
     component_interface.publish_output("test_13")
     with pytest.raises(ComponentError):
         component_interface.publish_output("")

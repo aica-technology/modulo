@@ -13,7 +13,7 @@ def parse_topic_name(topic_name: str) -> str:
     :return: The sanitized string
     """
     sanitized_string = re.sub("\W", "", topic_name, flags=re.ASCII).lower()
-    sanitized_string = sanitized_string.lstrip("_")
+    sanitized_string = sanitized_string.lstrip("0123456789_")
     return sanitized_string
 
 

@@ -282,6 +282,12 @@ void ComponentInterface::declare_signal(
         "The parsed signal name for " + type + " '" + signal_name
             + "' is empty. Provide a string with valid characters for the signal name ([a-zA-Z0-9_]).");
   }
+  if (signal_name != parsed_signal_name) {
+    RCLCPP_WARN_STREAM(
+        this->node_logging_->get_logger(),
+        "The parsed signal name for " + type + " '" + signal_name + "' is '" + parsed_signal_name
+            + "'. Use the parsed signal name to refer to this " + type + " and its topic parameter");
+  }
   if (this->inputs_.find(parsed_signal_name) != this->inputs_.cend()) {
     throw exceptions::AddSignalException("Signal with name '" + parsed_signal_name + "' already exists as input.");
   }
@@ -397,6 +403,12 @@ std::string ComponentInterface::validate_service_name(const std::string& service
     throw exceptions::AddServiceException(
         "The parsed service name for service '" + service_name
             + "' is empty. Provide a string with valid characters for the signal name ([a-zA-Z0-9_]).");
+  }
+  if (service_name != parsed_service_name) {
+    RCLCPP_WARN_STREAM(
+        this->node_logging_->get_logger(),
+        "The parsed name for service '" + service_name + "' is '" + parsed_service_name
+            + "'. Use the parsed name to refer to this service");
   }
   if (this->empty_services_.find(parsed_service_name) != this->empty_services_.cend()
       || this->string_services_.find(parsed_service_name) != this->string_services_.cend()) {
