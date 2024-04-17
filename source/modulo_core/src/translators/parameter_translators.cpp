@@ -19,7 +19,9 @@ void copy_parameter_value(
   if (source_parameter->get_parameter_type() != parameter->get_parameter_type()) {
     throw exceptions::ParameterTranslationException(
         "Source parameter " + source_parameter->get_name()
-            + " to be copied does not have the same type as destination parameter " + parameter->get_name());
+        + " to be copied does not have the same type as destination parameter " + parameter->get_name() + "("
+        + get_parameter_type_name(source_parameter->get_parameter_type()) + " vs. "
+        + get_parameter_type_name(parameter->get_parameter_type()) + ")");
   }
   switch (source_parameter->get_parameter_type()) {
     case ParameterType::BOOL:
@@ -56,8 +58,9 @@ void copy_parameter_value(
       if (source_parameter->get_parameter_state_type() != parameter->get_parameter_state_type()) {
         throw exceptions::ParameterTranslationException(
             "Source parameter " + source_parameter->get_name()
-                + " to be copied does not have the same parameter state type as destination parameter "
-                + parameter->get_name());
+            + " to be copied does not have the same parameter state type as destination parameter "
+            + parameter->get_name() + "(" + get_state_type_name(source_parameter->get_parameter_state_type()) + " vs. "
+            + get_state_type_name(parameter->get_parameter_state_type()) + ")");
       }
       switch (source_parameter->get_parameter_state_type()) {
         case StateType::CARTESIAN_STATE:
@@ -204,7 +207,9 @@ std::shared_ptr<ParameterInterface> read_parameter_const(
     if (new_parameter->get_parameter_state_type() != parameter->get_parameter_state_type()) {
       throw exceptions::ParameterTranslationException(
           "The received state parameter " + ros_parameter.get_name()
-              + " does not have the same state type as the reference parameter");
+          + "does not have the same state type as the reference parameter ("
+          + get_state_type_name(new_parameter->get_parameter_state_type()) + " vs. "
+          + get_state_type_name(parameter->get_parameter_state_type()) + ")");
     }
     return new_parameter;
   }
@@ -232,14 +237,16 @@ std::shared_ptr<ParameterInterface> read_parameter_const(
         default:
           throw exceptions::ParameterTranslationException(
               "The ROS parameter " + ros_parameter.get_name()
-                  + " with type double array cannot be interpreted by reference parameter " + parameter->get_name()
-                  + " (type code " + std::to_string(static_cast<int>(parameter->get_parameter_type())) + ")");
+              + " with type double array cannot be interpreted by reference parameter " + parameter->get_name() + " ("
+              + get_parameter_type_name(parameter->get_parameter_type()) + ")");
       }
       break;
     }
     default:
       throw exceptions::ParameterTranslationException(
-          "Incompatible parameter type encountered while reading parameter '" + parameter->get_name() + "'.");
+          "Incompatible parameter type (" + get_parameter_type_name(new_parameter->get_parameter_type())
+          + ") encountered while reading parameter " + parameter->get_name() + " ("
+          + get_parameter_type_name(parameter->get_parameter_type()) + ")");
   }
   return new_parameter;
 }
