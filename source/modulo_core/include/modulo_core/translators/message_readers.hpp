@@ -296,7 +296,7 @@ inline void read_message(std::shared_ptr<state_representation::State>& state, co
       }
       case StateType::DIGITAL_IO_STATE: {
         if (new_state->get_type() == StateType::DIGITAL_IO_STATE) {
-          safe_state_with_names_conversion<DigitalIOState, DigitalIOState>(
+          safe_joint_state_conversion<DigitalIOState, DigitalIOState>(
               state, new_state, [](DigitalIOState& a, const DigitalIOState& b) {
                 a.set_data(b.data());
               });
@@ -307,7 +307,7 @@ inline void read_message(std::shared_ptr<state_representation::State>& state, co
       }
       case StateType::ANALOG_IO_STATE: {
         if (new_state->get_type() == StateType::ANALOG_IO_STATE) {
-          safe_state_with_names_conversion<AnalogIOState, AnalogIOState>(
+          safe_joint_state_conversion<AnalogIOState, AnalogIOState>(
               state, new_state, [](AnalogIOState& a, const AnalogIOState& b) {
                 a.set_data(b.data());
               });
