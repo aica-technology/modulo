@@ -24,6 +24,7 @@ general version of `modulo_component_interfaces` and will replace the latter upo
 - feat: add warn log when topics are sanitized (#66)
 - feat: add modulo interface package (#73)
 - feat: support io states in modulo core (#70)
+- feat: improve logging in parameter translators (#65)
 
 ### Dependencies
 
