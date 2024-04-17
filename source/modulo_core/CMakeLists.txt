@@ -26,8 +26,8 @@ find_package(rclcpp REQUIRED)
 find_package(rclcpp_lifecycle REQUIRED)
 find_package(tf2_msgs REQUIRED)
 
-find_package(control_libraries 7.1.0 REQUIRED COMPONENTS state_representation)
-find_package(clproto 7.1.0 REQUIRED)
+find_package(control_libraries 7.4.0 REQUIRED COMPONENTS state_representation)
+find_package(clproto 7.4.0 REQUIRED)
 
 add_library(${PROJECT_NAME} SHARED
     ${PROJECT_SOURCE_DIR}/src/communication/MessagePair.cpp
