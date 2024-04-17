@@ -1,0 +1,2 @@
+string predicate
+bool value
