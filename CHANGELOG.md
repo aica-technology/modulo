@@ -19,6 +19,10 @@ Release Versions:
 - feat: add modulo interface package (#73)
 - feat: support io states in modulo core (#70)
 
+### Dependencies
+
+- control-libraries 7.1.0 -> 7.4.0: #76
+
 ## 4.0.0
 
 ### November 7, 2023
