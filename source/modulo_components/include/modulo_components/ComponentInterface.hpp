@@ -58,9 +58,9 @@ public:
   friend class ComponentInterfacePublicInterface;
 
   /**
-   * @brief Virtual destructor
+   * @brief Virtual default destructor.
    */
-  virtual ~ComponentInterface();
+  virtual ~ComponentInterface() = default;
 
 protected:
   /**
@@ -535,8 +535,6 @@ private:
       const std::string& frame, const std::string& reference_frame, const tf2::TimePoint& time_point,
       const tf2::Duration& duration
   );
-
-  std::mutex step_mutex_; ///< Mutex for step callback
 
   std::map<std::string, utilities::PredicateVariant> predicates_; ///< Map of predicates
   std::shared_ptr<rclcpp::Publisher<modulo_component_interfaces::msg::Predicate>>

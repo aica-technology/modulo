@@ -2,7 +2,6 @@ import inspect
 import sys
 from functools import partial
 from typing import Callable, Dict, List, Optional, TypeVar, Union, Iterable
-from threading import Lock
 
 import clproto
 import modulo_core.translators.message_readers as modulo_readers
@@ -46,7 +45,6 @@ class ComponentInterface(Node):
         if "parameter_overrides" in node_kwargs.keys():
             node_kwargs["parameter_overrides"] = modify_parameter_overrides(node_kwargs["parameter_overrides"])
         super().__init__(node_name, *args, **node_kwargs)
-        self.__step_lock = Lock()
         self._parameter_dict: Dict[str, Union[str, sr.Parameter]] = {}
         self._predicates: Dict[str, Union[bool, Callable[[], bool]]] = {}
         self._triggers: Dict[str, bool] = {}
@@ -71,15 +69,7 @@ class ComponentInterface(Node):
         self._predicate_publisher = self.create_publisher(Predicate, "/predicates", self._qos)
         self.add_predicate("in_error_state", False)
 
-        self.create_timer(self.get_parameter_value("period"), self.__step_with_mutex)
-    
-    def __del__(self):
-        self.__step_lock.acquire()
-
-    def __step_with_mutex(self):
-        if self.__step_lock.acquire(blocking=False):
-            self._step()
-            self.__step_lock.release()
+        self.create_timer(self.get_parameter_value("period"), self._step)
 
     def _step(self) -> None:
         """
