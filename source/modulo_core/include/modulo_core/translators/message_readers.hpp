@@ -15,6 +15,8 @@
 #include <sensor_msgs/msg/joint_state.hpp>
 
 #include <clproto.hpp>
+#include <state_representation/DigitalIOState.hpp>
+#include <state_representation/AnalogIOState.hpp>
 #include <state_representation/parameters/Parameter.hpp>
 #include <state_representation/space/cartesian/CartesianPose.hpp>
 #include <state_representation/space/joint/JointPositions.hpp>
@@ -255,6 +257,7 @@ inline void safe_spatial_state_conversion(
  * @param conversion_callback A callback function taking parameters of type StateT and NewStateT, where the
  * referenced StateT instance can be modified as needed from the NewStateT value
  */
+// FIXME(#77): rename this upon modulo 5.0
 template<typename StateT, typename NewStateT>
 inline void safe_joint_state_conversion(
     std::shared_ptr<state_representation::State>& state, std::shared_ptr<state_representation::State>& new_state,
@@ -277,7 +280,7 @@ inline void read_message(std::shared_ptr<state_representation::State>& state, co
   std::string tmp(message.data.begin(), message.data.end());
   std::shared_ptr<State> new_state;
   try {
-    new_state = clproto::decode<std::shared_ptr<State >>(tmp);
+    new_state = clproto::decode<std::shared_ptr<State>>(tmp);
   } catch (const std::exception& ex) {
     throw exceptions::MessageTranslationException(ex.what());
   }
@@ -288,6 +291,28 @@ inline void read_message(std::shared_ptr<state_representation::State>& state, co
           *state = *new_state;
         } else {
           *state = State(new_state->get_name());
+        }
+        break;
+      }
+      case StateType::DIGITAL_IO_STATE: {
+        if (new_state->get_type() == StateType::DIGITAL_IO_STATE) {
+          safe_joint_state_conversion<DigitalIOState, DigitalIOState>(
+              state, new_state, [](DigitalIOState& a, const DigitalIOState& b) {
+                a.set_data(b.data());
+              });
+        } else {
+          safe_dynamic_cast<DigitalIOState>(state, new_state);
+        }
+        break;
+      }
+      case StateType::ANALOG_IO_STATE: {
+        if (new_state->get_type() == StateType::ANALOG_IO_STATE) {
+          safe_joint_state_conversion<AnalogIOState, AnalogIOState>(
+              state, new_state, [](AnalogIOState& a, const AnalogIOState& b) {
+                a.set_data(b.data());
+              });
+        } else {
+          safe_dynamic_cast<AnalogIOState>(state, new_state);
         }
         break;
       }

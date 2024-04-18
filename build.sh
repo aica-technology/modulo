@@ -4,7 +4,7 @@ IMAGE_NAME=ghcr.io/aica-technology/modulo
 IMAGE_TAG=latest
 
 ROS2_VERSION=iron
-CL_VERSION=v7.3.0
+CL_VERSION=v7.4.0
 
 SSH_PORT=4440
 

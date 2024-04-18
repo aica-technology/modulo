@@ -17,6 +17,11 @@ Release Versions:
 - feat: add mutex around step callback (#67)
 - feat: add warn log when topics are sanitized (#66)
 - feat: add modulo interface package (#73)
+- feat: support io states in modulo core (#70)
+
+### Dependencies
+
+- control-libraries 7.1.0 -> 7.4.0: #76
 
 ## 4.0.0
 

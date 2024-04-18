@@ -141,6 +141,18 @@ TEST_F(EncodedCommunicationTest, SameType) {
         EXPECT_EQ(pub_state->get_reference_frame(), recv_state->get_reference_frame());
         EXPECT_TRUE(pub_state->data().isApprox(recv_state->data()));
       });
+  this->communicate<DigitalIOState, DigitalIOState>(
+      DigitalIOState::Random("this", 3), DigitalIOState("that", 3), true,
+      [](const std::shared_ptr<DigitalIOState>& pub_state, const std::shared_ptr<DigitalIOState>& recv_state) {
+        EXPECT_EQ(pub_state->get_name(), recv_state->get_name());
+        EXPECT_TRUE(pub_state->data().isApprox(recv_state->data()));
+      });
+  this->communicate<AnalogIOState, AnalogIOState>(
+      AnalogIOState::Random("this", 3), AnalogIOState("that", 3), true,
+      [](const std::shared_ptr<AnalogIOState>& pub_state, const std::shared_ptr<AnalogIOState>& recv_state) {
+        EXPECT_EQ(pub_state->get_name(), recv_state->get_name());
+        EXPECT_TRUE(pub_state->data().isApprox(recv_state->data()));
+      });
 }
 
 TEST_F(EncodedCommunicationTest, CompatibleType) {
