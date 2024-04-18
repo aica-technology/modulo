@@ -2,6 +2,7 @@
 
 Release Versions:
 
+- [4.1.0](#410)
 - [4.0.0](#400)
 - [3.2.0](#320)
 - [3.1.0](#310)
@@ -11,7 +12,13 @@ Release Versions:
 - [2.1.1](#211)
 - [2.1.0](#210)
 
-## Upcoming changes (in development)
+## 4.1.0
+
+### April 19, 2024
+
+Version 4.1.0 is a minor update which adds support for Analog and Digital IO States from control librareis and contains
+a few quality of life improvements. Additionally, it comes with a new package called `modulo_interfaces` which is a more
+general version of `modulo_component_interfaces` and will replace the latter upon the next major release.
 
 - chore: fix links in readme (#68)
 - feat: add warn log when topics are sanitized (#66)
