@@ -15,6 +15,7 @@ Release Versions:
 ## Upcoming changes
 
 - feat: improve logging in parameter translators (#65)
+- fix(component-interface): make python subscriptions type safe (#71)
 
 ## 4.1.0
 
@@ -28,7 +29,6 @@ general version of `modulo_component_interfaces` and will replace the latter upo
 - feat: add warn log when topics are sanitized (#66)
 - feat: add modulo interface package (#73)
 - feat: support io states in modulo core (#70)
-- fix(component-interface): make python subscriptions type safe (#71)
 
 ### Dependencies
 
