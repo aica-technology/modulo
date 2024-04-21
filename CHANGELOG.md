@@ -12,6 +12,10 @@ Release Versions:
 - [2.1.1](#211)
 - [2.1.0](#210)
 
+## Upcoming changes
+
+- feat: improve logging in parameter translators (#65)
+
 ## 4.1.0
 
 ### April 19, 2024
