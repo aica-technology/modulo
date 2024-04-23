@@ -62,7 +62,16 @@ def test_input_output_manual(ros_exec, make_lifecycle_change_client, random_pose
 
 
 @pytest.mark.parametrize("minimal_cartesian_input", [[LifecycleComponent, "/topic"]], indirect=True)
-def test_input_output_invalid(ros_exec, make_lifecycle_change_client, make_minimal_invalid_encoded_state_publisher,
+@pytest.mark.parametrize("minimal_joint_output", [[LifecycleComponent, "/topic", True]], indirect=True)
+def test_input_output_invalid_type(ros_exec, minimal_joint_output, minimal_cartesian_input):
+    ros_exec.add_node(minimal_cartesian_input)
+    ros_exec.add_node(minimal_joint_output)
+    ros_exec.spin_until_future_complete(minimal_cartesian_input.received_future, timeout_sec=0.5)
+    assert not minimal_cartesian_input.received_future.done()
+
+
+@pytest.mark.parametrize("minimal_cartesian_input", [[LifecycleComponent, "/topic"]], indirect=True)
+def test_input_output_invalid_msg(ros_exec, make_lifecycle_change_client, make_minimal_invalid_encoded_state_publisher,
                               minimal_cartesian_input):
     input_change_client = make_lifecycle_change_client("minimal_cartesian_input")
     invalid_publisher = make_minimal_invalid_encoded_state_publisher("/topic")

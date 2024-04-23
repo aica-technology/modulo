@@ -416,8 +416,10 @@ class ComponentInterface(Node):
         :param reader: A callable that can read the ROS message and translate to the desired type
         """
         try:
-            self.__setattr__(attribute_name, reader(message))
-        except (AttributeError, MessageTranslationError) as e:
+            obj_type = type(self.__getattribute__(attribute_name))
+            decoded_message = reader(message)
+            self.__setattr__(attribute_name, obj_type(decoded_message))
+        except (AttributeError, MessageTranslationError, TypeError) as e:
             self.get_logger().warn(f"Failed to read message for attribute {attribute_name}: {e}",
                                    throttle_duration_sec=1.0)
             return

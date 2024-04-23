@@ -15,6 +15,11 @@ def random_pose():
 
 
 @pytest.fixture
+def random_joint():
+    return sr.JointState().Random("test", 3)
+
+
+@pytest.fixture
 def minimal_cartesian_output(request, random_pose):
     def _make_minimal_cartesian_output(component_type, topic, publish_on_step):
         def publish(self):
@@ -23,6 +28,22 @@ def minimal_cartesian_output(request, random_pose):
         component = component_type("minimal_cartesian_output")
         component._output = random_pose
         component.add_output("cartesian_pose", "_output", EncodedState, clproto.MessageType.CARTESIAN_STATE_MESSAGE,
+                             topic, publish_on_step=publish_on_step)
+        component.publish = publish.__get__(component)
+        return component
+
+    yield _make_minimal_cartesian_output(request.param[0], request.param[1], request.param[2])
+
+
+@pytest.fixture
+def minimal_joint_output(request, random_joint):
+    def _make_minimal_cartesian_output(component_type, topic, publish_on_step):
+        def publish(self):
+            self.publish_output("joint_state")
+
+        component = component_type("minimal_joint_output")
+        component._output = random_joint
+        component.add_output("joint_state", "_output", EncodedState, clproto.MessageType.JOINT_STATE_MESSAGE,
                              topic, publish_on_step=publish_on_step)
         component.publish = publish.__get__(component)
         return component
