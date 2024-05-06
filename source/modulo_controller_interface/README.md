@@ -22,3 +22,9 @@ interfaces. The class is intended to be used as a base class to implement any ki
 
 The `activation_timeout` parameter gives the controller plugin and hardware interface additional time to read the
 initial states to prevent any NaN data from propagating through to the control logic.
+
+## RobotControllerInterface
+
+The `RobotControllerInterface` is derived from the `ModuloControllerInterface`. It incorporates `JointState` and
+`CartesianState` classes to leverage the `robot_model::Model` class for forward and inverse kinematics, and supports
+force-torque sensor data in `CartesianWrench` format.
