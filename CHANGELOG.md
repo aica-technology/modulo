@@ -20,6 +20,7 @@ Release Versions:
 - fix(modulo-components): add missing space in log message (#113)
 - feat(modulo-controller): add missing docs (#112)
 - refactor: rename function in modulo translators (#77)
+- feat: add mutex around step callback (#67)
 
 ## 4.2.1
 
