@@ -259,7 +259,7 @@ inline void safe_spatial_state_conversion(
  */
 // FIXME(#77): rename this upon modulo 5.0
 template<typename StateT, typename NewStateT>
-inline void safe_joint_state_conversion(
+inline void safe_state_with_names_conversion(
     std::shared_ptr<state_representation::State>& state, std::shared_ptr<state_representation::State>& new_state,
     std::function<void(StateT&, const NewStateT&)> conversion_callback = {}
 ) {
@@ -296,7 +296,7 @@ inline void read_message(std::shared_ptr<state_representation::State>& state, co
       }
       case StateType::DIGITAL_IO_STATE: {
         if (new_state->get_type() == StateType::DIGITAL_IO_STATE) {
-          safe_joint_state_conversion<DigitalIOState, DigitalIOState>(
+          safe_state_with_names_conversion<DigitalIOState, DigitalIOState>(
               state, new_state, [](DigitalIOState& a, const DigitalIOState& b) {
                 a.set_data(b.data());
               });
@@ -307,7 +307,7 @@ inline void read_message(std::shared_ptr<state_representation::State>& state, co
       }
       case StateType::ANALOG_IO_STATE: {
         if (new_state->get_type() == StateType::ANALOG_IO_STATE) {
-          safe_joint_state_conversion<AnalogIOState, AnalogIOState>(
+          safe_state_with_names_conversion<AnalogIOState, AnalogIOState>(
               state, new_state, [](AnalogIOState& a, const AnalogIOState& b) {
                 a.set_data(b.data());
               });
@@ -401,22 +401,22 @@ inline void read_message(std::shared_ptr<state_representation::State>& state, co
       case StateType::JOINT_STATE: {
         auto derived_state = safe_dynamic_pointer_cast<JointState>(state);
         if (new_state->get_type() == StateType::JOINT_POSITIONS) {
-          safe_joint_state_conversion<JointState, JointPositions>(
+          safe_state_with_names_conversion<JointState, JointPositions>(
               state, new_state, [](JointState& a, const JointPositions& b) {
                 a.set_positions(b.get_positions());
               });
         } else if (new_state->get_type() == StateType::JOINT_VELOCITIES) {
-          safe_joint_state_conversion<JointState, JointVelocities>(
+          safe_state_with_names_conversion<JointState, JointVelocities>(
               state, new_state, [](JointState& a, const JointVelocities& b) {
                 a.set_velocities(b.get_velocities());
               });
         } else if (new_state->get_type() == StateType::JOINT_ACCELERATIONS) {
-          safe_joint_state_conversion<JointState, JointAccelerations>(
+          safe_state_with_names_conversion<JointState, JointAccelerations>(
               state, new_state, [](JointState& a, const JointAccelerations& b) {
                 a.set_accelerations(b.get_accelerations());
               });
         } else if (new_state->get_type() == StateType::JOINT_TORQUES) {
-          safe_joint_state_conversion<JointState, JointTorques>(
+          safe_state_with_names_conversion<JointState, JointTorques>(
               state, new_state, [](JointState& a, const JointTorques& b) {
                 a.set_torques(b.get_torques());
               });
@@ -427,7 +427,7 @@ inline void read_message(std::shared_ptr<state_representation::State>& state, co
       }
       case StateType::JOINT_POSITIONS: {
         if (new_state->get_type() == StateType::JOINT_STATE) {
-          safe_joint_state_conversion<JointPositions, JointState>(
+          safe_state_with_names_conversion<JointPositions, JointState>(
               state, new_state, [](JointPositions& a, const JointState& b) {
                 a.set_positions(b.get_positions());
               });
@@ -438,7 +438,7 @@ inline void read_message(std::shared_ptr<state_representation::State>& state, co
       }
       case StateType::JOINT_VELOCITIES: {
         if (new_state->get_type() == StateType::JOINT_STATE) {
-          safe_joint_state_conversion<JointVelocities, JointState>(
+          safe_state_with_names_conversion<JointVelocities, JointState>(
               state, new_state, [](JointVelocities& a, const JointState& b) {
                 a.set_velocities(b.get_velocities());
               });
@@ -449,7 +449,7 @@ inline void read_message(std::shared_ptr<state_representation::State>& state, co
       }
       case StateType::JOINT_ACCELERATIONS: {
         if (new_state->get_type() == StateType::JOINT_STATE) {
-          safe_joint_state_conversion<JointAccelerations, JointState>(
+          safe_state_with_names_conversion<JointAccelerations, JointState>(
               state, new_state, [](JointAccelerations& a, const JointState& b) {
                 a.set_accelerations(b.get_accelerations());
               });
@@ -460,7 +460,7 @@ inline void read_message(std::shared_ptr<state_representation::State>& state, co
       }
       case StateType::JOINT_TORQUES: {
         if (new_state->get_type() == StateType::JOINT_STATE) {
-          safe_joint_state_conversion<JointTorques, JointState>(
+          safe_state_with_names_conversion<JointTorques, JointState>(
               state, new_state, [](JointTorques& a, const JointState& b) {
                 a.set_torques(b.get_torques());
               });
