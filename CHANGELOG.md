@@ -14,6 +14,10 @@ Release Versions:
 - [2.1.1](#211)
 - [2.1.0](#210)
 
+## Upcoming changes
+
+- refactor: rename function in modulo translators (#77)
+
 ## 4.2.1
 
 ### May 29, 2024
