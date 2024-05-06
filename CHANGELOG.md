@@ -18,6 +18,7 @@ Release Versions:
 - fix(component-interface): make python subscriptions type safe (#71)
 - build: change base workspace image version
 - refactor: rename function in modulo translators (#77)
+- feat: add mutex around step callback (#67)
 
 ## 4.1.0
 
