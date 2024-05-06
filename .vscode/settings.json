@@ -1,6 +1,6 @@
 {
     "C_Cpp.clang_format_style": "file:/home/ros2/.clang-format",
-    "cmake.sourceDirectory": "/home/dominic/aica/modulo/source/modulo_utils",
+    "cmake.sourceDirectory": "/home/ros2/ws/src/modulo_components",
     "python.analysis.typeCheckingMode": "basic",
     "python.languageServer": "Pylance",
     "editor.rulers": [
