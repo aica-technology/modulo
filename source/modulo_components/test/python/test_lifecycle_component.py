@@ -1,5 +1,5 @@
 import pytest
-from modulo_components.exceptions import ComponentError
+from modulo_utils.exceptions import ModuloError
 from modulo_components.lifecycle_component import LifecycleComponent
 from std_msgs.msg import Bool, String
 
@@ -13,7 +13,7 @@ def test_add_remove_output(lifecycle_component):
     lifecycle_component.add_output("8_tEsT_#1@3", "test", Bool)
     assert "test_13" in lifecycle_component._outputs.keys()
     assert lifecycle_component.get_parameter_value("test_13_topic") == "~/test_13"
-    with pytest.raises(ComponentError):
+    with pytest.raises(ModuloError):
         lifecycle_component.publish_output("test_13")
 
     lifecycle_component.add_output("9_tEsT_#1@5", "test", Bool, default_topic="/topic")
@@ -30,5 +30,5 @@ def test_add_remove_output(lifecycle_component):
     assert not lifecycle_component._periodic_outputs["test_13"]
     lifecycle_component.publish_output("8_tEsT_#1@3")
     lifecycle_component.publish_output("test_13")
-    with pytest.raises(ComponentError):
+    with pytest.raises(ModuloError):
         lifecycle_component.publish_output("")
