@@ -11,9 +11,10 @@ import state_representation as sr
 from geometry_msgs.msg import TransformStamped
 from modulo_component_interfaces.msg import Predicate
 from modulo_component_interfaces.srv import EmptyTrigger, StringTrigger
+from modulo_utils.parsing import parse_topic_name
 from modulo_components.exceptions import AddServiceError, AddSignalError, ComponentError, ComponentParameterError, \
     LookupTransformError
-from modulo_components.utilities import parse_topic_name, modify_parameter_overrides
+from modulo_components.utilities import modify_parameter_overrides
 from modulo_core import EncodedState
 from modulo_core.exceptions import MessageTranslationError, ParameterTranslationError
 from modulo_core.translators.parameter_translators import get_ros_parameter_type, read_parameter_const, write_parameter
