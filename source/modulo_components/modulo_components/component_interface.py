@@ -739,6 +739,9 @@ class ComponentInterface(Node):
 
     def __get_predicate_message(self, name: str) -> Predicate:
         """
+        Populate a Predicate messag with the name and the value of a predicate.
+
+        :param name: The name of the predicate
         """
         message = Predicate()
         message.predicate = name
