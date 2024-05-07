@@ -2,7 +2,8 @@
 
 #include <rclcpp/node_options.hpp>
 
-#include "modulo_core/EncodedState.hpp"
+#include <modulo_core/EncodedState.hpp>
+
 #include "test_modulo_components/component_public_interfaces.hpp"
 
 using namespace state_representation;
@@ -58,7 +59,7 @@ TEST_F(LifecycleComponentTest, AddRemoveOutput) {
   EXPECT_NO_THROW(component_->configure_outputs());
   EXPECT_NO_THROW(component_->activate_outputs());
   EXPECT_NO_THROW(component_->outputs_.at("test")->publish());
-  EXPECT_THROW(component_->publish_output("test"), exceptions::ComponentException);
+  EXPECT_THROW(component_->publish_output("test"), modulo_utils::exceptions::ModuloException);
 
   auto new_data = std::make_shared<bool>(false);
   component_->add_output("test", new_data);
@@ -72,6 +73,6 @@ TEST_F(LifecycleComponentTest, AddRemoveOutput) {
   EXPECT_FALSE(component_->periodic_outputs_.at("test_13"));
   EXPECT_NO_THROW(component_->publish_output("8_tEsT_#1@3"));
   EXPECT_NO_THROW(component_->publish_output("test_13"));
-  EXPECT_THROW(component_->publish_output(""), exceptions::ComponentException);
+  EXPECT_THROW(component_->publish_output(""), modulo_utils::exceptions::ModuloException);
 }
 } // namespace modulo_components

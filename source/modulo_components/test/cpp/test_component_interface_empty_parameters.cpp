@@ -1,6 +1,5 @@
 #include <gtest/gtest.h>
 
-#include "modulo_components/exceptions/ComponentParameterException.hpp"
 #include "test_modulo_components/component_public_interfaces.hpp"
 
 namespace modulo_components {
@@ -62,7 +61,7 @@ TYPED_TEST_SUITE(ComponentInterfaceEmptyParameterTest, NodeTypes);
 TYPED_TEST(ComponentInterfaceEmptyParameterTest, NotAllowEmptyOnConstruction) {
   auto node = std::make_shared<TypeParam>("EmptyParameterComponent", rclcpp::NodeOptions());
   EXPECT_THROW(std::make_shared<EmptyParameterInterface<TypeParam>>(node, false),
-               modulo_components::exceptions::ComponentParameterException);
+               modulo_utils::exceptions::ParameterException);
 }
 
 TYPED_TEST(ComponentInterfaceEmptyParameterTest, NotAllowEmpty) {
@@ -70,8 +69,8 @@ TYPED_TEST(ComponentInterfaceEmptyParameterTest, NotAllowEmpty) {
   auto node = std::make_shared<TypeParam>("EmptyParameterComponent", rclcpp::NodeOptions());
   component = std::make_shared<EmptyParameterInterface<TypeParam>>(node, false, false);
   EXPECT_THROW(component->add_parameter(std::make_shared<Parameter<std::string>>("name"), "Test parameter"),
-               exceptions::ComponentParameterException);
-  EXPECT_THROW(auto param = component->get_parameter("name"), exceptions::ComponentParameterException);
+               modulo_utils::exceptions::ParameterException);
+  EXPECT_THROW(auto param = component->get_parameter("name"), modulo_utils::exceptions::ParameterException);
   EXPECT_THROW(component->get_ros_parameter("name"), rclcpp::exceptions::ParameterNotDeclaredException);
 }
 
@@ -179,6 +178,6 @@ TYPED_TEST(ComponentInterfaceEmptyParameterTest, ParameterOverridesEmpty) {
   auto node = std::make_shared<TypeParam>(
       "EmptyParameterInterface", rclcpp::NodeOptions().parameter_overrides({rclcpp::Parameter("name")}));
   EXPECT_THROW(std::make_shared<EmptyParameterInterface<TypeParam>>(node, false, true, false),
-               modulo_components::exceptions::ComponentParameterException);
+               modulo_utils::exceptions::ParameterException);
 }
 } // namespace modulo_components
