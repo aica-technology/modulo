@@ -22,7 +22,7 @@ FROM base as utils-development
 ARG TARGETPLATFORM
 ARG CACHEID
 RUN --mount=type=cache,target=./build,id=${TARGETPLATFORM}-${CACHEID},uid=1000 \
-  colcon build --packages-select modulo_component_interfaces
+  colcon build --packages-select modulo_interfaces
 
 FROM utils-development as core-development
 ARG TARGETPLATFORM
