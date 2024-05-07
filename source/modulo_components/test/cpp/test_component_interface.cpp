@@ -191,11 +191,11 @@ TYPED_TEST(ComponentInterfaceTest, CallEmptyService) {
   };
   EXPECT_NO_THROW(this->component_->add_service("empty", empty_callback));
 
-  auto client = std::make_shared<ServiceClient<modulo_component_interfaces::srv::EmptyTrigger>>(
+  auto client = std::make_shared<ServiceClient<modulo_interfaces::srv::EmptyTrigger>>(
       rclcpp::NodeOptions(), "/" + std::string(this->component_->node_base_->get_name()) + "/empty");
   this->exec_->add_node(this->component_->node_base_);
   this->exec_->add_node(client);
-  auto request = std::make_shared<modulo_component_interfaces::srv::EmptyTrigger::Request>();
+  auto request = std::make_shared<modulo_interfaces::srv::EmptyTrigger::Request>();
   auto future = client->call_async(request);
   auto success = this->exec_->spin_until_future_complete(future, 1s);
   EXPECT_EQ(success, rclcpp::FutureReturnCode::SUCCESS);
@@ -211,11 +211,11 @@ TYPED_TEST(ComponentInterfaceTest, CallStringService) {
   };
   EXPECT_NO_THROW(this->component_->add_service("string", string_callback));
 
-  auto client = std::make_shared<ServiceClient<modulo_component_interfaces::srv::StringTrigger>>(
+  auto client = std::make_shared<ServiceClient<modulo_interfaces::srv::StringTrigger>>(
       rclcpp::NodeOptions(), "/" + std::string(this->component_->node_base_->get_name()) + "/string");
   this->exec_->add_node(this->component_->node_base_);
   this->exec_->add_node(client);
-  auto request = std::make_shared<modulo_component_interfaces::srv::StringTrigger::Request>();
+  auto request = std::make_shared<modulo_interfaces::srv::StringTrigger::Request>();
   request->payload = "payload";
   auto future = client->call_async(request);
   auto success = this->exec_->spin_until_future_complete(future, 0.5s);

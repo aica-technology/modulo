@@ -1,16 +1,17 @@
+import copy
 import inspect
 import sys
 from functools import partial
-from typing import Callable, Dict, List, Optional, TypeVar, Union, Iterable
 from threading import Lock
+from typing import Callable, Dict, Iterable, List, Optional, TypeVar, Union
 
 import clproto
 import modulo_core.translators.message_readers as modulo_readers
 import modulo_core.translators.message_writers as modulo_writers
 import state_representation as sr
 from geometry_msgs.msg import TransformStamped
-from modulo_component_interfaces.msg import Predicate
-from modulo_component_interfaces.srv import EmptyTrigger, StringTrigger
+from modulo_interfaces.msg import Predicate, PredicateCollection
+from modulo_interfaces.srv import EmptyTrigger, StringTrigger
 from modulo_utils.exceptions import AddServiceError, AddSignalError, ModuloError, ParameterError, LookupTransformError
 from modulo_utils.parsing import parse_topic_name
 from modulo_components.utilities import modify_parameter_overrides
@@ -68,7 +69,10 @@ class ComponentInterface(Node):
         self.add_parameter(sr.Parameter("period", 0.1, sr.ParameterType.DOUBLE),
                            "The time interval in seconds for all periodic callbacks")
 
-        self._predicate_publisher = self.create_publisher(Predicate, "/predicates", self._qos)
+        self._predicate_publisher = self.create_publisher(PredicateCollection, "/predicates", self._qos)
+        self.__predicate_message = PredicateCollection()
+        self.__predicate_message.node = self.get_fully_qualified_name()
+        self.__predicate_message.type = PredicateCollection.COMPONENT
         self.add_predicate("in_error_state", False)
 
         self.create_timer(self.get_parameter_value("period"), self.__step_with_mutex)
@@ -733,30 +737,44 @@ class ComponentInterface(Node):
             self.get_logger().debug(f"Adding periodic function '{name}'.")
         self._periodic_callbacks[name] = callback
 
+    def __get_predicate_message(self, name: str) -> Predicate:
+        """
+        """
+        message = Predicate()
+        message.predicate = name
+        message.value = self.get_predicate(name)
+        return message
+
     def _publish_predicate(self, name):
         """
         Helper function to publish a predicate.
 
         :param name: The name of the predicate to publish
         """
-        message = Predicate()
-        value = self.get_predicate(name)
+        message = copy.copy(self.__predicate_message)
         try:
-            message.value = value
+            message.predicates = [self.__get_predicate_message(name)]
         except AssertionError:
-            self.get_logger().error(f"Predicate '{name}' has invalid type: expected 'bool', got '{type(value)}'.",
+            self.get_logger().error(f"Predicate '{name}' has invalid type: expected 'bool', got '{type(self.get_predicate(name))}'.",
                                     throttle_duration_sec=1.0)
             return
-        message.component = self.get_fully_qualified_name()
-        message.predicate = name
         self._predicate_publisher.publish(message)
 
     def _publish_predicates(self):
         """
         Helper function to publish all predicates.
         """
-        for name in self._predicates.keys():
-            self._publish_predicate(name)
+        message = copy.copy(self.__predicate_message)
+        predicates = []
+        try:
+            for name in self._predicates.keys():
+                predicates.append(self.__get_predicate_message(name))
+        except AssertionError:
+            self.get_logger().error(f"Predicate '{name}' has invalid type: expected 'bool', got '{type(self.get_predicate(name))}'.",
+                                    throttle_duration_sec=1.0)
+            return
+        message.predicates = predicates
+        self._predicate_publisher.publish(message)
 
     def __translate_and_publish(self, output_name: str):
         """
