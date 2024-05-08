@@ -7,9 +7,9 @@
 #include <state_representation/space/cartesian/CartesianWrench.hpp>
 #include <state_representation/space/joint/JointState.hpp>
 
-#include "modulo_controller_interface/modulo_controller_interface.hpp"
+#include "modulo_controllers/modulo_controller_interface.hpp"
 
-namespace modulo_controller_interface {
+namespace modulo_controllers {
 
 /**
  * @class RobotControllerInterface
@@ -130,4 +130,4 @@ private:
   state_representation::CartesianWrench ft_sensor_;
 };
 
-}// namespace modulo_controller_interface
+}// namespace modulo_controllers

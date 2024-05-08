@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.15)
-project(modulo_controller_interface)
+project(modulo_controllers)
 
 # default to C99
 if (NOT CMAKE_C_STANDARD)
@@ -44,9 +44,9 @@ if(BUILD_TESTING)
   include_directories(test/include)
 
   ament_add_gmock(
-    test_modulo_controller_interface
+    test_modulo_controllers
     test/test_modulo_controller_interface.cpp
   )
-  target_include_directories(test_modulo_controller_interface PRIVATE include)
-  target_link_libraries(test_modulo_controller_interface ${PROJECT_NAME})
+  target_include_directories(test_modulo_controllers PRIVATE include)
+  target_link_libraries(test_modulo_controllers ${PROJECT_NAME})
 endif()

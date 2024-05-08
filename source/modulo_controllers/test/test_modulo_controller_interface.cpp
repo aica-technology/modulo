@@ -6,10 +6,10 @@
 #include <state_representation/space/cartesian/CartesianState.hpp>
 #include <state_representation/space/joint/JointState.hpp>
 
-#include "modulo_controller_interface/modulo_controller_interface.hpp"
-#include "test_modulo_controller_interface/communication_nodes.hpp"
+#include "modulo_controllers/modulo_controller_interface.hpp"
+#include "test_modulo_controllers/communication_nodes.hpp"
 
-using namespace modulo_controller_interface;
+using namespace modulo_controllers;
 using namespace state_representation;
 using namespace std::chrono_literals;
 

@@ -4,7 +4,7 @@
 
 #include <rclcpp/rclcpp.hpp>
 
-namespace modulo_controller_interface {
+namespace modulo_controllers {
 
 using namespace std::chrono_literals;
 
@@ -29,4 +29,4 @@ private:
   std::shared_future<void> received_future_;
   std::promise<void> received_;
 };
-}// namespace modulo_controller_interface
+}// namespace modulo_controllers

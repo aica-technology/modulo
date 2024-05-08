@@ -5,10 +5,10 @@
 #include <rclcpp/rclcpp.hpp>
 
 /**
- * @namespace modulo_controller_interface::utilities
+ * @namespace modulo_controllers::utilities
  * @brief Modulo controllers utilities
  */
-namespace modulo_controller_interface::utilities {
+namespace modulo_controllers::utilities {
 
 typedef std::variant<bool, std::function<bool(void)>> PredicateVariant;
 
@@ -30,4 +30,4 @@ typedef std::variant<bool, std::function<bool(void)>> PredicateVariant;
   }
   return output;
 }
-}// namespace modulo_components::utilities
+}// namespace modulo_controllers::utilities

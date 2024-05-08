@@ -1,4 +1,4 @@
-#include "modulo_controller_interface/robot_controller_interface.hpp"
+#include "modulo_controllers/robot_controller_interface.hpp"
 
 #include <hardware_interface/types/hardware_interface_type_values.hpp>
 
@@ -6,7 +6,7 @@
 
 using namespace state_representation;
 
-namespace modulo_controller_interface {
+namespace modulo_controllers {
 
 static const std::map<std::string, JointStateVariable> interface_map =// NOLINT(cert-err58-cpp)
     {{hardware_interface::HW_IF_POSITION, JointStateVariable::POSITIONS},
@@ -365,4 +365,4 @@ bool RobotControllerInterface::on_validate_parameter_callback(const std::shared_
   return ModuloControllerInterface::on_validate_parameter_callback(parameter);
 }
 
-}// namespace modulo_controller_interface
+}// namespace modulo_controllers

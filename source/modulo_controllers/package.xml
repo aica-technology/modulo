@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
 <package format="3">
-  <name>modulo_controller_interface</name>
+  <name>modulo_controllers</name>
   <version>4.1.0</version>
   <description>Interface class for modulo controllers</description>
   <maintainer email="enrico@aica.tech">Enrico Eberhard</maintainer>
   <maintainer email="dominic@aica.tech">Dominic Reber</maintainer>
-  <license>TODO: License declaration</license>
+  <license>GPLv3</license>
 
   <buildtool_depend>ament_cmake_auto</buildtool_depend>
 

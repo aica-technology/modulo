@@ -15,12 +15,12 @@
 #include <modulo_core/translators/parameter_translators.hpp>
 #include <modulo_interfaces/msg/predicate_collection.hpp>
 
-#include "modulo_controller_interface/utils/utilities.hpp"
+#include "modulo_controllers/utils/utilities.hpp"
 
 #include <modulo_component_interfaces/srv/empty_trigger.hpp>
 #include <modulo_component_interfaces/srv/string_trigger.hpp>
 
-namespace modulo_controller_interface {
+namespace modulo_controllers {
 
 typedef std::variant<
     std::shared_ptr<rclcpp::Subscription<modulo_core::EncodedState>>,
@@ -907,4 +907,4 @@ inline void ModuloControllerInterface::write_output(const std::string& name, con
   write_std_output<StringPublishers, std_msgs::msg::String, std::string>(name, data);
 }
 
-}// namespace modulo_controller_interface
+}// namespace modulo_controllers

@@ -4,7 +4,7 @@
   "description": {
     "brief": "Base controller class to combine ros2_control, control libraries and modulo"
   },
-  "plugin": "modulo_controller_interface/ModuloControllerInterface",
+  "plugin": "modulo_controllers/ModuloControllerInterface",
   "virtual": true,
   "parameters": [
     {

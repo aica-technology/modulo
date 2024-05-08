@@ -1,10 +1,10 @@
-#include "modulo_controller_interface/modulo_controller_interface.hpp"
+#include "modulo_controllers/modulo_controller_interface.hpp"
 
 #include <chrono>
 
 #include <modulo_core/translators/message_readers.hpp>
 
-#include "modulo_controller_interface/utils/utilities.hpp"
+#include "modulo_controllers/utils/utilities.hpp"
 
 template<class... Ts>
 struct overloaded : Ts... {
@@ -16,7 +16,7 @@ overloaded(Ts...) -> overloaded<Ts...>;
 using namespace state_representation;
 using namespace std::chrono_literals;
 
-namespace modulo_controller_interface {
+namespace modulo_controllers {
 
 ModuloControllerInterface::ModuloControllerInterface(bool claim_all_state_interfaces)
     : controller_interface::ControllerInterface(),
@@ -672,4 +672,4 @@ bool ModuloControllerInterface::is_active() const {
   return get_node()->get_current_state().label() == "active";
 }
 
-}// namespace modulo_controller_interface
+}// namespace modulo_controllers
