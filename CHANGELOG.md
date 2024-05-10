@@ -16,7 +16,12 @@ Release Versions:
 
 - feat: improve logging in parameter translators (#65)
 - fix(component-interface): make python subscriptions type safe (#71)
-- build: change base workspace image version
+- build: change base workspace image version (#83)
+- build: aica-package.toml for package-builder:v1 (#91)
+
+### Dependencies
+
+- control-libraries: 7.4.0 -> 8.1.0 (#91)
 
 ## 4.1.0
 
@@ -33,7 +38,7 @@ general version of `modulo_component_interfaces` and will replace the latter upo
 
 ### Dependencies
 
-- control-libraries 7.1.0 -> 7.4.0: #76
+- control-libraries: 7.1.0 -> 7.4.0 (#76)
 
 ## 4.0.0
 
