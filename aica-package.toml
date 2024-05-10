@@ -1,0 +1,30 @@
+#syntax=ghcr.io/aica-technology/package-builder:v1
+
+[metadata]
+version = "4.1.0"
+description = "Modular ROS 2 extension library for dynamic composition of components and controllers with the AICA robotics framework"
+
+[metadata.collection]
+name = "modulo"
+
+[build]
+type = "ros"
+image = "v1.0.1-iron"
+
+[build.dependencies]
+"@aica/foss/control-libraries" = "v8.1.0"
+
+[build.packages.modulo_component_interfaces]
+source = "./source/modulo_component_interfaces"
+
+[build.packages.modulo_components]
+source = "./source/modulo_components"
+
+[build.packages.modulo_core]
+source = "./source/modulo_core"
+
+[build.packages.modulo_interfaces]
+source = "./source/modulo_interfaces"
+
+[build.packages.modulo_utils]
+source = "./source/modulo_utils"
