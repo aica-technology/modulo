@@ -11,9 +11,8 @@ import state_representation as sr
 from geometry_msgs.msg import TransformStamped
 from modulo_component_interfaces.msg import Predicate
 from modulo_component_interfaces.srv import EmptyTrigger, StringTrigger
+from modulo_utils.exceptions import AddServiceError, AddSignalError, ModuloError, ParameterError, LookupTransformError
 from modulo_utils.parsing import parse_topic_name
-from modulo_components.exceptions import AddServiceError, AddSignalError, ComponentError, ComponentParameterError, \
-    LookupTransformError
 from modulo_components.utilities import modify_parameter_overrides
 from modulo_core import EncodedState
 from modulo_core.exceptions import MessageTranslationError, ParameterTranslationError
@@ -105,7 +104,7 @@ class ComponentInterface(Node):
         :param parameter: Either the name of the parameter attribute or the parameter itself
         :param description: The parameter description
         :param read_only: If True, the value of the parameter cannot be changed after declaration
-        :raises ComponentParameterError: if the parameter could not be added
+        :raises ParameterError: if the parameter could not be added
         """
         try:
             if isinstance(parameter, sr.Parameter):
@@ -122,7 +121,7 @@ class ComponentInterface(Node):
                                 "containing the name of the attribute that refers to the parameter to add.")
             ros_param = write_parameter(sr_parameter)
         except (TypeError, ParameterTranslationError) as e:
-            raise ComponentParameterError(f"Failed to add parameter: {e}")
+            raise ParameterError(f"Failed to add parameter: {e}")
         if not self.has_parameter(sr_parameter.get_name()):
             self.get_logger().debug(f"Adding parameter '{sr_parameter.get_name()}'.")
             self._parameter_dict[sr_parameter.get_name()] = parameter
@@ -136,7 +135,7 @@ class ComponentInterface(Node):
                     self.declare_parameter(ros_param.name, ros_param.value, descriptor=descriptor)
             except Exception as e:
                 del self._parameter_dict[sr_parameter.get_name()]
-                raise ComponentParameterError(f"Failed to add parameter: {e}")
+                raise ParameterError(f"Failed to add parameter: {e}")
         else:
             self.get_logger().debug(f"Parameter '{sr_parameter.get_name()}' already exists.")
 
@@ -147,7 +146,7 @@ class ComponentInterface(Node):
         dictionary.
 
         :param name: The name of the parameter
-        :raises ComponentParameterError: if the parameter does not exist
+        :raises ParameterError: if the parameter does not exist
         :return: The requested parameter
         """
         try:
@@ -158,32 +157,32 @@ class ComponentInterface(Node):
             else:
                 return self.__get_component_parameter(name)
         except Exception as e:
-            raise ComponentParameterError(f"Failed to get parameter '{name}': {e}")
+            raise ParameterError(f"Failed to get parameter '{name}': {e}")
 
     def __get_component_parameter(self, name: str) -> sr.Parameter:
         """
         Get the parameter from the parameter dictionary by its name.
 
         :param name: The name of the parameter
-        :raises ComponentParameterError: if the parameter does not exist
+        :raises ParameterError: if the parameter does not exist
         :return: The parameter, if it exists
         """
         if name not in self._parameter_dict.keys():
-            raise ComponentParameterError(f"Parameter '{name}' is not in the dict of parameters")
+            raise ParameterError(f"Parameter '{name}' is not in the dict of parameters")
         try:
             if isinstance(self._parameter_dict[name], str):
                 return self.__getattribute__(self._parameter_dict[name])
             else:
                 return self._parameter_dict[name]
         except AttributeError as e:
-            raise ComponentParameterError(f"{e}")
+            raise ParameterError(f"{e}")
 
     def get_parameter_value(self, name: str) -> T:
         """
         Get the parameter value from the parameter dictionary by its name.
 
         :param name: The name of the parameter
-        :raises ComponentParameterError: if the parameter does not exist
+        :raises ParameterError: if the parameter does not exist
         :return: The value of the parameter, if the parameter exists
         """
         return self.__get_component_parameter(name).get_value()
@@ -777,13 +776,13 @@ class ComponentInterface(Node):
         Trigger the publishing of an output
 
         :param signal_name: The name of the output signal
-        :raises ComponentError: if the output is being published periodically or if the signal name could not be found
+        :raises ModuloError: if the output is being published periodically or if the signal name could not be found
         """
         parsed_signal_name = parse_topic_name(signal_name)
         if parsed_signal_name not in self._outputs.keys():
-            raise ComponentError(f"Output with name '{signal_name}' doesn't exist")
+            raise ModuloError(f"Output with name '{signal_name}' doesn't exist")
         if self._periodic_outputs[parsed_signal_name]:
-            raise ComponentError("An output that is published periodically cannot be triggered manually")
+            raise ModuloError("An output that is published periodically cannot be triggered manually")
         try:
             self.__translate_and_publish(parsed_signal_name)
         except Exception as e:

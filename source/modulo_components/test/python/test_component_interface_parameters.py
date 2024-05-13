@@ -3,7 +3,7 @@ import rclpy.exceptions
 import rclpy.node
 import state_representation as sr
 from modulo_components.component_interface import ComponentInterface
-from modulo_components.exceptions import ComponentParameterError
+from modulo_utils.exceptions import ParameterError
 from rcl_interfaces.msg import SetParametersResult
 
 
@@ -37,7 +37,7 @@ def assert_param_value_equal(component_interface: ComponentInterfaceTest, name: 
 
 
 def test_add_parameter(component_interface):
-    with pytest.raises(ComponentParameterError):
+    with pytest.raises(ParameterError):
         component_interface.get_parameter("test")
     with pytest.raises(rclpy.exceptions.ParameterNotDeclaredException):
         rclpy.node.Node.get_parameter(component_interface, "test")
@@ -51,7 +51,7 @@ def test_add_parameter(component_interface):
 
 
 def test_add_parameter_again(component_interface):
-    with pytest.raises(ComponentParameterError):
+    with pytest.raises(ParameterError):
         component_interface.get_parameter_value("test")
     with pytest.raises(rclpy.exceptions.ParameterNotDeclaredException):
         rclpy.node.Node.get_parameter(component_interface, "test")
@@ -64,7 +64,7 @@ def test_add_parameter_again(component_interface):
 
 
 def test_add_parameter_again_not_attribute(component_interface):
-    with pytest.raises(ComponentParameterError):
+    with pytest.raises(ParameterError):
         component_interface.get_parameter("test")
     with pytest.raises(rclpy.exceptions.ParameterNotDeclaredException):
         rclpy.node.Node.get_parameter(component_interface, "test")
