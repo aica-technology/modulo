@@ -32,8 +32,10 @@ ComponentInterface::ComponentInterface(
   this->add_parameter("rate", 10, "The rate in Hertz for all periodic callbacks", true);
   this->add_parameter("period", 0.1, "The time interval in seconds for all periodic callbacks", true);
 
-  this->predicate_publisher_ = rclcpp::create_publisher<modulo_component_interfaces::msg::Predicate>(
+  this->predicate_publisher_ = rclcpp::create_publisher<modulo_interfaces::msg::PredicateCollection>(
       this->node_parameters_, this->node_topics_, "/predicates", this->qos_);
+  this->predicate_message_.node = this->node_base_->get_fully_qualified_name();
+  this->predicate_message_.type = modulo_interfaces::msg::PredicateCollection::COMPONENT;
 
   this->add_predicate("in_error_state", false);
 
@@ -186,7 +188,7 @@ void ComponentInterface::add_variant_predicate(
   this->predicates_.insert_or_assign(name, predicate);
 }
 
-bool ComponentInterface::get_predicate(const std::string& predicate_name) {
+bool ComponentInterface::get_predicate(const std::string& predicate_name) const {
   auto predicate_iterator = this->predicates_.find(predicate_name);
   // if there is no predicate with that name simply return false with an error message
   if (predicate_iterator == this->predicates_.end()) {
@@ -356,10 +358,10 @@ void ComponentInterface::add_service(
   try {
     std::string parsed_service_name = this->validate_service_name(service_name);
     RCLCPP_DEBUG_STREAM(this->node_logging_->get_logger(), "Adding empty service '" << parsed_service_name << "'.");
-    auto service = rclcpp::create_service<modulo_component_interfaces::srv::EmptyTrigger>(
+    auto service = rclcpp::create_service<modulo_interfaces::srv::EmptyTrigger>(
         this->node_base_, this->node_services_, "~/" + parsed_service_name, [callback](
-            const std::shared_ptr<modulo_component_interfaces::srv::EmptyTrigger::Request>,
-            std::shared_ptr<modulo_component_interfaces::srv::EmptyTrigger::Response> response
+            const std::shared_ptr<modulo_interfaces::srv::EmptyTrigger::Request>,
+            std::shared_ptr<modulo_interfaces::srv::EmptyTrigger::Response> response
         ) {
           try {
             auto callback_response = callback();
@@ -383,10 +385,10 @@ void ComponentInterface::add_service(
   try {
     std::string parsed_service_name = this->validate_service_name(service_name);
     RCLCPP_DEBUG_STREAM(this->node_logging_->get_logger(), "Adding string service '" << parsed_service_name << "'.");
-    auto service = rclcpp::create_service<modulo_component_interfaces::srv::StringTrigger>(
+    auto service = rclcpp::create_service<modulo_interfaces::srv::StringTrigger>(
         this->node_base_, this->node_services_, "~/" + parsed_service_name, [callback](
-            const std::shared_ptr<modulo_component_interfaces::srv::StringTrigger::Request> request,
-            std::shared_ptr<modulo_component_interfaces::srv::StringTrigger::Response> response
+            const std::shared_ptr<modulo_interfaces::srv::StringTrigger::Request> request,
+            std::shared_ptr<modulo_interfaces::srv::StringTrigger::Response> response
         ) {
           try {
             auto callback_response = callback(request->payload);
@@ -544,18 +546,25 @@ void ComponentInterface::raise_error() {
   this->set_predicate("in_error_state", true);
 }
 
-void ComponentInterface::publish_predicate(const std::string& name) {
-  modulo_component_interfaces::msg::Predicate message;
-  message.component = this->node_base_->get_fully_qualified_name();
+modulo_interfaces::msg::Predicate ComponentInterface::get_predicate_message(const std::string& name) const {
+  modulo_interfaces::msg::Predicate message;
   message.predicate = name;
   message.value = this->get_predicate(name);
+  return message;
+}
+
+void ComponentInterface::publish_predicate(const std::string& name) {
+  auto message(predicate_message_);
+  message.predicates.push_back(this->get_predicate_message(name));
   this->predicate_publisher_->publish(message);
 }
 
 void ComponentInterface::publish_predicates() {
+  auto message(this->predicate_message_);
   for (const auto& predicate : this->predicates_) {
-    this->publish_predicate(predicate.first);
+    message.predicates.push_back(this->get_predicate_message(predicate.first));
   }
+  this->predicate_publisher_->publish(message);
 }
 
 void ComponentInterface::publish_outputs() {

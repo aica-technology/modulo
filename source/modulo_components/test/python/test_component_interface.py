@@ -5,7 +5,7 @@ import numpy as np
 import pytest
 import rclpy
 import state_representation as sr
-from modulo_component_interfaces.srv import EmptyTrigger, StringTrigger
+from modulo_interfaces.srv import EmptyTrigger, StringTrigger
 from modulo_components.component_interface import ComponentInterface
 from modulo_utils.exceptions import ModuloError, LookupTransformError
 from rclpy.qos import QoSProfile

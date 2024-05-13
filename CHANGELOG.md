@@ -20,6 +20,7 @@ Release Versions:
 - feat: add mutex around step callback (#67)
 - refactor: move utilities to modulo_utils package (#89)
 - refactor: move exceptions to modulo_utils (#90)
+- refactor: remove modulo_component_interfaces (#88)
 
 ## 4.2.1
 
