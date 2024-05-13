@@ -17,8 +17,8 @@
 
 #include "modulo_controllers/utils/utilities.hpp"
 
-#include <modulo_component_interfaces/srv/empty_trigger.hpp>
-#include <modulo_component_interfaces/srv/string_trigger.hpp>
+#include <modulo_interfaces/srv/empty_trigger.hpp>
+#include <modulo_interfaces/srv/string_trigger.hpp>
 
 namespace modulo_controllers {
 
@@ -591,9 +591,9 @@ private:
   double input_validity_period_;///< Maximum age of an input state before discarding it as expired
   rclcpp::QoS qos_ = rclcpp::QoS(10); ///< Quality of Service for ROS publishers, subscribers and services
 
-  std::map<std::string, std::shared_ptr<rclcpp::Service<modulo_component_interfaces::srv::EmptyTrigger>>>
+  std::map<std::string, std::shared_ptr<rclcpp::Service<modulo_interfaces::srv::EmptyTrigger>>>
       empty_services_;///< Map of EmptyTrigger services
-  std::map<std::string, std::shared_ptr<rclcpp::Service<modulo_component_interfaces::srv::StringTrigger>>>
+  std::map<std::string, std::shared_ptr<rclcpp::Service<modulo_interfaces::srv::StringTrigger>>>
       string_services_;///< Map of StringTrigger services
 
   std::map<std::string, utilities::PredicateVariant> predicates_; ///< Map of predicates

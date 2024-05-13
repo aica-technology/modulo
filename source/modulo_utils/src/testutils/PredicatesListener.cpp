@@ -3,19 +3,19 @@
 namespace modulo_utils::testutils {
 
 PredicatesListener::PredicatesListener(
-    const std::string& component, const std::vector<std::string>& predicates, const rclcpp::NodeOptions& node_options
-) : rclcpp::Node("predicates_listener", node_options) {
+    const std::string& node, const std::vector<std::string>& predicates, const rclcpp::NodeOptions& node_options)
+    : rclcpp::Node("predicates_listener", node_options) {
   this->received_future_ = this->received_.get_future();
   for (const auto& predicate : predicates) {
     this->predicates_.insert_or_assign(predicate, false);
   }
-  this->subscription_ = this->create_subscription<modulo_component_interfaces::msg::Predicate>(
-      "/predicates", 10, [this, component](const std::shared_ptr<modulo_component_interfaces::msg::Predicate> message) {
-        if (message->component == component) {
-          for (auto& predicate : this->predicates_) {
-            if (message->predicate == predicate.first) {
-              predicate.second = message->value;
-              if (message->value) {
+  this->subscription_ = this->create_subscription<modulo_interfaces::msg::PredicateCollection>(
+      "/predicates", 10, [this, node](const std::shared_ptr<modulo_interfaces::msg::PredicateCollection> message) {
+        if (message->node == node) {
+          for (const auto& predicate_msg : message->predicates) {
+            if (this->predicates_.find(predicate_msg.predicate) != this->predicates_.end()) {
+              this->predicates_.at(predicate_msg.predicate) = predicate_msg.value;
+              if (predicate_msg.value) {
                 this->received_.set_value();
               }
             }
