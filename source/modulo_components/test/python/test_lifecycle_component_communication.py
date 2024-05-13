@@ -1,6 +1,6 @@
 import pytest
 from modulo_components.lifecycle_component import LifecycleComponent
-from modulo_components.exceptions import ComponentError
+from modulo_utils.exceptions import ModuloError
 
 
 class Trigger(LifecycleComponent):
@@ -34,7 +34,7 @@ def test_input_output(ros_exec, make_lifecycle_change_client, random_pose, minim
     assert minimal_cartesian_input.received_future.done() and minimal_cartesian_input.received_future.result()
     assert random_pose.get_name() == minimal_cartesian_input.input.get_name()
     assert random_pose.dist(minimal_cartesian_input.input) < 1e-3
-    with pytest.raises(ComponentError):
+    with pytest.raises(ModuloError):
         minimal_cartesian_output.publish()
 
 
