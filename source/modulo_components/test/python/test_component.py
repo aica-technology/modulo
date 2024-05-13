@@ -1,6 +1,6 @@
 import pytest
 from modulo_components.component import Component
-from modulo_components.exceptions import ComponentError
+from modulo_utils.exceptions import ModuloError
 from std_msgs.msg import Bool, String
 
 
@@ -13,7 +13,7 @@ def test_add_remove_output(component):
     component.add_output("8_tEsT_#1@3", "test", Bool)
     assert "test_13" in component._outputs.keys()
     assert component.get_parameter_value("test_13_topic") == "~/test_13"
-    with pytest.raises(ComponentError):
+    with pytest.raises(ModuloError):
         component.publish_output("test_13")
 
     component.add_output("9_tEsT_#1@5", "test", Bool, default_topic="/topic")
@@ -30,5 +30,5 @@ def test_add_remove_output(component):
     assert not component._periodic_outputs["test_13"]
     component.publish_output("8_tEsT_#1@3")
     component.publish_output("test_13")
-    with pytest.raises(ComponentError):
+    with pytest.raises(ModuloError):
         component.publish_output("")

@@ -7,8 +7,10 @@
 #include <modulo_core/translators/message_readers.hpp>
 #include <modulo_core/translators/message_writers.hpp>
 
-#include "modulo_components/exceptions/AddServiceException.hpp"
-#include "modulo_components/exceptions/LookupTransformException.hpp"
+#include "modulo_utils/exceptions/AddServiceException.hpp"
+#include "modulo_utils/exceptions/LookupTransformException.hpp"
+
+using namespace modulo_utils::exceptions;
 
 namespace modulo_components {
 
@@ -63,7 +65,7 @@ void ComponentInterface::add_parameter(
   try {
     ros_param = modulo_core::translators::write_parameter(parameter);
   } catch (const modulo_core::exceptions::ParameterTranslationException& ex) {
-    throw exceptions::ComponentParameterException("Failed to add parameter: " + std::string(ex.what()));
+    throw ParameterException("Failed to add parameter: " + std::string(ex.what()));
   }
   if (!this->node_parameters_->has_parameter(parameter->get_name())) {
     RCLCPP_DEBUG_STREAM(this->node_logging_->get_logger(), "Adding parameter '" << parameter->get_name() << "'.");
@@ -84,12 +86,12 @@ void ComponentInterface::add_parameter(
             this->on_set_parameters_callback({this->node_parameters_->get_parameters({parameter->get_name()})});
         if (!result.successful) {
           this->node_parameters_->undeclare_parameter(parameter->get_name());
-          throw exceptions::ComponentParameterException(result.reason);
+          throw ParameterException(result.reason);
         }
       }
     } catch (const std::exception& ex) {
       this->parameter_map_.remove_parameter(parameter->get_name());
-      throw exceptions::ComponentParameterException("Failed to add parameter: " + std::string(ex.what()));
+      throw ParameterException("Failed to add parameter: " + std::string(ex.what()));
     }
   } else {
     RCLCPP_DEBUG_STREAM(this->node_logging_->get_logger(),
@@ -102,7 +104,7 @@ ComponentInterface::get_parameter(const std::string& name) const {
   try {
     return this->parameter_map_.get_parameter(name);
   } catch (const state_representation::exceptions::InvalidParameterException& ex) {
-    throw exceptions::ComponentParameterException("Failed to get parameter '" + name + "': " + ex.what());
+    throw ParameterException("Failed to get parameter '" + name + "': " + ex.what());
   }
 }
 
@@ -280,7 +282,7 @@ void ComponentInterface::declare_signal(
 ) {
   std::string parsed_signal_name = modulo_utils::parse_topic_name(signal_name);
   if (parsed_signal_name.empty()) {
-    throw exceptions::AddSignalException(
+    throw AddSignalException(
         "The parsed signal name for " + type + " '" + signal_name
             + "' is empty. Provide a string with valid characters for the signal name ([a-zA-Z0-9_]).");
   }
@@ -291,10 +293,12 @@ void ComponentInterface::declare_signal(
             + "'. Use the parsed signal name to refer to this " + type + " and its topic parameter");
   }
   if (this->inputs_.find(parsed_signal_name) != this->inputs_.cend()) {
-    throw exceptions::AddSignalException("Signal with name '" + parsed_signal_name + "' already exists as input.");
+    throw AddSignalException(
+        "Signal with name '" + parsed_signal_name + "' already exists as input.");
   }
   if (this->outputs_.find(parsed_signal_name) != this->outputs_.cend()) {
-    throw exceptions::AddSignalException("Signal with name '" + parsed_signal_name + "' already exists as output.");
+    throw AddSignalException(
+        "Signal with name '" + parsed_signal_name + "' already exists as output.");
   }
   std::string topic_name = default_topic.empty() ? "~/" + parsed_signal_name : default_topic;
   auto parameter_name = parsed_signal_name + "_topic";
@@ -312,10 +316,11 @@ void ComponentInterface::declare_signal(
 void ComponentInterface::publish_output(const std::string& signal_name) {
   auto parsed_signal_name = modulo_utils::parse_topic_name(signal_name);
   if (this->outputs_.find(parsed_signal_name) == this->outputs_.cend()) {
-    throw exceptions::ComponentException("Output with name '" + signal_name + "' doesn't exist.");
+    throw ModuloException("Output with name '" + signal_name + "' doesn't exist.");
   }
   if (this->periodic_outputs_.at(parsed_signal_name)) {
-    throw exceptions::ComponentException("An output that is published periodically cannot be triggered manually.");
+    throw ModuloException(
+        "An output that is published periodically cannot be triggered manually.");
   }
   try {
     this->outputs_.at(parsed_signal_name)->publish();
@@ -402,7 +407,7 @@ void ComponentInterface::add_service(
 std::string ComponentInterface::validate_service_name(const std::string& service_name) {
   std::string parsed_service_name = modulo_utils::parse_topic_name(service_name);
   if (parsed_service_name.empty()) {
-    throw exceptions::AddServiceException(
+    throw AddServiceException(
         "The parsed service name for service '" + service_name
             + "' is empty. Provide a string with valid characters for the signal name ([a-zA-Z0-9_]).");
   }
@@ -414,7 +419,8 @@ std::string ComponentInterface::validate_service_name(const std::string& service
   }
   if (this->empty_services_.find(parsed_service_name) != this->empty_services_.cend()
       || this->string_services_.find(parsed_service_name) != this->string_services_.cend()) {
-    throw exceptions::AddServiceException("Service with name '" + parsed_service_name + "' already exists.");
+    throw AddServiceException(
+        "Service with name '" + parsed_service_name + "' already exists.");
   }
   return parsed_service_name;
 }
@@ -502,7 +508,8 @@ state_representation::CartesianPose ComponentInterface::lookup_transform(
       this->lookup_ros_transform(frame, reference_frame, tf2::TimePoint(std::chrono::microseconds(0)), duration);
   if (validity_period > 0.0
       && (this->node_clock_->get_clock()->now() - transform.header.stamp).seconds() > validity_period) {
-    throw exceptions::LookupTransformException("Failed to lookup transform: Latest transform is too old!");
+    throw LookupTransformException(
+        "Failed to lookup transform: Latest transform is too old!");
   }
   state_representation::CartesianPose result(frame, reference_frame);
   modulo_core::translators::read_message(result, transform);
@@ -514,12 +521,13 @@ geometry_msgs::msg::TransformStamped ComponentInterface::lookup_ros_transform(
     const tf2::Duration& duration
 ) {
   if (this->tf_buffer_ == nullptr || this->tf_listener_ == nullptr) {
-    throw exceptions::LookupTransformException("Failed to lookup transform: To TF buffer / listener configured.");
+    throw LookupTransformException(
+        "Failed to lookup transform: To TF buffer / listener configured.");
   }
   try {
     return this->tf_buffer_->lookupTransform(reference_frame, frame, time_point, duration);
   } catch (const tf2::TransformException& ex) {
-    throw exceptions::LookupTransformException(std::string("Failed to lookup transform: ").append(ex.what()));
+    throw LookupTransformException(std::string("Failed to lookup transform: ").append(ex.what()));
   }
 }
 

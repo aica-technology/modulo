@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 
-#include "modulo_components/exceptions/ComponentParameterException.hpp"
-#include "modulo_core/EncodedState.hpp"
+#include <modulo_core/EncodedState.hpp>
+
 #include "test_modulo_components/component_public_interfaces.hpp"
 
 namespace modulo_components {
@@ -37,7 +37,7 @@ using NodeTypes = ::testing::Types<rclcpp::Node, rclcpp_lifecycle::LifecycleNode
 TYPED_TEST_SUITE(ComponentInterfaceParameterTest, NodeTypes);
 
 TYPED_TEST(ComponentInterfaceParameterTest, AddParameter) {
-  EXPECT_THROW(auto discard = this->component_->get_parameter("test"), exceptions::ComponentParameterException);
+  EXPECT_THROW(auto discard = this->component_->get_parameter("test"), modulo_utils::exceptions::ParameterException);
   EXPECT_THROW(this->component_->get_ros_parameter("test"), rclcpp::exceptions::ParameterNotDeclaredException);
   this->component_->add_parameter(this->param_, "Test parameter");
 
@@ -49,7 +49,7 @@ TYPED_TEST(ComponentInterfaceParameterTest, AddParameter) {
 }
 
 TYPED_TEST(ComponentInterfaceParameterTest, AddNameValueParameter) {
-  EXPECT_THROW(auto discard = this->component_->get_parameter("test"), exceptions::ComponentParameterException);
+  EXPECT_THROW(auto discard = this->component_->get_parameter("test"), modulo_utils::exceptions::ParameterException);
   EXPECT_THROW(this->component_->get_ros_parameter("test"), rclcpp::exceptions::ParameterNotDeclaredException);
   this->component_->add_parameter("test", 1, "Test parameter");
 
@@ -61,7 +61,7 @@ TYPED_TEST(ComponentInterfaceParameterTest, AddNameValueParameter) {
 }
 
 TYPED_TEST(ComponentInterfaceParameterTest, AddParameterAgain) {
-  EXPECT_THROW(auto discard = this->component_->get_parameter("test"), exceptions::ComponentParameterException);
+  EXPECT_THROW(auto discard = this->component_->get_parameter("test"), modulo_utils::exceptions::ParameterException);
   EXPECT_THROW(this->component_->get_ros_parameter("test"), rclcpp::exceptions::ParameterNotDeclaredException);
   this->component_->add_parameter(this->param_, "Test parameter");
 
@@ -75,7 +75,8 @@ TYPED_TEST(ComponentInterfaceParameterTest, AddParameterAgain) {
 TYPED_TEST(ComponentInterfaceParameterTest, SetParameter) {
   // setting before adding should not work and parameter should not be created
   this->component_->set_parameter_value("test", 1);
-  EXPECT_THROW(this->component_->template get_parameter_value<int>("test"), exceptions::ComponentParameterException);
+  EXPECT_THROW(
+      this->component_->template get_parameter_value<int>("test"), modulo_utils::exceptions::ParameterException);
 
   // validation should not be invoked as the parameter did not exist
   EXPECT_FALSE(this->component_->validate_parameter_was_called);

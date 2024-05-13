@@ -2,10 +2,11 @@
 
 #include <chrono>
 
-#include "modulo_core/EncodedState.hpp"
-#include "modulo_core/translators/message_writers.hpp"
-#include "modulo_utils/testutils/ServiceClient.hpp"
-#include "modulo_components/exceptions/LookupTransformException.hpp"
+#include <modulo_core/EncodedState.hpp>
+#include <modulo_core/translators/message_writers.hpp>
+#include <modulo_utils/testutils/ServiceClient.hpp>
+#include <modulo_utils/exceptions/LookupTransformException.hpp>
+
 #include "test_modulo_components/component_public_interfaces.hpp"
 
 namespace modulo_components {
@@ -244,7 +245,7 @@ TYPED_TEST(ComponentInterfaceTest, CreateOutput) {
   EXPECT_FALSE(this->component_->periodic_outputs_.at("test_13"));
   EXPECT_NO_THROW(this->component_->publish_output("8_tEsT_#1@3"));
   EXPECT_NO_THROW(this->component_->publish_output("test_13"));
-  EXPECT_THROW(this->component_->publish_output(""), exceptions::ComponentException);
+  EXPECT_THROW(this->component_->publish_output(""), modulo_utils::exceptions::ModuloException);
 }
 
 TYPED_TEST(ComponentInterfaceTest, TF) {
@@ -261,12 +262,12 @@ TYPED_TEST(ComponentInterfaceTest, TF) {
 
   sleep(1);
   EXPECT_THROW(lookup_tf = this->component_->lookup_transform("test", "world", 0.9),
-               exceptions::LookupTransformException);
+               modulo_utils::exceptions::LookupTransformException);
 
   auto send_static_tf = state_representation::CartesianPose::Random("static_test", "world");
   EXPECT_NO_THROW(this->component_->send_static_transform(send_static_tf));
   EXPECT_THROW(auto throw_tf = this->component_->lookup_transform("dummy", "world"),
-               exceptions::LookupTransformException);
+               modulo_utils::exceptions::LookupTransformException);
 
   EXPECT_NO_THROW(lookup_tf = this->component_->lookup_transform("static_test", "world"));
   identity = send_static_tf * lookup_tf.inverse();
