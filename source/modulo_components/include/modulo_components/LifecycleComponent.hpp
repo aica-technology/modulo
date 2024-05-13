@@ -288,7 +288,7 @@ inline void LifecycleComponent::add_output(
     this->create_output(
         modulo_core::communication::PublisherType::LIFECYCLE_PUBLISHER, signal_name, data, default_topic, fixed_topic,
         publish_on_step);
-  } catch (const exceptions::AddSignalException& ex) {
+  } catch (const modulo_utils::exceptions::AddSignalException& ex) {
     RCLCPP_ERROR_STREAM(this->get_logger(), "Failed to add output '" << signal_name << "': " << ex.what());
   }
 }
