@@ -2,7 +2,7 @@ import pytest
 import rclpy
 import state_representation as sr
 from modulo_components.component_interface import ComponentInterface
-from modulo_components.exceptions import ComponentParameterError
+from modulo_utils.exceptions import ParameterError
 from rcl_interfaces.msg import SetParametersResult
 from rclpy.exceptions import ParameterNotDeclaredException
 from rclpy.node import Node
@@ -42,15 +42,15 @@ def component_test(ros_context):
 
 def test_not_allow_empty_on_construction(ros_context):
     # Construction with empty parameter should raise if the empty parameter is not allowed
-    with pytest.raises(ComponentParameterError):
+    with pytest.raises(ParameterError):
         EmtpyParameterInterface("component", False)
 
 
 def test_not_allow_empty(ros_context):
     component = EmtpyParameterInterface("component", allow_empty=False, add_parameter=False)
-    with pytest.raises(ComponentParameterError):
+    with pytest.raises(ParameterError):
         component.add_parameter(sr.Parameter("name", sr.ParameterType.STRING), "Test parameter")
-    with pytest.raises(ComponentParameterError):
+    with pytest.raises(ParameterError):
         component.get_parameter("name")
     with pytest.raises(ParameterNotDeclaredException):
         assert Node.get_parameter(component, "name")
@@ -147,6 +147,6 @@ def test_parameter_overrides(ros_context):
 
 def test_parameter_overrides_empty(ros_context):
     # Construction with not allowing empty parameters and providing an uninitialized parameter override should not succeed
-    with pytest.raises(ComponentParameterError):
+    with pytest.raises(ParameterError):
         EmtpyParameterInterface("component", allow_empty=False, empty_parameter=False,
                                 parameter_overrides=[Parameter("name")])
