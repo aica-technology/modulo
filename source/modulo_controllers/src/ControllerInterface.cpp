@@ -287,6 +287,45 @@ void ControllerInterface::set_command_interface(
   }
 }
 
+void ControllerInterface::add_parameter(
+    const std::shared_ptr<ParameterInterface>& parameter, const std::string& description, bool read_only) {
+  set_parameter_callback_called_ = false;
+  rclcpp::Parameter ros_param;
+  try {
+    ros_param = modulo_core::translators::write_parameter(parameter);
+    if (!get_node()->has_parameter(parameter->get_name())) {
+      RCLCPP_DEBUG(get_node()->get_logger(), "Adding parameter '%s'.", parameter->get_name().c_str());
+      parameter_map_.set_parameter(parameter);
+      rcl_interfaces::msg::ParameterDescriptor descriptor;
+      descriptor.description = description;
+      descriptor.read_only = read_only;
+      if (parameter->is_empty()) {
+        descriptor.dynamic_typing = true;
+        descriptor.type = modulo_core::translators::get_ros_parameter_type(parameter->get_parameter_type());
+        get_node()->declare_parameter(parameter->get_name(), rclcpp::ParameterValue{}, descriptor);
+      } else {
+        get_node()->declare_parameter(parameter->get_name(), ros_param.get_parameter_value(), descriptor);
+      }
+      if (!set_parameter_callback_called_) {
+        auto result = on_set_parameters_callback({get_node()->get_parameters({parameter->get_name()})});
+        if (!result.successful) {
+          get_node()->undeclare_parameter(parameter->get_name());
+          throw std::runtime_error(result.reason);
+        }
+      }
+    } else {
+      RCLCPP_DEBUG(get_node()->get_logger(), "Parameter '%s' already exists.", parameter->get_name().c_str());
+    }
+  } catch (const std::exception& ex) {
+    RCLCPP_ERROR(
+        get_node()->get_logger(), "Failed to add parameter '%s': %s", parameter->get_name().c_str(), ex.what());
+  }
+}
+
+std::shared_ptr<ParameterInterface> ControllerInterface::get_parameter(const std::string& name) const {
+  return parameter_map_.get_parameter(name);
+}
+
 rcl_interfaces::msg::SetParametersResult
 ControllerInterface::on_set_parameters_callback(const std::vector<rclcpp::Parameter>& parameters) {
   rcl_interfaces::msg::SetParametersResult result;
@@ -301,7 +340,7 @@ ControllerInterface::on_set_parameters_callback(const std::vector<rclcpp::Parame
 
       // convert the ROS parameter into a ParameterInterface without modifying the original
       auto new_parameter = modulo_core::translators::read_parameter_const(ros_parameter, parameter);
-      if (!on_validate_parameter_callback(new_parameter)) {
+      if (!validate_parameter(new_parameter)) {
         result.successful = false;
         result.reason += "Validation of parameter '" + ros_parameter.get_name() + "' returned false!";
       } else if (!new_parameter->is_empty()) {
@@ -317,7 +356,7 @@ ControllerInterface::on_set_parameters_callback(const std::vector<rclcpp::Parame
   return result;
 }
 
-bool ControllerInterface::on_validate_parameter_callback(const std::shared_ptr<ParameterInterface>& parameter) {
+bool ControllerInterface::validate_parameter(const std::shared_ptr<ParameterInterface>& parameter) {
   if (parameter->get_name() == "activation_timeout" || parameter->get_name() == "input_validity_period") {
     auto value = parameter->get_parameter_value<double>();
     if (value < 0.0 || value > std::numeric_limits<double>::max()) {
@@ -327,6 +366,10 @@ bool ControllerInterface::on_validate_parameter_callback(const std::shared_ptr<P
       return false;
     }
   }
+  return this->on_validate_parameter_callback(parameter);
+}
+
+bool ControllerInterface::on_validate_parameter_callback(const std::shared_ptr<ParameterInterface>&) {
   return true;
 }
 

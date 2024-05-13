@@ -301,6 +301,17 @@ protected:
   T get_parameter_value(const std::string& name) const;
 
   /**
+   * @brief Set the value of a parameter.
+   * @details The parameter must have been previously declared. This method preserves the reference to the original
+   * Parameter instance
+   * @tparam T The type of the parameter
+   * @param name The name of the parameter
+   * @return The value of the parameter
+   */
+  template<typename T>
+  void set_parameter_value(const std::string& name, const T& value);
+
+  /**
    * @brief Add a predicate to the map of predicates.
    * @param predicate_name the name of the associated predicate
    * @param predicate_value the boolean value of the predicate
@@ -447,6 +458,22 @@ private:
       const std::string& name, const std::string& interface, std::vector<std::string>& list, const std::string& type);
 
   /**
+   * @brief Parameter validation function
+   * @details This validates the period and calls the on_validate_parameter_callback function of the derived Component
+   * classes.
+   * @param parameter A ParameterInterface pointer to a Parameter instance
+   * @return The validation result
+   */
+  bool validate_parameter(const std::shared_ptr<state_representation::ParameterInterface>& parameter);
+
+  /**
+   * @brief Callback function to validate and update parameters on change.
+   * @param parameters The new parameter objects provided by the ROS interface
+   * @return The result of the validation
+   */
+  rcl_interfaces::msg::SetParametersResult on_set_parameters_callback(const std::vector<rclcpp::Parameter>& parameters);
+
+  /**
    * @brief Add a predicate to the map of predicates.
    * @param name The name of the predicate
    * @param predicate The predicate variant
@@ -536,13 +563,6 @@ private:
    */
   std::string validate_service_name(const std::string& service_name, const std::string& type) const;
 
-  /**
-   * @brief Callback function to validate and update parameters on change.
-   * @param parameters The new parameter objects provided by the ROS interface
-   * @return The result of the validation
-   */
-  rcl_interfaces::msg::SetParametersResult on_set_parameters_callback(const std::vector<rclcpp::Parameter>& parameters);
-
   using controller_interface::ControllerInterfaceBase::command_interfaces_;
   using controller_interface::ControllerInterfaceBase::state_interfaces_;
 
@@ -595,50 +615,28 @@ inline void ControllerInterface::add_parameter(
   add_parameter(state_representation::make_shared_parameter(name, value), description, read_only);
 }
 
-inline void ControllerInterface::add_parameter(
-    const std::shared_ptr<state_representation::ParameterInterface>& parameter, const std::string& description,
-    bool read_only) {
-  set_parameter_callback_called_ = false;
-  rclcpp::Parameter ros_param;
+template<typename T>
+inline T ControllerInterface::get_parameter_value(const std::string& name) const {
+  return parameter_map_.template get_parameter_value<T>(name);
+}
+
+template<typename T>
+inline void ControllerInterface::set_parameter_value(const std::string& name, const T& value) {
   try {
-    ros_param = modulo_core::translators::write_parameter(parameter);
-    if (!get_node()->has_parameter(parameter->get_name())) {
-      RCLCPP_DEBUG_STREAM(get_node()->get_logger(), "Adding parameter '" << parameter->get_name() << "'.");
-      parameter_map_.set_parameter(parameter);
-      rcl_interfaces::msg::ParameterDescriptor descriptor;
-      descriptor.description = description;
-      descriptor.read_only = read_only;
-      if (parameter->is_empty()) {
-        descriptor.dynamic_typing = true;
-        descriptor.type = modulo_core::translators::get_ros_parameter_type(parameter->get_parameter_type());
-        get_node()->declare_parameter(parameter->get_name(), rclcpp::ParameterValue{}, descriptor);
-      } else {
-        get_node()->declare_parameter(parameter->get_name(), ros_param.get_parameter_value(), descriptor);
-      }
-      if (!set_parameter_callback_called_) {
-        auto result = on_set_parameters_callback({get_node()->get_parameters({parameter->get_name()})});
-        if (!result.successful) {
-          get_node()->undeclare_parameter(parameter->get_name());
-          throw std::runtime_error(result.reason);
-        }
-      }
-    } else {
-      RCLCPP_DEBUG_STREAM(get_node()->get_logger(), "Parameter '" << parameter->get_name() << "' already exists.");
+    rcl_interfaces::msg::SetParametersResult result =
+        get_node()
+            ->set_parameters(
+                {modulo_core::translators::write_parameter(state_representation::make_shared_parameter(name, value))})
+            .at(0);
+    if (!result.successful) {
+      RCLCPP_ERROR_THROTTLE(
+          get_node()->get_logger(), *get_node()->get_clock(), 1000,
+          "Failed to set parameter value of parameter '%s': %s", name.c_str(), result.reason);
     }
   } catch (const std::exception& ex) {
     RCLCPP_ERROR_STREAM(
         get_node()->get_logger(), "Failed to add parameter '" << parameter->get_name() << "': " << ex.what());
   }
-}
-
-inline std::shared_ptr<state_representation::ParameterInterface>
-ControllerInterface::get_parameter(const std::string& name) const {
-  return parameter_map_.get_parameter(name);
-}
-
-template<typename T>
-inline T ControllerInterface::get_parameter_value(const std::string& name) const {
-  return parameter_map_.template get_parameter_value<T>(name);
 }
 
 template<typename T>
