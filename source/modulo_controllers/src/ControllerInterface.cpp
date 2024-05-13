@@ -678,11 +678,11 @@ void ControllerInterface::add_service(
   auto parsed_service_name = validate_service_name(service_name, "empty");
   if (!parsed_service_name.empty()) {
     try {
-      auto service = get_node()->create_service<modulo_component_interfaces::srv::EmptyTrigger>(
+      auto service = get_node()->create_service<modulo_interfaces::srv::EmptyTrigger>(
           "~/" + parsed_service_name,
           [this, callback](
-              const std::shared_ptr<modulo_component_interfaces::srv::EmptyTrigger::Request>,
-              std::shared_ptr<modulo_component_interfaces::srv::EmptyTrigger::Response> response) {
+              const std::shared_ptr<modulo_interfaces::srv::EmptyTrigger::Request>,
+              std::shared_ptr<modulo_interfaces::srv::EmptyTrigger::Response> response) {
             try {
               if (this->command_mutex_.try_lock_for(100ms)) {
                 auto callback_response = callback();
@@ -712,11 +712,11 @@ void ControllerInterface::add_service(
   auto parsed_service_name = validate_service_name(service_name, "string");
   if (!parsed_service_name.empty()) {
     try {
-      auto service = get_node()->create_service<modulo_component_interfaces::srv::StringTrigger>(
+      auto service = get_node()->create_service<modulo_interfaces::srv::StringTrigger>(
           "~/" + parsed_service_name,
           [this, callback](
-              const std::shared_ptr<modulo_component_interfaces::srv::StringTrigger::Request> request,
-              std::shared_ptr<modulo_component_interfaces::srv::StringTrigger::Response> response) {
+              const std::shared_ptr<modulo_interfaces::srv::StringTrigger::Request> request,
+              std::shared_ptr<modulo_interfaces::srv::StringTrigger::Response> response) {
             try {
               if (this->command_mutex_.try_lock_for(100ms)) {
                 auto callback_response = callback(request->payload);

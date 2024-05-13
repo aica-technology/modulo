@@ -17,7 +17,7 @@
 
   <depend>console_bridge</depend>
   <depend>modulo_core</depend>
-  <depend>modulo_component_interfaces</depend>
+  <depend>modulo_interfaces</depend>
   <depend>modulo_utils</depend>
   <depend>tf2_ros</depend>
 
