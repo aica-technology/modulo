@@ -7,7 +7,7 @@ namespace modulo_components {
 
 Component::Component(const NodeOptions& node_options, const std::string& fallback_name)
     : Node(
-        utilities::parse_node_name(node_options, fallback_name), utilities::modify_parameter_overrides(node_options)),
+        modulo_utils::parse_node_name(node_options, fallback_name), utilities::modify_parameter_overrides(node_options)),
       ComponentInterface(std::make_shared<node_interfaces::NodeInterfaces<ALL_RCLCPP_NODE_INTERFACES>>(
           Node::get_node_base_interface(), Node::get_node_clock_interface(), Node::get_node_graph_interface(),
           Node::get_node_logging_interface(), Node::get_node_parameters_interface(),
