@@ -506,6 +506,17 @@ private:
   void publish_predicates() const;
 
   /**
+   * @brief Validate a signal name by parsing the name and checking the maps of registered signals
+   * @param signal_name The name of the signal
+   * @param type One of 'input' or 'output'
+   * @param default_topic The topic name of the signal
+   * @param fixed_topic If true, the topic name of the signal is fixed
+  */
+  std::string validate_and_declare_signal(
+      const std::string& signal_name, const std::string& type, const std::string& default_topic,
+      bool fixed_topic = false);
+
+  /**
    * @brief Create an input from a message pair, name, and topic name
    * @details This function checks if the input already exists, sanitizes the name and topic name, and adds the
    * parameter for the topic name
