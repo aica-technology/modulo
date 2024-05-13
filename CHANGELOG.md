@@ -21,6 +21,7 @@ Release Versions:
 - feat(modulo-controller): add missing docs (#112)
 - refactor: rename function in modulo translators (#77)
 - feat: add mutex around step callback (#67)
+- refactor: move utilities to modulo_utils package (#89)
 
 ## 4.2.1
 

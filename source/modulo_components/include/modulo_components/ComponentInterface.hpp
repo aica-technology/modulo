@@ -18,10 +18,12 @@
 #include <modulo_component_interfaces/srv/string_trigger.hpp>
 #include <modulo_component_interfaces/msg/predicate.hpp>
 
+#include <modulo_utils/parsing.hpp>
+#include <modulo_utils/predicate_variant.hpp>
+
 #include "modulo_components/exceptions/AddSignalException.hpp"
 #include "modulo_components/exceptions/ComponentParameterException.hpp"
 #include "modulo_components/utilities/utilities.hpp"
-#include "modulo_components/utilities/predicate_variant.hpp"
 
 /**
  * @namespace modulo_components
@@ -464,14 +466,14 @@ private:
    * @param name The name of the predicate
    * @param predicate The predicate variant
    */
-  void add_variant_predicate(const std::string& name, const utilities::PredicateVariant& predicate);
+  void add_variant_predicate(const std::string& name, const modulo_utils::PredicateVariant& predicate);
 
   /**
    * @brief Set the predicate given as parameter, if the predicate is not found does not do anything.
    * @param name The name of the predicate
    * @param predicate The predicate variant
    */
-  void set_variant_predicate(const std::string& name, const utilities::PredicateVariant& predicate);
+  void set_variant_predicate(const std::string& name, const modulo_utils::PredicateVariant& predicate);
 
   /**
    * @brief Declare a signal to create the topic parameter without adding it to the map of signals.
@@ -538,7 +540,7 @@ private:
 
   std::mutex step_mutex_; ///< Mutex for step callback
 
-  std::map<std::string, utilities::PredicateVariant> predicates_; ///< Map of predicates
+  std::map<std::string, modulo_utils::PredicateVariant> predicates_; ///< Map of predicates
   std::shared_ptr<rclcpp::Publisher<modulo_component_interfaces::msg::Predicate>>
       predicate_publisher_; ///< Predicate publisher
   std::map<std::string, bool> triggers_; ///< Map of triggers
@@ -630,7 +632,7 @@ inline void ComponentInterface::add_input(
           "Invalid data pointer for input '" + signal_name + "'.");
     }
     this->declare_input(signal_name, default_topic, fixed_topic);
-    std::string parsed_signal_name = utilities::parse_topic_name(signal_name);
+    std::string parsed_signal_name = modulo_utils::parse_topic_name(signal_name);
     auto topic_name = this->get_parameter_value<std::string>(parsed_signal_name + "_topic");
     RCLCPP_DEBUG_STREAM(this->node_logging_->get_logger(),
                         "Adding input '" << parsed_signal_name << "' with topic name '" << topic_name << "'.");
@@ -701,7 +703,7 @@ inline void ComponentInterface::add_input(
 ) {
   using namespace modulo_core::communication;
   try {
-    std::string parsed_signal_name = utilities::parse_topic_name(signal_name);
+    std::string parsed_signal_name = modulo_utils::parse_topic_name(signal_name);
     this->declare_input(parsed_signal_name, default_topic, fixed_topic);
     auto topic_name = this->get_parameter_value<std::string>(parsed_signal_name + "_topic");
     RCLCPP_DEBUG_STREAM(this->node_logging_->get_logger(),
@@ -724,7 +726,7 @@ inline std::string ComponentInterface::create_output(
 ) {
   using namespace modulo_core::communication;
   try {
-    auto parsed_signal_name = utilities::parse_topic_name(signal_name);
+    auto parsed_signal_name = modulo_utils::parse_topic_name(signal_name);
     if (data == nullptr) {
       throw modulo_core::exceptions::NullPointerException(
           "Invalid data pointer for output '" + parsed_signal_name + "'.");
