@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>modulo_controllers</name>
+  <version>4.1.0</version>
+  <description>Interface class for modulo controllers</description>
+  <maintainer email="enrico@aica.tech">Enrico Eberhard</maintainer>
+  <maintainer email="dominic@aica.tech">Dominic Reber</maintainer>
+  <license>GPLv3</license>
+
+  <buildtool_depend>ament_cmake_auto</buildtool_depend>
+
+  <depend>controller_interface</depend>
+  <depend>hardware_interface</depend>
+  <depend>kdl_parser</depend>
+  <depend>pluginlib</depend>
+  <depend>rclcpp</depend>
+  <depend>rclcpp_lifecycle</depend>
+  <depend>realtime_tools</depend>
+  <depend>tf2_ros</depend>
+
+  <depend>modulo_core</depend>
+  <depend>modulo_interfaces</depend>
+  <depend>modulo_component_interfaces</depend>
+
+  <test_depend>ament_cmake_gmock</test_depend>
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>
