@@ -10,7 +10,7 @@
         "."
     ],
   "image": "modulo:development",
-  "postAttachCommand": "cd /home/ros2/ws && colcon build --packages-select modulo_component_interfaces modulo_interfaces",
+  "postAttachCommand": "cd /home/ros2/ws && colcon build --packages-select modulo_interfaces",
   "workspaceMount": "source=${localWorkspaceFolder},target=/home/ros2/.devcontainer,type=bind,consistency=cached",
   "workspaceFolder": "/home/ros2/.devcontainer",
   "mounts": [

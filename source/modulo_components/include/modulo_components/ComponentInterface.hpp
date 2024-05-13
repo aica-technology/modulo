@@ -14,9 +14,9 @@
 #include <modulo_core/communication/SubscriptionHandler.hpp>
 #include <modulo_core/translators/parameter_translators.hpp>
 
-#include <modulo_component_interfaces/srv/empty_trigger.hpp>
-#include <modulo_component_interfaces/srv/string_trigger.hpp>
-#include <modulo_component_interfaces/msg/predicate.hpp>
+#include <modulo_interfaces/srv/empty_trigger.hpp>
+#include <modulo_interfaces/srv/string_trigger.hpp>
+#include <modulo_interfaces/msg/predicate_collection.hpp>
 
 #include <modulo_utils/exceptions/AddSignalException.hpp>
 #include <modulo_utils/exceptions/ParameterException.hpp>
@@ -173,7 +173,7 @@ protected:
    * @param predicate_name the name of the predicate to retrieve from the map of predicates
    * @return the value of the predicate as a boolean
    */
-  [[nodiscard]] bool get_predicate(const std::string& predicate_name);
+  [[nodiscard]] bool get_predicate(const std::string& predicate_name) const;
 
   /**
    * @brief Set the value of the predicate given as parameter, if the predicate is not found does not do anything.
@@ -476,6 +476,12 @@ private:
   void set_variant_predicate(const std::string& name, const modulo_utils::PredicateVariant& predicate);
 
   /**
+   * @brief Populate a Prediate message with the name and the value of a predicate.
+   * @param name The name of the predicate
+  */
+  modulo_interfaces::msg::Predicate get_predicate_message(const std::string& name) const;
+
+  /**
    * @brief Declare a signal to create the topic parameter without adding it to the map of signals.
    * @param signal_name The name of the signal
    * @param type The type of the signal (input or output)
@@ -541,13 +547,14 @@ private:
   std::mutex step_mutex_; ///< Mutex for step callback
 
   std::map<std::string, modulo_utils::PredicateVariant> predicates_; ///< Map of predicates
-  std::shared_ptr<rclcpp::Publisher<modulo_component_interfaces::msg::Predicate>>
+  std::shared_ptr<rclcpp::Publisher<modulo_interfaces::msg::PredicateCollection>>
       predicate_publisher_; ///< Predicate publisher
+  modulo_interfaces::msg::PredicateCollection predicate_message_;
   std::map<std::string, bool> triggers_; ///< Map of triggers
 
-  std::map<std::string, std::shared_ptr<rclcpp::Service<modulo_component_interfaces::srv::EmptyTrigger>>>
+  std::map<std::string, std::shared_ptr<rclcpp::Service<modulo_interfaces::srv::EmptyTrigger>>>
       empty_services_; ///< Map of EmptyTrigger services
-  std::map<std::string, std::shared_ptr<rclcpp::Service<modulo_component_interfaces::srv::StringTrigger>>>
+  std::map<std::string, std::shared_ptr<rclcpp::Service<modulo_interfaces::srv::StringTrigger>>>
       string_services_; ///< Map of StringTrigger services
 
   std::map<std::string, std::function<void(void)>> periodic_callbacks_; ///< Map of periodic function callbacks

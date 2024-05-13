@@ -18,7 +18,6 @@ the behaviour, either to set a specific version, update
 the major or minor numbers, or to decrement instead.
 
 This script modifies the version in the following files:
-  ./source/modulo_component_interfaces/package.xml
   ./source/modulo_components/package.xml
   ./source/modulo_controllers/package.xml
   ./source/modulo_core/package.xml
@@ -115,7 +114,7 @@ SED_STR_DOXYGEN="s/PROJECT_NUMBER = ${VERSION}/PROJECT_NUMBER = ${NEW_VERSION}/g
 SED_STR_TOML="s/version = \"${VERSION}\"/version = \"${NEW_VERSION}\"/g"
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
-  sed -i '' "${SED_STR_PACKAGE}" ./source/modulo_component_interfaces/package.xml
+  sed -i '' "${SED_STR_VERSION}" ./VERSION
   sed -i '' "${SED_STR_PACKAGE}" ./source/modulo_components/package.xml
   sed -i '' "${SED_STR_PACKAGE}" ./source/modulo_controllers/package.xml
   sed -i '' "${SED_STR_PACKAGE}" ./source/modulo_core/package.xml
@@ -125,7 +124,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
   sed -i '' "${SED_STR_TOML}" ./aica-package.toml
   sed -i '' "${SED_STR_VERSION}" ./VERSION
 else
-  sed -i "${SED_STR_PACKAGE}" ./source/modulo_component_interfaces/package.xml
+  sed -i "${SED_STR_VERSION}" ./VERSION
   sed -i "${SED_STR_PACKAGE}" ./source/modulo_components/package.xml
   sed -i "${SED_STR_PACKAGE}" ./source/modulo_controllers/package.xml
   sed -i "${SED_STR_PACKAGE}" ./source/modulo_core/package.xml
@@ -138,9 +137,8 @@ fi
 
 if [ "${COMMIT}" == true ]; then
   echo "Committing changes to source control"
-  git add ./source/modulo_component_interfaces/package.xml ./source/modulo_components/package.xml \
-      ./source/modulo_controllers/package.xml ./source/modulo_core/package.xml \
-      ./source/modulo_interfaces/package.xml ./source/modulo_utils/package.xml \
+  git add ./source/modulo_components/package.xml ./source/modulo_controllers/package.xml \
+      ./source/modulo_core/package.xml ./source/modulo_interfaces/package.xml ./source/modulo_utils/package.xml \
       ./doxygen/doxygen.conf aica-package.toml VERSION
   git commit -m "${VERSION} -> ${NEW_VERSION}"
 fi
