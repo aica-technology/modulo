@@ -2,7 +2,7 @@
 
 ROS2 control interface class for controllers based on the control libraries stack.
 
-## ModuloControllerInterface
+## ControllerInterface
 
 This C++ class derives from ros2_control `ControllerInterface` and incorporates `modulo` concepts like inputs, outputs,
 parameters, predicates, and services.
@@ -25,6 +25,6 @@ initial states to prevent any NaN data from propagating through to the control l
 
 ## RobotControllerInterface
 
-The `RobotControllerInterface` is derived from the `ModuloControllerInterface`. It incorporates `JointState` and
+The `RobotControllerInterface` is derived from the `ControllerInterface`. It incorporates `JointState` and
 `CartesianState` classes to leverage the `robot_model::Model` class for forward and inverse kinematics, and supports
 force-torque sensor data in `CartesianWrench` format.

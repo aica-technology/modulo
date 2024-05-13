@@ -1,10 +1,10 @@
 {
   "$schema": "https://docs.aica.tech/schemas/1-3-0/controller.schema.json",
-  "name": "Modulo Controller Interface",
+  "name": "Controller Interface",
   "description": {
     "brief": "Base controller class to combine ros2_control, control libraries and modulo"
   },
-  "plugin": "modulo_controllers/ModuloControllerInterface",
+  "plugin": "modulo_controllers/ControllerInterface",
   "virtual": true,
   "parameters": [
     {

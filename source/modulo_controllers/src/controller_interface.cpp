@@ -1,4 +1,4 @@
-#include "modulo_controllers/modulo_controller_interface.hpp"
+#include "modulo_controllers/controller_interface.hpp"
 
 #include <chrono>
 
@@ -18,12 +18,12 @@ using namespace std::chrono_literals;
 
 namespace modulo_controllers {
 
-ModuloControllerInterface::ModuloControllerInterface(bool claim_all_state_interfaces)
+ControllerInterface::ControllerInterface(bool claim_all_state_interfaces)
     : controller_interface::ControllerInterface(),
       input_validity_period_(1.0),
       claim_all_state_interfaces_(claim_all_state_interfaces) {}
 
-rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn ModuloControllerInterface::on_init() {
+rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn ControllerInterface::on_init() {
   parameter_cb_handle_ = get_node()->add_on_set_parameters_callback(
       [this](const std::vector<rclcpp::Parameter>& parameters) -> rcl_interfaces::msg::SetParametersResult {
         return on_set_parameters_callback(parameters);
@@ -51,7 +51,7 @@ rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn Modulo
 }
 
 rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn
-ModuloControllerInterface::on_configure(const rclcpp_lifecycle::State&) {
+ControllerInterface::on_configure(const rclcpp_lifecycle::State&) {
   auto hardware_name = get_parameter("hardware_name");
   if (hardware_name->is_empty()) {
     RCLCPP_ERROR(get_node()->get_logger(), "Parameter 'hardware_name' cannot be empty");
@@ -76,23 +76,23 @@ ModuloControllerInterface::on_configure(const rclcpp_lifecycle::State&) {
         [this]() { this->publish_predicates(); });
   }
 
-  RCLCPP_DEBUG(get_node()->get_logger(), "Configuration of ModuloControllerInterface successful");
+  RCLCPP_DEBUG(get_node()->get_logger(), "Configuration of ControllerInterface successful");
   return on_configure();
 }
 
-rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn ModuloControllerInterface::on_configure() {
+rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn ControllerInterface::on_configure() {
   return CallbackReturn::SUCCESS;
 }
 
-void ModuloControllerInterface::add_state_interface(const std::string& name, const std::string& interface) {
+void ControllerInterface::add_state_interface(const std::string& name, const std::string& interface) {
   add_interface(name, interface, state_interface_names_, "state");
 }
 
-void ModuloControllerInterface::add_command_interface(const std::string& name, const std::string& interface) {
+void ControllerInterface::add_command_interface(const std::string& name, const std::string& interface) {
   add_interface(name, interface, command_interface_names_, "command");
 }
 
-void ModuloControllerInterface::add_interface(
+void ControllerInterface::add_interface(
     const std::string& name, const std::string& interface, std::vector<std::string>& list, const std::string& type) {
   if (get_node()->get_current_state().label() != "configuring") {
     throw std::runtime_error("Interfaces can only be added when the controller is in state 'configuring'");
@@ -110,7 +110,7 @@ void ModuloControllerInterface::add_interface(
   }
 }
 
-controller_interface::InterfaceConfiguration ModuloControllerInterface::command_interface_configuration() const {
+controller_interface::InterfaceConfiguration ControllerInterface::command_interface_configuration() const {
   controller_interface::InterfaceConfiguration command_interfaces_config;
   if (command_interface_names_.empty()) {
     RCLCPP_DEBUG(get_node()->get_logger(), "List of command interfaces is empty, not claiming any interfaces.");
@@ -127,7 +127,7 @@ controller_interface::InterfaceConfiguration ModuloControllerInterface::command_
   return command_interfaces_config;
 }
 
-controller_interface::InterfaceConfiguration ModuloControllerInterface::state_interface_configuration() const {
+controller_interface::InterfaceConfiguration ControllerInterface::state_interface_configuration() const {
   controller_interface::InterfaceConfiguration state_interfaces_config;
   if (claim_all_state_interfaces_) {
     RCLCPP_DEBUG(get_node()->get_logger(), "Claiming all state interfaces.");
@@ -145,7 +145,7 @@ controller_interface::InterfaceConfiguration ModuloControllerInterface::state_in
 }
 
 rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn
-ModuloControllerInterface::on_activate(const rclcpp_lifecycle::State&) {
+ControllerInterface::on_activate(const rclcpp_lifecycle::State&) {
   // initialize the map of command data from all available interfaces
   command_interface_data_ = std::vector<double>(command_interfaces_.size());
   for (unsigned int i = 0; i < command_interfaces_.size(); ++i) {
@@ -189,25 +189,25 @@ ModuloControllerInterface::on_activate(const rclcpp_lifecycle::State&) {
     }
   }
 
-  RCLCPP_DEBUG(get_node()->get_logger(), "Activation of ModuloControllerInterface successful");
+  RCLCPP_DEBUG(get_node()->get_logger(), "Activation of ControllerInterface successful");
   return CallbackReturn::SUCCESS;
 }
 
-rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn ModuloControllerInterface::on_activate() {
+rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn ControllerInterface::on_activate() {
   return CallbackReturn::SUCCESS;
 }
 
 rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn
-ModuloControllerInterface::on_deactivate(const rclcpp_lifecycle::State&) {
+ControllerInterface::on_deactivate(const rclcpp_lifecycle::State&) {
   return CallbackReturn::SUCCESS;
 }
 
-rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn ModuloControllerInterface::on_deactivate() {
+rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn ControllerInterface::on_deactivate() {
   return CallbackReturn::SUCCESS;
 }
 
 controller_interface::return_type
-ModuloControllerInterface::update(const rclcpp::Time& time, const rclcpp::Duration& period) {
+ControllerInterface::update(const rclcpp::Time& time, const rclcpp::Duration& period) {
   auto status = read_state_interfaces();
   if (status != controller_interface::return_type::OK) {
     return status;
@@ -247,7 +247,7 @@ ModuloControllerInterface::update(const rclcpp::Time& time, const rclcpp::Durati
   return ret;
 }
 
-controller_interface::return_type ModuloControllerInterface::read_state_interfaces() {
+controller_interface::return_type ControllerInterface::read_state_interfaces() {
   for (const auto& state_interface : state_interfaces_) {
     state_interface_data_.at(state_interface.get_prefix_name()).at(state_interface.get_interface_name()) =
         state_interface.get_value();
@@ -256,7 +256,7 @@ controller_interface::return_type ModuloControllerInterface::read_state_interfac
   return controller_interface::return_type::OK;
 }
 
-controller_interface::return_type ModuloControllerInterface::write_command_interfaces(const rclcpp::Duration&) {
+controller_interface::return_type ControllerInterface::write_command_interfaces(const rclcpp::Duration&) {
   for (auto& command_interface : command_interfaces_) {
     command_interface.set_value(command_interface_data_.at(
         command_interface_indices_.at(command_interface.get_prefix_name()).at(command_interface.get_interface_name())));
@@ -264,19 +264,19 @@ controller_interface::return_type ModuloControllerInterface::write_command_inter
   return controller_interface::return_type::OK;
 }
 
-std::unordered_map<std::string, double> ModuloControllerInterface::get_state_interfaces(const std::string& name) const {
+std::unordered_map<std::string, double> ControllerInterface::get_state_interfaces(const std::string& name) const {
   return state_interface_data_.at(name);
 }
 
-double ModuloControllerInterface::get_state_interface(const std::string& name, const std::string& interface) const {
+double ControllerInterface::get_state_interface(const std::string& name, const std::string& interface) const {
   return state_interface_data_.at(name).at(interface);
 }
 
-double ModuloControllerInterface::get_command_interface(const std::string& name, const std::string& interface) const {
+double ControllerInterface::get_command_interface(const std::string& name, const std::string& interface) const {
   return command_interfaces_.at(command_interface_indices_.at(name).at(interface)).get_value();
 }
 
-void ModuloControllerInterface::set_command_interface(
+void ControllerInterface::set_command_interface(
     const std::string& name, const std::string& interface, double value) {
   try {
     command_interface_data_.at(command_interface_indices_.at(name).at(interface)) = value;
@@ -288,7 +288,7 @@ void ModuloControllerInterface::set_command_interface(
 }
 
 rcl_interfaces::msg::SetParametersResult
-ModuloControllerInterface::on_set_parameters_callback(const std::vector<rclcpp::Parameter>& parameters) {
+ControllerInterface::on_set_parameters_callback(const std::vector<rclcpp::Parameter>& parameters) {
   rcl_interfaces::msg::SetParametersResult result;
   result.successful = true;
   for (const auto& ros_parameter : parameters) {
@@ -317,7 +317,7 @@ ModuloControllerInterface::on_set_parameters_callback(const std::vector<rclcpp::
   return result;
 }
 
-bool ModuloControllerInterface::on_validate_parameter_callback(const std::shared_ptr<ParameterInterface>& parameter) {
+bool ControllerInterface::on_validate_parameter_callback(const std::shared_ptr<ParameterInterface>& parameter) {
   if (parameter->get_name() == "activation_timeout" || parameter->get_name() == "input_validity_period") {
     auto value = parameter->get_parameter_value<double>();
     if (value < 0.0 || value > std::numeric_limits<double>::max()) {
@@ -330,15 +330,15 @@ bool ModuloControllerInterface::on_validate_parameter_callback(const std::shared
   return true;
 }
 
-void ModuloControllerInterface::add_predicate(const std::string& name, bool predicate) {
+void ControllerInterface::add_predicate(const std::string& name, bool predicate) {
   add_variant_predicate(name, utilities::PredicateVariant(predicate));
 }
 
-void ModuloControllerInterface::add_predicate(const std::string& name, const std::function<bool(void)>& predicate) {
+void ControllerInterface::add_predicate(const std::string& name, const std::function<bool(void)>& predicate) {
   add_variant_predicate(name, utilities::PredicateVariant(predicate));
 }
 
-void ModuloControllerInterface::add_variant_predicate(
+void ControllerInterface::add_variant_predicate(
     const std::string& name, const utilities::PredicateVariant& predicate) {
   if (name.empty()) {
     RCLCPP_ERROR(get_node()->get_logger(), "Failed to add predicate: Provide a non empty string as a name.");
@@ -352,7 +352,7 @@ void ModuloControllerInterface::add_variant_predicate(
   this->predicates_.insert_or_assign(name, predicate);
 }
 
-bool ModuloControllerInterface::get_predicate(const std::string& predicate_name) const {
+bool ControllerInterface::get_predicate(const std::string& predicate_name) const {
   auto predicate_iterator = predicates_.find(predicate_name);
   // if there is no predicate with that name simply return false with an error message
   if (predicate_iterator == predicates_.end()) {
@@ -379,15 +379,15 @@ bool ModuloControllerInterface::get_predicate(const std::string& predicate_name)
   return value;
 }
 
-void ModuloControllerInterface::set_predicate(const std::string& name, bool predicate) {
+void ControllerInterface::set_predicate(const std::string& name, bool predicate) {
   set_variant_predicate(name, utilities::PredicateVariant(predicate));
 }
 
-void ModuloControllerInterface::set_predicate(const std::string& name, const std::function<bool(void)>& predicate) {
+void ControllerInterface::set_predicate(const std::string& name, const std::function<bool(void)>& predicate) {
   set_variant_predicate(name, utilities::PredicateVariant(predicate));
 }
 
-void ModuloControllerInterface::set_variant_predicate(
+void ControllerInterface::set_variant_predicate(
     const std::string& name, const utilities::PredicateVariant& predicate) {
   auto predicate_iterator = predicates_.find(name);
   if (predicate_iterator == predicates_.end()) {
@@ -400,7 +400,7 @@ void ModuloControllerInterface::set_variant_predicate(
   publish_predicate(name); // TODO: do we want that
 }
 
-void ModuloControllerInterface::add_trigger(const std::string& trigger_name) {
+void ControllerInterface::add_trigger(const std::string& trigger_name) {
   if (trigger_name.empty()) {
     RCLCPP_ERROR(get_node()->get_logger(), "Failed to add trigger: Provide a non empty string as a name.");
     return;
@@ -419,7 +419,7 @@ void ModuloControllerInterface::add_trigger(const std::string& trigger_name) {
   });
 }
 
-void ModuloControllerInterface::trigger(const std::string& trigger_name) {
+void ControllerInterface::trigger(const std::string& trigger_name) {
   if (triggers_.find(trigger_name) == triggers_.end()) {
     RCLCPP_ERROR(
         get_node()->get_logger(), "Failed to trigger: could not find trigger with name  '%s'.", trigger_name.c_str());
@@ -429,20 +429,20 @@ void ModuloControllerInterface::trigger(const std::string& trigger_name) {
   publish_predicate(trigger_name);
 }
 
-modulo_interfaces::msg::Predicate ModuloControllerInterface::get_predicate_message(const std::string& name) const {
+modulo_interfaces::msg::Predicate ControllerInterface::get_predicate_message(const std::string& name) const {
   modulo_interfaces::msg::Predicate message;
   message.predicate = name;
   message.value = get_predicate(name);
   return message;
 }
 
-void ModuloControllerInterface::publish_predicate(const std::string& name) const {
+void ControllerInterface::publish_predicate(const std::string& name) const {
   auto message(predicate_message_);
   message.predicates.push_back(get_predicate_message(name));
   predicate_publisher_->publish(message);
 }
 
-void ModuloControllerInterface::publish_predicates() const {
+void ControllerInterface::publish_predicates() const {
   auto message(predicate_message_);
   for (const auto& predicate : this->predicates_) {
     message.predicates.push_back(get_predicate_message(predicate.first));
@@ -450,7 +450,7 @@ void ModuloControllerInterface::publish_predicates() const {
   predicate_publisher_->publish(message);
 }
 
-void ModuloControllerInterface::create_input(
+void ControllerInterface::create_input(
     const ControllerInput& input, const std::string& name, const std::string& topic_name) {
   if (inputs_.find(name) != inputs_.end()) {
     RCLCPP_WARN(get_node()->get_logger(), "Input '%s' already exists", name.c_str());
@@ -462,7 +462,7 @@ void ModuloControllerInterface::create_input(
   inputs_.insert_or_assign(name, input);
 }
 
-void ModuloControllerInterface::add_inputs() {
+void ControllerInterface::add_inputs() {
   for (auto& [name, input] : inputs_) {
     try {
       auto topic = get_parameter_value<std::string>(name + "_topic");
@@ -493,7 +493,7 @@ void ModuloControllerInterface::add_inputs() {
   }
 }
 
-void ModuloControllerInterface::create_output(
+void ControllerInterface::create_output(
     const PublisherVariant& publishers, const std::string& name, const std::string& topic_name) {
   if (outputs_.find(name) != outputs_.end()) {
     RCLCPP_WARN(get_node()->get_logger(), "Output '%s' already exists", name.c_str());
@@ -505,7 +505,7 @@ void ModuloControllerInterface::create_output(
   outputs_.insert_or_assign(name, publishers);
 }
 
-void ModuloControllerInterface::add_outputs() {
+void ControllerInterface::add_outputs() {
   for (auto& [name, publishers] : outputs_) {
     try {
       auto topic = get_parameter_value<std::string>(name + "_topic");
@@ -543,7 +543,7 @@ void ModuloControllerInterface::add_outputs() {
   }
 }
 
-bool ModuloControllerInterface::check_input_valid(const std::string& name) const {
+bool ControllerInterface::check_input_valid(const std::string& name) const {
   if (inputs_.find(name) == inputs_.end()) {
     RCLCPP_WARN_THROTTLE(
         get_node()->get_logger(), *get_node()->get_clock(), 1000, "Could not find input '%s'", name.c_str());
@@ -560,7 +560,7 @@ bool ModuloControllerInterface::check_input_valid(const std::string& name) const
 }
 
 std::string
-ModuloControllerInterface::validate_service_name(const std::string& service_name, const std::string& type) const {
+ControllerInterface::validate_service_name(const std::string& service_name, const std::string& type) const {
   std::string parsed_service_name = utilities::parse_topic_name(service_name);
   if (parsed_service_name.empty()) {
     RCLCPP_WARN(
@@ -593,7 +593,7 @@ ModuloControllerInterface::validate_service_name(const std::string& service_name
   return parsed_service_name;
 }
 
-void ModuloControllerInterface::add_service(
+void ControllerInterface::add_service(
     const std::string& service_name, const std::function<ControllerServiceResponse(void)>& callback) {
   auto parsed_service_name = validate_service_name(service_name, "empty");
   if (!parsed_service_name.empty()) {
@@ -626,7 +626,7 @@ void ModuloControllerInterface::add_service(
   }
 }
 
-void ModuloControllerInterface::add_service(
+void ControllerInterface::add_service(
     const std::string& service_name,
     const std::function<ControllerServiceResponse(const std::string& string)>& callback) {
   auto parsed_service_name = validate_service_name(service_name, "string");
@@ -660,15 +660,15 @@ void ModuloControllerInterface::add_service(
   }
 }
 
-rclcpp::QoS ModuloControllerInterface::get_qos() const {
+rclcpp::QoS ControllerInterface::get_qos() const {
   return qos_;
 }
 
-void ModuloControllerInterface::set_qos(const rclcpp::QoS& qos) {
+void ControllerInterface::set_qos(const rclcpp::QoS& qos) {
   qos_ = qos;
 }
 
-bool ModuloControllerInterface::is_active() const {
+bool ControllerInterface::is_active() const {
   return get_node()->get_current_state().label() == "active";
 }
 

@@ -7,7 +7,7 @@
 #include <state_representation/space/cartesian/CartesianWrench.hpp>
 #include <state_representation/space/joint/JointState.hpp>
 
-#include "modulo_controllers/modulo_controller_interface.hpp"
+#include "modulo_controllers/controller_interface.hpp"
 
 namespace modulo_controllers {
 
@@ -20,7 +20,7 @@ namespace modulo_controllers {
  * JointState pointers for derived classes to access. A robot model, Cartesian state and force-torque sensor state are
  * similarly available based on the URDF and state interfaces.
  */
-class RobotControllerInterface : public ModuloControllerInterface {
+class RobotControllerInterface : public ControllerInterface {
 public:
   /**
    * @brief Default constructor
@@ -35,20 +35,20 @@ public:
   explicit RobotControllerInterface(bool robot_model_required, const std::string& control_type = "");
 
   /**
-   * @copydoc ModuloControllerInterface::on_init()
+   * @copydoc modulo_controllers::ControllerInterface::on_init()
    * @details Declare additional parameters.
    */
   CallbackReturn on_init() override;
 
   /**
-   * @copydoc ModuloControllerInterface::on_configure()
+   * @copydoc modulo_controllers::ControllerInterface::on_configure()
    * @details Create a robot model from the robot description, get and sort the joints and construct the internal joint
    * state object.
    */
   CallbackReturn on_configure() override;
 
   /**
-   * @copydoc ModuloControllerInterface::on_activate()
+   * @copydoc modulo_controllers::ControllerInterface::on_activate()
    * @details Initialize a fore torque sensor if applicable
    */
   CallbackReturn on_activate() override;
@@ -87,7 +87,7 @@ protected:
   void set_joint_command(const state_representation::JointState& joint_command);
 
   /**
-   * @copydoc ModuloControllerInterface::on_validate_parameter_callback()
+   * @copydoc modulo_controllers::ControllerInterface::on_validate_parameter_callback()
    */
   bool
   on_validate_parameter_callback(const std::shared_ptr<state_representation::ParameterInterface>& parameter) override;
@@ -100,13 +100,13 @@ protected:
 
 private:
   /**
-   * @copydoc ModuloControllerInterface::read_state_interfaces()
+   * @copydoc modulo_controllers::ControllerInterface::read_state_interfaces()
    * @details Update the internal joint state and force torque sensor objects from the new state interface values.
    */
   controller_interface::return_type read_state_interfaces() final;
 
   /**
-   * @copydoc ModuloControllerInterface::write_command_interfaces()
+   * @copydoc modulo_controllers::ControllerInterface::write_command_interfaces()
    * @details Apply rate limiting and command decay to the buffered command to update the command interfaces.
    */
   controller_interface::return_type write_command_interfaces(const rclcpp::Duration& period) final;

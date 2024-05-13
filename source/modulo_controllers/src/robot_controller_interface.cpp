@@ -17,7 +17,7 @@ static const std::map<std::string, JointStateVariable> interface_map =// NOLINT(
 RobotControllerInterface::RobotControllerInterface() : RobotControllerInterface(false, "") {}
 
 RobotControllerInterface::RobotControllerInterface(bool robot_model_required, const std::string& control_type)
-    : ModuloControllerInterface(true),
+    : ControllerInterface(true),
       control_type_(control_type),
       robot_model_required_(robot_model_required),
       new_joint_command_ready_(false),
@@ -30,7 +30,7 @@ RobotControllerInterface::RobotControllerInterface(bool robot_model_required, co
 }
 
 rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn RobotControllerInterface::on_init() {
-  auto status = ModuloControllerInterface::on_init();
+  auto status = ControllerInterface::on_init();
   if (status != CallbackReturn::SUCCESS) {
     return status;
   }
@@ -193,7 +193,7 @@ rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn RobotC
 }
 
 controller_interface::return_type RobotControllerInterface::read_state_interfaces() {
-  auto status = ModuloControllerInterface::read_state_interfaces();
+  auto status = ControllerInterface::read_state_interfaces();
   if (status != controller_interface::return_type::OK) {
     return status;
   }
@@ -284,7 +284,7 @@ controller_interface::return_type RobotControllerInterface::write_command_interf
     new_joint_command_ready_ = false;
   }
 
-  return ModuloControllerInterface::write_command_interfaces(period);
+  return ControllerInterface::write_command_interfaces(period);
 }
 
 const JointState& RobotControllerInterface::get_joint_state() {
@@ -362,7 +362,7 @@ bool RobotControllerInterface::on_validate_parameter_callback(const std::shared_
         get_node()->get_logger(), "Parameter value of '%s' should be greater than 0", parameter->get_name().c_str());
     return false;
   }
-  return ModuloControllerInterface::on_validate_parameter_callback(parameter);
+  return ControllerInterface::on_validate_parameter_callback(parameter);
 }
 
 }// namespace modulo_controllers
