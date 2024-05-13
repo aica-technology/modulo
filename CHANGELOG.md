@@ -17,6 +17,7 @@ Release Versions:
 
 - refactor: rename function in modulo translators (#77)
 - feat: add mutex around step callback (#67)
+- refactor: move utilities to modulo_utils package (#89)
 
 ## 4.2.0
 
