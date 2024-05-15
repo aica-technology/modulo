@@ -315,6 +315,14 @@ protected:
   void add_predicate(const std::string& predicate_name, const std::function<bool(void)>& predicate_function);
 
   /**
+   * @brief Get the logical value of a predicate.
+   * @details If the predicate is not found or the callable function fails, the return value is false.
+   * @param predicate_name the name of the predicate to retrieve from the map of predicates
+   * @return the value of the predicate as a boolean
+   */
+  [[nodiscard]] bool get_predicate(const std::string& predicate_name) const;
+
+  /**
    * @brief Set the value of the predicate given as parameter, if the predicate is not found does not do anything.
    * @details Even though the predicates are published periodically, the new value of this predicate will be published
    * once immediately after setting it.
@@ -444,14 +452,6 @@ private:
    * @param predicate The predicate variant
    */
   void add_variant_predicate(const std::string& name, const utilities::PredicateVariant& predicate);
-
-  /**
-   * @brief Get the logical value of a predicate.
-   * @details If the predicate is not found or the callable function fails, the return value is false.
-   * @param predicate_name the name of the predicate to retrieve from the map of predicates
-   * @return the value of the predicate as a boolean
-   */
-  [[nodiscard]] bool get_predicate(const std::string& predicate_name) const;
 
   /**
    * @brief Set the predicate given as parameter, if the predicate is not found does not do anything.
