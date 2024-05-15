@@ -1,4 +1,4 @@
-#include "modulo_controllers/robot_controller_interface.hpp"
+#include "modulo_controllers/RobotControllerInterface.hpp"
 
 #include <hardware_interface/types/hardware_interface_type_values.hpp>
 

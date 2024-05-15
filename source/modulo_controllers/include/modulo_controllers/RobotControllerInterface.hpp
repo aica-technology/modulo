@@ -7,7 +7,7 @@
 #include <state_representation/space/cartesian/CartesianWrench.hpp>
 #include <state_representation/space/joint/JointState.hpp>
 
-#include "modulo_controllers/controller_interface.hpp"
+#include "modulo_controllers/ControllerInterface.hpp"
 
 namespace modulo_controllers {
 

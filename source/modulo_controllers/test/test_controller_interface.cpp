@@ -6,7 +6,7 @@
 #include <state_representation/space/cartesian/CartesianState.hpp>
 #include <state_representation/space/joint/JointState.hpp>
 
-#include "modulo_controllers/controller_interface.hpp"
+#include "modulo_controllers/ControllerInterface.hpp"
 #include "test_modulo_controllers/communication_nodes.hpp"
 
 using namespace modulo_controllers;

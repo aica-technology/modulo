@@ -1,4 +1,4 @@
-#include "modulo_controllers/controller_interface.hpp"
+#include "modulo_controllers/ControllerInterface.hpp"
 
 #include <chrono>
 
