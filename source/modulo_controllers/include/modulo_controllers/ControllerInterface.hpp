@@ -275,7 +275,7 @@ protected:
    * @brief Parameter validation function to be redefined by derived controller classes.
    * @details This method is automatically invoked whenever the ROS interface tried to modify a parameter. Validation
    * and sanitization can be performed by reading or writing the value of the parameter through the ParameterInterface
-   * pointer, depending on the parameter name and desired component behaviour. If the validation returns true, the
+   * pointer, depending on the parameter name and desired controller behaviour. If the validation returns true, the
    * updated parameter value (including any modifications) is applied. If the validation returns false, any changes to
    * the parameter are discarded and the parameter value is not changed.
    * @param parameter A ParameterInterface pointer to a Parameter instance
@@ -352,8 +352,9 @@ protected:
   void set_predicate(const std::string& predicate_name, const std::function<bool(void)>& predicate_function);
 
   /**
-   * @brief Add a trigger to the component. Triggers are predicates that are always false except when it's triggered in
-   * which case it is set back to false immediately after it is read.
+   * @brief Add a trigger to the controller. 
+   * @details Triggers are predicates that are always false except when it's triggered in which case it is set back to
+   * false immediately after it is read.
    * @param trigger_name The name of the trigger
    */
   void add_trigger(const std::string& trigger_name);
@@ -459,8 +460,8 @@ private:
 
   /**
    * @brief Parameter validation function
-   * @details This validates the period and calls the on_validate_parameter_callback function of the derived Component
-   * classes.
+   * @details This validates the base class parameters and calls the on_validate_parameter_callback function of the
+   * derived controller classes.
    * @param parameter A ParameterInterface pointer to a Parameter instance
    * @return The validation result
    */
