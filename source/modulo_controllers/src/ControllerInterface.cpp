@@ -71,8 +71,7 @@ ControllerInterface::on_configure(const rclcpp_lifecycle::State&) {
     predicate_message_.type = modulo_interfaces::msg::PredicateCollection::CONTROLLER;
 
     predicate_timer_ = get_node()->create_wall_timer(
-        std::chrono::nanoseconds(
-            static_cast<int64_t>(1e9 / this->get_parameter_value<int>("predicate_publishing_rate"))),
+        std::chrono::nanoseconds(static_cast<int64_t>(1e9 / get_parameter_value<int>("predicate_publishing_rate"))),
         [this]() { this->publish_predicates(); });
   }
 
@@ -276,8 +275,7 @@ double ControllerInterface::get_command_interface(const std::string& name, const
   return command_interfaces_.at(command_interface_indices_.at(name).at(interface)).get_value();
 }
 
-void ControllerInterface::set_command_interface(
-    const std::string& name, const std::string& interface, double value) {
+void ControllerInterface::set_command_interface(const std::string& name, const std::string& interface, double value) {
   try {
     command_interface_data_.at(command_interface_indices_.at(name).at(interface)) = value;
   } catch (const std::out_of_range&) {
@@ -285,6 +283,45 @@ void ControllerInterface::set_command_interface(
         get_node()->get_logger(), *get_node()->get_clock(), 1000,
         "set_command_interface called with an unknown name/interface: %s/%s", name.c_str(), interface.c_str());
   }
+}
+
+void ControllerInterface::add_parameter(
+    const std::shared_ptr<ParameterInterface>& parameter, const std::string& description, bool read_only) {
+  set_parameter_callback_called_ = false;
+  rclcpp::Parameter ros_param;
+  try {
+    ros_param = modulo_core::translators::write_parameter(parameter);
+    if (!get_node()->has_parameter(parameter->get_name())) {
+      RCLCPP_DEBUG(get_node()->get_logger(), "Adding parameter '%s'.", parameter->get_name().c_str());
+      parameter_map_.set_parameter(parameter);
+      rcl_interfaces::msg::ParameterDescriptor descriptor;
+      descriptor.description = description;
+      descriptor.read_only = read_only;
+      if (parameter->is_empty()) {
+        descriptor.dynamic_typing = true;
+        descriptor.type = modulo_core::translators::get_ros_parameter_type(parameter->get_parameter_type());
+        get_node()->declare_parameter(parameter->get_name(), rclcpp::ParameterValue{}, descriptor);
+      } else {
+        get_node()->declare_parameter(parameter->get_name(), ros_param.get_parameter_value(), descriptor);
+      }
+      if (!set_parameter_callback_called_) {
+        auto result = on_set_parameters_callback({get_node()->get_parameters({parameter->get_name()})});
+        if (!result.successful) {
+          get_node()->undeclare_parameter(parameter->get_name());
+          throw std::runtime_error(result.reason);
+        }
+      }
+    } else {
+      RCLCPP_DEBUG(get_node()->get_logger(), "Parameter '%s' already exists.", parameter->get_name().c_str());
+    }
+  } catch (const std::exception& ex) {
+    RCLCPP_ERROR(
+        get_node()->get_logger(), "Failed to add parameter '%s': %s", parameter->get_name().c_str(), ex.what());
+  }
+}
+
+std::shared_ptr<ParameterInterface> ControllerInterface::get_parameter(const std::string& name) const {
+  return parameter_map_.get_parameter(name);
 }
 
 rcl_interfaces::msg::SetParametersResult
@@ -301,7 +338,7 @@ ControllerInterface::on_set_parameters_callback(const std::vector<rclcpp::Parame
 
       // convert the ROS parameter into a ParameterInterface without modifying the original
       auto new_parameter = modulo_core::translators::read_parameter_const(ros_parameter, parameter);
-      if (!on_validate_parameter_callback(new_parameter)) {
+      if (!validate_parameter(new_parameter)) {
         result.successful = false;
         result.reason += "Validation of parameter '" + ros_parameter.get_name() + "' returned false!";
       } else if (!new_parameter->is_empty()) {
@@ -317,7 +354,7 @@ ControllerInterface::on_set_parameters_callback(const std::vector<rclcpp::Parame
   return result;
 }
 
-bool ControllerInterface::on_validate_parameter_callback(const std::shared_ptr<ParameterInterface>& parameter) {
+bool ControllerInterface::validate_parameter(const std::shared_ptr<ParameterInterface>& parameter) {
   if (parameter->get_name() == "activation_timeout" || parameter->get_name() == "input_validity_period") {
     auto value = parameter->get_parameter_value<double>();
     if (value < 0.0 || value > std::numeric_limits<double>::max()) {
@@ -327,6 +364,10 @@ bool ControllerInterface::on_validate_parameter_callback(const std::shared_ptr<P
       return false;
     }
   }
+  return on_validate_parameter_callback(parameter);
+}
+
+bool ControllerInterface::on_validate_parameter_callback(const std::shared_ptr<ParameterInterface>&) {
   return true;
 }
 
@@ -338,8 +379,7 @@ void ControllerInterface::add_predicate(const std::string& name, const std::func
   add_variant_predicate(name, utilities::PredicateVariant(predicate));
 }
 
-void ControllerInterface::add_variant_predicate(
-    const std::string& name, const utilities::PredicateVariant& predicate) {
+void ControllerInterface::add_variant_predicate(const std::string& name, const utilities::PredicateVariant& predicate) {
   if (name.empty()) {
     RCLCPP_ERROR(get_node()->get_logger(), "Failed to add predicate: Provide a non empty string as a name.");
     return;
@@ -349,7 +389,7 @@ void ControllerInterface::add_variant_predicate(
   } else {
     RCLCPP_DEBUG(get_node()->get_logger(), "Adding predicate '%s'.", name.c_str());
   }
-  this->predicates_.insert_or_assign(name, predicate);
+  predicates_.insert_or_assign(name, predicate);
 }
 
 bool ControllerInterface::get_predicate(const std::string& predicate_name) const {
@@ -387,8 +427,7 @@ void ControllerInterface::set_predicate(const std::string& name, const std::func
   set_variant_predicate(name, utilities::PredicateVariant(predicate));
 }
 
-void ControllerInterface::set_variant_predicate(
-    const std::string& name, const utilities::PredicateVariant& predicate) {
+void ControllerInterface::set_variant_predicate(const std::string& name, const utilities::PredicateVariant& predicate) {
   auto predicate_iterator = predicates_.find(name);
   if (predicate_iterator == predicates_.end()) {
     RCLCPP_ERROR_THROTTLE(
@@ -397,7 +436,7 @@ void ControllerInterface::set_variant_predicate(
     return;
   }
   predicate_iterator->second = predicate;
-  publish_predicate(name); // TODO: do we want that
+  publish_predicate(name);// TODO: do we want that
 }
 
 void ControllerInterface::add_trigger(const std::string& trigger_name) {
@@ -411,8 +450,8 @@ void ControllerInterface::add_trigger(const std::string& trigger_name) {
         trigger_name.c_str());
     return;
   }
-  this->triggers_.insert_or_assign(trigger_name, false);
-  this->add_predicate(trigger_name, [this, trigger_name] {
+  triggers_.insert_or_assign(trigger_name, false);
+  add_predicate(trigger_name, [this, trigger_name] {
     auto value = this->triggers_.at(trigger_name);
     this->triggers_.at(trigger_name) = false;
     return value;
@@ -444,7 +483,7 @@ void ControllerInterface::publish_predicate(const std::string& name) const {
 
 void ControllerInterface::publish_predicates() const {
   auto message(predicate_message_);
-  for (const auto& predicate : this->predicates_) {
+  for (const auto& predicate : predicates_) {
     message.predicates.push_back(get_predicate_message(predicate.first));
   }
   predicate_publisher_->publish(message);
@@ -513,7 +552,8 @@ void ControllerInterface::add_outputs() {
           overloaded{
               [&](EncodedStatePublishers& pub) {
                 std::get<1>(pub) = get_node()->create_publisher<modulo_core::EncodedState>(topic, qos_);
-                std::get<2>(pub) = std::make_shared<realtime_tools::RealtimePublisher<modulo_core::EncodedState>>(std::get<1>(pub));
+                std::get<2>(pub) =
+                    std::make_shared<realtime_tools::RealtimePublisher<modulo_core::EncodedState>>(std::get<1>(pub));
               },
               [&](BoolPublishers& pub) {
                 pub.first = get_node()->create_publisher<std_msgs::msg::Bool>(topic, qos_);
@@ -559,8 +599,7 @@ bool ControllerInterface::check_input_valid(const std::string& name) const {
   return true;
 }
 
-std::string
-ControllerInterface::validate_service_name(const std::string& service_name, const std::string& type) const {
+std::string ControllerInterface::validate_service_name(const std::string& service_name, const std::string& type) const {
   std::string parsed_service_name = utilities::parse_topic_name(service_name);
   if (parsed_service_name.empty()) {
     RCLCPP_WARN(
@@ -577,13 +616,13 @@ ControllerInterface::validate_service_name(const std::string& service_name, cons
         "The parsed name for '%s' service '%s' is '%s'. Use the parsed name to refer to this service.", type.c_str(),
         service_name.c_str(), parsed_service_name.c_str());
   }
-  if (this->empty_services_.find(parsed_service_name) != this->empty_services_.cend()) {
+  if (empty_services_.find(parsed_service_name) != empty_services_.cend()) {
     RCLCPP_WARN(
         get_node()->get_logger(), "Service with name '%s' already exists as %s service.", parsed_service_name.c_str(),
         type.c_str());
     return "";
   }
-  if (this->string_services_.find(parsed_service_name) != this->string_services_.cend()) {
+  if (string_services_.find(parsed_service_name) != string_services_.cend()) {
     RCLCPP_WARN(
         get_node()->get_logger(), "Service with name '%s' already exists as %s service.", parsed_service_name.c_str(),
         type.c_str());
@@ -619,7 +658,7 @@ void ControllerInterface::add_service(
             }
           },
           qos_);
-      this->empty_services_.insert_or_assign(parsed_service_name, service);
+      empty_services_.insert_or_assign(parsed_service_name, service);
     } catch (const std::exception& ex) {
       RCLCPP_ERROR(get_node()->get_logger(), "Failed to add service '%s': %s", parsed_service_name.c_str(), ex.what());
     }
@@ -653,7 +692,7 @@ void ControllerInterface::add_service(
             }
           },
           qos_);
-      this->string_services_.insert_or_assign(parsed_service_name, service);
+      string_services_.insert_or_assign(parsed_service_name, service);
     } catch (const std::exception& ex) {
       RCLCPP_ERROR(get_node()->get_logger(), "Failed to add service '%s': %s", parsed_service_name.c_str(), ex.what());
     }

@@ -275,7 +275,7 @@ protected:
    * @brief Parameter validation function to be redefined by derived controller classes.
    * @details This method is automatically invoked whenever the ROS interface tried to modify a parameter. Validation
    * and sanitization can be performed by reading or writing the value of the parameter through the ParameterInterface
-   * pointer, depending on the parameter name and desired component behaviour. If the validation returns true, the
+   * pointer, depending on the parameter name and desired controller behaviour. If the validation returns true, the
    * updated parameter value (including any modifications) is applied. If the validation returns false, any changes to
    * the parameter are discarded and the parameter value is not changed.
    * @param parameter A ParameterInterface pointer to a Parameter instance
@@ -299,6 +299,17 @@ protected:
    */
   template<typename T>
   T get_parameter_value(const std::string& name) const;
+
+  /**
+   * @brief Set the value of a parameter.
+   * @details The parameter must have been previously declared. This method preserves the reference to the original
+   * Parameter instance
+   * @tparam T The type of the parameter
+   * @param name The name of the parameter
+   * @return The value of the parameter
+   */
+  template<typename T>
+  void set_parameter_value(const std::string& name, const T& value);
 
   /**
    * @brief Add a predicate to the map of predicates.
@@ -341,8 +352,9 @@ protected:
   void set_predicate(const std::string& predicate_name, const std::function<bool(void)>& predicate_function);
 
   /**
-   * @brief Add a trigger to the component. Triggers are predicates that are always false except when it's triggered in
-   * which case it is set back to false immediately after it is read.
+   * @brief Add a trigger to the controller. 
+   * @details Triggers are predicates that are always false except when it's triggered in which case it is set back to
+   * false immediately after it is read.
    * @param trigger_name The name of the trigger
    */
   void add_trigger(const std::string& trigger_name);
@@ -447,6 +459,22 @@ private:
       const std::string& name, const std::string& interface, std::vector<std::string>& list, const std::string& type);
 
   /**
+   * @brief Parameter validation function
+   * @details This validates the base class parameters and calls the on_validate_parameter_callback function of the
+   * derived controller classes.
+   * @param parameter A ParameterInterface pointer to a Parameter instance
+   * @return The validation result
+   */
+  bool validate_parameter(const std::shared_ptr<state_representation::ParameterInterface>& parameter);
+
+  /**
+   * @brief Callback function to validate and update parameters on change.
+   * @param parameters The new parameter objects provided by the ROS interface
+   * @return The result of the validation
+   */
+  rcl_interfaces::msg::SetParametersResult on_set_parameters_callback(const std::vector<rclcpp::Parameter>& parameters);
+
+  /**
    * @brief Add a predicate to the map of predicates.
    * @param name The name of the predicate
    * @param predicate The predicate variant
@@ -536,13 +564,6 @@ private:
    */
   std::string validate_service_name(const std::string& service_name, const std::string& type) const;
 
-  /**
-   * @brief Callback function to validate and update parameters on change.
-   * @param parameters The new parameter objects provided by the ROS interface
-   * @return The result of the validation
-   */
-  rcl_interfaces::msg::SetParametersResult on_set_parameters_callback(const std::vector<rclcpp::Parameter>& parameters);
-
   using controller_interface::ControllerInterfaceBase::command_interfaces_;
   using controller_interface::ControllerInterfaceBase::state_interfaces_;
 
@@ -595,50 +616,29 @@ inline void ControllerInterface::add_parameter(
   add_parameter(state_representation::make_shared_parameter(name, value), description, read_only);
 }
 
-inline void ControllerInterface::add_parameter(
-    const std::shared_ptr<state_representation::ParameterInterface>& parameter, const std::string& description,
-    bool read_only) {
-  set_parameter_callback_called_ = false;
-  rclcpp::Parameter ros_param;
-  try {
-    ros_param = modulo_core::translators::write_parameter(parameter);
-    if (!get_node()->has_parameter(parameter->get_name())) {
-      RCLCPP_DEBUG_STREAM(get_node()->get_logger(), "Adding parameter '" << parameter->get_name() << "'.");
-      parameter_map_.set_parameter(parameter);
-      rcl_interfaces::msg::ParameterDescriptor descriptor;
-      descriptor.description = description;
-      descriptor.read_only = read_only;
-      if (parameter->is_empty()) {
-        descriptor.dynamic_typing = true;
-        descriptor.type = modulo_core::translators::get_ros_parameter_type(parameter->get_parameter_type());
-        get_node()->declare_parameter(parameter->get_name(), rclcpp::ParameterValue{}, descriptor);
-      } else {
-        get_node()->declare_parameter(parameter->get_name(), ros_param.get_parameter_value(), descriptor);
-      }
-      if (!set_parameter_callback_called_) {
-        auto result = on_set_parameters_callback({get_node()->get_parameters({parameter->get_name()})});
-        if (!result.successful) {
-          get_node()->undeclare_parameter(parameter->get_name());
-          throw std::runtime_error(result.reason);
-        }
-      }
-    } else {
-      RCLCPP_DEBUG_STREAM(get_node()->get_logger(), "Parameter '" << parameter->get_name() << "' already exists.");
-    }
-  } catch (const std::exception& ex) {
-    RCLCPP_ERROR_STREAM(
-        get_node()->get_logger(), "Failed to add parameter '" << parameter->get_name() << "': " << ex.what());
-  }
-}
-
-inline std::shared_ptr<state_representation::ParameterInterface>
-ControllerInterface::get_parameter(const std::string& name) const {
-  return parameter_map_.get_parameter(name);
-}
-
 template<typename T>
 inline T ControllerInterface::get_parameter_value(const std::string& name) const {
   return parameter_map_.template get_parameter_value<T>(name);
+}
+
+template<typename T>
+inline void ControllerInterface::set_parameter_value(const std::string& name, const T& value) {
+  try {
+    rcl_interfaces::msg::SetParametersResult result =
+        get_node()
+            ->set_parameters(
+                {modulo_core::translators::write_parameter(state_representation::make_shared_parameter(name, value))})
+            .at(0);
+    if (!result.successful) {
+      RCLCPP_ERROR_THROTTLE(
+          get_node()->get_logger(), *get_node()->get_clock(), 1000,
+          "Failed to set parameter value of parameter '%s': %s", name.c_str(), result.reason);
+    }
+  } catch (const std::exception& ex) {
+    RCLCPP_ERROR_THROTTLE(
+        get_node()->get_logger(), *get_node()->get_clock(), 1000, "Failed to set parameter value of parameter '%s': %s",
+        name.c_str(), ex.what());
+  }
 }
 
 template<typename T>
@@ -689,9 +689,9 @@ inline void ControllerInterface::add_input<std::string>(const std::string& name,
 template<typename T>
 inline std::shared_ptr<rclcpp::Subscription<T>>
 ControllerInterface::create_subscription(const std::string& name, const std::string& topic_name) {
-  return get_node()->create_subscription<T>(topic_name, this->qos_, [this, name](const std::shared_ptr<T> message) {
-    std::get<realtime_tools::RealtimeBuffer<std::shared_ptr<T>>>(this->inputs_.at(name).buffer).writeFromNonRT(message);
-    this->inputs_.at(name).timestamp = std::chrono::steady_clock::now();
+  return get_node()->create_subscription<T>(topic_name, qos_, [this, name](const std::shared_ptr<T> message) {
+    std::get<realtime_tools::RealtimeBuffer<std::shared_ptr<T>>>(inputs_.at(name).buffer).writeFromNonRT(message);
+    inputs_.at(name).timestamp = std::chrono::steady_clock::now();
   });
 }
 
@@ -732,9 +732,9 @@ inline std::optional<T> ControllerInterface::read_input(const std::string& name)
   if (!check_input_valid(name)) {
     return {};
   }
-  auto message = *std::get<realtime_tools::RealtimeBuffer<std::shared_ptr<modulo_core::EncodedState>>>(
-                      this->inputs_.at(name).buffer)
-                      .readFromNonRT();
+  auto message =
+      *std::get<realtime_tools::RealtimeBuffer<std::shared_ptr<modulo_core::EncodedState>>>(inputs_.at(name).buffer)
+           .readFromNonRT();
   std::shared_ptr<state_representation::State> state;
   try {
     auto message_pair = input_message_pairs_.at(name);
@@ -766,7 +766,7 @@ inline std::optional<bool> ControllerInterface::read_input<bool>(const std::stri
   }
   // no need to check for emptiness of the pointer: timestamps are default constructed to 0, so an input being valid
   //  means that a message was received
-  return (*std::get<realtime_tools::RealtimeBuffer<std::shared_ptr<std_msgs::msg::Bool>>>(this->inputs_.at(name).buffer)
+  return (*std::get<realtime_tools::RealtimeBuffer<std::shared_ptr<std_msgs::msg::Bool>>>(inputs_.at(name).buffer)
                .readFromNonRT())
       ->data;
 }
@@ -776,8 +776,7 @@ inline std::optional<double> ControllerInterface::read_input<double>(const std::
   if (!check_input_valid(name)) {
     return {};
   }
-  return (*std::get<realtime_tools::RealtimeBuffer<std::shared_ptr<std_msgs::msg::Float64>>>(
-               this->inputs_.at(name).buffer)
+  return (*std::get<realtime_tools::RealtimeBuffer<std::shared_ptr<std_msgs::msg::Float64>>>(inputs_.at(name).buffer)
                .readFromNonRT())
       ->data;
 }
@@ -789,7 +788,7 @@ ControllerInterface::read_input<std::vector<double>>(const std::string& name) {
     return {};
   }
   return (*std::get<realtime_tools::RealtimeBuffer<std::shared_ptr<std_msgs::msg::Float64MultiArray>>>(
-               this->inputs_.at(name).buffer)
+               inputs_.at(name).buffer)
                .readFromNonRT())
       ->data;
 }
@@ -799,8 +798,7 @@ inline std::optional<int> ControllerInterface::read_input<int>(const std::string
   if (!check_input_valid(name)) {
     return {};
   }
-  return (*std::get<realtime_tools::RealtimeBuffer<std::shared_ptr<std_msgs::msg::Int32>>>(
-               this->inputs_.at(name).buffer)
+  return (*std::get<realtime_tools::RealtimeBuffer<std::shared_ptr<std_msgs::msg::Int32>>>(inputs_.at(name).buffer)
                .readFromNonRT())
       ->data;
 }
@@ -810,8 +808,7 @@ inline std::optional<std::string> ControllerInterface::read_input<std::string>(c
   if (!check_input_valid(name)) {
     return {};
   }
-  return (*std::get<realtime_tools::RealtimeBuffer<std::shared_ptr<std_msgs::msg::String>>>(
-               this->inputs_.at(name).buffer)
+  return (*std::get<realtime_tools::RealtimeBuffer<std::shared_ptr<std_msgs::msg::String>>>(inputs_.at(name).buffer)
                .readFromNonRT())
       ->data;
 }
