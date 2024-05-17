@@ -54,7 +54,7 @@
       "description": "The rate at which to publish controller predicates",
       "parameter_name": "predicate_publishing_rate",
       "parameter_type": "int",
-      "default_value": "100",
+      "default_value": "10",
       "internal": true
     }
   ]

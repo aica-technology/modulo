@@ -50,7 +50,7 @@ rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn RobotC
         std::make_shared<Parameter<std::string>>("ft_sensor_reference_frame"),
         "The reference frame of the force-torque sensor in the robot model");
     add_parameter<double>(
-        "command_half_life", 1.0,
+        "command_half_life", 0.1,
         "A time constant for the exponential decay of the commanded velocity, acceleration or torque if no new command "
         "is set");
     add_parameter<double>(
@@ -133,10 +133,14 @@ rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn RobotC
     joints_ = ordered_joints;
   }
   joint_state_ = JointState(hardware_name_, joints_);
-  previous_joint_command_values_.reserve(joints_.size());
 
   // set command interfaces from joints
   if (!control_type_.empty()) {
+    if (control_type_ == hardware_interface::HW_IF_POSITION) {
+      previous_joint_command_values_ = std::vector<double>(joints_.size(), std::numeric_limits<double>::quiet_NaN());
+    } else {
+      previous_joint_command_values_ = std::vector<double>(joints_.size(), 0.0);
+    }
     for (const auto& joint : joints_) {
       add_command_interface(joint, control_type_);
     }
@@ -260,27 +264,20 @@ controller_interface::return_type RobotControllerInterface::write_command_interf
     }
 
     for (std::size_t index = 0; index < joints_.size(); ++index) {
-      double previous_command = 0.0;
-      if (previous_joint_command_values_.size()) {
-        previous_command = previous_joint_command_values_.at(index);
-      } else {
-        // if no previous command was set, assume a 0.0 command, except for position
-        if (control_type_ == hardware_interface::HW_IF_POSITION) {
-          previous_command = std::numeric_limits<double>::quiet_NaN();
-        }
-      }
+      double previous_command = previous_joint_command_values_.at(index);
+      double new_command;
       if (new_joint_command_ready_) {
-        double new_command = joint_command_values->at(index);
-        if (!isnan(previous_command) && abs(new_command - previous_command) > rate_limit) {
+        new_command = joint_command_values->at(index);
+        if (std::isfinite(previous_command) && std::abs(new_command - previous_command) > rate_limit) {
           double command_offset = new_command - previous_command > 0.0 ? rate_limit : -rate_limit;
           new_command = previous_command + command_offset;
         }
-        set_command_interface(joints_.at(index), control_type_, new_command);
       } else if (control_type_ != hardware_interface::HW_IF_POSITION) {
-        set_command_interface(joints_.at(index), control_type_, previous_command * decay);
+        new_command = previous_command * decay;
       }
+      set_command_interface(joints_.at(index), control_type_, new_command);
+      previous_joint_command_values_.at(index) = new_command;
     }
-    previous_joint_command_values_ = *joint_command_values;
     new_joint_command_ready_ = false;
   }
 
