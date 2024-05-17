@@ -634,8 +634,9 @@ inline void ControllerInterface::set_parameter_value(const std::string& name, co
           "Failed to set parameter value of parameter '%s': %s", name.c_str(), result.reason);
     }
   } catch (const std::exception& ex) {
-    RCLCPP_ERROR_STREAM(
-        get_node()->get_logger(), "Failed to add parameter '" << parameter->get_name() << "': " << ex.what());
+    RCLCPP_ERROR_THROTTLE(
+        get_node()->get_logger(), *get_node()->get_clock(), 1000, "Failed to set parameter value of parameter '%s': %s",
+        name.c_str(), ex.what());
   }
 }
 
