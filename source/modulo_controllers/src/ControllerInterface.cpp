@@ -494,7 +494,7 @@ std::string ControllerInterface::validate_and_declare_signal(
   auto parsed_signal_name = utilities::parse_topic_name(signal_name);
   if (parsed_signal_name.empty()) {
     RCLCPP_WARN(
-        get_node()->get_logger(),void
+        get_node()->get_logger(),
         "The parsed signal name for %s '%s' is empty. Provide a string with valid characters for the signal name "
         "([a-zA-Z0-9_]).",
         type.c_str(), signal_name.c_str());
@@ -518,7 +518,7 @@ std::string ControllerInterface::validate_and_declare_signal(
   auto topic = default_topic.empty() ? "~/" + parsed_signal_name : default_topic;
   auto parameter_name = parsed_signal_name + "_topic";
   if (get_node()->has_parameter(parameter_name) && get_parameter(parameter_name)->is_empty()) {
-    set_parameter_value<std::string>(parameter_name, topic_name);
+    set_parameter_value<std::string>(parameter_name, topic);
   } else {
     add_parameter<std::string>(
         parameter_name, topic, "Signal topic name of " + type + " '" + parsed_signal_name + "'", fixed_topic);
