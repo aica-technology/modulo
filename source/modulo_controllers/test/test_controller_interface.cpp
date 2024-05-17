@@ -6,19 +6,19 @@
 #include <state_representation/space/cartesian/CartesianState.hpp>
 #include <state_representation/space/joint/JointState.hpp>
 
-#include "modulo_controllers/modulo_controller_interface.hpp"
+#include "modulo_controllers/ControllerInterface.hpp"
 #include "test_modulo_controllers/communication_nodes.hpp"
 
 using namespace modulo_controllers;
 using namespace state_representation;
 using namespace std::chrono_literals;
 
-class FriendModuloControllerInterface : public ModuloControllerInterface {
+class FriendControllerInterface : public ControllerInterface {
 public:
-  using ModuloControllerInterface::add_input;
-  using ModuloControllerInterface::add_output;
-  using ModuloControllerInterface::read_input;
-  using ModuloControllerInterface::write_output;
+  using ControllerInterface::add_input;
+  using ControllerInterface::add_output;
+  using ControllerInterface::read_input;
+  using ControllerInterface::write_output;
 
 private:
   controller_interface::return_type evaluate(const rclcpp::Time&, const std::chrono::nanoseconds&) {
@@ -103,37 +103,37 @@ static std::tuple<
             read_state_msg<JointStateT>, encoded_state_equal<JointStateT>)}};
 
 template<typename T>
-class ModuloControllerInterfaceTest : public ::testing::Test {
+class ControllerInterfaceTest : public ::testing::Test {
 public:
-  ModuloControllerInterfaceTest() : test_cases_{std::get<SignalT<T>>(signal_test_cases)} {}
+  ControllerInterfaceTest() : test_cases_{std::get<SignalT<T>>(signal_test_cases)} {}
   static void SetUpTestCase() { rclcpp::init(0, nullptr); }
   static void TearDownTestCase() { rclcpp::shutdown(); }
 
-  void SetUp() { interface_ = std::make_unique<FriendModuloControllerInterface>(); }
+  void SetUp() { interface_ = std::make_unique<FriendControllerInterface>(); }
   void TearDown() { interface_.reset(nullptr); }
 
   void init() {
-    const auto result = interface_->init("modulo_controller_interface");
+    const auto result = interface_->init("controller_interface");
     ASSERT_EQ(result, controller_interface::return_type::OK);
     interface_->get_node()->set_parameter({"hardware_name", "test"});
     interface_->get_node()->set_parameter({"input_validity_period", 0.1});
   }
 
 protected:
-  std::unique_ptr<FriendModuloControllerInterface> interface_;
+  std::unique_ptr<FriendControllerInterface> interface_;
   SignalT<T> test_cases_;
 };
 
-TYPED_TEST_CASE_P(ModuloControllerInterfaceTest);
+TYPED_TEST_CASE_P(ControllerInterfaceTest);
 
-TYPED_TEST_P(ModuloControllerInterfaceTest, ConfigureErrorTest) {
+TYPED_TEST_P(ControllerInterfaceTest, ConfigureErrorTest) {
   ASSERT_THROW(this->interface_->on_configure(rclcpp_lifecycle::State()), std::exception);
 
   this->init();
   ASSERT_NO_THROW(this->interface_->on_configure(rclcpp_lifecycle::State()));
 }
 
-TYPED_TEST_P(ModuloControllerInterfaceTest, InputTest) {
+TYPED_TEST_P(ControllerInterfaceTest, InputTest) {
   using DataT = typename std::tuple_element<0, TypeParam>::type;
   using MsgT = typename std::tuple_element<1, TypeParam>::type;
 
@@ -161,7 +161,7 @@ TYPED_TEST_P(ModuloControllerInterfaceTest, InputTest) {
   }
 }
 
-TYPED_TEST_P(ModuloControllerInterfaceTest, OutputTest) {
+TYPED_TEST_P(ControllerInterfaceTest, OutputTest) {
   using DataT = typename std::tuple_element<0, TypeParam>::type;
   using MsgT = typename std::tuple_element<1, TypeParam>::type;
 
@@ -186,7 +186,7 @@ TYPED_TEST_P(ModuloControllerInterfaceTest, OutputTest) {
   }
 }
 
-REGISTER_TYPED_TEST_CASE_P(ModuloControllerInterfaceTest, ConfigureErrorTest, InputTest, OutputTest);
+REGISTER_TYPED_TEST_CASE_P(ControllerInterfaceTest, ConfigureErrorTest, InputTest, OutputTest);
 
 typedef ::testing::Types<BoolT, DoubleT, DoubleVecT, IntT, StringT, CartesianStateT, JointStateT> SignalTypes;
-INSTANTIATE_TYPED_TEST_CASE_P(TestPrefix, ModuloControllerInterfaceTest, SignalTypes);
+INSTANTIATE_TYPED_TEST_CASE_P(TestPrefix, ControllerInterfaceTest, SignalTypes);

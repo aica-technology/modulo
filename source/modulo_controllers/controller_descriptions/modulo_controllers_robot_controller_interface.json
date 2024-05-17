@@ -5,7 +5,7 @@
     "brief": "Base controller class that automatically associates joints with a JointState object"
   },
   "plugin": "modulo_controllers/RobotControllerInterface",
-  "inherits": "modulo_controllers/ModuloControllerInterface",
+  "inherits": "modulo_controllers/ControllerInterface",
   "virtual": true,
   "parameters": [
     {

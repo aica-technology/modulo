@@ -92,16 +92,16 @@ struct ControllerServiceResponse {
 };
 
 /**
- * @class ModuloControllerInterface
+ * @class ControllerInterface
  * @brief Base controller class to combine ros2_control, control libraries and modulo.
  */
-class ModuloControllerInterface : public controller_interface::ControllerInterface {
+class ControllerInterface : public controller_interface::ControllerInterface {
 public:
   /**
    * @brief Default constructor
    * @param claim_all_state_interfaces Flag to indicate if all state interfaces should be claimed
    */
-  ModuloControllerInterface(bool claim_all_state_interfaces = false);
+  ControllerInterface(bool claim_all_state_interfaces = false);
 
   /**
    * @brief Declare parameters and register the on_set_parameters callback.
@@ -586,7 +586,7 @@ private:
 };
 
 template<typename T>
-inline void ModuloControllerInterface::add_parameter(
+inline void ControllerInterface::add_parameter(
     const std::string& name, const T& value, const std::string& description, bool read_only) {
   if (name.empty()) {
     RCLCPP_ERROR(get_node()->get_logger(), "Failed to add parameter: Provide a non empty string as a name.");
@@ -595,7 +595,7 @@ inline void ModuloControllerInterface::add_parameter(
   add_parameter(state_representation::make_shared_parameter(name, value), description, read_only);
 }
 
-inline void ModuloControllerInterface::add_parameter(
+inline void ControllerInterface::add_parameter(
     const std::shared_ptr<state_representation::ParameterInterface>& parameter, const std::string& description,
     bool read_only) {
   set_parameter_callback_called_ = false;
@@ -632,17 +632,17 @@ inline void ModuloControllerInterface::add_parameter(
 }
 
 inline std::shared_ptr<state_representation::ParameterInterface>
-ModuloControllerInterface::get_parameter(const std::string& name) const {
+ControllerInterface::get_parameter(const std::string& name) const {
   return parameter_map_.get_parameter(name);
 }
 
 template<typename T>
-inline T ModuloControllerInterface::get_parameter_value(const std::string& name) const {
+inline T ControllerInterface::get_parameter_value(const std::string& name) const {
   return parameter_map_.template get_parameter_value<T>(name);
 }
 
 template<typename T>
-inline void ModuloControllerInterface::add_input(const std::string& name, const std::string& topic_name) {
+inline void ControllerInterface::add_input(const std::string& name, const std::string& topic_name) {
   auto buffer = realtime_tools::RealtimeBuffer<std::shared_ptr<modulo_core::EncodedState>>();
   auto input = ControllerInput(buffer);
   create_input(input, name, topic_name);
@@ -651,14 +651,14 @@ inline void ModuloControllerInterface::add_input(const std::string& name, const 
 }
 
 template<>
-inline void ModuloControllerInterface::add_input<bool>(const std::string& name, const std::string& topic_name) {
+inline void ControllerInterface::add_input<bool>(const std::string& name, const std::string& topic_name) {
   auto buffer = realtime_tools::RealtimeBuffer<std::shared_ptr<std_msgs::msg::Bool>>();
   auto input = ControllerInput(buffer);
   create_input(input, name, topic_name);
 }
 
 template<>
-inline void ModuloControllerInterface::add_input<double>(const std::string& name, const std::string& topic_name) {
+inline void ControllerInterface::add_input<double>(const std::string& name, const std::string& topic_name) {
   auto buffer = realtime_tools::RealtimeBuffer<std::shared_ptr<std_msgs::msg::Float64>>();
   auto input = ControllerInput(buffer);
   create_input(input, name, topic_name);
@@ -666,21 +666,21 @@ inline void ModuloControllerInterface::add_input<double>(const std::string& name
 
 template<>
 inline void
-ModuloControllerInterface::add_input<std::vector<double>>(const std::string& name, const std::string& topic_name) {
+ControllerInterface::add_input<std::vector<double>>(const std::string& name, const std::string& topic_name) {
   auto buffer = realtime_tools::RealtimeBuffer<std::shared_ptr<std_msgs::msg::Float64MultiArray>>();
   auto input = ControllerInput(buffer);
   create_input(input, name, topic_name);
 }
 
 template<>
-inline void ModuloControllerInterface::add_input<int>(const std::string& name, const std::string& topic_name) {
+inline void ControllerInterface::add_input<int>(const std::string& name, const std::string& topic_name) {
   auto buffer = realtime_tools::RealtimeBuffer<std::shared_ptr<std_msgs::msg::Int32>>();
   auto input = ControllerInput(buffer);
   create_input(input, name, topic_name);
 }
 
 template<>
-inline void ModuloControllerInterface::add_input<std::string>(const std::string& name, const std::string& topic_name) {
+inline void ControllerInterface::add_input<std::string>(const std::string& name, const std::string& topic_name) {
   auto buffer = realtime_tools::RealtimeBuffer<std::shared_ptr<std_msgs::msg::String>>();
   auto input = ControllerInput(buffer);
   create_input(input, name, topic_name);
@@ -688,7 +688,7 @@ inline void ModuloControllerInterface::add_input<std::string>(const std::string&
 
 template<typename T>
 inline std::shared_ptr<rclcpp::Subscription<T>>
-ModuloControllerInterface::create_subscription(const std::string& name, const std::string& topic_name) {
+ControllerInterface::create_subscription(const std::string& name, const std::string& topic_name) {
   return get_node()->create_subscription<T>(topic_name, this->qos_, [this, name](const std::shared_ptr<T> message) {
     std::get<realtime_tools::RealtimeBuffer<std::shared_ptr<T>>>(this->inputs_.at(name).buffer).writeFromNonRT(message);
     this->inputs_.at(name).timestamp = std::chrono::steady_clock::now();
@@ -696,39 +696,39 @@ ModuloControllerInterface::create_subscription(const std::string& name, const st
 }
 
 template<typename T>
-inline void ModuloControllerInterface::add_output(const std::string& name, const std::string& topic_name) {
+inline void ControllerInterface::add_output(const std::string& name, const std::string& topic_name) {
   std::shared_ptr<state_representation::State> state_ptr = std::make_shared<T>();
   create_output(EncodedStatePublishers(state_ptr, {}, {}), name, topic_name);
 }
 
 template<>
-inline void ModuloControllerInterface::add_output<bool>(const std::string& name, const std::string& topic_name) {
+inline void ControllerInterface::add_output<bool>(const std::string& name, const std::string& topic_name) {
   create_output(BoolPublishers(), name, topic_name);
 }
 
 template<>
-inline void ModuloControllerInterface::add_output<double>(const std::string& name, const std::string& topic_name) {
+inline void ControllerInterface::add_output<double>(const std::string& name, const std::string& topic_name) {
   create_output(DoublePublishers(), name, topic_name);
 }
 
 template<>
 inline void
-ModuloControllerInterface::add_output<std::vector<double>>(const std::string& name, const std::string& topic_name) {
+ControllerInterface::add_output<std::vector<double>>(const std::string& name, const std::string& topic_name) {
   create_output(DoubleVecPublishers(), name, topic_name);
 }
 
 template<>
-inline void ModuloControllerInterface::add_output<int>(const std::string& name, const std::string& topic_name) {
+inline void ControllerInterface::add_output<int>(const std::string& name, const std::string& topic_name) {
   create_output(IntPublishers(), name, topic_name);
 }
 
 template<>
-inline void ModuloControllerInterface::add_output<std::string>(const std::string& name, const std::string& topic_name) {
+inline void ControllerInterface::add_output<std::string>(const std::string& name, const std::string& topic_name) {
   create_output(StringPublishers(), name, topic_name);
 }
 
 template<typename T>
-inline std::optional<T> ModuloControllerInterface::read_input(const std::string& name) {
+inline std::optional<T> ControllerInterface::read_input(const std::string& name) {
   if (!check_input_valid(name)) {
     return {};
   }
@@ -760,7 +760,7 @@ inline std::optional<T> ModuloControllerInterface::read_input(const std::string&
 }
 
 template<>
-inline std::optional<bool> ModuloControllerInterface::read_input<bool>(const std::string& name) {
+inline std::optional<bool> ControllerInterface::read_input<bool>(const std::string& name) {
   if (!check_input_valid(name)) {
     return {};
   }
@@ -772,7 +772,7 @@ inline std::optional<bool> ModuloControllerInterface::read_input<bool>(const std
 }
 
 template<>
-inline std::optional<double> ModuloControllerInterface::read_input<double>(const std::string& name) {
+inline std::optional<double> ControllerInterface::read_input<double>(const std::string& name) {
   if (!check_input_valid(name)) {
     return {};
   }
@@ -784,7 +784,7 @@ inline std::optional<double> ModuloControllerInterface::read_input<double>(const
 
 template<>
 inline std::optional<std::vector<double>>
-ModuloControllerInterface::read_input<std::vector<double>>(const std::string& name) {
+ControllerInterface::read_input<std::vector<double>>(const std::string& name) {
   if (!check_input_valid(name)) {
     return {};
   }
@@ -795,7 +795,7 @@ ModuloControllerInterface::read_input<std::vector<double>>(const std::string& na
 }
 
 template<>
-inline std::optional<int> ModuloControllerInterface::read_input<int>(const std::string& name) {
+inline std::optional<int> ControllerInterface::read_input<int>(const std::string& name) {
   if (!check_input_valid(name)) {
     return {};
   }
@@ -806,7 +806,7 @@ inline std::optional<int> ModuloControllerInterface::read_input<int>(const std::
 }
 
 template<>
-inline std::optional<std::string> ModuloControllerInterface::read_input<std::string>(const std::string& name) {
+inline std::optional<std::string> ControllerInterface::read_input<std::string>(const std::string& name) {
   if (!check_input_valid(name)) {
     return {};
   }
@@ -817,7 +817,7 @@ inline std::optional<std::string> ModuloControllerInterface::read_input<std::str
 }
 
 template<typename T>
-inline void ModuloControllerInterface::write_output(const std::string& name, const T& data) {
+inline void ControllerInterface::write_output(const std::string& name, const T& data) {
   if (data.is_empty()) {
     RCLCPP_DEBUG_THROTTLE(
         get_node()->get_logger(), *get_node()->get_clock(), 1000,
@@ -860,7 +860,7 @@ inline void ModuloControllerInterface::write_output(const std::string& name, con
 }
 
 template<typename PublisherT, typename MsgT, typename T>
-void ModuloControllerInterface::write_std_output(const std::string& name, const T& data) {
+void ControllerInterface::write_std_output(const std::string& name, const T& data) {
   if (outputs_.find(name) == outputs_.end()) {
     RCLCPP_WARN_THROTTLE(
         get_node()->get_logger(), *get_node()->get_clock(), 1000, "Could not find output '%s'", name.c_str());
@@ -883,27 +883,27 @@ void ModuloControllerInterface::write_std_output(const std::string& name, const 
 }
 
 template<>
-inline void ModuloControllerInterface::write_output(const std::string& name, const bool& data) {
+inline void ControllerInterface::write_output(const std::string& name, const bool& data) {
   write_std_output<BoolPublishers, std_msgs::msg::Bool, bool>(name, data);
 }
 
 template<>
-inline void ModuloControllerInterface::write_output(const std::string& name, const double& data) {
+inline void ControllerInterface::write_output(const std::string& name, const double& data) {
   write_std_output<DoublePublishers, std_msgs::msg::Float64, double>(name, data);
 }
 
 template<>
-inline void ModuloControllerInterface::write_output(const std::string& name, const std::vector<double>& data) {
+inline void ControllerInterface::write_output(const std::string& name, const std::vector<double>& data) {
   write_std_output<DoubleVecPublishers, std_msgs::msg::Float64MultiArray, std::vector<double>>(name, data);
 }
 
 template<>
-inline void ModuloControllerInterface::write_output(const std::string& name, const int& data) {
+inline void ControllerInterface::write_output(const std::string& name, const int& data) {
   write_std_output<IntPublishers, std_msgs::msg::Int32, int>(name, data);
 }
 
 template<>
-inline void ModuloControllerInterface::write_output(const std::string& name, const std::string& data) {
+inline void ControllerInterface::write_output(const std::string& name, const std::string& data) {
   write_std_output<StringPublishers, std_msgs::msg::String, std::string>(name, data);
 }
 
