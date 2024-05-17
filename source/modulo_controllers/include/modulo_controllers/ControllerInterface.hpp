@@ -687,9 +687,9 @@ inline void ControllerInterface::add_input<std::string>(const std::string& name,
 template<typename T>
 inline std::shared_ptr<rclcpp::Subscription<T>>
 ControllerInterface::create_subscription(const std::string& name, const std::string& topic_name) {
-  return get_node()->create_subscription<T>(topic_name, this->qos_, [this, name](const std::shared_ptr<T> message) {
-    std::get<realtime_tools::RealtimeBuffer<std::shared_ptr<T>>>(this->inputs_.at(name).buffer).writeFromNonRT(message);
-    this->inputs_.at(name).timestamp = std::chrono::steady_clock::now();
+  return get_node()->create_subscription<T>(topic_name, qos_, [this, name](const std::shared_ptr<T> message) {
+    std::get<realtime_tools::RealtimeBuffer<std::shared_ptr<T>>>(inputs_.at(name).buffer).writeFromNonRT(message);
+    inputs_.at(name).timestamp = std::chrono::steady_clock::now();
   });
 }
 
@@ -730,9 +730,9 @@ inline std::optional<T> ControllerInterface::read_input(const std::string& name)
   if (!check_input_valid(name)) {
     return {};
   }
-  auto message = *std::get<realtime_tools::RealtimeBuffer<std::shared_ptr<modulo_core::EncodedState>>>(
-                      this->inputs_.at(name).buffer)
-                      .readFromNonRT();
+  auto message =
+      *std::get<realtime_tools::RealtimeBuffer<std::shared_ptr<modulo_core::EncodedState>>>(inputs_.at(name).buffer)
+           .readFromNonRT();
   std::shared_ptr<state_representation::State> state;
   try {
     auto message_pair = input_message_pairs_.at(name);
@@ -764,7 +764,7 @@ inline std::optional<bool> ControllerInterface::read_input<bool>(const std::stri
   }
   // no need to check for emptiness of the pointer: timestamps are default constructed to 0, so an input being valid
   //  means that a message was received
-  return (*std::get<realtime_tools::RealtimeBuffer<std::shared_ptr<std_msgs::msg::Bool>>>(this->inputs_.at(name).buffer)
+  return (*std::get<realtime_tools::RealtimeBuffer<std::shared_ptr<std_msgs::msg::Bool>>>(inputs_.at(name).buffer)
                .readFromNonRT())
       ->data;
 }
@@ -774,8 +774,7 @@ inline std::optional<double> ControllerInterface::read_input<double>(const std::
   if (!check_input_valid(name)) {
     return {};
   }
-  return (*std::get<realtime_tools::RealtimeBuffer<std::shared_ptr<std_msgs::msg::Float64>>>(
-               this->inputs_.at(name).buffer)
+  return (*std::get<realtime_tools::RealtimeBuffer<std::shared_ptr<std_msgs::msg::Float64>>>(inputs_.at(name).buffer)
                .readFromNonRT())
       ->data;
 }
@@ -787,7 +786,7 @@ ControllerInterface::read_input<std::vector<double>>(const std::string& name) {
     return {};
   }
   return (*std::get<realtime_tools::RealtimeBuffer<std::shared_ptr<std_msgs::msg::Float64MultiArray>>>(
-               this->inputs_.at(name).buffer)
+               inputs_.at(name).buffer)
                .readFromNonRT())
       ->data;
 }
@@ -797,8 +796,7 @@ inline std::optional<int> ControllerInterface::read_input<int>(const std::string
   if (!check_input_valid(name)) {
     return {};
   }
-  return (*std::get<realtime_tools::RealtimeBuffer<std::shared_ptr<std_msgs::msg::Int32>>>(
-               this->inputs_.at(name).buffer)
+  return (*std::get<realtime_tools::RealtimeBuffer<std::shared_ptr<std_msgs::msg::Int32>>>(inputs_.at(name).buffer)
                .readFromNonRT())
       ->data;
 }
@@ -808,8 +806,7 @@ inline std::optional<std::string> ControllerInterface::read_input<std::string>(c
   if (!check_input_valid(name)) {
     return {};
   }
-  return (*std::get<realtime_tools::RealtimeBuffer<std::shared_ptr<std_msgs::msg::String>>>(
-               this->inputs_.at(name).buffer)
+  return (*std::get<realtime_tools::RealtimeBuffer<std::shared_ptr<std_msgs::msg::String>>>(inputs_.at(name).buffer)
                .readFromNonRT())
       ->data;
 }
