@@ -46,7 +46,7 @@
       "description": "A time constant for the exponential decay of the commanded velocity, acceleration or torque if no new command is set",
       "parameter_name": "command_half_life",
       "parameter_type": "double",
-      "default_value": "1.0"
+      "default_value": "0.1"
     },
     {
       "display_name": "Command rate limit",
