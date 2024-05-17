@@ -28,8 +28,8 @@ ament_auto_find_build_dependencies()
 include_directories(include)
 
 ament_auto_add_library(${PROJECT_NAME} SHARED
-        src/modulo_controller_interface.cpp
-        src/robot_controller_interface.cpp)
+        src/ControllerInterface.cpp
+        src/RobotControllerInterface.cpp)
 
 target_link_libraries(${PROJECT_NAME} ${control_libraries_LIBRARIES})
 
@@ -45,7 +45,7 @@ if(BUILD_TESTING)
 
   ament_add_gmock(
     test_modulo_controllers
-    test/test_modulo_controller_interface.cpp
+    test/test_controller_interface.cpp
   )
   target_include_directories(test_modulo_controllers PRIVATE include)
   target_link_libraries(test_modulo_controllers ${PROJECT_NAME})

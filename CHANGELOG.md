@@ -17,6 +17,7 @@ Release Versions:
 - feat: improve logging in parameter translators (#65)
 - fix(component-interface): make python subscriptions type safe (#71)
 - build: change base workspace image version
+- feat: add modulo controllers (#84, #94)
 
 ## 4.1.0
 
