@@ -263,20 +263,21 @@ controller_interface::return_type RobotControllerInterface::write_command_interf
       new_joint_command_ready_ = false;
     }
 
-    for (std::size_t index = 0; index < joints_.size(); ++index) {
+for (std::size_t index = 0; index < joints_.size(); ++index) {
       double previous_command = previous_joint_command_values_.at(index);
-      double new_command;
       if (new_joint_command_ready_) {
-        new_command = joint_command_values->at(index);
+        auto new_command = joint_command_values->at(index);
         if (std::isfinite(previous_command) && std::abs(new_command - previous_command) > rate_limit) {
           double command_offset = new_command - previous_command > 0.0 ? rate_limit : -rate_limit;
           new_command = previous_command + command_offset;
         }
+        set_command_interface(joints_.at(index), control_type_, new_command);
+        previous_joint_command_values_.at(index) = new_command;
       } else if (control_type_ != hardware_interface::HW_IF_POSITION) {
-        new_command = previous_command * decay;
+        auto new_command = previous_command * decay;
+        set_command_interface(joints_.at(index), control_type_, new_command);
+        previous_joint_command_values_.at(index) = new_command;
       }
-      set_command_interface(joints_.at(index), control_type_, new_command);
-      previous_joint_command_values_.at(index) = new_command;
     }
     new_joint_command_ready_ = false;
   }
