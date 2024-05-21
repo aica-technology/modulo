@@ -263,7 +263,7 @@ controller_interface::return_type RobotControllerInterface::write_command_interf
       new_joint_command_ready_ = false;
     }
 
-for (std::size_t index = 0; index < joints_.size(); ++index) {
+    for (std::size_t index = 0; index < joints_.size(); ++index) {
       double previous_command = previous_joint_command_values_.at(index);
       if (new_joint_command_ready_) {
         auto new_command = joint_command_values->at(index);
