@@ -489,16 +489,52 @@ void ControllerInterface::publish_predicates() const {
   predicate_publisher_->publish(message);
 }
 
+std::string ControllerInterface::validate_and_declare_signal(
+    const std::string& signal_name, const std::string& type, const std::string& default_topic, bool fixed_topic) {
+  auto parsed_signal_name = utilities::parse_topic_name(signal_name);
+  if (parsed_signal_name.empty()) {
+    RCLCPP_WARN(
+        get_node()->get_logger(),
+        "The parsed signal name for %s '%s' is empty. Provide a string with valid characters for the signal name "
+        "([a-zA-Z0-9_]).",
+        type.c_str(), signal_name.c_str());
+    return "";
+  }
+  if (signal_name != parsed_signal_name) {
+    RCLCPP_WARN(
+        get_node()->get_logger(),
+        "The parsed signal name for %s '%s' is '%s'. Use the parsed signal name to refer to this %s and its topic "
+        "parameter.",
+        type.c_str(), signal_name.c_str(), parsed_signal_name.c_str(), type.c_str());
+  }
+  if (inputs_.find(parsed_signal_name) != inputs_.end()) {
+    RCLCPP_WARN(get_node()->get_logger(), "Signal '%s' already exists as input.", parsed_signal_name.c_str());
+    return "";
+  }
+  if (outputs_.find(parsed_signal_name) != outputs_.end()) {
+    RCLCPP_WARN(get_node()->get_logger(), "Signal '%s' already exists as output", parsed_signal_name.c_str());
+    return "";
+  }
+  auto topic = default_topic.empty() ? "~/" + parsed_signal_name : default_topic;
+  auto parameter_name = parsed_signal_name + "_topic";
+  if (get_node()->has_parameter(parameter_name) && get_parameter(parameter_name)->is_empty()) {
+    set_parameter_value<std::string>(parameter_name, topic);
+  } else {
+    add_parameter<std::string>(
+        parameter_name, topic, "Signal topic name of " + type + " '" + parsed_signal_name + "'", fixed_topic);
+  }
+  RCLCPP_DEBUG(
+      get_node()->get_logger(), "Declared %s '%s' and parameter '%s' with value '%s'.", type.c_str(),
+      parsed_signal_name.c_str(), parameter_name.c_str(), topic.c_str());
+  return parsed_signal_name;
+}
+
 void ControllerInterface::create_input(
     const ControllerInput& input, const std::string& name, const std::string& topic_name) {
-  if (inputs_.find(name) != inputs_.end()) {
-    RCLCPP_WARN(get_node()->get_logger(), "Input '%s' already exists", name.c_str());
-    return;
+  auto parsed_name = validate_and_declare_signal(name, "input", topic_name);
+  if (!parsed_name.empty()) {
+    inputs_.insert_or_assign(name, input);
   }
-  // TODO: sanitize strings
-  auto topic = topic_name.empty() ? "~/" + name : topic_name;
-  add_parameter<std::string>(name + "_topic", topic, "Topic name of input " + name);
-  inputs_.insert_or_assign(name, input);
 }
 
 void ControllerInterface::add_inputs() {
@@ -534,14 +570,10 @@ void ControllerInterface::add_inputs() {
 
 void ControllerInterface::create_output(
     const PublisherVariant& publishers, const std::string& name, const std::string& topic_name) {
-  if (outputs_.find(name) != outputs_.end()) {
-    RCLCPP_WARN(get_node()->get_logger(), "Output '%s' already exists", name.c_str());
-    return;
+  auto parsed_name = validate_and_declare_signal(name, "output", topic_name);
+  if (!parsed_name.empty()) {
+    outputs_.insert_or_assign(name, publishers);
   }
-  // TODO: sanitize strings
-  auto topic = topic_name.empty() ? "~/" + name : topic_name;
-  add_parameter<std::string>(name + "_topic", topic, "Topic name of output " + name);
-  outputs_.insert_or_assign(name, publishers);
 }
 
 void ControllerInterface::add_outputs() {
