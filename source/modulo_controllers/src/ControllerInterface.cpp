@@ -57,7 +57,8 @@ ControllerInterface::on_configure(const rclcpp_lifecycle::State&) {
   if (!on_init_called_) {
     RCLCPP_ERROR(
         get_node()->get_logger(),
-        "'ModuloControllerInterface::on_init()' has not been called, any derived class needs to do that");
+        "The controller has not been properly initialized! Derived controller classes must call "
+        "'ControllerInterface::on_init()' during their own initialization before being configured.");
     return CallbackReturn::ERROR;
   }
   auto hardware_name = get_parameter("hardware_name");
