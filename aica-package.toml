@@ -12,7 +12,7 @@ type = "ros"
 image = "v1.0.1-iron"
 
 [build.dependencies]
-"@aica/foss/control-libraries" = "v8.1.0"
+"@aica/foss/control-libraries" = "v7.4.1"
 
 [build.packages.modulo_component_interfaces]
 source = "./source/modulo_component_interfaces"
