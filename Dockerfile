@@ -1,5 +1,5 @@
 #syntax=docker/dockerfile:1.4.0
-ARG CL_VERSION=v7.4.0
+ARG CL_VERSION=v7.4.1
 ARG BASE_VERSION=v1.0.0-iron
 FROM ghcr.io/aica-technology/control-libraries:${CL_VERSION} as cl
 FROM ghcr.io/aica-technology/ros2-ws:${BASE_VERSION} as base
