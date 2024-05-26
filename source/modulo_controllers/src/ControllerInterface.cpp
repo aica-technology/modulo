@@ -21,9 +21,11 @@ namespace modulo_controllers {
 ControllerInterface::ControllerInterface(bool claim_all_state_interfaces)
     : controller_interface::ControllerInterface(),
       input_validity_period_(1.0),
-      claim_all_state_interfaces_(claim_all_state_interfaces) {}
+      claim_all_state_interfaces_(claim_all_state_interfaces),
+      on_init_called_(false) {}
 
 rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn ControllerInterface::on_init() {
+  on_init_called_ = true;
   parameter_cb_handle_ = get_node()->add_on_set_parameters_callback(
       [this](const std::vector<rclcpp::Parameter>& parameters) -> rcl_interfaces::msg::SetParametersResult {
         return on_set_parameters_callback(parameters);
@@ -52,6 +54,13 @@ rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn Contro
 
 rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn
 ControllerInterface::on_configure(const rclcpp_lifecycle::State&) {
+  if (!on_init_called_) {
+    RCLCPP_ERROR(
+        get_node()->get_logger(),
+        "The controller has not been properly initialized! Derived controller classes must call "
+        "'ControllerInterface::on_init()' during their own initialization before being configured.");
+    return CallbackReturn::ERROR;
+  }
   auto hardware_name = get_parameter("hardware_name");
   if (hardware_name->is_empty()) {
     RCLCPP_ERROR(get_node()->get_logger(), "Parameter 'hardware_name' cannot be empty");
