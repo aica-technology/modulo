@@ -87,6 +87,7 @@ jobs:
 
       - uses: aica-technology/.github/.github/actions/ghcr-build@v0.6.1
         with:
+          dockerfile_path: aica-package.toml
           image_name: ${{ needs.metadata.outputs.image_name }}
           image_tags: ${{ steps.merge-tags.outputs.list }}
           token: ${{ secrets.GITHUB_TOKEN }}
