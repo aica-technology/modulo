@@ -615,6 +615,7 @@ private:
   std::timed_mutex command_mutex_;
   // TODO make missed_locks an internal parameter
   unsigned int missed_locks_;
+  bool on_init_called_;
 };
 
 template<typename T>
