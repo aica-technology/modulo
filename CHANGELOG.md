@@ -21,7 +21,7 @@ Release Versions:
 
 ### Dependencies
 
-- control-libraries: 7.4.0 -> 8.1.0 (#91)
+- control-libraries: 7.4.0 -> 7.4.1 (#91)
 
 ## 4.1.0
 
