@@ -1,0 +1,61 @@
+{
+  "$schema": "https://docs.aica.tech/schemas/1-3-0/controller.schema.json",
+  "name": "Controller Interface",
+  "description": {
+    "brief": "Base controller class to combine ros2_control, control libraries and modulo"
+  },
+  "plugin": "modulo_controllers/ControllerInterface",
+  "virtual": true,
+  "parameters": [
+    {
+      "display_name": "Hardware name",
+      "description": "The name of the hardware interface",
+      "parameter_name": "hardware_name",
+      "parameter_type": "string",
+      "default_value": null,
+      "optional": true,
+      "internal": true
+    },
+    {
+      "display_name": "Joints",
+      "description": "A vector of joint names that the controller will claim",
+      "parameter_name": "joints",
+      "parameter_type": "string_array",
+      "default_value": null,
+      "optional": true,
+      "internal": true
+    },
+    {
+      "display_name": "Robot description",
+      "description": "The string formatted content of the controller's URDF description",
+      "parameter_name": "robot_description",
+      "parameter_type": "string",
+      "default_value": null,
+      "optional": true,
+      "internal": true
+    },
+    {
+      "display_name": "Activation timeout",
+      "description": "The seconds to wait for valid data on the state interfaces before activating",
+      "parameter_name": "activation_timeout",
+      "parameter_type": "double",
+      "default_value": "1.0",
+      "internal": true
+    },
+    {
+      "display_name": "Input validity period",
+      "description": "The maximum age of an input state before discarding it as expired",
+      "parameter_name": "input_validity_period_",
+      "parameter_type": "double",
+      "default_value": "1.0"
+    },
+    {
+      "display_name": "Predicate publishing rate",
+      "description": "The rate at which to publish controller predicates",
+      "parameter_name": "predicate_publishing_rate",
+      "parameter_type": "int",
+      "default_value": "10",
+      "internal": true
+    }
+  ]
+}
