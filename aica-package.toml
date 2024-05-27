@@ -28,3 +28,6 @@ source = "./source/modulo_interfaces"
 
 [build.packages.modulo_utils]
 source = "./source/modulo_utils"
+
+[build.packages.modulo_controllers]
+source = "./source/modulo_controllers"
