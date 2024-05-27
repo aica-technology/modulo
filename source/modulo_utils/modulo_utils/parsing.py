@@ -1,6 +1,17 @@
 import re
 
 
+def topic_validation_warning(name: str, type: str):
+    """
+    This function returns a default validation warning for topic names.
+
+    :param name: The pre-validation signal name
+    :param type: One of input|output
+    :return: The validation warning
+    """
+    return f"The parsed signal name for {type} '{name}' is empty. Provide a string with valid characters for the signal name ([a-zA-Z0-9_])."
+
+
 def parse_topic_name(topic_name: str) -> str:
     """
     Parse a string topic name from a user-provided input.

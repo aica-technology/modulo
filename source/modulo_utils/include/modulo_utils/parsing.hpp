@@ -4,7 +4,23 @@
 
 #include <rclcpp/rclcpp.hpp>
 
-namespace modulo_utils {
+/**
+ * @namespace modulo_utils::parsing
+ * @brief Modulo parsing helpers.
+ */
+namespace modulo_utils::parsing {
+
+/**
+ * @brief This function returns a default validation warning for topic names.
+ * @param name The pre-validation signal name
+ * @param type One of input|output
+ * @return The validation warning
+ * @see modulo_utils::parsing::parse_topic_name
+*/
+[[maybe_unused]] static const std::string topic_validation_warning(const std::string& name, const std::string& type) {
+  return "The parsed signal name for " + type + " '" + name
+      + "' is empty. Provide a string with valid characters for the signal name ([a-zA-Z0-9_]).";
+}
 
 /**
  * @brief Parse a string node name from NodeOptions arguments.
@@ -47,4 +63,4 @@ parse_node_name(const rclcpp::NodeOptions& options, const std::string& fallback 
   return output;
 }
 
-}// namespace modulo_utils
+}// namespace modulo_utils::parsing

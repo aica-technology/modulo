@@ -652,7 +652,7 @@ inline void ComponentInterface::add_input(
           "Invalid data pointer for input '" + signal_name + "'.");
     }
     this->declare_input(signal_name, default_topic, fixed_topic);
-    std::string parsed_signal_name = modulo_utils::parse_topic_name(signal_name);
+    std::string parsed_signal_name = modulo_utils::parsing::parse_topic_name(signal_name);
     auto topic_name = this->get_parameter_value<std::string>(parsed_signal_name + "_topic");
     RCLCPP_DEBUG_STREAM(this->node_logging_->get_logger(),
                         "Adding input '" << parsed_signal_name << "' with topic name '" << topic_name << "'.");
@@ -723,7 +723,7 @@ inline void ComponentInterface::add_input(
 ) {
   using namespace modulo_core::communication;
   try {
-    std::string parsed_signal_name = modulo_utils::parse_topic_name(signal_name);
+    std::string parsed_signal_name = modulo_utils::parsing::parse_topic_name(signal_name);
     this->declare_input(parsed_signal_name, default_topic, fixed_topic);
     auto topic_name = this->get_parameter_value<std::string>(parsed_signal_name + "_topic");
     RCLCPP_DEBUG_STREAM(this->node_logging_->get_logger(),
@@ -746,7 +746,7 @@ inline std::string ComponentInterface::create_output(
 ) {
   using namespace modulo_core::communication;
   try {
-    auto parsed_signal_name = modulo_utils::parse_topic_name(signal_name);
+    auto parsed_signal_name = modulo_utils::parsing::parse_topic_name(signal_name);
     if (data == nullptr) {
       throw modulo_core::exceptions::NullPointerException(
           "Invalid data pointer for output '" + parsed_signal_name + "'.");

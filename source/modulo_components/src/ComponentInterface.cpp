@@ -293,17 +293,13 @@ void ComponentInterface::declare_output(
 void ComponentInterface::declare_signal(
     const std::string& signal_name, const std::string& type, const std::string& default_topic, bool fixed_topic
 ) {
-  std::string parsed_signal_name = modulo_utils::parse_topic_name(signal_name);
+  std::string parsed_signal_name = modulo_utils::parsing::parse_topic_name(signal_name);
   if (parsed_signal_name.empty()) {
-    throw AddSignalException(
-        "The parsed signal name for " + type + " '" + signal_name
-            + "' is empty. Provide a string with valid characters for the signal name ([a-zA-Z0-9_]).");
+    throw AddSignalException(modulo_utils::parsing::topic_validation_warning(signal_name, type));
   }
   if (signal_name != parsed_signal_name) {
     RCLCPP_WARN_STREAM(
-        this->node_logging_->get_logger(),
-        "The parsed signal name for " + type + " '" + signal_name + "' is '" + parsed_signal_name
-            + "'. Use the parsed signal name to refer to this " + type + " and its topic parameter");
+        this->node_logging_->get_logger(), modulo_utils::parsing::topic_validation_warning(signal_name, type));
   }
   if (this->inputs_.find(parsed_signal_name) != this->inputs_.cend()) {
     throw AddSignalException(
@@ -327,7 +323,7 @@ void ComponentInterface::declare_signal(
 }
 
 void ComponentInterface::publish_output(const std::string& signal_name) {
-  auto parsed_signal_name = modulo_utils::parse_topic_name(signal_name);
+  auto parsed_signal_name = modulo_utils::parsing::parse_topic_name(signal_name);
   if (this->outputs_.find(parsed_signal_name) == this->outputs_.cend()) {
     throw ModuloException("Output with name '" + signal_name + "' doesn't exist.");
   }
@@ -345,7 +341,7 @@ void ComponentInterface::publish_output(const std::string& signal_name) {
 
 void ComponentInterface::remove_input(const std::string& signal_name) {
   if (!this->remove_signal(signal_name, this->inputs_)) {
-    auto parsed_signal_name = modulo_utils::parse_topic_name(signal_name);
+    auto parsed_signal_name = modulo_utils::parsing::parse_topic_name(signal_name);
     if (!this->remove_signal(parsed_signal_name, this->inputs_)) {
       RCLCPP_DEBUG_STREAM(this->node_logging_->get_logger(),
                           "Unknown input '" << signal_name << "' (parsed name was '" << parsed_signal_name << "').");
@@ -355,7 +351,7 @@ void ComponentInterface::remove_input(const std::string& signal_name) {
 
 void ComponentInterface::remove_output(const std::string& signal_name) {
   if (!this->remove_signal(signal_name, this->outputs_)) {
-    auto parsed_signal_name = modulo_utils::parse_topic_name(signal_name);
+    auto parsed_signal_name = modulo_utils::parsing::parse_topic_name(signal_name);
     if (!this->remove_signal(parsed_signal_name, this->outputs_)) {
       RCLCPP_DEBUG_STREAM(this->node_logging_->get_logger(),
                           "Unknown output '" << signal_name << "' (parsed name was '" << parsed_signal_name << "').");
@@ -418,7 +414,7 @@ void ComponentInterface::add_service(
 }
 
 std::string ComponentInterface::validate_service_name(const std::string& service_name) {
-  std::string parsed_service_name = modulo_utils::parse_topic_name(service_name);
+  std::string parsed_service_name = modulo_utils::parsing::parse_topic_name(service_name);
   if (parsed_service_name.empty()) {
     throw AddServiceException(
         "The parsed service name for service '" + service_name

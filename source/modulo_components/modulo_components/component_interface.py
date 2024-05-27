@@ -13,7 +13,7 @@ from geometry_msgs.msg import TransformStamped
 from modulo_interfaces.msg import Predicate, PredicateCollection
 from modulo_interfaces.srv import EmptyTrigger, StringTrigger
 from modulo_utils.exceptions import AddServiceError, AddSignalError, ModuloError, ParameterError, LookupTransformError
-from modulo_utils.parsing import parse_topic_name
+from modulo_utils.parsing import parse_topic_name, topic_validation_warning
 from modulo_core import EncodedState
 from modulo_core.exceptions import MessageTranslationError, ParameterTranslationError
 from modulo_core.translators.parameter_translators import get_ros_parameter_type, read_parameter_const, write_parameter
@@ -463,12 +463,9 @@ class ComponentInterface(Node):
         """
         parsed_signal_name = parse_topic_name(signal_name)
         if not parsed_signal_name:
-            raise AddSignalError(f"The parsed signal name for {signal_type} '{signal_name}' is empty. Provide a "
-                                 f"string with valid characters for the signal name ([a-zA-Z0-9_]).")
+            raise AddSignalError(topic_validation_warning(signal_name, signal_type))
         if signal_name != parsed_signal_name:
-            self.get_logger().warn(
-                f"The parsed signal name for {type} '{signal_name}' is '{parsed_signal_name}'."
-                  "Use the parsed signal name to refer to this {type} and its topic parameter.")
+            self.get_logger().warn(topic_validation_warning(signal_name, signal_type))
         if parsed_signal_name in self._inputs.keys():
             raise AddSignalError(f"Signal with name '{parsed_signal_name}' already exists as input.")
         if parsed_signal_name in self._outputs.keys():
