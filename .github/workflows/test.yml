@@ -43,6 +43,6 @@ jobs:
 
       - name: Test
         run: |
-          DOCKER_BUILDKIT=1 docker build --target test .
+          DOCKER_BUILDKIT=1 docker build -f aica-package.toml --target test .
         shell: bash
         
