@@ -14,11 +14,9 @@
 #include <modulo_core/translators/message_writers.hpp>
 #include <modulo_core/translators/parameter_translators.hpp>
 #include <modulo_interfaces/msg/predicate_collection.hpp>
-
-#include "modulo_controllers/utils/utilities.hpp"
-
 #include <modulo_interfaces/srv/empty_trigger.hpp>
 #include <modulo_interfaces/srv/string_trigger.hpp>
+#include <modulo_utils/exceptions/ParameterException.hpp>
 #include <modulo_utils/parsing.hpp>
 #include <modulo_utils/predicate_variant.hpp>
 
@@ -640,7 +638,12 @@ inline void ControllerInterface::add_parameter(
 
 template<typename T>
 inline T ControllerInterface::get_parameter_value(const std::string& name) const {
-  return parameter_map_.template get_parameter_value<T>(name);
+  try {
+    return this->parameter_map_.template get_parameter_value<T>(name);
+  } catch (const state_representation::exceptions::InvalidParameterException& ex) {
+    throw modulo_utils::exceptions::ParameterException(
+        "Failed to get parameter value of parameter '" + name + "': " + ex.what());
+  }
 }
 
 template<typename T>

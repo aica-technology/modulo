@@ -4,8 +4,6 @@
 
 #include <modulo_core/translators/message_readers.hpp>
 
-#include "modulo_controllers/utils/utilities.hpp"
-
 template<class... Ts>
 struct overloaded : Ts... {
   using Ts::operator()...;
@@ -13,6 +11,7 @@ struct overloaded : Ts... {
 template<class... Ts>
 overloaded(Ts...) -> overloaded<Ts...>;
 
+using namespace modulo_utils::exceptions;
 using namespace state_representation;
 using namespace std::chrono_literals;
 
@@ -335,7 +334,11 @@ void ControllerInterface::add_parameter(
 }
 
 std::shared_ptr<ParameterInterface> ControllerInterface::get_parameter(const std::string& name) const {
-  return parameter_map_.get_parameter(name);
+  try {
+    return this->parameter_map_.get_parameter(name);
+  } catch (const state_representation::exceptions::InvalidParameterException& ex) {
+    throw ParameterException("Failed to get parameter '" + name + "': " + ex.what());
+  }
 }
 
 rcl_interfaces::msg::SetParametersResult
