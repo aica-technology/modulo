@@ -14,7 +14,6 @@ from modulo_interfaces.msg import Predicate, PredicateCollection
 from modulo_interfaces.srv import EmptyTrigger, StringTrigger
 from modulo_utils.exceptions import AddServiceError, AddSignalError, ModuloError, ParameterError, LookupTransformError
 from modulo_utils.parsing import parse_topic_name
-from modulo_components.utilities import modify_parameter_overrides
 from modulo_core import EncodedState
 from modulo_core.exceptions import MessageTranslationError, ParameterTranslationError
 from modulo_core.translators.parameter_translators import get_ros_parameter_type, read_parameter_const, write_parameter
@@ -44,8 +43,6 @@ class ComponentInterface(Node):
 
     def __init__(self, node_name: str, *args, **kwargs):
         node_kwargs = {key: value for key, value in kwargs.items() if key in NODE_KWARGS}
-        if "parameter_overrides" in node_kwargs.keys():
-            node_kwargs["parameter_overrides"] = modify_parameter_overrides(node_kwargs["parameter_overrides"])
         super().__init__(node_name, *args, **node_kwargs)
         self.__step_lock = Lock()
         self._parameter_dict: Dict[str, Union[str, sr.Parameter]] = {}
@@ -64,10 +61,8 @@ class ComponentInterface(Node):
         self._qos = QoSProfile(depth=10)
 
         self.add_on_set_parameters_callback(self.__on_set_parameters_callback)
-        self.add_parameter(sr.Parameter("rate", 10, sr.ParameterType.INT),
+        self.add_parameter(sr.Parameter("rate", 10.0, sr.ParameterType.DOUBLE),
                            "The rate in Hertz for all periodic callbacks")
-        self.add_parameter(sr.Parameter("period", 0.1, sr.ParameterType.DOUBLE),
-                           "The time interval in seconds for all periodic callbacks")
 
         self._predicate_publisher = self.create_publisher(PredicateCollection, "/predicates", self._qos)
         self.__predicate_message = PredicateCollection()
@@ -75,10 +70,28 @@ class ComponentInterface(Node):
         self.__predicate_message.type = PredicateCollection.COMPONENT
         self.add_predicate("in_error_state", False)
 
-        self.create_timer(self.get_parameter_value("period"), self.__step_with_mutex)
+        self._rate = self.get_parameter_value("rate")
+        self._period = 1.0 / self._rate
+        self.create_timer(self._period, self.__step_with_mutex)
     
     def __del__(self):
         self.__step_lock.acquire()
+
+    def get_rate(self):
+        """
+        Get the component rate in Hertz.
+
+        :return: The component rate
+        """
+        return self._rate
+
+    def get_period(self):
+        """
+        Get the component period in seconds.
+
+        :return: The component period
+        """
+        return self._period
 
     def __step_with_mutex(self):
         if self.__step_lock.acquire(blocking=False):
@@ -222,11 +235,6 @@ class ComponentInterface(Node):
             value = parameter.get_value()
             if value <= 0 or value > sys.float_info.max:
                 self.get_logger().error("Value for parameter 'rate' has to be a positive finite number.")
-                return False
-        if parameter.get_name() == "period":
-            value = parameter.get_value()
-            if value <= 0.0 or value > sys.float_info.max:
-                self.get_logger().error("Value for parameter 'period' has to be a positive finite number.")
                 return False
         return self.on_validate_parameter_callback(parameter)
 

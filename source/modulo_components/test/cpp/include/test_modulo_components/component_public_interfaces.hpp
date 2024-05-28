@@ -86,6 +86,8 @@ public:
       const rclcpp::NodeOptions& node_options, const std::string& fallback_name = "ComponentPublicInterface"
   ) : Component(node_options, fallback_name) {}
   using ComponentInterface::get_parameter_value;
+  using ComponentInterface::get_rate;
+  using ComponentInterface::get_period;
   using Component::add_output;
   using Component::outputs_;
   using Component::periodic_outputs_;
@@ -98,6 +100,8 @@ public:
   explicit LifecycleComponentPublicInterface(const rclcpp::NodeOptions& node_options) :
       LifecycleComponent(node_options) {}
   using ComponentInterface::get_parameter_value;
+  using ComponentInterface::get_rate;
+  using ComponentInterface::get_period;
   using LifecycleComponent::add_output;
   using LifecycleComponent::configure_outputs;
   using LifecycleComponent::activate_outputs;
