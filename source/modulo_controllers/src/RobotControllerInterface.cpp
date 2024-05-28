@@ -1,5 +1,6 @@
 #include "modulo_controllers/RobotControllerInterface.hpp"
 
+#include "ament_index_cpp/get_package_share_directory.hpp"
 #include <hardware_interface/types/hardware_interface_type_values.hpp>
 
 #include <state_representation/exceptions/JointNotFoundException.hpp>
@@ -14,12 +15,14 @@ static const std::map<std::string, JointStateVariable> interface_map =// NOLINT(
      {hardware_interface::HW_IF_ACCELERATION, JointStateVariable::ACCELERATIONS},
      {hardware_interface::HW_IF_EFFORT, JointStateVariable::TORQUES}};
 
-RobotControllerInterface::RobotControllerInterface() : RobotControllerInterface(false, "") {}
+RobotControllerInterface::RobotControllerInterface() : RobotControllerInterface(false, "", false) {}
 
-RobotControllerInterface::RobotControllerInterface(bool robot_model_required, const std::string& control_type)
+RobotControllerInterface::RobotControllerInterface(
+    bool robot_model_required, const std::string& control_type, bool load_geometries)
     : ControllerInterface(true),
       control_type_(control_type),
       robot_model_required_(robot_model_required),
+      load_geometries_(load_geometries),
       new_joint_command_ready_(false),
       command_decay_factor_(0.0),
       command_rate_limit_(std::numeric_limits<double>::infinity()) {
@@ -60,6 +63,12 @@ rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn RobotC
     auto urdf_path = "/tmp/" + hardware_name_ + "_" + timestamp.str();
     try {
       robot_model::Model::create_urdf_from_string(get_parameter_value<std::string>("robot_description"), urdf_path);
+      if (load_geometries_) {
+        robot_ = std::make_shared<robot_model::Model>(hardware_name_, urdf_path, [](const std::string& package_name) {
+          return ament_index_cpp::get_package_share_directory(package_name) + "/";
+        });
+        RCLCPP_DEBUG(get_node()->get_logger(), "Generated robot model with collision features");
+      }
       robot_ = std::make_shared<robot_model::Model>(hardware_name_, urdf_path);
       RCLCPP_DEBUG(get_node()->get_logger(), "Generated robot model");
     } catch (const std::exception& ex) {
