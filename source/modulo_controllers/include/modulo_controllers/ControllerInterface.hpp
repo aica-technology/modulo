@@ -19,6 +19,8 @@
 
 #include <modulo_interfaces/srv/empty_trigger.hpp>
 #include <modulo_interfaces/srv/string_trigger.hpp>
+#include <modulo_utils/parsing.hpp>
+#include <modulo_utils/predicate_variant.hpp>
 
 namespace modulo_controllers {
 
@@ -487,14 +489,14 @@ private:
    * @param name The name of the predicate
    * @param predicate The predicate variant
    */
-  void add_variant_predicate(const std::string& name, const utilities::PredicateVariant& predicate);
+  void add_variant_predicate(const std::string& name, const modulo_utils::PredicateVariant& predicate);
 
   /**
    * @brief Set the predicate given as parameter, if the predicate is not found does not do anything.
    * @param name The name of the predicate
    * @param predicate The predicate variant
    */
-  void set_variant_predicate(const std::string& name, const utilities::PredicateVariant& predicate);
+  void set_variant_predicate(const std::string& name, const modulo_utils::PredicateVariant& predicate);
 
   /**
    * @brief Populate a Prediate message with the name and the value of a predicate.
@@ -604,7 +606,7 @@ private:
   std::map<std::string, std::shared_ptr<rclcpp::Service<modulo_interfaces::srv::StringTrigger>>>
       string_services_;///< Map of StringTrigger services
 
-  std::map<std::string, utilities::PredicateVariant> predicates_; ///< Map of predicates
+  std::map<std::string, modulo_utils::PredicateVariant> predicates_; ///< Map of predicates
   std::shared_ptr<rclcpp::Publisher<modulo_interfaces::msg::PredicateCollection>>
       predicate_publisher_; ///< Predicate publisher
   std::map<std::string, bool> triggers_; ///< Map of triggers
