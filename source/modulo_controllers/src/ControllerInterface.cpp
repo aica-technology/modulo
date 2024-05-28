@@ -45,10 +45,16 @@ rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn Contro
         "input_validity_period", input_validity_period_,
         "The maximum age of an input state before discarding it as expired");
     add_parameter<int>("predicate_publishing_rate", 10, "The rate at which to publish controller predicates");
+
+    return add_interfaces();
   } catch (const std::exception& e) {
     RCLCPP_ERROR(get_node()->get_logger(), "Exception thrown during on_init stage with message: %s \n", e.what());
     return CallbackReturn::ERROR;
   }
+  return CallbackReturn::SUCCESS;
+}
+
+rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn ControllerInterface::add_interfaces() {
   return CallbackReturn::SUCCESS;
 }
 

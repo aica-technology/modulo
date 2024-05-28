@@ -154,6 +154,14 @@ public:
 
 protected:
   /**
+   * @brief Add interfaces like parameters, signals, services, and predicates to controller.
+   * @details This function is called during the `on_init` callback of the base class to perform post-construction
+   * steps.
+   * @return SUCCESS or ERROR
+  */
+  virtual CallbackReturn add_interfaces();
+
+  /**
    * @brief Configure the controller.
    * @details This method should be overridden by derived classes.
    * @return SUCCESS or ERROR
