@@ -103,3 +103,8 @@ jobs:
           image_tags: ${{ needs.metadata.outputs.image_tags }}
           archs: amd64,arm64
           token: ${{ secrets.GITHUB_TOKEN }}
+
+      - if: needs.metadata.outputs.create_tag == 'true'
+        uses: aica-technology/.github/.github/actions/git-tag@v0.8.1
+        with:
+          tag: ${{ needs.metadata.outputs.git_tag }}
