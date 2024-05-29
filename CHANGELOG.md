@@ -2,6 +2,7 @@
 
 Release Versions:
 
+- [4.2.0](#420)
 - [4.1.0](#410)
 - [4.0.0](#400)
 - [3.2.0](#320)
@@ -12,7 +13,14 @@ Release Versions:
 - [2.1.1](#211)
 - [2.1.0](#210)
 
-## Upcoming changes
+## 4.2.0
+
+### May 28, 2024
+
+Version 4.2.0 features a new package `modulo_controllers` that extends the controller interface from ROS 2 control with
+concepts and capabilities known from `modulo_components`. These classes can and should be used to write derived
+ROS 2 controller plugins within the AICA robotics framework. Additionally, this version introduces the package builder
+that replaces the Dockerfile to improve clarity, maintenance and standardization of the build system.
 
 - feat: improve logging in parameter translators (#65)
 - fix(component-interface): make python subscriptions type safe (#71)
@@ -22,6 +30,8 @@ Release Versions:
 
 ### Dependencies
 
+- package-builder: v1 (#91)
+- ros2-ws: v1.0.1-iron (#83, #91)
 - control-libraries: 7.4.0 -> 7.4.1 (#91)
 
 ## 4.1.0

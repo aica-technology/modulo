@@ -20,8 +20,12 @@ the major or minor numbers, or to decrement instead.
 This script modifies the version in the following files:
   ./source/modulo_component_interfaces/package.xml
   ./source/modulo_components/package.xml
+  ./source/modulo_controllers/package.xml
   ./source/modulo_core/package.xml
+  ./source/modulo_interfaces/package.xml
+  ./source/modulo_utils/package.xml
   ./doxygen/doxygen.conf
+  ./VERSION
 
 Options:
   --major                  Update the major version number.
@@ -109,24 +113,29 @@ SED_STR_PACKAGE="s/<version>${VERSION}<\/version>/<version>${NEW_VERSION}<\/vers
 SED_STR_DOXYGEN="s/PROJECT_NUMBER = ${VERSION}/PROJECT_NUMBER = ${NEW_VERSION}/g"
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
-  sed -i '' "${SED_STR_VERSION}" ./VERSION
   sed -i '' "${SED_STR_PACKAGE}" ./source/modulo_component_interfaces/package.xml
-  sed -i '' "${SED_STR_PACKAGE}" ./source/modulo_utils/package.xml
   sed -i '' "${SED_STR_PACKAGE}" ./source/modulo_components/package.xml
+  sed -i '' "${SED_STR_PACKAGE}" ./source/modulo_controllers/package.xml
   sed -i '' "${SED_STR_PACKAGE}" ./source/modulo_core/package.xml
+  sed -i '' "${SED_STR_PACKAGE}" ./source/modulo_interfaces/package.xml
+  sed -i '' "${SED_STR_PACKAGE}" ./source/modulo_utils/package.xml
   sed -i '' "${SED_STR_DOXYGEN}" ./doxygen/doxygen.conf
+  sed -i '' "${SED_STR_VERSION}" ./VERSION
 else
-  sed -i "${SED_STR_VERSION}" ./VERSION
   sed -i "${SED_STR_PACKAGE}" ./source/modulo_component_interfaces/package.xml
-  sed -i "${SED_STR_PACKAGE}" ./source/modulo_utils/package.xml
   sed -i "${SED_STR_PACKAGE}" ./source/modulo_components/package.xml
+  sed -i "${SED_STR_PACKAGE}" ./source/modulo_controllers/package.xml
   sed -i "${SED_STR_PACKAGE}" ./source/modulo_core/package.xml
+  sed -i "${SED_STR_PACKAGE}" ./source/modulo_interfaces/package.xml
+  sed -i "${SED_STR_PACKAGE}" ./source/modulo_utils/package.xml
   sed -i "${SED_STR_DOXYGEN}" ./doxygen/doxygen.conf
+  sed -i "${SED_STR_VERSION}" ./VERSION
 fi
 
 if [ "${COMMIT}" == true ]; then
   echo "Committing changes to source control"
-  git add VERSION ./source/modulo_component_interfaces/package.xml ./source/modulo_utils/package.xml \
-      ./source/modulo_components/package.xml ./source/modulo_core/package.xml ./doxygen/doxygen.conf
+  git add ./source/modulo_component_interfaces/package.xml ./source/modulo_components/package.xml \
+      ./source/modulo_controllers/package.xml ./source/modulo_core/package.xml \
+      ./source/modulo_interfaces/package.xml ./source/modulo_utils/package.xml ./doxygen/doxygen.conf VERSION
   git commit -m "${VERSION} -> ${NEW_VERSION}"
 fi
