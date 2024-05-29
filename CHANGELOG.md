@@ -13,6 +13,10 @@ Release Versions:
 - [2.1.1](#211)
 - [2.1.0](#210)
 
+## Upcoming changes
+
+- ci: create git tag on release (#109)
+
 ## 4.2.0
 
 ### May 28, 2024
