@@ -295,6 +295,7 @@ protected:
   /**
    * @brief Get a parameter by name.
    * @param name The name of the parameter
+   * @throws modulo_utils::exceptions::ParameterException if the parameter could not be accessed
    * @return The ParameterInterface pointer to a Parameter instance
    */
   [[nodiscard]] std::shared_ptr<state_representation::ParameterInterface> get_parameter(const std::string& name) const;
@@ -303,6 +304,7 @@ protected:
    * @brief Get a parameter value by name.
    * @tparam T The type of the parameter
    * @param name The name of the parameter
+   * @throws modulo_utils::exceptions::ParameterException if the parameter value could not be accessed
    * @return The value of the parameter
    */
   template<typename T>
