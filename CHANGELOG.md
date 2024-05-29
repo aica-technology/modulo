@@ -2,6 +2,7 @@
 
 Release Versions:
 
+- [4.2.1](#421)
 - [4.2.0](#420)
 - [4.1.0](#410)
 - [4.0.0](#400)
@@ -12,6 +13,15 @@ Release Versions:
 - [2.2.0](#220)
 - [2.1.1](#211)
 - [2.1.0](#210)
+
+## 4.2.1
+
+### May 29, 2024
+
+Version 4.2.1 is a patch that fixes a missing version update in the aica-package.toml and a missing action in the
+build-release workflow.
+
+- ci: create git tag on release (#109)
 
 ## 4.2.0
 
