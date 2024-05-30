@@ -29,37 +29,27 @@ RobotControllerInterface::RobotControllerInterface(bool robot_model_required, co
   }
 }
 
-rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn RobotControllerInterface::on_init() {
-  auto status = ControllerInterface::on_init();
-  if (status != CallbackReturn::SUCCESS) {
-    return status;
-  }
-
-  try {
-    add_parameter(
-        std::make_shared<Parameter<std::string>>("task_space_frame"),
-        "The frame name in the robot model to use for kinematics calculations (defaults to the last frame in the "
-        "model)");
-    add_parameter<bool>(
-        "sort_joints", true,
-        "If true, re-arrange the 'joints' parameter into a physically correct order according to the robot model");
-    add_parameter(
-        std::make_shared<Parameter<std::string>>("ft_sensor_name"),
-        "Optionally, the name of a force-torque sensor in the hardware interface");
-    add_parameter(
-        std::make_shared<Parameter<std::string>>("ft_sensor_reference_frame"),
-        "The reference frame of the force-torque sensor in the robot model");
-    add_parameter<double>(
-        "command_half_life", 0.1,
-        "A time constant for the exponential decay of the commanded velocity, acceleration or torque if no new command "
-        "is set");
-    add_parameter<double>(
-        "command_rate_limit", command_rate_limit_,
-        "The maximum allowable change in command on any interface expressed in command units / second");
-  } catch (const std::exception& e) {
-    RCLCPP_ERROR(get_node()->get_logger(), "Exception thrown during on_init stage with message: %s \n", e.what());
-    return CallbackReturn::ERROR;
-  }
+rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn RobotControllerInterface::add_interfaces() {
+  add_parameter(
+      std::make_shared<Parameter<std::string>>("task_space_frame"),
+      "The frame name in the robot model to use for kinematics calculations (defaults to the last frame in the "
+      "model)");
+  add_parameter<bool>(
+      "sort_joints", true,
+      "If true, re-arrange the 'joints' parameter into a physically correct order according to the robot model");
+  add_parameter(
+      std::make_shared<Parameter<std::string>>("ft_sensor_name"),
+      "Optionally, the name of a force-torque sensor in the hardware interface");
+  add_parameter(
+      std::make_shared<Parameter<std::string>>("ft_sensor_reference_frame"),
+      "The reference frame of the force-torque sensor in the robot model");
+  add_parameter<double>(
+      "command_half_life", 0.1,
+      "A time constant for the exponential decay of the commanded velocity, acceleration or torque if no new command "
+      "is set");
+  add_parameter<double>(
+      "command_rate_limit", command_rate_limit_,
+      "The maximum allowable change in command on any interface expressed in command units / second");
   return CallbackReturn::SUCCESS;
 }
 

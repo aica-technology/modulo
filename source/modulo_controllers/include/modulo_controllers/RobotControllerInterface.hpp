@@ -35,10 +35,10 @@ public:
   explicit RobotControllerInterface(bool robot_model_required, const std::string& control_type = "");
 
   /**
-   * @copydoc modulo_controllers::ControllerInterface::on_init()
+   * @copydoc modulo_controllers::ControllerInterface::add_interfaces()
    * @details Declare additional parameters.
    */
-  CallbackReturn on_init() override;
+  CallbackReturn add_interfaces() override;
 
   /**
    * @copydoc modulo_controllers::ControllerInterface::on_configure()
