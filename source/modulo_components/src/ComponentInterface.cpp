@@ -363,7 +363,7 @@ void ComponentInterface::add_service(
     const std::string& service_name, const std::function<ComponentServiceResponse(void)>& callback
 ) {
   try {
-    std::string parsed_service_name = this->validate_service_name(service_name);
+    std::string parsed_service_name = this->validate_service_name(service_name, "empty");
     RCLCPP_DEBUG_STREAM(this->node_logging_->get_logger(), "Adding empty service '" << parsed_service_name << "'.");
     auto service = rclcpp::create_service<modulo_interfaces::srv::EmptyTrigger>(
         this->node_base_, this->node_services_, "~/" + parsed_service_name, [callback](
@@ -390,7 +390,7 @@ void ComponentInterface::add_service(
     const std::string& service_name, const std::function<ComponentServiceResponse(const std::string& string)>& callback
 ) {
   try {
-    std::string parsed_service_name = this->validate_service_name(service_name);
+    std::string parsed_service_name = this->validate_service_name(service_name, "string");
     RCLCPP_DEBUG_STREAM(this->node_logging_->get_logger(), "Adding string service '" << parsed_service_name << "'.");
     auto service = rclcpp::create_service<modulo_interfaces::srv::StringTrigger>(
         this->node_base_, this->node_services_, "~/" + parsed_service_name, [callback](
@@ -413,12 +413,10 @@ void ComponentInterface::add_service(
   }
 }
 
-std::string ComponentInterface::validate_service_name(const std::string& service_name) {
+std::string ComponentInterface::validate_service_name(const std::string& service_name, const std::string& type) const {
   std::string parsed_service_name = modulo_utils::parsing::parse_topic_name(service_name);
   if (parsed_service_name.empty()) {
-    throw AddServiceException(
-        "The parsed service name for service '" + service_name
-            + "' is empty. Provide a string with valid characters for the signal name ([a-zA-Z0-9_]).");
+    throw AddServiceException(modulo_utils::parsing::topic_validation_warning(service_name,  type + " service"));
   }
   if (service_name != parsed_service_name) {
     RCLCPP_WARN_STREAM(
@@ -426,11 +424,13 @@ std::string ComponentInterface::validate_service_name(const std::string& service
         "The parsed name for service '" + service_name + "' is '" + parsed_service_name
             + "'. Use the parsed name to refer to this service");
   }
-  if (this->empty_services_.find(parsed_service_name) != this->empty_services_.cend()
-      || this->string_services_.find(parsed_service_name) != this->string_services_.cend()) {
-    throw AddServiceException(
-        "Service with name '" + parsed_service_name + "' already exists.");
+  if (empty_services_.find(parsed_service_name) != empty_services_.cend()) {
+    throw AddServiceException("Service with name '" + parsed_service_name + "' already exists as empty service.");
   }
+  if (string_services_.find(parsed_service_name) != string_services_.cend()) {
+    throw AddServiceException("Service with name '" + parsed_service_name + "' already exists as string service.");
+  }
+  RCLCPP_DEBUG(this->node_logging_->get_logger(), "Adding %s service '%s'.", type.c_str(), parsed_service_name.c_str());
   return parsed_service_name;
 }
 

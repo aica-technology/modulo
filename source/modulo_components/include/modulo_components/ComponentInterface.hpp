@@ -521,11 +521,12 @@ private:
   /**
    * @brief Validate an add_service request by parsing the service name and checking the maps of registered services.
    * @param service_name The name of the service
+   * @param type One of empty|string
    * @throws modulo_utils::exceptions::AddServiceException if the service could not be created
    * (empty name or already registered)
    * @return The parsed service name
    */
-  std::string validate_service_name(const std::string& service_name);
+  std::string validate_service_name(const std::string& service_name, const std::string& type) const;
 
   /**
    * @brief Helper function to send a vector of transforms through a transform broadcaster
@@ -746,12 +747,11 @@ inline std::string ComponentInterface::create_output(
 ) {
   using namespace modulo_core::communication;
   try {
-    auto parsed_signal_name = modulo_utils::parsing::parse_topic_name(signal_name);
     if (data == nullptr) {
-      throw modulo_core::exceptions::NullPointerException(
-          "Invalid data pointer for output '" + parsed_signal_name + "'.");
+      throw modulo_core::exceptions::NullPointerException("Invalid data pointer for output '" + signal_name + "'.");
     }
-    this->declare_output(parsed_signal_name, default_topic, fixed_topic);
+    this->declare_output(signal_name, default_topic, fixed_topic);
+    auto parsed_signal_name = modulo_utils::parsing::parse_topic_name(signal_name);
     RCLCPP_DEBUG_STREAM(this->node_logging_->get_logger(),
                         "Creating output '" << parsed_signal_name << "' (provided signal name was '" << signal_name
                                             << "').");

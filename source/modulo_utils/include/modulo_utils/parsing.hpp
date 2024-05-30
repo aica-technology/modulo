@@ -19,7 +19,7 @@ namespace modulo_utils::parsing {
 */
 [[maybe_unused]] static const std::string topic_validation_warning(const std::string& name, const std::string& type) {
   return "The parsed signal name for " + type + " '" + name
-      + "' is empty. Provide a string with valid characters for the signal name ([a-zA-Z0-9_]).";
+      + "' is empty. Provide a string with valid characters for the signal name ([a-z0-9_]).";
 }
 
 /**
@@ -45,17 +45,16 @@ parse_node_name(const rclcpp::NodeOptions& options, const std::string& fallback 
 
 /**
  * @brief Parse a string topic name from a user-provided input.
- * @details This functions removes all characters different from a-z, A-Z, 0-9, and _ from a string and transforms
- * uppercase letters into lowercase letters. Additionally, it removes all leading numbers and underscores, such that the
- * resulting string starts with a letter a-z.
+ * @details This functions removes all characters different from a-z, 0-9, and _ from a string. Additionally, it removes
+ * all leading numbers and underscores, such that the resulting string starts with a letter a-z.
  * @param topic_name The input string
  * @return the sanitized string
  */
 [[maybe_unused]] static std::string parse_topic_name(const std::string& topic_name) {
   std::string output;
   for (char c : topic_name) {
-    if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')) {
-      output.insert(output.end(), std::tolower(c));
+    if (c >= 'a' && c <= 'z') {
+      output.insert(output.end(), c);
     } else if (!output.empty() && ((c >= '0' && c <= '9') || c == '_')) {
       output.insert(output.end(), c);
     }

@@ -400,8 +400,8 @@ class ComponentInterface(Node):
         try:
             if message_type == EncodedState and clproto_message_type == clproto.MessageType.UNKNOWN_MESSAGE:
                 raise AddSignalError(f"Provide a valid clproto message type for outputs of type EncodedState.")
+            self.declare_output(signal_name, default_topic, fixed_topic)
             parsed_signal_name = parse_topic_name(signal_name)
-            self.declare_output(parsed_signal_name, default_topic, fixed_topic)
             if message_type == Bool or message_type == Float64 or \
                     message_type == Float64MultiArray or message_type == Int32 or message_type == String:
                 translator = modulo_writers.write_std_message
@@ -516,8 +516,8 @@ class ComponentInterface(Node):
         :raises AddSignalError: if there is a problem adding the input
         """
         try:
+            self.declare_input(signal_name, default_topic, fixed_topic)
             parsed_signal_name = parse_topic_name(signal_name)
-            self.declare_input(parsed_signal_name, default_topic, fixed_topic)
             topic_name = self.get_parameter_value(parsed_signal_name + "_topic")
             self.get_logger().debug(f"Adding input '{parsed_signal_name}' with topic name '{topic_name}'.")
             if isinstance(subscription, Callable):
@@ -602,8 +602,7 @@ class ComponentInterface(Node):
         try:
             parsed_service_name = parse_topic_name(service_name)
             if not parsed_service_name:
-                raise AddServiceError(f"The parsed signal name for service {service_name} is empty. Provide a "
-                                      f"string with valid characters for the service name ([a-zA-Z0-9_]).")
+                raise AddServiceError(topic_validation_warning(service_name, "service"))
             if service_name != parsed_service_name:
                 self.get_logger().warn(
                     f"The parsed name for service '{service_name}' is '{parsed_service_name}'."
