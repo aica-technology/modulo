@@ -154,7 +154,7 @@ public:
 
 protected:
   /**
-   * @brief Add interfaces like parameters, signals, services, and predicates to controller.
+   * @brief Add interfaces like parameters, signals, services, and predicates to the controller.
    * @details This function is called during the `on_init` callback of the base class to perform post-construction
    * steps.
    * @return SUCCESS or ERROR

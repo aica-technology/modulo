@@ -20,7 +20,7 @@ Release Versions:
 - refactor: move utilities to modulo_utils package (#89)
 - refactor: move exceptions to modulo_utils (#90)
 - refactor: remove modulo_component_interfaces (#88)
-- feat: add add_interfaces function for derived controllers (#107)
+- feat: add add_interfaces function for derived controllers (#102)
 
 ## 4.2.0
 

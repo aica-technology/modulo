@@ -49,9 +49,8 @@ rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn Contro
     return add_interfaces();
   } catch (const std::exception& e) {
     RCLCPP_ERROR(get_node()->get_logger(), "Exception thrown during on_init stage with message: %s \n", e.what());
-    return CallbackReturn::ERROR;
   }
-  return CallbackReturn::SUCCESS;
+  return CallbackReturn::ERROR;
 }
 
 rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn ControllerInterface::add_interfaces() {
