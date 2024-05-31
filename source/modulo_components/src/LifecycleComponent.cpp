@@ -1,6 +1,6 @@
 #include "modulo_components/LifecycleComponent.hpp"
 
-#include "modulo_core/exceptions/CoreException.hpp"
+#include <modulo_core/exceptions/CoreException.hpp>
 
 using namespace modulo_core::communication;
 using namespace rclcpp_lifecycle;
@@ -8,8 +8,7 @@ using namespace rclcpp_lifecycle;
 namespace modulo_components {
 
 LifecycleComponent::LifecycleComponent(const rclcpp::NodeOptions& node_options, const std::string& fallback_name)
-    : LifecycleNode(
-        modulo_utils::parse_node_name(node_options, fallback_name), utilities::modify_parameter_overrides(node_options)),
+    : LifecycleNode(modulo_utils::parse_node_name(node_options, fallback_name), node_options),
       ComponentInterface(std::make_shared<rclcpp::node_interfaces::NodeInterfaces<ALL_RCLCPP_NODE_INTERFACES>>(
           LifecycleNode::get_node_base_interface(), LifecycleNode::get_node_clock_interface(),
           LifecycleNode::get_node_graph_interface(), LifecycleNode::get_node_logging_interface(),

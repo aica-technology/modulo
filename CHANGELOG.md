@@ -22,6 +22,7 @@ Release Versions:
 - refactor: move exceptions to modulo_utils (#90)
 - refactor: remove modulo_component_interfaces (#88)
 - feat: add add_interfaces function for derived controllers (#102)
+- refactor: remove period parameter and make rate double (#108)
 
 ## 4.2.1
 
