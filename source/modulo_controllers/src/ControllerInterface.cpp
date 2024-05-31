@@ -659,14 +659,14 @@ std::string ControllerInterface::validate_service_name(const std::string& servic
   }
   if (empty_services_.find(parsed_service_name) != empty_services_.cend()) {
     RCLCPP_WARN(
-        get_node()->get_logger(), "Service with name '%s' already exists as %s service.", parsed_service_name.c_str(),
-        type.c_str());
+        get_node()->get_logger(), "Service with name '%s' already exists as empty service.",
+        parsed_service_name.c_str());
     return "";
   }
   if (string_services_.find(parsed_service_name) != string_services_.cend()) {
     RCLCPP_WARN(
-        get_node()->get_logger(), "Service with name '%s' already exists as %s service.", parsed_service_name.c_str(),
-        type.c_str());
+        get_node()->get_logger(), "Service with name '%s' already exists as string service.",
+        parsed_service_name.c_str());
     return "";
   }
   RCLCPP_DEBUG(get_node()->get_logger(), "Adding %s service '%s'.", type.c_str(), parsed_service_name.c_str());
