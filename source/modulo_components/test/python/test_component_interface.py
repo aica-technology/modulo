@@ -21,25 +21,17 @@ def component_interface(ros_context):
     yield ComponentInterface('component_interface')
 
 
-def test_rate_period_parameters(ros_context):
+def test_rate_parameter(ros_context):
     component_interface = ComponentInterface('component_interface')
-    assert component_interface.get_parameter_value("rate") == 10
-    assert component_interface.get_parameter_value("period") == 0.1
+    assert component_interface.get_parameter_value("rate") == 10.0
+    assert component_interface.get_rate() == 10.0
+    assert component_interface.get_period() == 0.1
 
-    parameter_overrides=[rclpy.Parameter("rate", value=200)]
+    parameter_overrides=[rclpy.Parameter("rate", value=200.0)]
     component_interface = ComponentInterface('component_interface', parameter_overrides=parameter_overrides)
     assert component_interface.get_parameter_value("rate") == 200
-    assert component_interface.get_parameter_value("period") == 0.005
-
-    parameter_overrides=[rclpy.Parameter("period", value=0.01)]
-    component_interface = ComponentInterface('component_interface', parameter_overrides=parameter_overrides)
-    assert component_interface.get_parameter_value("rate") == 100
-    assert component_interface.get_parameter_value("period") == 0.01
-
-    parameter_overrides=[rclpy.Parameter("rate", value=200), rclpy.Parameter("period", value=0.01)]
-    component_interface = ComponentInterface('component_interface', parameter_overrides=parameter_overrides)
-    assert component_interface.get_parameter_value("rate") == 200
-    assert component_interface.get_parameter_value("period") == 0.005
+    assert component_interface.get_rate() == 200.0
+    assert component_interface.get_period() == 0.005
 
 
 def test_add_bool_predicate(component_interface):
