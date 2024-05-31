@@ -7,6 +7,7 @@
 #include "test_modulo_components/component_public_interfaces.hpp"
 
 using namespace state_representation;
+using namespace std::chrono_literals;
 
 namespace modulo_components {
 
@@ -27,28 +28,25 @@ protected:
   std::shared_ptr<LifecycleComponentPublicInterface> component_;
 };
 
-TEST_F(LifecycleComponentTest, RatePeriodParameters) {
+TEST_F(LifecycleComponentTest, RateParameter) {
   std::shared_ptr<LifecycleComponentPublicInterface> component;
   auto node_options = rclcpp::NodeOptions();
   component = std::make_shared<LifecycleComponentPublicInterface>(node_options);
-  EXPECT_EQ(component->template get_parameter_value<int>("rate"), 10);
-  EXPECT_EQ(component->template get_parameter_value<double>("period"), 0.1);
+  EXPECT_EQ(component->template get_parameter_value<double>("rate"), 10.0);
+  EXPECT_EQ(component->get_rate(), 10.0);
+  auto double_period = component->template get_period<double>();
+  EXPECT_EQ(double_period, 0.1);
+  auto chrono_period = component->template get_period<std::chrono::nanoseconds>();
+  EXPECT_EQ(chrono_period, 100ms);
 
-  node_options = rclcpp::NodeOptions().parameter_overrides({rclcpp::Parameter("rate", 200)});
+  node_options = rclcpp::NodeOptions().parameter_overrides({rclcpp::Parameter("rate", 200.0)});
   component = std::make_shared<LifecycleComponentPublicInterface>(node_options);
-  EXPECT_EQ(component->template get_parameter_value<int>("rate"), 200);
-  EXPECT_EQ(component->template get_parameter_value<double>("period"), 0.005);
-
-  node_options = rclcpp::NodeOptions().parameter_overrides({rclcpp::Parameter("period", 0.01)});
-  component = std::make_shared<LifecycleComponentPublicInterface>(node_options);
-  EXPECT_EQ(component->template get_parameter_value<int>("rate"), 100);
-  EXPECT_EQ(component->template get_parameter_value<double>("period"), 0.01);
-
-  node_options =
-      rclcpp::NodeOptions().parameter_overrides({rclcpp::Parameter("rate", 200), rclcpp::Parameter("period", 0.01)});
-  component = std::make_shared<LifecycleComponentPublicInterface>(node_options);
-  EXPECT_EQ(component->template get_parameter_value<int>("rate"), 200);
-  EXPECT_EQ(component->template get_parameter_value<double>("period"), 0.005);
+  EXPECT_EQ(component->template get_parameter_value<double>("rate"), 200.0);
+  EXPECT_EQ(component->get_rate(), 200.0);
+  double_period = component->template get_period<double>();
+  EXPECT_EQ(double_period, 0.005);
+  chrono_period = component->template get_period<std::chrono::nanoseconds>();
+  EXPECT_EQ(chrono_period, 5ms);
 }
 
 TEST_F(LifecycleComponentTest, AddRemoveOutput) {

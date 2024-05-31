@@ -23,8 +23,6 @@
 #include <modulo_utils/parsing.hpp>
 #include <modulo_utils/predicate_variant.hpp>
 
-#include "modulo_components/utilities/utilities.hpp"
-
 /**
  * @namespace modulo_components
  * @brief Modulo components
@@ -72,6 +70,19 @@ protected:
   explicit ComponentInterface(
       const std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<ALL_RCLCPP_NODE_INTERFACES>>& interfaces
   );
+
+  /**
+   * @brief Get the component rate in Hertz
+   * @return The component rate
+  */
+  double get_rate() const;
+
+  /**
+   * @brief Get the component period
+   * @return The component period
+  */
+  template<typename T>
+  T get_period() const;
 
   /**
    * @brief Step function that is called periodically.
@@ -544,6 +555,8 @@ private:
       const tf2::Duration& duration
   );
 
+  double rate_; ///< The component rate in Hz
+  double period_; ///< The componet period in s
   std::mutex step_mutex_; ///< Mutex for step callback
 
   std::map<std::string, modulo_utils::PredicateVariant> predicates_; ///< Map of predicates
