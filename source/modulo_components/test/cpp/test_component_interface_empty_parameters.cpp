@@ -13,11 +13,12 @@ public:
   ) : ComponentInterfacePublicInterface(node), allow_empty_(allow_empty) {
     if (add_parameter) {
       if (empty_parameter) {
-        this->add_parameter(std::make_shared<Parameter<std::string>>("name"), "Test parameter");
+        this->add_parameter(std::make_shared<Parameter<std::string>>("name"), "Name parameter");
       } else {
-        this->add_parameter(std::make_shared<Parameter<std::string>>("name", "test"), "Test parameter");
+        this->add_parameter(std::make_shared<Parameter<std::string>>("name", "test"), "Name parameter");
       }
     }
+    this->add_parameter(std::make_shared<Parameter<double>>("value", 0.0), "Value parameter");
   };
 
 private:
@@ -30,6 +31,12 @@ private:
         RCLCPP_ERROR(this->node_logging_->get_logger(), "Provide a non empty value for parameter 'name'");
         return false;
       }
+    } else if (parameter->get_name() == "value") {
+      auto value = parameter->get_parameter_value<double>();
+      if (value < 0) {
+        parameter->set_parameter_value<double>(std::abs(value));
+      }
+      return true;
     }
     return true;
   }
@@ -179,5 +186,22 @@ TYPED_TEST(ComponentInterfaceEmptyParameterTest, ParameterOverridesEmpty) {
       "EmptyParameterInterface", rclcpp::NodeOptions().parameter_overrides({rclcpp::Parameter("name")}));
   EXPECT_THROW(std::make_shared<EmptyParameterInterface<TypeParam>>(node, false, true, false),
                modulo_utils::exceptions::ParameterException);
+}
+
+TYPED_TEST(ComponentInterfaceEmptyParameterTest, ValueParameter) {
+  EXPECT_EQ(this->component_->get_parameter("value")->template get_parameter_value<double>(), 0);
+  this->component_->template set_parameter_value<double>("value", 1);
+  EXPECT_EQ(this->component_->get_parameter("value")->template get_parameter_value<double>(), 1);
+  EXPECT_EQ(this->component_->get_ros_parameter("value").as_double(), 1);
+  this->component_->template set_parameter_value<double>("value", -2);
+  EXPECT_EQ(this->component_->get_parameter("value")->template get_parameter_value<double>(), 2);
+  EXPECT_EQ(this->component_->get_ros_parameter("value").as_double(), 2);
+
+  this->component_->set_ros_parameter({"value", 3.0});
+  EXPECT_EQ(this->component_->get_parameter("value")->template get_parameter_value<double>(), 3);
+  EXPECT_EQ(this->component_->get_ros_parameter("value").as_double(), 3);
+  this->component_->set_ros_parameter({"value", -4.0});
+  EXPECT_EQ(this->component_->get_parameter("value")->template get_parameter_value<double>(), 4);
+  EXPECT_EQ(this->component_->get_ros_parameter("value").as_double(), 4);
 }
 } // namespace modulo_components

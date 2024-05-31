@@ -459,6 +459,13 @@ private:
   /**
    * @brief Callback function to validate and update parameters on change.
    * @param parameters The new parameter objects provided by the ROS interface
+   */
+  void pre_set_parameters_callback(std::vector<rclcpp::Parameter>& parameters);
+
+  /**
+   * @brief Callback function notify ROS about the validation result from the pre_set_parameters_callback step..
+   * @param parameters The new parameter objects provided by the ROS interface
+   * @see pre_set_parameters_callback()
    * @return The result of the validation
    */
   rcl_interfaces::msg::SetParametersResult on_set_parameters_callback(const std::vector<rclcpp::Parameter>& parameters);
@@ -574,8 +581,13 @@ private:
   std::map<std::string, std::function<void(void)>> periodic_callbacks_; ///< Map of periodic function callbacks
 
   state_representation::ParameterMap parameter_map_; ///< ParameterMap for handling parameters
+  std::unordered_map<std::string, bool> read_only_parameters_;
+  std::shared_ptr<rclcpp::node_interfaces::PreSetParametersCallbackHandle>
+      pre_set_parameter_cb_handle_; ///< ROS callback function handle on pre set of parameters
   std::shared_ptr<rclcpp::node_interfaces::OnSetParametersCallbackHandle>
-      parameter_cb_handle_; ///< ROS callback function handle for setting parameters
+      on_set_parameter_cb_handle_; ///< ROS callback function handle on set of parameters
+  rcl_interfaces::msg::SetParametersResult set_parameters_result_;
+  bool pre_set_parameter_callback_called_ = false; ///< Flag to indicate if pre_set_parameter_callback was called
 
   std::shared_ptr<rclcpp::TimerBase> step_timer_; ///< Timer for the step function
   std::shared_ptr<tf2_ros::Buffer> tf_buffer_; ///< TF buffer
@@ -591,8 +603,6 @@ private:
   std::shared_ptr<rclcpp::node_interfaces::NodeTimersInterface> node_timers_;
   std::shared_ptr<rclcpp::node_interfaces::NodeTopicsInterface> node_topics_;
   rclcpp::QoS qos_ = rclcpp::QoS(10); ///< Quality of Service for ROS publishers and subscribers
-
-  bool set_parameter_callback_called_ = false; ///< Flag to indicate if on_set_parameter_callback was called
 };
 
 template<typename T>
@@ -619,10 +629,11 @@ inline T ComponentInterface::get_parameter_value(const std::string& name) const 
 template<typename T>
 inline void ComponentInterface::set_parameter_value(const std::string& name, const T& value) {
   try {
-    rcl_interfaces::msg::SetParametersResult result = this->node_parameters_->set_parameters(
-        {
-            modulo_core::translators::write_parameter(state_representation::make_shared_parameter(name, value))
-        }).at(0);
+    std::vector<rclcpp::Parameter> parameters{
+        modulo_core::translators::write_parameter(state_representation::make_shared_parameter(name, value))};
+    this->pre_set_parameters_callback(parameters);
+    this->pre_set_parameter_callback_called_ = true;
+    auto result = this->node_parameters_->set_parameters(parameters).at(0);
     if (!result.successful) {
       RCLCPP_ERROR_STREAM_THROTTLE(this->node_logging_->get_logger(), *this->node_clock_->get_clock(), 1000,
                                    "Failed to set parameter value of parameter '" << name << "': " << result.reason);
