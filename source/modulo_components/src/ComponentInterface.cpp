@@ -6,9 +6,8 @@
 #include <modulo_core/exceptions/ParameterTranslationException.hpp>
 #include <modulo_core/translators/message_readers.hpp>
 #include <modulo_core/translators/message_writers.hpp>
-
-#include "modulo_utils/exceptions/AddServiceException.hpp"
-#include "modulo_utils/exceptions/LookupTransformException.hpp"
+#include <modulo_utils/exceptions/AddServiceException.hpp>
+#include <modulo_utils/exceptions/LookupTransformException.hpp>
 
 using namespace modulo_utils::exceptions;
 
@@ -29,8 +28,7 @@ ComponentInterface::ComponentInterface(
       [this](const std::vector<rclcpp::Parameter>& parameters) -> rcl_interfaces::msg::SetParametersResult {
         return this->on_set_parameters_callback(parameters);
       });
-  this->add_parameter("rate", 10, "The rate in Hertz for all periodic callbacks", true);
-  this->add_parameter("period", 0.1, "The time interval in seconds for all periodic callbacks", true);
+  this->add_parameter("rate", 10.0, "The rate in Hertz for all periodic callbacks", true);
 
   this->predicate_publisher_ = rclcpp::create_publisher<modulo_interfaces::msg::PredicateCollection>(
       this->node_parameters_, this->node_topics_, "/predicates", this->qos_);
@@ -39,8 +37,10 @@ ComponentInterface::ComponentInterface(
 
   this->add_predicate("in_error_state", false);
 
+  this->rate_ = this->get_parameter_value<double>("rate");
+  this->period_ = 1.0 / this->rate_;
   this->step_timer_ = rclcpp::create_wall_timer(
-      std::chrono::nanoseconds(static_cast<int64_t>(this->get_parameter_value<double>("period") * 1e9)),
+      std::chrono::nanoseconds(static_cast<int64_t>(1e9 * this->period_)),
       [this] {
         if (this->step_mutex_.try_lock()) {
           this->step();
@@ -52,6 +52,25 @@ ComponentInterface::ComponentInterface(
 
 ComponentInterface::~ComponentInterface() {
   this->step_mutex_.lock();
+}
+
+double ComponentInterface::get_rate() const {
+  return this->rate_;
+}
+
+template<>
+double ComponentInterface::get_period() const {
+  return this->period_;
+}
+
+template<>
+std::chrono::nanoseconds ComponentInterface::get_period() const {
+  return std::chrono::nanoseconds(static_cast<int64_t>(1e9 * this->period_));
+}
+
+template<>
+rclcpp::Duration ComponentInterface::get_period() const {
+  return rclcpp::Duration::from_seconds(this->period_);
 }
 
 void ComponentInterface::step() {}
@@ -143,17 +162,9 @@ ComponentInterface::on_set_parameters_callback(const std::vector<rclcpp::Paramet
 bool
 ComponentInterface::validate_parameter(const std::shared_ptr<state_representation::ParameterInterface>& parameter) {
   if (parameter->get_name() == "rate") {
-    auto value = parameter->get_parameter_value<int>();
+    auto value = parameter->get_parameter_value<double>();
     if (value <= 0 || !std::isfinite(value)) {
       RCLCPP_ERROR(this->node_logging_->get_logger(), "Value for parameter 'rate' has to be a positive finite number.");
-      return false;
-    }
-  }
-  if (parameter->get_name() == "period") {
-    auto value = parameter->get_parameter_value<double>();
-    if (value <= 0.0 || !std::isfinite(value)) {
-      RCLCPP_ERROR(this->node_logging_->get_logger(),
-                   "Value for parameter 'period' has to be a positive finite number.");
       return false;
     }
   }
