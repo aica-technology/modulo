@@ -48,7 +48,7 @@ void LifecycleComponent::step() {
     }
     this->publish_predicates();
   } catch (const std::exception& ex) {
-    RCLCPP_ERROR_STREAM(this->get_logger(), "Failed to execute step function:" << ex.what());
+    RCLCPP_ERROR_STREAM(this->get_logger(), "Failed to execute step function: " << ex.what());
     // TODO handle error in lifecycle component
 //    this->raise_error();
   }

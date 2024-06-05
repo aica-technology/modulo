@@ -24,7 +24,7 @@ void Component::step() {
     this->publish_outputs();
     this->publish_predicates();
   } catch (const std::exception& ex) {
-    RCLCPP_ERROR_STREAM(this->get_logger(), "Failed to execute step function:" << ex.what());
+    RCLCPP_ERROR_STREAM(this->get_logger(), "Failed to execute step function: " << ex.what());
     this->raise_error();
   }
 }
