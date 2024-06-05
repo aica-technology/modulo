@@ -1,6 +1,6 @@
 # modulo-controllers
 
-ROS2 control interface classes for controllers in the AICA framework.
+ROS 2 control interface classes for controllers in the AICA framework.
 
 ## ControllerInterface
 
