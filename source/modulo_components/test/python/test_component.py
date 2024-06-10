@@ -10,13 +10,13 @@ def component(ros_context):
 
 
 def test_add_remove_output(component):
-    component.add_output("8_tEsT_#1@3", "test", Bool)
+    component.add_output("8_teEsTt_#1@3", "test", Bool)
     assert "test_13" in component._outputs.keys()
     assert component.get_parameter_value("test_13_topic") == "~/test_13"
     with pytest.raises(ModuloError):
         component.publish_output("test_13")
 
-    component.add_output("9_tEsT_#1@5", "test", Bool, default_topic="/topic")
+    component.add_output("9_tEestT_#1@5", "test", Bool, default_topic="/topic")
     assert "test_15" in component._outputs.keys()
     assert component.get_parameter_value("test_15_topic") == "/topic"
 
@@ -26,9 +26,9 @@ def test_add_remove_output(component):
     component.remove_output("test_13")
     assert "test_13" not in component._inputs.keys()
 
-    component.add_output("8_tEsT_#1@3", "test", Bool, publish_on_step=False)
+    component.add_output("8_teEsTt_#1@3", "test", Bool, publish_on_step=False)
     assert not component._periodic_outputs["test_13"]
-    component.publish_output("8_tEsT_#1@3")
+    component.publish_output("8_teEsTt_#1@3")
     component.publish_output("test_13")
     with pytest.raises(ModuloError):
         component.publish_output("")

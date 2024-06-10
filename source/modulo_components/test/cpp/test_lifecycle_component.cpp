@@ -67,9 +67,9 @@ TEST_F(LifecycleComponentTest, AddRemoveOutput) {
   component_->remove_output("test_13");
   EXPECT_TRUE(component_->outputs_.find("test_13") == component_->outputs_.end());
 
-  component_->add_output("8_tEsT_#1@3", data, "", true, false);
+  component_->add_output("8_teEsTt_#1@3", data, "", true, false);
   EXPECT_FALSE(component_->periodic_outputs_.at("test_13"));
-  EXPECT_NO_THROW(component_->publish_output("8_tEsT_#1@3"));
+  EXPECT_NO_THROW(component_->publish_output("8_teEsTt_#1@3"));
   EXPECT_NO_THROW(component_->publish_output("test_13"));
   EXPECT_THROW(component_->publish_output(""), modulo_utils::exceptions::ModuloException);
 }

@@ -293,17 +293,13 @@ void ComponentInterface::declare_output(
 void ComponentInterface::declare_signal(
     const std::string& signal_name, const std::string& type, const std::string& default_topic, bool fixed_topic
 ) {
-  std::string parsed_signal_name = modulo_utils::parse_topic_name(signal_name);
+  std::string parsed_signal_name = modulo_utils::parsing::parse_topic_name(signal_name);
   if (parsed_signal_name.empty()) {
-    throw AddSignalException(
-        "The parsed signal name for " + type + " '" + signal_name
-            + "' is empty. Provide a string with valid characters for the signal name ([a-zA-Z0-9_]).");
+    throw AddSignalException(modulo_utils::parsing::topic_validation_warning(signal_name, type));
   }
   if (signal_name != parsed_signal_name) {
     RCLCPP_WARN_STREAM(
-        this->node_logging_->get_logger(),
-        "The parsed signal name for " + type + " '" + signal_name + "' is '" + parsed_signal_name
-            + "'. Use the parsed signal name to refer to this " + type + " and its topic parameter");
+        this->node_logging_->get_logger(), modulo_utils::parsing::topic_validation_warning(signal_name, type));
   }
   if (this->inputs_.find(parsed_signal_name) != this->inputs_.cend()) {
     throw AddSignalException(
@@ -327,7 +323,7 @@ void ComponentInterface::declare_signal(
 }
 
 void ComponentInterface::publish_output(const std::string& signal_name) {
-  auto parsed_signal_name = modulo_utils::parse_topic_name(signal_name);
+  auto parsed_signal_name = modulo_utils::parsing::parse_topic_name(signal_name);
   if (this->outputs_.find(parsed_signal_name) == this->outputs_.cend()) {
     throw ModuloException("Output with name '" + signal_name + "' doesn't exist.");
   }
@@ -345,7 +341,7 @@ void ComponentInterface::publish_output(const std::string& signal_name) {
 
 void ComponentInterface::remove_input(const std::string& signal_name) {
   if (!this->remove_signal(signal_name, this->inputs_)) {
-    auto parsed_signal_name = modulo_utils::parse_topic_name(signal_name);
+    auto parsed_signal_name = modulo_utils::parsing::parse_topic_name(signal_name);
     if (!this->remove_signal(parsed_signal_name, this->inputs_)) {
       RCLCPP_DEBUG_STREAM(this->node_logging_->get_logger(),
                           "Unknown input '" << signal_name << "' (parsed name was '" << parsed_signal_name << "').");
@@ -355,7 +351,7 @@ void ComponentInterface::remove_input(const std::string& signal_name) {
 
 void ComponentInterface::remove_output(const std::string& signal_name) {
   if (!this->remove_signal(signal_name, this->outputs_)) {
-    auto parsed_signal_name = modulo_utils::parse_topic_name(signal_name);
+    auto parsed_signal_name = modulo_utils::parsing::parse_topic_name(signal_name);
     if (!this->remove_signal(parsed_signal_name, this->outputs_)) {
       RCLCPP_DEBUG_STREAM(this->node_logging_->get_logger(),
                           "Unknown output '" << signal_name << "' (parsed name was '" << parsed_signal_name << "').");
@@ -367,7 +363,7 @@ void ComponentInterface::add_service(
     const std::string& service_name, const std::function<ComponentServiceResponse(void)>& callback
 ) {
   try {
-    std::string parsed_service_name = this->validate_service_name(service_name);
+    std::string parsed_service_name = this->validate_service_name(service_name, "empty");
     RCLCPP_DEBUG_STREAM(this->node_logging_->get_logger(), "Adding empty service '" << parsed_service_name << "'.");
     auto service = rclcpp::create_service<modulo_interfaces::srv::EmptyTrigger>(
         this->node_base_, this->node_services_, "~/" + parsed_service_name, [callback](
@@ -394,7 +390,7 @@ void ComponentInterface::add_service(
     const std::string& service_name, const std::function<ComponentServiceResponse(const std::string& string)>& callback
 ) {
   try {
-    std::string parsed_service_name = this->validate_service_name(service_name);
+    std::string parsed_service_name = this->validate_service_name(service_name, "string");
     RCLCPP_DEBUG_STREAM(this->node_logging_->get_logger(), "Adding string service '" << parsed_service_name << "'.");
     auto service = rclcpp::create_service<modulo_interfaces::srv::StringTrigger>(
         this->node_base_, this->node_services_, "~/" + parsed_service_name, [callback](
@@ -417,12 +413,11 @@ void ComponentInterface::add_service(
   }
 }
 
-std::string ComponentInterface::validate_service_name(const std::string& service_name) {
-  std::string parsed_service_name = modulo_utils::parse_topic_name(service_name);
+// FIXME: use enum for service type
+std::string ComponentInterface::validate_service_name(const std::string& service_name, const std::string& type) const {
+  std::string parsed_service_name = modulo_utils::parsing::parse_topic_name(service_name);
   if (parsed_service_name.empty()) {
-    throw AddServiceException(
-        "The parsed service name for service '" + service_name
-            + "' is empty. Provide a string with valid characters for the signal name ([a-zA-Z0-9_]).");
+    throw AddServiceException(modulo_utils::parsing::topic_validation_warning(service_name,  type + " service"));
   }
   if (service_name != parsed_service_name) {
     RCLCPP_WARN_STREAM(
@@ -430,11 +425,13 @@ std::string ComponentInterface::validate_service_name(const std::string& service
         "The parsed name for service '" + service_name + "' is '" + parsed_service_name
             + "'. Use the parsed name to refer to this service");
   }
-  if (this->empty_services_.find(parsed_service_name) != this->empty_services_.cend()
-      || this->string_services_.find(parsed_service_name) != this->string_services_.cend()) {
-    throw AddServiceException(
-        "Service with name '" + parsed_service_name + "' already exists.");
+  if (empty_services_.find(parsed_service_name) != empty_services_.cend()) {
+    throw AddServiceException("Service with name '" + parsed_service_name + "' already exists as an empty service.");
   }
+  if (string_services_.find(parsed_service_name) != string_services_.cend()) {
+    throw AddServiceException("Service with name '" + parsed_service_name + "' already exists as a string service.");
+  }
+  RCLCPP_DEBUG(this->node_logging_->get_logger(), "Adding %s service '%s'.", type.c_str(), parsed_service_name.c_str());
   return parsed_service_name;
 }
 
