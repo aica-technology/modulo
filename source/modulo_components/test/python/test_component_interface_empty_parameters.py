@@ -37,7 +37,9 @@ class EmtpyParameterInterface(ComponentInterface):
             value = parameter.get_value()
             if value < 0.0:
                 parameter.set_value(abs(value))
-                return True
+            if abs(value) > 10:
+                return False
+            return True
         return True
 
 
@@ -166,10 +168,16 @@ def test_value_parameter(component_test):
     component_test.set_parameter_value("value", -2.0, sr.ParameterType.DOUBLE)
     assert component_test.get_parameter_value("value") == 2.0
     assert component_test.get_ros_parameter("value").get_parameter_value().double_value == 2.0
+    component_test.set_parameter_value("value", 11.0, sr.ParameterType.DOUBLE)
+    assert component_test.get_parameter_value("value") == 2.0
+    assert component_test.get_ros_parameter("value").get_parameter_value().double_value == 2.0
 
     component_test.set_ros_parameter(Parameter("value", value=3.0))
     assert component_test.get_parameter_value("value") == 3.0
     assert component_test.get_ros_parameter("value").get_parameter_value().double_value == 3.0
     component_test.set_ros_parameter(Parameter("value", value=-4.0))
+    assert component_test.get_parameter_value("value") == 4.0
+    assert component_test.get_ros_parameter("value").get_parameter_value().double_value == 4.0
+    component_test.set_ros_parameter(Parameter("value", value=-11.0))
     assert component_test.get_parameter_value("value") == 4.0
     assert component_test.get_ros_parameter("value").get_parameter_value().double_value == 4.0

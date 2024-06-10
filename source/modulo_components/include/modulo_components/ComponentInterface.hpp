@@ -463,7 +463,7 @@ private:
   void pre_set_parameters_callback(std::vector<rclcpp::Parameter>& parameters);
 
   /**
-   * @brief Callback function notify ROS about the validation result from the pre_set_parameters_callback step..
+   * @brief Callback function to notify ROS about the validation result from the pre_set_parameters_callback step.
    * @param parameters The new parameter objects provided by the ROS interface
    * @see pre_set_parameters_callback()
    * @return The result of the validation

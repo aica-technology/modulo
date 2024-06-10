@@ -153,10 +153,10 @@ void ComponentInterface::pre_set_parameters_callback(std::vector<rclcpp::Paramet
       // convert the ROS parameter into a ParameterInterface without modifying the original
       auto new_parameter = modulo_core::translators::read_parameter_const(ros_parameter, parameter);
       if (!this->validate_parameter(new_parameter)) {
-        ros_parameter = modulo_core::translators::write_parameter(new_parameter);
         result.successful = false;
         result.reason += "Validation of parameter '" + ros_parameter.get_name() + "' returned false!";
       } else if (!new_parameter->is_empty()) {
+        // update the value of the parameter in the map
         modulo_core::translators::copy_parameter_value(new_parameter, parameter);
         ros_parameter = modulo_core::translators::write_parameter(new_parameter);
       }
@@ -169,7 +169,7 @@ void ComponentInterface::pre_set_parameters_callback(std::vector<rclcpp::Paramet
 }
 
 rcl_interfaces::msg::SetParametersResult
-ComponentInterface::on_set_parameters_callback(const std::vector<rclcpp::Parameter>& parameters) {
+ComponentInterface::on_set_parameters_callback(const std::vector<rclcpp::Parameter>&) {
   auto result = this->set_parameters_result_;
   this->set_parameters_result_.successful = true;
   this->set_parameters_result_.reason = "";

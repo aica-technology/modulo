@@ -285,7 +285,7 @@ class ComponentInterface(Node):
                     continue
                 new_parameter = read_parameter_const(ros_param, parameter)
                 if not self.__validate_parameter(new_parameter):
-                    new_parameters.append(write_parameter(parameter))
+                    new_parameters.append(ros_param)
                     result.successful = False
                     result.reason = f"Validation of parameter '{ros_param.name}' returned false!"
                 else:
@@ -303,7 +303,7 @@ class ComponentInterface(Node):
 
     def __on_set_parameters_callback(self, ros_parameters: List[Parameter]) -> SetParametersResult:
         """
-        Callback function notify ROS about the validation result from the pre_set_parameters_callback step
+        Callback function to notify ROS about the validation result from the pre_set_parameters_callback step
 
         :param ros_parameters: The parameter objects provided by the ROS interface
         :return: The result of the validation
