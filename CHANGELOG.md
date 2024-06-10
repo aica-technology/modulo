@@ -23,6 +23,7 @@ Release Versions:
 - refactor: remove modulo_component_interfaces (#88)
 - feat: add add_interfaces function for derived controllers (#102)
 - refactor: remove period parameter and make rate double (#108)
+- feat(modulo-controllers): use exceptions from modulo utils and update to CL v8.1.0 (#106)
 
 ## 4.2.2
 
