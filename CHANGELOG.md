@@ -28,6 +28,7 @@ Release Versions:
 - refactor: remove period parameter and make rate double (#108)
 - feat(modulo-controllers): use exceptions from modulo utils and update to CL v8.1.0 (#106)
 - feat: define topic validation warning in utilities (#101)
+- fix: keep parameter values in sync with ros (#111)
 
 ## 4.2.1
 
