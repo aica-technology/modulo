@@ -4,8 +4,6 @@
 
 #include <modulo_core/translators/message_readers.hpp>
 
-#include "modulo_controllers/utils/utilities.hpp"
-
 template<class... Ts>
 struct overloaded : Ts... {
   using Ts::operator()...;
@@ -13,6 +11,7 @@ struct overloaded : Ts... {
 template<class... Ts>
 overloaded(Ts...) -> overloaded<Ts...>;
 
+using namespace modulo_utils::exceptions;
 using namespace state_representation;
 using namespace std::chrono_literals;
 
@@ -335,7 +334,11 @@ void ControllerInterface::add_parameter(
 }
 
 std::shared_ptr<ParameterInterface> ControllerInterface::get_parameter(const std::string& name) const {
-  return parameter_map_.get_parameter(name);
+  try {
+    return this->parameter_map_.get_parameter(name);
+  } catch (const state_representation::exceptions::InvalidParameterException& ex) {
+    throw ParameterException("Failed to get parameter '" + name + "': " + ex.what());
+  }
 }
 
 rcl_interfaces::msg::SetParametersResult
@@ -386,14 +389,15 @@ bool ControllerInterface::on_validate_parameter_callback(const std::shared_ptr<P
 }
 
 void ControllerInterface::add_predicate(const std::string& name, bool predicate) {
-  add_variant_predicate(name, utilities::PredicateVariant(predicate));
+  add_variant_predicate(name, modulo_utils::PredicateVariant(predicate));
 }
 
 void ControllerInterface::add_predicate(const std::string& name, const std::function<bool(void)>& predicate) {
-  add_variant_predicate(name, utilities::PredicateVariant(predicate));
+  add_variant_predicate(name, modulo_utils::PredicateVariant(predicate));
 }
 
-void ControllerInterface::add_variant_predicate(const std::string& name, const utilities::PredicateVariant& predicate) {
+void ControllerInterface::add_variant_predicate(
+    const std::string& name, const modulo_utils::PredicateVariant& predicate) {
   if (name.empty()) {
     RCLCPP_ERROR(get_node()->get_logger(), "Failed to add predicate: Provide a non empty string as a name.");
     return;
@@ -434,14 +438,15 @@ bool ControllerInterface::get_predicate(const std::string& predicate_name) const
 }
 
 void ControllerInterface::set_predicate(const std::string& name, bool predicate) {
-  set_variant_predicate(name, utilities::PredicateVariant(predicate));
+  set_variant_predicate(name, modulo_utils::PredicateVariant(predicate));
 }
 
 void ControllerInterface::set_predicate(const std::string& name, const std::function<bool(void)>& predicate) {
-  set_variant_predicate(name, utilities::PredicateVariant(predicate));
+  set_variant_predicate(name, modulo_utils::PredicateVariant(predicate));
 }
 
-void ControllerInterface::set_variant_predicate(const std::string& name, const utilities::PredicateVariant& predicate) {
+void ControllerInterface::set_variant_predicate(
+    const std::string& name, const modulo_utils::PredicateVariant& predicate) {
   auto predicate_iterator = predicates_.find(name);
   if (predicate_iterator == predicates_.end()) {
     RCLCPP_ERROR_THROTTLE(
@@ -505,7 +510,7 @@ void ControllerInterface::publish_predicates() const {
 
 std::string ControllerInterface::validate_and_declare_signal(
     const std::string& signal_name, const std::string& type, const std::string& default_topic, bool fixed_topic) {
-  auto parsed_signal_name = utilities::parse_topic_name(signal_name);
+  auto parsed_signal_name = modulo_utils::parse_topic_name(signal_name);
   if (parsed_signal_name.empty()) {
     RCLCPP_WARN(
         get_node()->get_logger(),
@@ -646,7 +651,7 @@ bool ControllerInterface::check_input_valid(const std::string& name) const {
 }
 
 std::string ControllerInterface::validate_service_name(const std::string& service_name, const std::string& type) const {
-  std::string parsed_service_name = utilities::parse_topic_name(service_name);
+  std::string parsed_service_name = modulo_utils::parse_topic_name(service_name);
   if (parsed_service_name.empty()) {
     RCLCPP_WARN(
         get_node()->get_logger(),
