@@ -510,7 +510,7 @@ void ControllerInterface::publish_predicates() const {
 
 std::string ControllerInterface::validate_and_declare_signal(
     const std::string& signal_name, const std::string& type, const std::string& default_topic, bool fixed_topic) {
-  auto parsed_signal_name = modulo_utils::parse_topic_name(signal_name);
+  auto parsed_signal_name = modulo_utils::parsing::parse_topic_name(signal_name);
   if (parsed_signal_name.empty()) {
     RCLCPP_WARN(
         get_node()->get_logger(),
@@ -651,7 +651,7 @@ bool ControllerInterface::check_input_valid(const std::string& name) const {
 }
 
 std::string ControllerInterface::validate_service_name(const std::string& service_name, const std::string& type) const {
-  std::string parsed_service_name = modulo_utils::parse_topic_name(service_name);
+  std::string parsed_service_name = modulo_utils::parsing::parse_topic_name(service_name);
   if (parsed_service_name.empty()) {
     RCLCPP_WARN(
         get_node()->get_logger(),
