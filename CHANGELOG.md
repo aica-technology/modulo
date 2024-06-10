@@ -27,6 +27,7 @@ Release Versions:
 - feat: add add_interfaces function for derived controllers (#102)
 - refactor: remove period parameter and make rate double (#108)
 - feat(modulo-controllers): use exceptions from modulo utils and update to CL v8.1.0 (#106)
+- feat: define topic validation warning in utilities (#101)
 
 ## 4.2.1
 
