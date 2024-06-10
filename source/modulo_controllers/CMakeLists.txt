@@ -21,7 +21,7 @@ if (ENABLE_SIGNING)
 endif()
 
 find_package(ament_cmake_auto REQUIRED)
-find_package(control_libraries 7.4.0 CONFIG REQUIRED COMPONENTS state_representation robot_model controllers)
+find_package(control_libraries 8.1.0 CONFIG REQUIRED COMPONENTS state_representation robot_model controllers)
 
 ament_auto_find_build_dependencies()
 
