@@ -413,6 +413,7 @@ void ComponentInterface::add_service(
   }
 }
 
+// FIXME: use enum for service type
 std::string ComponentInterface::validate_service_name(const std::string& service_name, const std::string& type) const {
   std::string parsed_service_name = modulo_utils::parsing::parse_topic_name(service_name);
   if (parsed_service_name.empty()) {
@@ -425,10 +426,10 @@ std::string ComponentInterface::validate_service_name(const std::string& service
             + "'. Use the parsed name to refer to this service");
   }
   if (empty_services_.find(parsed_service_name) != empty_services_.cend()) {
-    throw AddServiceException("Service with name '" + parsed_service_name + "' already exists as empty service.");
+    throw AddServiceException("Service with name '" + parsed_service_name + "' already exists as an empty service.");
   }
   if (string_services_.find(parsed_service_name) != string_services_.cend()) {
-    throw AddServiceException("Service with name '" + parsed_service_name + "' already exists as string service.");
+    throw AddServiceException("Service with name '" + parsed_service_name + "' already exists as a string service.");
   }
   RCLCPP_DEBUG(this->node_logging_->get_logger(), "Adding %s service '%s'.", type.c_str(), parsed_service_name.c_str());
   return parsed_service_name;
