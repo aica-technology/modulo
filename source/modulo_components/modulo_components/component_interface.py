@@ -46,6 +46,9 @@ class ComponentInterface(Node):
         super().__init__(node_name, *args, **node_kwargs)
         self.__step_lock = Lock()
         self._parameter_dict: Dict[str, Union[str, sr.Parameter]] = {}
+        self.__read_only_parameters: Dict[str, bool] = {}
+        self.__pre_set_parameters_callback_called = False
+        self.__set_parameters_result = SetParametersResult()
         self._predicates: Dict[str, Union[bool, Callable[[], bool]]] = {}
         self._triggers: Dict[str, bool] = {}
         self._periodic_callbacks: Dict[str, Callable[[], None]] = {}
@@ -60,6 +63,7 @@ class ComponentInterface(Node):
 
         self._qos = QoSProfile(depth=10)
 
+        self.add_pre_set_parameters_callback(self.__pre_set_parameters_callback)
         self.add_on_set_parameters_callback(self.__on_set_parameters_callback)
         self.add_parameter(sr.Parameter("rate", 10.0, sr.ParameterType.DOUBLE),
                            "The rate in Hertz for all periodic callbacks")
@@ -142,16 +146,25 @@ class ComponentInterface(Node):
         if not self.has_parameter(sr_parameter.get_name()):
             self.get_logger().debug(f"Adding parameter '{sr_parameter.get_name()}'.")
             self._parameter_dict[sr_parameter.get_name()] = parameter
+            self.__read_only_parameters[sr_parameter.get_name()] = False
             try:
                 descriptor = ParameterDescriptor(description=description, read_only=read_only)
+                self.__set_parameters_result = SetParametersResult(successful=True, reason="")
                 if sr_parameter.is_empty():
                     descriptor.dynamic_typing = True
                     descriptor.type = get_ros_parameter_type(sr_parameter.get_parameter_type()).value
                     self.declare_parameter(ros_param.name, None, descriptor=descriptor)
                 else:
                     self.declare_parameter(ros_param.name, ros_param.value, descriptor=descriptor)
+                new_parameters = self.__pre_set_parameters_callback([Node.get_parameter(self, ros_param.name)])
+                result = self.__on_set_parameters_callback(new_parameters)
+                if not result.successful:
+                    self.undeclare_parameter(ros_param.name)
+                    raise ParameterError(result.reason)
+                self.__read_only_parameters[sr_parameter.get_name()] = read_only
             except Exception as e:
                 del self._parameter_dict[sr_parameter.get_name()]
+                del self.__read_only_parameters[sr_parameter.get_name()]
                 raise ParameterError(f"Failed to add parameter: {e}")
         else:
             self.get_logger().debug(f"Parameter '{sr_parameter.get_name()}' already exists.")
@@ -214,8 +227,10 @@ class ComponentInterface(Node):
         :param parameter_type: The type of the parameter
         """
         try:
-            ros_param = write_parameter(sr.Parameter(name, value, parameter_type))
-            result = self.set_parameters([ros_param])[0]
+            parameters = [write_parameter(sr.Parameter(name, value, parameter_type))]
+            new_parameters = self.__pre_set_parameters_callback(parameters)
+            self.__pre_set_parameters_callback_called = True
+            result = self.set_parameters(new_parameters)[0]
             if not result.successful:
                 self.get_logger().error(f"Failed to set parameter value of parameter '{name}': {result.reason}",
                                         throttle_duration_sec=1.0)
@@ -249,20 +264,28 @@ class ComponentInterface(Node):
         :return: The validation result
         """
         return True
-
-    def __on_set_parameters_callback(self, ros_parameters: List[Parameter]) -> SetParametersResult:
+    
+    def __pre_set_parameters_callback(self, ros_parameters: List[Parameter]) -> List[Parameter]:
         """
         Callback function to validate and update parameters on change.
 
         :param ros_parameters: The new parameter objects provided by the ROS interface
-        :return: The result of the validation
+        :return: The validated parameter objects
         """
+        if self.__pre_set_parameters_callback_called:
+            self.__pre_set_parameters_callback_called = False
+            return ros_parameters
+        new_parameters = []
         result = SetParametersResult(successful=True)
         for ros_param in ros_parameters:
             try:
                 parameter = self.__get_component_parameter(ros_param.name)
+                if self.__read_only_parameters.get(ros_param.name):
+                    self.get_logger().debug(f"Parameter '{ros_param.name}' is read only")
+                    continue
                 new_parameter = read_parameter_const(ros_param, parameter)
                 if not self.__validate_parameter(new_parameter):
+                    new_parameters.append(ros_param)
                     result.successful = False
                     result.reason = f"Validation of parameter '{ros_param.name}' returned false!"
                 else:
@@ -270,9 +293,24 @@ class ComponentInterface(Node):
                         self.__setattr__(self._parameter_dict[ros_param.name], new_parameter)
                     else:
                         self._parameter_dict[ros_param.name] = new_parameter
+                    new_parameters.append(write_parameter(new_parameter))
             except Exception as e:
                 result.successful = False
                 result.reason += str(e)
+        self.__set_parameters_result = result
+        return new_parameters
+
+
+    def __on_set_parameters_callback(self, ros_parameters: List[Parameter]) -> SetParametersResult:
+        """
+        Callback function to notify ROS about the validation result from the pre_set_parameters_callback step
+
+        :param ros_parameters: The parameter objects provided by the ROS interface
+        :return: The result of the validation
+        """
+        result = copy.copy(self.__set_parameters_result)
+        self.__set_parameters_result.successful = True
+        self.__set_parameters_result.reason = ""
         return result
 
     def add_predicate(self, name: str, value: Union[bool, Callable[[], bool]]):

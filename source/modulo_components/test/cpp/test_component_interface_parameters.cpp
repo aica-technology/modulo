@@ -65,7 +65,7 @@ TYPED_TEST(ComponentInterfaceParameterTest, AddParameterAgain) {
   EXPECT_THROW(this->component_->get_ros_parameter("test"), rclcpp::exceptions::ParameterNotDeclaredException);
   this->component_->add_parameter(this->param_, "Test parameter");
 
-  // Adding an existing parameter again should just set the value
+  // Adding an existing parameter again should not change the parameter
   this->component_->validate_parameter_was_called = false;
   EXPECT_NO_THROW(this->component_->add_parameter("test", 2, "foo"));
   EXPECT_FALSE(this->component_->validate_parameter_was_called);
@@ -73,12 +73,12 @@ TYPED_TEST(ComponentInterfaceParameterTest, AddParameterAgain) {
 }
 
 TYPED_TEST(ComponentInterfaceParameterTest, SetParameter) {
-  // setting before adding should not work and parameter should not be created
+  // Setting before adding should not work and parameter should not be created
   this->component_->set_parameter_value("test", 1);
   EXPECT_THROW(
       this->component_->template get_parameter_value<int>("test"), modulo_utils::exceptions::ParameterException);
 
-  // validation should not be invoked as the parameter did not exist
+  // Validation should not be invoked as the parameter did not exist
   EXPECT_FALSE(this->component_->validate_parameter_was_called);
   EXPECT_THROW(this->component_->get_ros_parameter("test"), rclcpp::exceptions::ParameterNotDeclaredException);
 
