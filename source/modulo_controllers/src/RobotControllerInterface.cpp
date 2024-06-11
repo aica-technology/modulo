@@ -68,9 +68,10 @@ rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn RobotC
           return ament_index_cpp::get_package_share_directory(package_name) + "/";
         });
         RCLCPP_DEBUG(get_node()->get_logger(), "Generated robot model with collision features");
+      } else {
+        robot_ = std::make_shared<robot_model::Model>(hardware_name_, urdf_path);
+        RCLCPP_DEBUG(get_node()->get_logger(), "Generated robot model");
       }
-      robot_ = std::make_shared<robot_model::Model>(hardware_name_, urdf_path);
-      RCLCPP_DEBUG(get_node()->get_logger(), "Generated robot model");
     } catch (const std::exception& ex) {
       RCLCPP_WARN(
           get_node()->get_logger(),
