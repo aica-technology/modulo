@@ -23,8 +23,10 @@ ComponentInterface::ComponentInterface(
     node_services_(interfaces->get_node_services_interface()),
     node_timers_(interfaces->get_node_timers_interface()),
     node_topics_(interfaces->get_node_topics_interface()) {
-  // register the parameter change callback handler
-  this->parameter_cb_handle_ = this->node_parameters_->add_on_set_parameters_callback(
+  // register the parameter change callback handlers
+  this->pre_set_parameter_cb_handle_ = this->node_parameters_->add_pre_set_parameters_callback(
+      [this](std::vector<rclcpp::Parameter>& parameters) { return this->pre_set_parameters_callback(parameters); });
+  this->on_set_parameter_cb_handle_ = this->node_parameters_->add_on_set_parameters_callback(
       [this](const std::vector<rclcpp::Parameter>& parameters) -> rcl_interfaces::msg::SetParametersResult {
         return this->on_set_parameters_callback(parameters);
       });
@@ -79,9 +81,7 @@ void ComponentInterface::on_step_callback() {}
 
 void ComponentInterface::add_parameter(
     const std::shared_ptr<state_representation::ParameterInterface>& parameter, const std::string& description,
-    bool read_only
-) {
-  this->set_parameter_callback_called_ = false;
+    bool read_only) {
   rclcpp::Parameter ros_param;
   try {
     ros_param = modulo_core::translators::write_parameter(parameter);
@@ -91,10 +91,14 @@ void ComponentInterface::add_parameter(
   if (!this->node_parameters_->has_parameter(parameter->get_name())) {
     RCLCPP_DEBUG_STREAM(this->node_logging_->get_logger(), "Adding parameter '" << parameter->get_name() << "'.");
     this->parameter_map_.set_parameter(parameter);
+    this->read_only_parameters_.insert_or_assign(parameter->get_name(), false);
     try {
       rcl_interfaces::msg::ParameterDescriptor descriptor;
       descriptor.description = description;
       descriptor.read_only = read_only;
+      // since the pre_set_parameters_callback is not called on parameter declaration, this has to be true
+      this->set_parameters_result_.successful = true;
+      this->set_parameters_result_.reason = "";
       if (parameter->is_empty()) {
         descriptor.dynamic_typing = true;
         descriptor.type = modulo_core::translators::get_ros_parameter_type(parameter->get_parameter_type());
@@ -102,21 +106,22 @@ void ComponentInterface::add_parameter(
       } else {
         this->node_parameters_->declare_parameter(parameter->get_name(), ros_param.get_parameter_value(), descriptor);
       }
-      if (!this->set_parameter_callback_called_) {
-        auto result =
-            this->on_set_parameters_callback({this->node_parameters_->get_parameters({parameter->get_name()})});
-        if (!result.successful) {
-          this->node_parameters_->undeclare_parameter(parameter->get_name());
-          throw ParameterException(result.reason);
-        }
+      std::vector<rclcpp::Parameter> ros_parameters{this->node_parameters_->get_parameters({parameter->get_name()})};
+      this->pre_set_parameters_callback(ros_parameters);
+      auto result = this->on_set_parameters_callback(ros_parameters);
+      if (!result.successful) {
+        this->node_parameters_->undeclare_parameter(parameter->get_name());
+        throw ParameterException(result.reason);
       }
+      this->read_only_parameters_.at(parameter->get_name()) = read_only;
     } catch (const std::exception& ex) {
       this->parameter_map_.remove_parameter(parameter->get_name());
+      this->read_only_parameters_.erase(parameter->get_name());
       throw ParameterException("Failed to add parameter: " + std::string(ex.what()));
     }
   } else {
-    RCLCPP_DEBUG_STREAM(this->node_logging_->get_logger(),
-                        "Parameter '" << parameter->get_name() << "' already exists.");
+    RCLCPP_DEBUG_STREAM(
+        this->node_logging_->get_logger(), "Parameter '" << parameter->get_name() << "' already exists.");
   }
 }
 
@@ -129,17 +134,21 @@ ComponentInterface::get_parameter(const std::string& name) const {
   }
 }
 
-rcl_interfaces::msg::SetParametersResult
-ComponentInterface::on_set_parameters_callback(const std::vector<rclcpp::Parameter>& parameters) {
+void ComponentInterface::pre_set_parameters_callback(std::vector<rclcpp::Parameter>& parameters) {
+  if (this->pre_set_parameter_callback_called_) {
+    this->pre_set_parameter_callback_called_ = false;
+    return;
+  }
   rcl_interfaces::msg::SetParametersResult result;
   result.successful = true;
-  for (const auto& ros_parameter : parameters) {
+  for (auto& ros_parameter : parameters) {
     try {
-      if (ros_parameter.get_name().substr(0, 27) == "qos_overrides./tf.publisher") {
+      auto parameter = parameter_map_.get_parameter(ros_parameter.get_name());
+      if (this->read_only_parameters_.at(ros_parameter.get_name())) {
+        RCLCPP_DEBUG_STREAM(
+            this->node_logging_->get_logger(), "Parameter '" << ros_parameter.get_name() << "' is read only.");
         continue;
       }
-      // get the associated parameter interface by name
-      auto parameter = parameter_map_.get_parameter(ros_parameter.get_name());
 
       // convert the ROS parameter into a ParameterInterface without modifying the original
       auto new_parameter = modulo_core::translators::read_parameter_const(ros_parameter, parameter);
@@ -149,13 +158,21 @@ ComponentInterface::on_set_parameters_callback(const std::vector<rclcpp::Paramet
       } else if (!new_parameter->is_empty()) {
         // update the value of the parameter in the map
         modulo_core::translators::copy_parameter_value(new_parameter, parameter);
+        ros_parameter = modulo_core::translators::write_parameter(new_parameter);
       }
     } catch (const std::exception& ex) {
       result.successful = false;
       result.reason += ex.what();
     }
   }
-  this->set_parameter_callback_called_ = true;
+  this->set_parameters_result_ = result;
+}
+
+rcl_interfaces::msg::SetParametersResult
+ComponentInterface::on_set_parameters_callback(const std::vector<rclcpp::Parameter>&) {
+  auto result = this->set_parameters_result_;
+  this->set_parameters_result_.successful = true;
+  this->set_parameters_result_.reason = "";
   return result;
 }
 
