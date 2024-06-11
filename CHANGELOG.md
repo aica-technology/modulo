@@ -16,18 +16,19 @@ Release Versions:
 
 ## Upcoming changes
 
-- fix(modulo-controllers): improve log message (#110)
-- fix(modulo-components): add missing space in log message (#113)
-- feat(modulo-controller): add missing docs (#112)
+- fix(controllers): improve log message (#110)
+- fix(components): add missing space in log message (#113)
+- feat(controllers): add missing docs (#112)
 - refactor: rename function in modulo translators (#77)
-- feat: add mutex around step callback (#67)
+- feat(components): add mutex around step callback (#67)
 - refactor: move utilities to modulo_utils package (#89)
 - refactor: move exceptions to modulo_utils (#90)
 - refactor: remove modulo_component_interfaces (#88)
-- feat: add add_interfaces function for derived controllers (#102)
-- refactor: remove period parameter and make rate double (#108)
-- feat(modulo-controllers): use exceptions from modulo utils and update to CL v8.1.0 (#106)
+- feat(controllers): add add_interfaces function for derived controllers (#102)
+- refactor(components): remove period parameter and make rate double (#108)
+- feat(controllers): use exceptions from modulo utils and update to CL v8.1.0 (#106)
 - feat: define topic validation warning in utilities (#101)
+- fix(components): keep parameter values in sync with ros (#111)
 
 ## 4.2.1
 

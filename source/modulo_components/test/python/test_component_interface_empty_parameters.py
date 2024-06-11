@@ -15,9 +15,10 @@ class EmtpyParameterInterface(ComponentInterface):
         self._allow_empty = allow_empty
         if add_parameter:
             if empty_parameter:
-                self.add_parameter(sr.Parameter("name", sr.ParameterType.STRING), "Test parameter")
+                self.add_parameter(sr.Parameter("name", sr.ParameterType.STRING), "Name parameter")
             else:
-                self.add_parameter(sr.Parameter("name", "test", sr.ParameterType.STRING), "Test parameter")
+                self.add_parameter(sr.Parameter("name", "test", sr.ParameterType.STRING), "Name parameter")
+        self.add_parameter(sr.Parameter("value", 0.0, sr.ParameterType.DOUBLE), "Value parameter")
 
     def get_ros_parameter(self, name: str) -> rclpy.Parameter:
         return rclpy.node.Node.get_parameter(self, name)
@@ -32,6 +33,13 @@ class EmtpyParameterInterface(ComponentInterface):
             elif not parameter.get_value():
                 self.get_logger().error("Provide a non empty value for parameter 'name'")
                 return False
+        elif parameter.get_name() == "value":
+            value = parameter.get_value()
+            if value < 0.0:
+                parameter.set_value(abs(value))
+            if abs(value) > 10:
+                return False
+            return True
         return True
 
 
@@ -150,3 +158,26 @@ def test_parameter_overrides_empty(ros_context):
     with pytest.raises(ParameterError):
         EmtpyParameterInterface("component", allow_empty=False, empty_parameter=False,
                                 parameter_overrides=[Parameter("name")])
+
+
+def test_value_parameter(component_test):
+    assert component_test.get_parameter_value("value") == 0.0
+    component_test.set_parameter_value("value", 1.0, sr.ParameterType.DOUBLE)
+    assert component_test.get_parameter_value("value") == 1.0
+    assert component_test.get_ros_parameter("value").get_parameter_value().double_value == 1.0
+    component_test.set_parameter_value("value", -2.0, sr.ParameterType.DOUBLE)
+    assert component_test.get_parameter_value("value") == 2.0
+    assert component_test.get_ros_parameter("value").get_parameter_value().double_value == 2.0
+    component_test.set_parameter_value("value", 11.0, sr.ParameterType.DOUBLE)
+    assert component_test.get_parameter_value("value") == 2.0
+    assert component_test.get_ros_parameter("value").get_parameter_value().double_value == 2.0
+
+    component_test.set_ros_parameter(Parameter("value", value=3.0))
+    assert component_test.get_parameter_value("value") == 3.0
+    assert component_test.get_ros_parameter("value").get_parameter_value().double_value == 3.0
+    component_test.set_ros_parameter(Parameter("value", value=-4.0))
+    assert component_test.get_parameter_value("value") == 4.0
+    assert component_test.get_ros_parameter("value").get_parameter_value().double_value == 4.0
+    component_test.set_ros_parameter(Parameter("value", value=-11.0))
+    assert component_test.get_parameter_value("value") == 4.0
+    assert component_test.get_ros_parameter("value").get_parameter_value().double_value == 4.0
