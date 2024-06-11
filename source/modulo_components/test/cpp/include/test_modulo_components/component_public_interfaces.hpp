@@ -17,7 +17,7 @@ public:
           node->get_node_logging_interface(), node->get_node_parameters_interface(),
           node->get_node_services_interface(), node->get_node_time_source_interface(),
           node->get_node_timers_interface(), node->get_node_topics_interface(),
-          node->get_node_waitables_interface())) {}
+          node->get_node_type_descriptions_interface(), node->get_node_waitables_interface())) {}
   using ComponentInterface::node_base_;
   using ComponentInterface::node_clock_;
   using ComponentInterface::node_logging_;
