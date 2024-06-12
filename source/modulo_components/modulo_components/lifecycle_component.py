@@ -3,7 +3,7 @@ from typing import TypeVar
 import clproto
 from lifecycle_msgs.msg import State
 from modulo_components.component_interface import ComponentInterface
-from modulo_utils.exceptions import AddSignalError
+from modulo_core.exceptions import AddSignalError
 from rclpy.lifecycle import LifecycleNodeMixin, LifecycleState
 from rclpy.lifecycle.node import TransitionCallbackReturn
 

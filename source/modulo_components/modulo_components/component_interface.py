@@ -12,10 +12,9 @@ import state_representation as sr
 from geometry_msgs.msg import TransformStamped
 from modulo_interfaces.msg import Predicate, PredicateCollection
 from modulo_interfaces.srv import EmptyTrigger, StringTrigger
-from modulo_utils.exceptions import AddServiceError, AddSignalError, ModuloError, ParameterError, LookupTransformError
 from modulo_utils.parsing import parse_topic_name, topic_validation_warning
 from modulo_core import EncodedState
-from modulo_core.exceptions import MessageTranslationError, ParameterTranslationError
+from modulo_core.exceptions import *
 from modulo_core.translators.parameter_translators import get_ros_parameter_type, read_parameter_const, write_parameter
 from rcl_interfaces.msg import ParameterDescriptor, SetParametersResult
 from rclpy.duration import Duration
@@ -839,13 +838,13 @@ class ComponentInterface(Node):
         Trigger the publishing of an output
 
         :param signal_name: The name of the output signal
-        :raises ModuloError: if the output is being published periodically or if the signal name could not be found
+        :raises CoreError: if the output is being published periodically or if the signal name could not be found
         """
         parsed_signal_name = parse_topic_name(signal_name)
         if parsed_signal_name not in self._outputs.keys():
-            raise ModuloError(f"Output with name '{signal_name}' doesn't exist")
+            raise CoreError(f"Output with name '{signal_name}' doesn't exist")
         if self._periodic_outputs[parsed_signal_name]:
-            raise ModuloError("An output that is published periodically cannot be triggered manually")
+            raise CoreError("An output that is published periodically cannot be triggered manually")
         try:
             self.__translate_and_publish(parsed_signal_name)
         except Exception as e:

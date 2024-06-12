@@ -10,7 +10,7 @@ As a general rule, a component interface methods do not throw an exception or ra
 meaningful option. More precisely, only non-void public/protected methods throw, i.e. all setters and `add_xxx` methods 
 do not throw but catch all exceptions and log an error.
 
-If an exception is thrown, it is either a `ModuloException` (in C++) or a `ModuloError` (in Python) or any
+If an exception is thrown, it is either a `CoreException` (in C++) or a `CoreError` (in Python) or any
 derived exception, such that all exceptions thrown by a component can be caught with those base exceptions (for example
 in the periodic `step` function).
 
