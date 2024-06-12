@@ -47,7 +47,7 @@ TEST_F(LifecycleComponentCommunicationTest, InputOutput) {
   ASSERT_EQ(return_code, rclcpp::FutureReturnCode::SUCCESS);
   EXPECT_EQ(cartesian_state.get_name(), input_node->input->get_name());
   EXPECT_TRUE(cartesian_state.data().isApprox(input_node->input->data()));
-  EXPECT_THROW(output_node->publish(), modulo_utils::exceptions::ModuloException);
+  EXPECT_THROW(output_node->publish(), modulo_core::exceptions::CoreException);
 }
 
 TEST_F(LifecycleComponentCommunicationTest, InputOutputManual) {

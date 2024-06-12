@@ -3,8 +3,7 @@
 #include <memory>
 
 #include "modulo_core/communication/MessageType.hpp"
-#include "modulo_core/exceptions/InvalidPointerCastException.hpp"
-#include "modulo_core/exceptions/InvalidPointerException.hpp"
+#include "modulo_core/exceptions.hpp"
 
 namespace modulo_core::communication {
 

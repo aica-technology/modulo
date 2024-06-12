@@ -10,15 +10,17 @@
 #include <state_representation/parameters/ParameterMap.hpp>
 
 #include <modulo_core/EncodedState.hpp>
+#include <modulo_core/PredicateVariant.hpp>
 #include <modulo_core/communication/MessagePair.hpp>
+#include <modulo_core/exceptions.hpp>
 #include <modulo_core/translators/message_writers.hpp>
 #include <modulo_core/translators/parameter_translators.hpp>
+
 #include <modulo_interfaces/msg/predicate_collection.hpp>
 #include <modulo_interfaces/srv/empty_trigger.hpp>
 #include <modulo_interfaces/srv/string_trigger.hpp>
-#include <modulo_utils/exceptions/ParameterException.hpp>
+
 #include <modulo_utils/parsing.hpp>
-#include <modulo_utils/predicate_variant.hpp>
 
 namespace modulo_controllers {
 
@@ -295,7 +297,7 @@ protected:
   /**
    * @brief Get a parameter by name.
    * @param name The name of the parameter
-   * @throws modulo_utils::exceptions::ParameterException if the parameter could not be accessed
+   * @throws modulo_core::exceptions::ParameterException if the parameter could not be accessed
    * @return The ParameterInterface pointer to a Parameter instance
    */
   [[nodiscard]] std::shared_ptr<state_representation::ParameterInterface> get_parameter(const std::string& name) const;
@@ -304,7 +306,7 @@ protected:
    * @brief Get a parameter value by name.
    * @tparam T The type of the parameter
    * @param name The name of the parameter
-   * @throws modulo_utils::exceptions::ParameterException if the parameter value could not be accessed
+   * @throws modulo_core::exceptions::ParameterException if the parameter value could not be accessed
    * @return The value of the parameter
    */
   template<typename T>
@@ -489,14 +491,14 @@ private:
    * @param name The name of the predicate
    * @param predicate The predicate variant
    */
-  void add_variant_predicate(const std::string& name, const modulo_utils::PredicateVariant& predicate);
+  void add_variant_predicate(const std::string& name, const modulo_core::PredicateVariant& predicate);
 
   /**
    * @brief Set the predicate given as parameter, if the predicate is not found does not do anything.
    * @param name The name of the predicate
    * @param predicate The predicate variant
    */
-  void set_variant_predicate(const std::string& name, const modulo_utils::PredicateVariant& predicate);
+  void set_variant_predicate(const std::string& name, const modulo_core::PredicateVariant& predicate);
 
   /**
    * @brief Populate a Prediate message with the name and the value of a predicate.
@@ -606,7 +608,7 @@ private:
   std::map<std::string, std::shared_ptr<rclcpp::Service<modulo_interfaces::srv::StringTrigger>>>
       string_services_;///< Map of StringTrigger services
 
-  std::map<std::string, modulo_utils::PredicateVariant> predicates_; ///< Map of predicates
+  std::map<std::string, modulo_core::PredicateVariant> predicates_; ///< Map of predicates
   std::shared_ptr<rclcpp::Publisher<modulo_interfaces::msg::PredicateCollection>>
       predicate_publisher_; ///< Predicate publisher
   std::map<std::string, bool> triggers_; ///< Map of triggers
@@ -643,7 +645,7 @@ inline T ControllerInterface::get_parameter_value(const std::string& name) const
   try {
     return this->parameter_map_.template get_parameter_value<T>(name);
   } catch (const state_representation::exceptions::InvalidParameterException& ex) {
-    throw modulo_utils::exceptions::ParameterException(
+    throw modulo_core::exceptions::ParameterException(
         "Failed to get parameter value of parameter '" + name + "': " + ex.what());
   }
 }

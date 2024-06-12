@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include "modulo_core/exceptions/ParameterTranslationException.hpp"
+#include "modulo_core/exceptions.hpp"
 #include "modulo_core/translators/parameter_translators.hpp"
 
 using namespace modulo_core::translators;

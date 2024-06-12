@@ -7,7 +7,7 @@ import rclpy
 import state_representation as sr
 from modulo_interfaces.srv import EmptyTrigger, StringTrigger
 from modulo_components.component_interface import ComponentInterface
-from modulo_utils.exceptions import ModuloError, LookupTransformError
+from modulo_core.exceptions import CoreError, LookupTransformError
 from rclpy.qos import QoSProfile
 from std_msgs.msg import Bool, String
 
@@ -155,7 +155,7 @@ def test_create_output(component_interface):
     assert not component_interface._periodic_outputs["test_13"]
     component_interface.publish_output("8_teEsTt_#1@3")
     component_interface.publish_output("test_13")
-    with pytest.raises(ModuloError):
+    with pytest.raises(CoreError):
         component_interface.publish_output("")
 
 

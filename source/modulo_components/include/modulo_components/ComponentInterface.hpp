@@ -9,19 +9,18 @@
 
 #include <state_representation/parameters/ParameterMap.hpp>
 
+#include <modulo_core/PredicateVariant.hpp>
 #include <modulo_core/communication/PublisherHandler.hpp>
 #include <modulo_core/communication/PublisherType.hpp>
 #include <modulo_core/communication/SubscriptionHandler.hpp>
+#include <modulo_core/exceptions.hpp>
 #include <modulo_core/translators/parameter_translators.hpp>
 
 #include <modulo_interfaces/srv/empty_trigger.hpp>
 #include <modulo_interfaces/srv/string_trigger.hpp>
 #include <modulo_interfaces/msg/predicate_collection.hpp>
 
-#include <modulo_utils/exceptions/AddSignalException.hpp>
-#include <modulo_utils/exceptions/ParameterException.hpp>
 #include <modulo_utils/parsing.hpp>
-#include <modulo_utils/predicate_variant.hpp>
 
 /**
  * @namespace modulo_components
@@ -125,7 +124,7 @@ protected:
   /**
    * @brief Get a parameter by name.
    * @param name The name of the parameter
-   * @throws modulo_utils::exceptions::ParameterException if the parameter could not be found
+   * @throws modulo_core::exceptions::ParameterException if the parameter could not be found
    * @return The ParameterInterface pointer to a Parameter instance
    */
   [[nodiscard]] std::shared_ptr<state_representation::ParameterInterface> get_parameter(const std::string& name) const;
@@ -134,7 +133,7 @@ protected:
    * @brief Get a parameter value by name.
    * @tparam T The type of the parameter
    * @param name The name of the parameter
-   * @throws modulo_utils::exceptions::ParameterException if the parameter value could not be accessed
+   * @throws modulo_core::exceptions::ParameterException if the parameter value could not be accessed
    * @return The value of the parameter
    */
   template<typename T>
@@ -222,7 +221,7 @@ protected:
    * @param signal_name The signal name of the input
    * @param default_topic If set, the default value for the topic name to use
    * @param fixed_topic If true, the topic name of the signal is fixed
-   * @throws modulo_utils::exceptions::AddSignalException if the input could not be declared
+   * @throws modulo_core::exceptions::AddSignalException if the input could not be declared
    * (empty name or already created)
    */
   void declare_input(const std::string& signal_name, const std::string& default_topic = "", bool fixed_topic = false);
@@ -232,7 +231,7 @@ protected:
    * @param signal_name The signal name of the output
    * @param default_topic If set, the default value for the topic name to use
    * @param fixed_topic If true, the topic name of the signal is fixed
-   * @throws modulo_utils::exceptions::AddSignalException if the output could not be declared
+   * @throws modulo_core::exceptions::AddSignalException if the output could not be declared
    * (empty name or already created)
    */
   void declare_output(const std::string& signal_name, const std::string& default_topic = "", bool fixed_topic = false);
@@ -288,7 +287,7 @@ protected:
    * @param default_topic If set, the default value for the topic name to use
    * @param fixed_topic If true, the topic name of the output signal is fixed
    * @param publish_on_step If true, the output is published periodically on step
-   * @throws modulo_utils::exceptions::AddSignalException if the output could not be created
+   * @throws modulo_core::exceptions::AddSignalException if the output could not be created
    * (empty name, already registered)
    * @return The parsed signal name
    */
@@ -390,7 +389,7 @@ protected:
    * @param reference_frame The desired reference frame of the transform
    * @param time_point The time at which the value of the transform is desired
    * @param duration How long to block the lookup call before failing
-   * @throws modulo_utils::exceptions::LookupTransformException if TF buffer/listener are unconfigured or
+   * @throws modulo_core::exceptions::LookupTransformException if TF buffer/listener are unconfigured or
    * if the lookupTransform call failed
    * @return If it exists, the requested transform
    */
@@ -405,7 +404,7 @@ protected:
    * @param reference_frame The desired reference frame of the transform
    * @param validity_period The validity period of the latest transform from the time of lookup in seconds
    * @param duration How long to block the lookup call before failing
-   * @throws modulo_utils::exceptions::LookupTransformException if TF buffer/listener are unconfigured,
+   * @throws modulo_core::exceptions::LookupTransformException if TF buffer/listener are unconfigured,
    * if the lookupTransform call failed, or if the transform is too old
    * @return If it exists and is still valid, the requested transform
    */
@@ -484,14 +483,14 @@ private:
    * @param name The name of the predicate
    * @param predicate The predicate variant
    */
-  void add_variant_predicate(const std::string& name, const modulo_utils::PredicateVariant& predicate);
+  void add_variant_predicate(const std::string& name, const modulo_core::PredicateVariant& predicate);
 
   /**
    * @brief Set the predicate given as parameter, if the predicate is not found does not do anything.
    * @param name The name of the predicate
    * @param predicate The predicate variant
    */
-  void set_variant_predicate(const std::string& name, const modulo_utils::PredicateVariant& predicate);
+  void set_variant_predicate(const std::string& name, const modulo_core::PredicateVariant& predicate);
 
   /**
    * @brief Populate a Prediate message with the name and the value of a predicate.
@@ -505,7 +504,7 @@ private:
    * @param type The type of the signal (input or output)
    * @param default_topic If set, the default value for the topic name to use
    * @param fixed_topic If true, the topic name of the signal is fixed
-   * @throws modulo_utils::exceptions::AddSignalException if the signal could not be declared
+   * @throws modulo_core::exceptions::AddSignalException if the signal could not be declared
    * (empty name or already created)
    */
   void declare_signal(
@@ -529,7 +528,7 @@ private:
    * @brief Validate an add_service request by parsing the service name and checking the maps of registered services.
    * @param service_name The name of the service
    * @param type One of empty|string
-   * @throws modulo_utils::exceptions::AddServiceException if the service could not be created
+   * @throws modulo_core::exceptions::AddServiceException if the service could not be created
    * (empty name or already registered)
    * @return The parsed service name
    */
@@ -554,7 +553,7 @@ private:
  * @param reference_frame The desired reference frame of the transform
  * @param time_point The time at which the value of the transform is desired
  * @param duration How long to block the lookup call before failing
- * @throws modulo_utils::exceptions::LookupTransformException if TF buffer/listener are unconfigured or
+ * @throws modulo_core::exceptions::LookupTransformException if TF buffer/listener are unconfigured or
  * if the lookupTransform call failed
  * @return If it exists, the requested transform
  */
@@ -567,7 +566,7 @@ private:
   double period_; ///< The componet period in s
   std::mutex step_mutex_; ///< Mutex for step callback
 
-  std::map<std::string, modulo_utils::PredicateVariant> predicates_; ///< Map of predicates
+  std::map<std::string, modulo_core::PredicateVariant> predicates_; ///< Map of predicates
   std::shared_ptr<rclcpp::Publisher<modulo_interfaces::msg::PredicateCollection>>
       predicate_publisher_; ///< Predicate publisher
   modulo_interfaces::msg::PredicateCollection predicate_message_;
@@ -621,7 +620,7 @@ inline T ComponentInterface::get_parameter_value(const std::string& name) const 
   try {
     return this->parameter_map_.template get_parameter_value<T>(name);
   } catch (const state_representation::exceptions::InvalidParameterException& ex) {
-    throw modulo_utils::exceptions::ParameterException(
+    throw modulo_core::exceptions::ParameterException(
         "Failed to get parameter value of parameter '" + name + "': " + ex.what());
   }
 }
@@ -771,10 +770,10 @@ inline std::string ComponentInterface::create_output(
         parsed_signal_name, std::make_shared<PublisherInterface>(publisher_type, message_pair));
     this->periodic_outputs_.insert_or_assign(parsed_signal_name, publish_on_step);
     return parsed_signal_name;
-  } catch (const modulo_utils::exceptions::AddSignalException&) {
+  } catch (const modulo_core::exceptions::AddSignalException&) {
     throw;
   } catch (const std::exception& ex) {
-    throw modulo_utils::exceptions::AddSignalException(ex.what());
+    throw modulo_core::exceptions::AddSignalException(ex.what());
   }
 }
 
