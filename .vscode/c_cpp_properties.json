@@ -3,7 +3,7 @@
         {
             "name": "AMD",
             "includePath": [
-                "/opt/ros/iron/include/**",
+                "/opt/ros/jazzy/include/**",
                 "/home/ros2/ros2_ws/install/**",
                 "/home/ros2/ws/install/**",
                 "/home/ros2/ws/src/modulo_utils/include",
