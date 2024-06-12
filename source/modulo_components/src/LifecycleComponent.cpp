@@ -14,7 +14,8 @@ LifecycleComponent::LifecycleComponent(const rclcpp::NodeOptions& node_options, 
           LifecycleNode::get_node_graph_interface(), LifecycleNode::get_node_logging_interface(),
           LifecycleNode::get_node_parameters_interface(), LifecycleNode::get_node_services_interface(),
           LifecycleNode::get_node_time_source_interface(), LifecycleNode::get_node_timers_interface(),
-          LifecycleNode::get_node_topics_interface(), LifecycleNode::get_node_waitables_interface())) {
+          LifecycleNode::get_node_topics_interface(), LifecycleNode::get_node_type_descriptions_interface(),
+          LifecycleNode::get_node_waitables_interface())) {
   this->add_predicate(
       "is_unconfigured", [this] {
         return this->get_current_state().id() == lifecycle_msgs::msg::State::PRIMARY_STATE_UNCONFIGURED;
