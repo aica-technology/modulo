@@ -11,7 +11,6 @@
 #include <std_msgs/msg/string.hpp>
 
 #include "modulo_core/communication/PublisherHandler.hpp"
-#include "modulo_core/exceptions/NullPointerException.hpp"
 
 namespace modulo_core::communication {
 

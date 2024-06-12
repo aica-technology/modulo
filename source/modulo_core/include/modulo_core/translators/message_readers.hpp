@@ -23,7 +23,7 @@
 #include <state_representation/space/Jacobian.hpp>
 
 #include "modulo_core/EncodedState.hpp"
-#include "modulo_core/exceptions/MessageTranslationException.hpp"
+#include "modulo_core/exceptions.hpp"
 
 namespace modulo_core::translators {
 
