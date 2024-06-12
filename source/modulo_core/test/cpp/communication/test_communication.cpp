@@ -29,6 +29,8 @@ protected:
   }
 
   void clear_nodes() {
+    exec_->remove_node(pub_node_);
+    exec_->remove_node(sub_node_);
     pub_node_.reset();
     sub_node_.reset();
   }

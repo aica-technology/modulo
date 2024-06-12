@@ -9,10 +9,10 @@ name = "modulo"
 
 [build]
 type = "ros"
-image = "v1.0.1-iron"
+image = "v0.0.1-jazzy"
 
 [build.dependencies]
-"@aica/foss/control-libraries" = "v8.1.0"
+"@aica/foss/control-libraries" = "v9.0.0"
 
 [build.packages.modulo_components]
 source = "./source/modulo_components"

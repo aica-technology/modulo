@@ -113,7 +113,7 @@ public:
   void TearDown() { interface_.reset(nullptr); }
 
   void init() {
-    const auto result = interface_->init("controller_interface");
+    const auto result = interface_->init("controller_interface", "", 0, "", interface_->define_custom_node_options());
     ASSERT_EQ(result, controller_interface::return_type::OK);
     interface_->get_node()->set_parameter({"hardware_name", "test"});
     interface_->get_node()->set_parameter({"input_validity_period", 0.1});
