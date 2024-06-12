@@ -4,8 +4,7 @@
 
 #include "modulo_core/communication/MessagePair.hpp"
 #include "modulo_core/communication/PublisherType.hpp"
-#include "modulo_core/exceptions/InvalidPointerCastException.hpp"
-#include "modulo_core/exceptions/InvalidPointerException.hpp"
+#include "modulo_core/exceptions.hpp"
 
 namespace modulo_core::communication {
 

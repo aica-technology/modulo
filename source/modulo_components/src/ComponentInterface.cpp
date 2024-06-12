@@ -3,13 +3,10 @@
 #include <console_bridge/console.h>
 #include <tf2_msgs/msg/tf_message.hpp>
 
-#include <modulo_core/exceptions/ParameterTranslationException.hpp>
 #include <modulo_core/translators/message_readers.hpp>
 #include <modulo_core/translators/message_writers.hpp>
-#include <modulo_utils/exceptions/AddServiceException.hpp>
-#include <modulo_utils/exceptions/LookupTransformException.hpp>
 
-using namespace modulo_utils::exceptions;
+using namespace modulo_core;
 
 namespace modulo_components {
 
@@ -84,9 +81,9 @@ void ComponentInterface::add_parameter(
     bool read_only) {
   rclcpp::Parameter ros_param;
   try {
-    ros_param = modulo_core::translators::write_parameter(parameter);
-  } catch (const modulo_core::exceptions::ParameterTranslationException& ex) {
-    throw ParameterException("Failed to add parameter: " + std::string(ex.what()));
+    ros_param = translators::write_parameter(parameter);
+  } catch (const exceptions::ParameterTranslationException& ex) {
+    throw exceptions::ParameterException("Failed to add parameter: " + std::string(ex.what()));
   }
   if (!this->node_parameters_->has_parameter(parameter->get_name())) {
     RCLCPP_DEBUG_STREAM(this->node_logging_->get_logger(), "Adding parameter '" << parameter->get_name() << "'.");
@@ -101,7 +98,7 @@ void ComponentInterface::add_parameter(
       this->set_parameters_result_.reason = "";
       if (parameter->is_empty()) {
         descriptor.dynamic_typing = true;
-        descriptor.type = modulo_core::translators::get_ros_parameter_type(parameter->get_parameter_type());
+        descriptor.type = translators::get_ros_parameter_type(parameter->get_parameter_type());
         this->node_parameters_->declare_parameter(parameter->get_name(), rclcpp::ParameterValue{}, descriptor);
       } else {
         this->node_parameters_->declare_parameter(parameter->get_name(), ros_param.get_parameter_value(), descriptor);
@@ -111,13 +108,13 @@ void ComponentInterface::add_parameter(
       auto result = this->on_set_parameters_callback(ros_parameters);
       if (!result.successful) {
         this->node_parameters_->undeclare_parameter(parameter->get_name());
-        throw ParameterException(result.reason);
+        throw exceptions::ParameterException(result.reason);
       }
       this->read_only_parameters_.at(parameter->get_name()) = read_only;
     } catch (const std::exception& ex) {
       this->parameter_map_.remove_parameter(parameter->get_name());
       this->read_only_parameters_.erase(parameter->get_name());
-      throw ParameterException("Failed to add parameter: " + std::string(ex.what()));
+      throw exceptions::ParameterException("Failed to add parameter: " + std::string(ex.what()));
     }
   } else {
     RCLCPP_DEBUG_STREAM(
@@ -130,7 +127,7 @@ ComponentInterface::get_parameter(const std::string& name) const {
   try {
     return this->parameter_map_.get_parameter(name);
   } catch (const state_representation::exceptions::InvalidParameterException& ex) {
-    throw ParameterException("Failed to get parameter '" + name + "': " + ex.what());
+    throw exceptions::ParameterException("Failed to get parameter '" + name + "': " + ex.what());
   }
 }
 
@@ -151,14 +148,14 @@ void ComponentInterface::pre_set_parameters_callback(std::vector<rclcpp::Paramet
       }
 
       // convert the ROS parameter into a ParameterInterface without modifying the original
-      auto new_parameter = modulo_core::translators::read_parameter_const(ros_parameter, parameter);
+      auto new_parameter = translators::read_parameter_const(ros_parameter, parameter);
       if (!this->validate_parameter(new_parameter)) {
         result.successful = false;
         result.reason += "Validation of parameter '" + ros_parameter.get_name() + "' returned false!";
       } else if (!new_parameter->is_empty()) {
         // update the value of the parameter in the map
-        modulo_core::translators::copy_parameter_value(new_parameter, parameter);
-        ros_parameter = modulo_core::translators::write_parameter(new_parameter);
+        translators::copy_parameter_value(new_parameter, parameter);
+        ros_parameter = translators::write_parameter(new_parameter);
       }
     } catch (const std::exception& ex) {
       result.successful = false;
@@ -194,15 +191,14 @@ ComponentInterface::on_validate_parameter_callback(const std::shared_ptr<state_r
 }
 
 void ComponentInterface::add_predicate(const std::string& name, bool predicate) {
-  this->add_variant_predicate(name, modulo_utils::PredicateVariant(predicate));
+  this->add_variant_predicate(name, PredicateVariant(predicate));
 }
 
 void ComponentInterface::add_predicate(const std::string& name, const std::function<bool(void)>& predicate) {
-  this->add_variant_predicate(name, modulo_utils::PredicateVariant(predicate));
+  this->add_variant_predicate(name, PredicateVariant(predicate));
 }
 
-void ComponentInterface::add_variant_predicate(
-    const std::string& name, const modulo_utils::PredicateVariant& predicate) {
+void ComponentInterface::add_variant_predicate(const std::string& name, const PredicateVariant& predicate) {
   if (name.empty()) {
     RCLCPP_ERROR(this->node_logging_->get_logger(), "Failed to add predicate: Provide a non empty string as a name.");
     return;
@@ -244,17 +240,16 @@ bool ComponentInterface::get_predicate(const std::string& predicate_name) const 
 }
 
 void ComponentInterface::set_predicate(const std::string& name, bool predicate) {
-  this->set_variant_predicate(name, modulo_utils::PredicateVariant(predicate));
+  this->set_variant_predicate(name, PredicateVariant(predicate));
 }
 
 void ComponentInterface::set_predicate(
     const std::string& name, const std::function<bool(void)>& predicate
 ) {
-  this->set_variant_predicate(name, modulo_utils::PredicateVariant(predicate));
+  this->set_variant_predicate(name, PredicateVariant(predicate));
 }
 
-void ComponentInterface::set_variant_predicate(
-    const std::string& name, const modulo_utils::PredicateVariant& predicate) {
+void ComponentInterface::set_variant_predicate(const std::string& name, const PredicateVariant& predicate) {
   auto predicate_iterator = this->predicates_.find(name);
   if (predicate_iterator == this->predicates_.end()) {
     RCLCPP_ERROR_STREAM_THROTTLE(this->node_logging_->get_logger(), *this->node_clock_->get_clock(), 1000,
@@ -312,18 +307,18 @@ void ComponentInterface::declare_signal(
 ) {
   std::string parsed_signal_name = modulo_utils::parsing::parse_topic_name(signal_name);
   if (parsed_signal_name.empty()) {
-    throw AddSignalException(modulo_utils::parsing::topic_validation_warning(signal_name, type));
+    throw exceptions::AddSignalException(modulo_utils::parsing::topic_validation_warning(signal_name, type));
   }
   if (signal_name != parsed_signal_name) {
     RCLCPP_WARN_STREAM(
         this->node_logging_->get_logger(), modulo_utils::parsing::topic_validation_warning(signal_name, type));
   }
   if (this->inputs_.find(parsed_signal_name) != this->inputs_.cend()) {
-    throw AddSignalException(
+    throw exceptions::AddSignalException(
         "Signal with name '" + parsed_signal_name + "' already exists as input.");
   }
   if (this->outputs_.find(parsed_signal_name) != this->outputs_.cend()) {
-    throw AddSignalException(
+    throw exceptions::AddSignalException(
         "Signal with name '" + parsed_signal_name + "' already exists as output.");
   }
   std::string topic_name = default_topic.empty() ? "~/" + parsed_signal_name : default_topic;
@@ -342,15 +337,15 @@ void ComponentInterface::declare_signal(
 void ComponentInterface::publish_output(const std::string& signal_name) {
   auto parsed_signal_name = modulo_utils::parsing::parse_topic_name(signal_name);
   if (this->outputs_.find(parsed_signal_name) == this->outputs_.cend()) {
-    throw ModuloException("Output with name '" + signal_name + "' doesn't exist.");
+    throw exceptions::CoreException("Output with name '" + signal_name + "' doesn't exist.");
   }
   if (this->periodic_outputs_.at(parsed_signal_name)) {
-    throw ModuloException(
+    throw exceptions::CoreException(
         "An output that is published periodically cannot be triggered manually.");
   }
   try {
     this->outputs_.at(parsed_signal_name)->publish();
-  } catch (const modulo_core::exceptions::CoreException& ex) {
+  } catch (const exceptions::CoreException& ex) {
     RCLCPP_ERROR_STREAM_THROTTLE(this->node_logging_->get_logger(), *this->node_clock_->get_clock(), 1000,
                                  "Failed to publish output '" << parsed_signal_name << "': " << ex.what());
   }
@@ -434,7 +429,8 @@ void ComponentInterface::add_service(
 std::string ComponentInterface::validate_service_name(const std::string& service_name, const std::string& type) const {
   std::string parsed_service_name = modulo_utils::parsing::parse_topic_name(service_name);
   if (parsed_service_name.empty()) {
-    throw AddServiceException(modulo_utils::parsing::topic_validation_warning(service_name,  type + " service"));
+    throw exceptions::AddServiceException(
+        modulo_utils::parsing::topic_validation_warning(service_name, type + " service"));
   }
   if (service_name != parsed_service_name) {
     RCLCPP_WARN_STREAM(
@@ -443,10 +439,12 @@ std::string ComponentInterface::validate_service_name(const std::string& service
             + "'. Use the parsed name to refer to this service");
   }
   if (empty_services_.find(parsed_service_name) != empty_services_.cend()) {
-    throw AddServiceException("Service with name '" + parsed_service_name + "' already exists as an empty service.");
+    throw exceptions::AddServiceException(
+        "Service with name '" + parsed_service_name + "' already exists as an empty service.");
   }
   if (string_services_.find(parsed_service_name) != string_services_.cend()) {
-    throw AddServiceException("Service with name '" + parsed_service_name + "' already exists as a string service.");
+    throw exceptions::AddServiceException(
+        "Service with name '" + parsed_service_name + "' already exists as a string service.");
   }
   RCLCPP_DEBUG(this->node_logging_->get_logger(), "Adding %s service '%s'.", type.c_str(), parsed_service_name.c_str());
   return parsed_service_name;
@@ -524,7 +522,7 @@ state_representation::CartesianPose ComponentInterface::lookup_transform(
 ) {
   auto transform = this->lookup_ros_transform(frame, reference_frame, time_point, duration);
   state_representation::CartesianPose result(frame, reference_frame);
-  modulo_core::translators::read_message(result, transform);
+  translators::read_message(result, transform);
   return result;
 }
 
@@ -535,11 +533,11 @@ state_representation::CartesianPose ComponentInterface::lookup_transform(
       this->lookup_ros_transform(frame, reference_frame, tf2::TimePoint(std::chrono::microseconds(0)), duration);
   if (validity_period > 0.0
       && (this->node_clock_->get_clock()->now() - transform.header.stamp).seconds() > validity_period) {
-    throw LookupTransformException(
+    throw exceptions::LookupTransformException(
         "Failed to lookup transform: Latest transform is too old!");
   }
   state_representation::CartesianPose result(frame, reference_frame);
-  modulo_core::translators::read_message(result, transform);
+  translators::read_message(result, transform);
   return result;
 }
 
@@ -548,13 +546,13 @@ geometry_msgs::msg::TransformStamped ComponentInterface::lookup_ros_transform(
     const tf2::Duration& duration
 ) {
   if (this->tf_buffer_ == nullptr || this->tf_listener_ == nullptr) {
-    throw LookupTransformException(
+    throw exceptions::LookupTransformException(
         "Failed to lookup transform: To TF buffer / listener configured.");
   }
   try {
     return this->tf_buffer_->lookupTransform(reference_frame, frame, time_point, duration);
   } catch (const tf2::TransformException& ex) {
-    throw LookupTransformException(std::string("Failed to lookup transform: ").append(ex.what()));
+    throw exceptions::LookupTransformException(std::string("Failed to lookup transform: ").append(ex.what()));
   }
 }
 
@@ -598,7 +596,7 @@ void ComponentInterface::publish_outputs() {
       if (this->periodic_outputs_.at(signal)) {
         publisher->publish();
       }
-    } catch (const modulo_core::exceptions::CoreException& ex) {
+    } catch (const exceptions::CoreException& ex) {
       RCLCPP_ERROR_STREAM_THROTTLE(this->node_logging_->get_logger(), *this->node_clock_->get_clock(), 1000,
                                    "Failed to publish output '" << signal << "': " << ex.what());
     }

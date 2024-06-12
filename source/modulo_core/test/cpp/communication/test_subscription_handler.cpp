@@ -3,7 +3,6 @@
 #include <rclcpp/node.hpp>
 
 #include "modulo_core/communication/SubscriptionHandler.hpp"
-#include "modulo_core/exceptions/NullPointerException.hpp"
 
 using namespace modulo_core::communication;
 

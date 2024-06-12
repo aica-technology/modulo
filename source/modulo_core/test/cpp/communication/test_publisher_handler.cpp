@@ -4,7 +4,6 @@
 
 #include "modulo_core/communication/PublisherHandler.hpp"
 #include "modulo_core/communication/MessagePair.hpp"
-#include "modulo_core/exceptions/CoreException.hpp"
 
 using namespace modulo_core::communication;
 

@@ -6,7 +6,7 @@
 #include <state_representation/space/joint/JointPositions.hpp>
 #include <state_representation/space/joint/JointState.hpp>
 
-#include "modulo_core/exceptions/ParameterTranslationException.hpp"
+#include "modulo_core/exceptions.hpp"
 
 using namespace state_representation;
 

@@ -3,7 +3,6 @@
 #include <rclcpp/clock.hpp>
 
 #include "modulo_core/communication/MessagePairInterface.hpp"
-#include "modulo_core/exceptions/NullPointerException.hpp"
 #include "modulo_core/translators/message_readers.hpp"
 #include "modulo_core/translators/message_writers.hpp"
 

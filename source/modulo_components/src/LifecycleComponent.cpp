@@ -1,7 +1,5 @@
 #include "modulo_components/LifecycleComponent.hpp"
 
-#include <modulo_core/exceptions/CoreException.hpp>
-
 using namespace modulo_core::communication;
 using namespace rclcpp_lifecycle;
 

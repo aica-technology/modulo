@@ -1,6 +1,6 @@
 import pytest
 from modulo_components.component import Component
-from modulo_utils.exceptions import ModuloError
+from modulo_core.exceptions import CoreError
 
 
 class Trigger(Component):
@@ -21,7 +21,7 @@ def test_input_output(ros_exec, random_pose, minimal_cartesian_output, minimal_c
     assert minimal_cartesian_input.received_future.done() and minimal_cartesian_input.received_future.result()
     assert random_pose.get_name() == minimal_cartesian_input.input.get_name()
     assert random_pose.dist(minimal_cartesian_input.input) < 1e-3
-    with pytest.raises(ModuloError):
+    with pytest.raises(CoreError):
         minimal_cartesian_output.publish()
 
 
