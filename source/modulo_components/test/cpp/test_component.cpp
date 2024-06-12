@@ -60,7 +60,7 @@ TEST_F(ComponentTest, AddRemoveOutput) {
   component_->add_output("8_teEsTt_#1@3", data);
   EXPECT_TRUE(component_->outputs_.find("test_13") != component_->outputs_.end());
   EXPECT_NO_THROW(component_->outputs_.at("test_13")->publish());
-  EXPECT_THROW(component_->publish_output("test_13"), modulo_utils::exceptions::ModuloException);
+  EXPECT_THROW(component_->publish_output("test_13"), modulo_core::exceptions::CoreException);
 
   auto new_data = std::make_shared<bool>(false);
   component_->add_output("test_13", new_data);
@@ -74,6 +74,6 @@ TEST_F(ComponentTest, AddRemoveOutput) {
   EXPECT_FALSE(component_->periodic_outputs_.at("test_13"));
   EXPECT_NO_THROW(component_->publish_output("8_teEsTt_#1@3"));
   EXPECT_NO_THROW(component_->publish_output("test_13"));
-  EXPECT_THROW(component_->publish_output(""), modulo_utils::exceptions::ModuloException);
+  EXPECT_THROW(component_->publish_output(""), modulo_core::exceptions::CoreException);
 }
 } // namespace modulo_components
