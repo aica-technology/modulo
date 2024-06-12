@@ -30,6 +30,7 @@ Release Versions:
 - feat: define topic validation warning in utilities (#101)
 - fix(components): keep parameter values in sync with ros (#111)
 - feat: update to jazzy and CL v9.0.0 (#116)
+- refactor: move all exceptions into one place (#117)
 
 ## 4.2.1
 
