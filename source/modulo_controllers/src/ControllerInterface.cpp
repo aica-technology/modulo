@@ -389,15 +389,15 @@ bool ControllerInterface::on_validate_parameter_callback(const std::shared_ptr<P
 }
 
 void ControllerInterface::add_predicate(const std::string& name, bool predicate) {
-  add_variant_predicate(name, modulo_utils::PredicateVariant(predicate));
+  add_variant_predicate(name, modulo_core::PredicateVariant(predicate));
 }
 
 void ControllerInterface::add_predicate(const std::string& name, const std::function<bool(void)>& predicate) {
-  add_variant_predicate(name, modulo_utils::PredicateVariant(predicate));
+  add_variant_predicate(name, modulo_core::PredicateVariant(predicate));
 }
 
 void ControllerInterface::add_variant_predicate(
-    const std::string& name, const modulo_utils::PredicateVariant& predicate) {
+    const std::string& name, const modulo_core::PredicateVariant& predicate) {
   if (name.empty()) {
     RCLCPP_ERROR(get_node()->get_logger(), "Failed to add predicate: Provide a non empty string as a name.");
     return;
@@ -438,15 +438,15 @@ bool ControllerInterface::get_predicate(const std::string& predicate_name) const
 }
 
 void ControllerInterface::set_predicate(const std::string& name, bool predicate) {
-  set_variant_predicate(name, modulo_utils::PredicateVariant(predicate));
+  set_variant_predicate(name, modulo_core::PredicateVariant(predicate));
 }
 
 void ControllerInterface::set_predicate(const std::string& name, const std::function<bool(void)>& predicate) {
-  set_variant_predicate(name, modulo_utils::PredicateVariant(predicate));
+  set_variant_predicate(name, modulo_core::PredicateVariant(predicate));
 }
 
 void ControllerInterface::set_variant_predicate(
-    const std::string& name, const modulo_utils::PredicateVariant& predicate) {
+    const std::string& name, const modulo_core::PredicateVariant& predicate) {
   auto predicate_iterator = predicates_.find(name);
   if (predicate_iterator == predicates_.end()) {
     RCLCPP_ERROR_THROTTLE(

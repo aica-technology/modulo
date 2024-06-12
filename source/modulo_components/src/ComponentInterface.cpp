@@ -194,15 +194,15 @@ ComponentInterface::on_validate_parameter_callback(const std::shared_ptr<state_r
 }
 
 void ComponentInterface::add_predicate(const std::string& name, bool predicate) {
-  this->add_variant_predicate(name, modulo_utils::PredicateVariant(predicate));
+  this->add_variant_predicate(name, modulo_core::PredicateVariant(predicate));
 }
 
 void ComponentInterface::add_predicate(const std::string& name, const std::function<bool(void)>& predicate) {
-  this->add_variant_predicate(name, modulo_utils::PredicateVariant(predicate));
+  this->add_variant_predicate(name, modulo_core::PredicateVariant(predicate));
 }
 
 void ComponentInterface::add_variant_predicate(
-    const std::string& name, const modulo_utils::PredicateVariant& predicate) {
+    const std::string& name, const modulo_core::PredicateVariant& predicate) {
   if (name.empty()) {
     RCLCPP_ERROR(this->node_logging_->get_logger(), "Failed to add predicate: Provide a non empty string as a name.");
     return;
@@ -244,17 +244,17 @@ bool ComponentInterface::get_predicate(const std::string& predicate_name) const 
 }
 
 void ComponentInterface::set_predicate(const std::string& name, bool predicate) {
-  this->set_variant_predicate(name, modulo_utils::PredicateVariant(predicate));
+  this->set_variant_predicate(name, modulo_core::PredicateVariant(predicate));
 }
 
 void ComponentInterface::set_predicate(
     const std::string& name, const std::function<bool(void)>& predicate
 ) {
-  this->set_variant_predicate(name, modulo_utils::PredicateVariant(predicate));
+  this->set_variant_predicate(name, modulo_core::PredicateVariant(predicate));
 }
 
 void ComponentInterface::set_variant_predicate(
-    const std::string& name, const modulo_utils::PredicateVariant& predicate) {
+    const std::string& name, const modulo_core::PredicateVariant& predicate) {
   auto predicate_iterator = this->predicates_.find(name);
   if (predicate_iterator == this->predicates_.end()) {
     RCLCPP_ERROR_STREAM_THROTTLE(this->node_logging_->get_logger(), *this->node_clock_->get_clock(), 1000,

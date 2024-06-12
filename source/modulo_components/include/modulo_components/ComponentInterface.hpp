@@ -13,6 +13,7 @@
 #include <modulo_core/communication/PublisherType.hpp>
 #include <modulo_core/communication/SubscriptionHandler.hpp>
 #include <modulo_core/translators/parameter_translators.hpp>
+#include <modulo_core/PredicateVariant.hpp>
 
 #include <modulo_interfaces/srv/empty_trigger.hpp>
 #include <modulo_interfaces/srv/string_trigger.hpp>
@@ -21,7 +22,6 @@
 #include <modulo_utils/exceptions/AddSignalException.hpp>
 #include <modulo_utils/exceptions/ParameterException.hpp>
 #include <modulo_utils/parsing.hpp>
-#include <modulo_utils/predicate_variant.hpp>
 
 /**
  * @namespace modulo_components
@@ -484,14 +484,14 @@ private:
    * @param name The name of the predicate
    * @param predicate The predicate variant
    */
-  void add_variant_predicate(const std::string& name, const modulo_utils::PredicateVariant& predicate);
+  void add_variant_predicate(const std::string& name, const modulo_core::PredicateVariant& predicate);
 
   /**
    * @brief Set the predicate given as parameter, if the predicate is not found does not do anything.
    * @param name The name of the predicate
    * @param predicate The predicate variant
    */
-  void set_variant_predicate(const std::string& name, const modulo_utils::PredicateVariant& predicate);
+  void set_variant_predicate(const std::string& name, const modulo_core::PredicateVariant& predicate);
 
   /**
    * @brief Populate a Prediate message with the name and the value of a predicate.
@@ -567,7 +567,7 @@ private:
   double period_; ///< The componet period in s
   std::mutex step_mutex_; ///< Mutex for step callback
 
-  std::map<std::string, modulo_utils::PredicateVariant> predicates_; ///< Map of predicates
+  std::map<std::string, modulo_core::PredicateVariant> predicates_; ///< Map of predicates
   std::shared_ptr<rclcpp::Publisher<modulo_interfaces::msg::PredicateCollection>>
       predicate_publisher_; ///< Predicate publisher
   modulo_interfaces::msg::PredicateCollection predicate_message_;
