@@ -11,7 +11,7 @@ struct overloaded : Ts... {
 template<class... Ts>
 overloaded(Ts...) -> overloaded<Ts...>;
 
-using namespace modulo_utils::exceptions;
+using namespace modulo_core;
 using namespace state_representation;
 using namespace std::chrono_literals;
 
@@ -303,7 +303,7 @@ void ControllerInterface::add_parameter(
   set_parameter_callback_called_ = false;
   rclcpp::Parameter ros_param;
   try {
-    ros_param = modulo_core::translators::write_parameter(parameter);
+    ros_param = translators::write_parameter(parameter);
     if (!get_node()->has_parameter(parameter->get_name())) {
       RCLCPP_DEBUG(get_node()->get_logger(), "Adding parameter '%s'.", parameter->get_name().c_str());
       parameter_map_.set_parameter(parameter);
@@ -312,7 +312,7 @@ void ControllerInterface::add_parameter(
       descriptor.read_only = read_only;
       if (parameter->is_empty()) {
         descriptor.dynamic_typing = true;
-        descriptor.type = modulo_core::translators::get_ros_parameter_type(parameter->get_parameter_type());
+        descriptor.type = translators::get_ros_parameter_type(parameter->get_parameter_type());
         get_node()->declare_parameter(parameter->get_name(), rclcpp::ParameterValue{}, descriptor);
       } else {
         get_node()->declare_parameter(parameter->get_name(), ros_param.get_parameter_value(), descriptor);
@@ -337,7 +337,7 @@ std::shared_ptr<ParameterInterface> ControllerInterface::get_parameter(const std
   try {
     return this->parameter_map_.get_parameter(name);
   } catch (const state_representation::exceptions::InvalidParameterException& ex) {
-    throw ParameterException("Failed to get parameter '" + name + "': " + ex.what());
+    throw modulo_core::exceptions::ParameterException("Failed to get parameter '" + name + "': " + ex.what());
   }
 }
 
@@ -354,13 +354,13 @@ ControllerInterface::on_set_parameters_callback(const std::vector<rclcpp::Parame
       auto parameter = parameter_map_.get_parameter(ros_parameter.get_name());
 
       // convert the ROS parameter into a ParameterInterface without modifying the original
-      auto new_parameter = modulo_core::translators::read_parameter_const(ros_parameter, parameter);
+      auto new_parameter = translators::read_parameter_const(ros_parameter, parameter);
       if (!validate_parameter(new_parameter)) {
         result.successful = false;
         result.reason += "Validation of parameter '" + ros_parameter.get_name() + "' returned false!";
       } else if (!new_parameter->is_empty()) {
         // update the value of the parameter in the map
-        modulo_core::translators::copy_parameter_value(new_parameter, parameter);
+        translators::copy_parameter_value(new_parameter, parameter);
       }
     } catch (const std::exception& ex) {
       result.successful = false;
@@ -389,15 +389,15 @@ bool ControllerInterface::on_validate_parameter_callback(const std::shared_ptr<P
 }
 
 void ControllerInterface::add_predicate(const std::string& name, bool predicate) {
-  add_variant_predicate(name, modulo_core::PredicateVariant(predicate));
+  add_variant_predicate(name, PredicateVariant(predicate));
 }
 
 void ControllerInterface::add_predicate(const std::string& name, const std::function<bool(void)>& predicate) {
-  add_variant_predicate(name, modulo_core::PredicateVariant(predicate));
+  add_variant_predicate(name, PredicateVariant(predicate));
 }
 
 void ControllerInterface::add_variant_predicate(
-    const std::string& name, const modulo_core::PredicateVariant& predicate) {
+    const std::string& name, const PredicateVariant& predicate) {
   if (name.empty()) {
     RCLCPP_ERROR(get_node()->get_logger(), "Failed to add predicate: Provide a non empty string as a name.");
     return;
@@ -438,15 +438,15 @@ bool ControllerInterface::get_predicate(const std::string& predicate_name) const
 }
 
 void ControllerInterface::set_predicate(const std::string& name, bool predicate) {
-  set_variant_predicate(name, modulo_core::PredicateVariant(predicate));
+  set_variant_predicate(name, PredicateVariant(predicate));
 }
 
 void ControllerInterface::set_predicate(const std::string& name, const std::function<bool(void)>& predicate) {
-  set_variant_predicate(name, modulo_core::PredicateVariant(predicate));
+  set_variant_predicate(name, PredicateVariant(predicate));
 }
 
 void ControllerInterface::set_variant_predicate(
-    const std::string& name, const modulo_core::PredicateVariant& predicate) {
+    const std::string& name, const PredicateVariant& predicate) {
   auto predicate_iterator = predicates_.find(name);
   if (predicate_iterator == predicates_.end()) {
     RCLCPP_ERROR_THROTTLE(
@@ -562,8 +562,8 @@ void ControllerInterface::add_inputs() {
       auto topic = get_parameter_value<std::string>(name + "_topic");
       std::visit(
           overloaded{
-              [&](const realtime_tools::RealtimeBuffer<std::shared_ptr<modulo_core::EncodedState>>&) {
-                subscriptions_.push_back(create_subscription<modulo_core::EncodedState>(name, topic));
+              [&](const realtime_tools::RealtimeBuffer<std::shared_ptr<EncodedState>>&) {
+                subscriptions_.push_back(create_subscription<EncodedState>(name, topic));
               },
               [&](const realtime_tools::RealtimeBuffer<std::shared_ptr<std_msgs::msg::Bool>>&) {
                 subscriptions_.push_back(create_subscription<std_msgs::msg::Bool>(name, topic));
@@ -602,9 +602,9 @@ void ControllerInterface::add_outputs() {
       std::visit(
           overloaded{
               [&](EncodedStatePublishers& pub) {
-                std::get<1>(pub) = get_node()->create_publisher<modulo_core::EncodedState>(topic, qos_);
+                std::get<1>(pub) = get_node()->create_publisher<EncodedState>(topic, qos_);
                 std::get<2>(pub) =
-                    std::make_shared<realtime_tools::RealtimePublisher<modulo_core::EncodedState>>(std::get<1>(pub));
+                    std::make_shared<realtime_tools::RealtimePublisher<EncodedState>>(std::get<1>(pub));
               },
               [&](BoolPublishers& pub) {
                 pub.first = get_node()->create_publisher<std_msgs::msg::Bool>(topic, qos_);

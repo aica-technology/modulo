@@ -10,16 +10,16 @@
 #include <state_representation/parameters/ParameterMap.hpp>
 
 #include <modulo_core/EncodedState.hpp>
+#include <modulo_core/PredicateVariant.hpp>
 #include <modulo_core/communication/MessagePair.hpp>
+#include <modulo_core/exceptions.hpp>
 #include <modulo_core/translators/message_writers.hpp>
 #include <modulo_core/translators/parameter_translators.hpp>
-#include <modulo_core/PredicateVariant.hpp>
 
 #include <modulo_interfaces/msg/predicate_collection.hpp>
 #include <modulo_interfaces/srv/empty_trigger.hpp>
 #include <modulo_interfaces/srv/string_trigger.hpp>
 
-#include <modulo_utils/exceptions/ParameterException.hpp>
 #include <modulo_utils/parsing.hpp>
 
 namespace modulo_controllers {
@@ -297,7 +297,7 @@ protected:
   /**
    * @brief Get a parameter by name.
    * @param name The name of the parameter
-   * @throws modulo_utils::exceptions::ParameterException if the parameter could not be accessed
+   * @throws modulo_core::exceptions::ParameterException if the parameter could not be accessed
    * @return The ParameterInterface pointer to a Parameter instance
    */
   [[nodiscard]] std::shared_ptr<state_representation::ParameterInterface> get_parameter(const std::string& name) const;
@@ -306,7 +306,7 @@ protected:
    * @brief Get a parameter value by name.
    * @tparam T The type of the parameter
    * @param name The name of the parameter
-   * @throws modulo_utils::exceptions::ParameterException if the parameter value could not be accessed
+   * @throws modulo_core::exceptions::ParameterException if the parameter value could not be accessed
    * @return The value of the parameter
    */
   template<typename T>
@@ -645,7 +645,7 @@ inline T ControllerInterface::get_parameter_value(const std::string& name) const
   try {
     return this->parameter_map_.template get_parameter_value<T>(name);
   } catch (const state_representation::exceptions::InvalidParameterException& ex) {
-    throw modulo_utils::exceptions::ParameterException(
+    throw modulo_core::exceptions::ParameterException(
         "Failed to get parameter value of parameter '" + name + "': " + ex.what());
   }
 }
