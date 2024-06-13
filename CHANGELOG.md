@@ -18,8 +18,8 @@ Release Versions:
 
 - fix(modulo-controllers): improve log message (#110)
 - fix(modulo-components): add missing space in log message (#113)
-- feat(modulo-controller): add missing docs (#112)
-- fix: unhandled nullptr in ControllerInterface
+- feat(modulo-controllers): add missing docs (#112)
+- fix(modulo-controllers): unhandled nullptr in read_input
 
 ## 4.2.1
 
