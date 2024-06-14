@@ -14,7 +14,12 @@ Release Versions:
 - [2.1.1](#211)
 - [2.1.0](#210)
 
-## Upcoming changes
+## 4.2.2
+
+### June 14, 2024
+
+Version 4.2.2 bring a few fixes and minor improvements to the component and controllers. Mainly, it improves the
+controller interface by handling a potentially failing dynamic pointer cast.
 
 - fix(modulo-controllers): improve log message (#110)
 - fix(modulo-components): add missing space in log message (#113)
