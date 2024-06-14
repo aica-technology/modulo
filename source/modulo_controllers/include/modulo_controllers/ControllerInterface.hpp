@@ -745,12 +745,12 @@ inline std::optional<T> ControllerInterface::read_input(const std::string& name)
     return {};
   }
   auto message =
-      *std::get<realtime_tools::RealtimeBuffer<std::shared_ptr<modulo_core::EncodedState>>>(inputs_.at(name).buffer)
-           .readFromNonRT();
+      **std::get<realtime_tools::RealtimeBuffer<std::shared_ptr<modulo_core::EncodedState>>>(inputs_.at(name).buffer)
+            .readFromNonRT();
   std::shared_ptr<state_representation::State> state;
   try {
     auto message_pair = input_message_pairs_.at(name);
-    message_pair->read<modulo_core::EncodedState, state_representation::State>(*message);
+    message_pair->read<modulo_core::EncodedState, state_representation::State>(message);
     state = message_pair->get_message_pair<modulo_core::EncodedState, state_representation::State>()->get_data();
   } catch (const std::exception& ex) {
     RCLCPP_WARN_THROTTLE(
@@ -761,12 +761,14 @@ inline std::optional<T> ControllerInterface::read_input(const std::string& name)
   if (state->is_empty()) {
     return {};
   }
-  try {
-    return *std::dynamic_pointer_cast<T>(state);
-  } catch (const std::exception& ex) {
+  auto cast_ptr = std::dynamic_pointer_cast<T>(state);
+  if (cast_ptr != nullptr) {
+    return *cast_ptr;
+  } else {
     RCLCPP_WARN_THROTTLE(
-        get_node()->get_logger(), *get_node()->get_clock(), 1000, "Could not cast input '%s' to desired state type: %s",
-        name.c_str(), ex.what());
+        get_node()->get_logger(), *get_node()->get_clock(), 1000,
+        "Dynamic cast of message on input '%s' from type '%s' to type '%s' failed.", name.c_str(),
+        get_state_type_name(state->get_type()), get_state_type_name(T().get_type()));
   }
   return {};
 }
