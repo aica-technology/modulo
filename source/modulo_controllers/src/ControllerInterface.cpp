@@ -89,7 +89,12 @@ ControllerInterface::on_configure(const rclcpp_lifecycle::State&) {
   }
 
   RCLCPP_DEBUG(get_node()->get_logger(), "Configuration of ControllerInterface successful");
-  return on_configure();
+  try {
+    return on_configure();
+  } catch (const std::exception& ex) {
+    RCLCPP_ERROR_STREAM(get_node()->get_logger(), ex.what());
+  }
+  return CallbackReturn::ERROR;
 }
 
 rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn ControllerInterface::on_configure() {
@@ -181,7 +186,12 @@ ControllerInterface::on_activate(const rclcpp_lifecycle::State&) {
         .insert_or_assign(state_interface.get_interface_name(), state_interface.get_value());
   }
 
-  auto status = on_activate();
+  auto status = CallbackReturn::ERROR;
+  try {
+    status = on_activate();
+  } catch (const std::exception& ex) {
+    RCLCPP_ERROR_STREAM(get_node()->get_logger(), ex.what());
+  }
   if (status != CallbackReturn::SUCCESS) {
     return status;
   }
@@ -211,7 +221,12 @@ rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn Contro
 
 rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn
 ControllerInterface::on_deactivate(const rclcpp_lifecycle::State&) {
-  return on_deactivate();
+  try {
+    return on_deactivate();
+  } catch (const std::exception& ex) {
+    RCLCPP_ERROR_STREAM(get_node()->get_logger(), ex.what());
+  }
+  return CallbackReturn::ERROR;
 }
 
 rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn ControllerInterface::on_deactivate() {

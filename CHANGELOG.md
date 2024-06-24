@@ -28,6 +28,7 @@ Release Versions:
 - fix(components): keep parameter values in sync with ros (#111)
 - feat: update to jazzy and CL v9.0.0 (#116)
 - refactor: move all exceptions into one place (#117)
+- feat: try catch lifecycle transitions in components and controllers (#120)
 
 ## 4.2.2
 

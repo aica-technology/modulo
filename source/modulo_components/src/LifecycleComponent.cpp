@@ -73,7 +73,13 @@ node_interfaces::LifecycleNodeInterface::CallbackReturn LifecycleComponent::on_c
 }
 
 bool LifecycleComponent::handle_configure() {
-  bool result = this->on_configure_callback();
+  bool result;
+  try {
+    result = this->on_configure_callback();
+  } catch (const std::exception& ex) {
+    RCLCPP_ERROR_STREAM(get_logger(), ex.what());
+    return false;
+  }
   return result && this->configure_outputs();
 }
 
@@ -95,7 +101,12 @@ node_interfaces::LifecycleNodeInterface::CallbackReturn LifecycleComponent::on_c
 }
 
 bool LifecycleComponent::handle_cleanup() {
-  return this->on_cleanup_callback();
+  try {
+    return this->on_cleanup_callback();
+  } catch (const std::exception& ex) {
+    RCLCPP_ERROR_STREAM(get_logger(), ex.what());
+    return false;
+  }
 }
 
 bool LifecycleComponent::on_cleanup_callback() {
@@ -123,8 +134,14 @@ node_interfaces::LifecycleNodeInterface::CallbackReturn LifecycleComponent::on_a
 }
 
 bool LifecycleComponent::handle_activate() {
-  bool result = this->activate_outputs();
-  return result && this->on_activate_callback();
+  bool result;
+  try {
+    result = this->on_activate_callback();
+  } catch (const std::exception& ex) {
+    RCLCPP_ERROR_STREAM(get_logger(), ex.what());
+    return false;
+  }
+  return result && this->activate_outputs();
 }
 
 bool LifecycleComponent::on_activate_callback() {
@@ -145,8 +162,13 @@ node_interfaces::LifecycleNodeInterface::CallbackReturn LifecycleComponent::on_d
 }
 
 bool LifecycleComponent::handle_deactivate() {
-  bool result = this->on_deactivate_callback();
-  return result && this->deactivate_outputs();
+  auto result = this->deactivate_outputs();
+  try {
+    return result && this->on_deactivate_callback();
+  } catch (const std::exception& ex) {
+    RCLCPP_ERROR_STREAM(get_logger(), ex.what());
+    return false;
+  }
 }
 
 bool LifecycleComponent::on_deactivate_callback() {
@@ -189,7 +211,13 @@ node_interfaces::LifecycleNodeInterface::CallbackReturn LifecycleComponent::on_s
 }
 
 bool LifecycleComponent::handle_shutdown() {
-  bool result = this->on_shutdown_callback();
+  bool result;
+  try {
+    result = this->on_shutdown_callback();
+  } catch (const std::exception& ex) {
+    RCLCPP_ERROR_STREAM(get_logger(), ex.what());
+    return false;
+  }
   return result && this->clear_signals();
 }
 
