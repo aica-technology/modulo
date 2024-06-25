@@ -471,6 +471,20 @@ private:
       const std::string& name, const std::string& interface, std::vector<std::string>& list, const std::string& type);
 
   /**
+   * @brief Callback function to validate and update parameters on change.
+   * @param parameters The new parameter objects provided by the ROS interface
+   */
+  void pre_set_parameters_callback(std::vector<rclcpp::Parameter>& parameters);
+
+  /**
+   * @brief Callback function to notify ROS about the validation result from the pre_set_parameters_callback step.
+   * @param parameters The new parameter objects provided by the ROS interface
+   * @see pre_set_parameters_callback()
+   * @return The result of the validation
+   */
+  rcl_interfaces::msg::SetParametersResult on_set_parameters_callback(const std::vector<rclcpp::Parameter>& parameters);
+
+  /**
    * @brief Parameter validation function
    * @details This validates the base class parameters and calls the on_validate_parameter_callback function of the
    * derived controller classes.
@@ -478,13 +492,6 @@ private:
    * @return The validation result
    */
   bool validate_parameter(const std::shared_ptr<state_representation::ParameterInterface>& parameter);
-
-  /**
-   * @brief Callback function to validate and update parameters on change.
-   * @param parameters The new parameter objects provided by the ROS interface
-   * @return The result of the validation
-   */
-  rcl_interfaces::msg::SetParametersResult on_set_parameters_callback(const std::vector<rclcpp::Parameter>& parameters);
 
   /**
    * @brief Add a predicate to the map of predicates.
@@ -590,10 +597,14 @@ private:
   using controller_interface::ControllerInterfaceBase::command_interfaces_;
   using controller_interface::ControllerInterfaceBase::state_interfaces_;
 
-  state_representation::ParameterMap parameter_map_;///< ParameterMap for handling parameters
-  bool set_parameter_callback_called_ = false;      ///< Flag to indicate if on_set_parameter_callback was called
+  state_representation::ParameterMap parameter_map_; ///< ParameterMap for handling parameters
+  std::unordered_map<std::string, bool> read_only_parameters_;
+  std::shared_ptr<rclcpp::node_interfaces::PreSetParametersCallbackHandle>
+      pre_set_parameter_cb_handle_; ///< ROS callback function handle on pre set of parameters
   std::shared_ptr<rclcpp::node_interfaces::OnSetParametersCallbackHandle>
-      parameter_cb_handle_;///< ROS callback function handle for setting parameters
+      on_set_parameter_cb_handle_; ///< ROS callback function handle on set of parameters
+  rcl_interfaces::msg::SetParametersResult set_parameters_result_;
+  bool pre_set_parameter_callback_called_ = false; ///< Flag to indicate if pre_set_parameter_callback was called
 
   std::vector<SubscriptionVariant> subscriptions_;///< Vector of subscriptions
   std::map<std::string, ControllerInput> inputs_;///< Map of inputs
@@ -653,11 +664,11 @@ inline T ControllerInterface::get_parameter_value(const std::string& name) const
 template<typename T>
 inline void ControllerInterface::set_parameter_value(const std::string& name, const T& value) {
   try {
-    rcl_interfaces::msg::SetParametersResult result =
-        get_node()
-            ->set_parameters(
-                {modulo_core::translators::write_parameter(state_representation::make_shared_parameter(name, value))})
-            .at(0);
+    std::vector<rclcpp::Parameter> parameters{
+        modulo_core::translators::write_parameter(state_representation::make_shared_parameter(name, value))};
+    pre_set_parameters_callback(parameters);
+    pre_set_parameter_callback_called_ = true;
+    auto result = get_node()->set_parameters(parameters).at(0);
     if (!result.successful) {
       RCLCPP_ERROR_THROTTLE(
           get_node()->get_logger(), *get_node()->get_clock(), 1000,
@@ -785,7 +796,7 @@ inline std::optional<T> ControllerInterface::read_input(const std::string& name)
     RCLCPP_WARN_THROTTLE(
         get_node()->get_logger(), *get_node()->get_clock(), 1000,
         "Dynamic cast of message on input '%s' from type '%s' to type '%s' failed.", name.c_str(),
-        get_state_type_name(state->get_type()), get_state_type_name(T().get_type()));
+        get_state_type_name(state->get_type()).c_str(), get_state_type_name(T().get_type()).c_str());
   }
   return {};
 }
