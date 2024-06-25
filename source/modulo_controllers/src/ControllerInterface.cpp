@@ -77,9 +77,8 @@ ControllerInterface::on_configure(const rclcpp_lifecycle::State&) {
   add_outputs();
 
   if (predicates_.size()) {
-    // TODO: topic
     predicate_publisher_ =
-        get_node()->create_publisher<modulo_interfaces::msg::PredicateCollection>("/predicates2", qos_);
+        get_node()->create_publisher<modulo_interfaces::msg::PredicateCollection>("/predicates", qos_);
     predicate_message_.node = get_node()->get_fully_qualified_name();
     predicate_message_.type = modulo_interfaces::msg::PredicateCollection::CONTROLLER;
 
