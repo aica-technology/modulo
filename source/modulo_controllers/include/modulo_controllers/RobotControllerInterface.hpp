@@ -31,8 +31,10 @@ public:
    * @brief Constructor with robot model flag and a control type to determine the command interfaces to claim
    * @param robot_model_required Flag to indicate if a robot model is required for the controller
    * @param control_type One of [position, velocity, effort or acceleration]
+   * @param load_geometries If true, load the URDF geometries into the robot model for collision features
    */
-  explicit RobotControllerInterface(bool robot_model_required, const std::string& control_type = "");
+  explicit RobotControllerInterface(
+      bool robot_model_required, const std::string& control_type = "", bool load_geometries = false);
 
   /**
    * @copydoc modulo_controllers::ControllerInterface::add_interfaces()
@@ -115,6 +117,7 @@ private:
   std::string control_type_;       ///< The high-level interface type (position, velocity, acceleration or effort)
 
   bool robot_model_required_;///< If true, check that a robot model is available on configure
+  bool load_geometries_;///< If true, load geometries from the URDF into the robot model
   bool
       new_joint_command_ready_;///< If true, joint commands are written to the command interface, else previous commands are decayed
   double

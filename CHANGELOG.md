@@ -2,6 +2,7 @@
 
 Release Versions:
 
+- [4.2.2](#422)
 - [4.2.1](#421)
 - [4.2.0](#420)
 - [4.1.0](#410)
@@ -28,6 +29,7 @@ Release Versions:
 - fix(components): keep parameter values in sync with ros (#111)
 - feat: update to jazzy and CL v9.0.0 (#116)
 - refactor: move all exceptions into one place (#117)
+- feat(controllers): add flag for collision features to robot controller interface (#114)
 
 ## 4.2.2
 
