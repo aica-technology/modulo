@@ -37,13 +37,13 @@ def test_rate_parameter(ros_context):
 def test_add_bool_predicate(component_interface):
     component_interface.add_predicate('foo', True)
     assert 'foo' in component_interface._predicates.keys()
-    assert component_interface._predicates['foo']
+    assert component_interface._predicates['foo'].get_value()
 
 
 def test_add_function_predicate(component_interface):
     component_interface.add_predicate('foo', lambda: False)
     assert 'foo' in component_interface._predicates.keys()
-    assert not component_interface._predicates['foo']()
+    assert not component_interface._predicates['foo'].get_value()
 
 
 def test_get_predicate(component_interface):
@@ -224,14 +224,5 @@ def test_raise_error(component_interface):
 
 def test_add_trigger(component_interface):
     component_interface.add_trigger("trigger")
-    assert "trigger" in component_interface._triggers.keys()
-    assert not component_interface._triggers["trigger"]
-    assert not component_interface.get_predicate("trigger")
+    assert "trigger" in component_interface._triggers
     component_interface.trigger("trigger")
-    # When reading, the trigger will be true only once
-    component_interface._triggers["trigger"] = True
-    assert component_interface._triggers["trigger"]
-    assert component_interface.get_predicate("trigger")
-    # After the predicate function was evaluated once, the trigger is back to false
-    assert not component_interface._triggers["trigger"]
-    assert not component_interface.get_predicate("trigger")

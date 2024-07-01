@@ -213,7 +213,6 @@ void ComponentInterface::add_predicate(
     RCLCPP_ERROR_STREAM_THROTTLE(
         this->node_logging_->get_logger(), *this->node_clock_->get_clock(), 1000,
         "Failed to add predicate '" << predicate_name << "': " << ex.what());
-    return;
   }
 }
 
