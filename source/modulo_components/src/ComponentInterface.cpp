@@ -190,74 +190,68 @@ ComponentInterface::on_validate_parameter_callback(const std::shared_ptr<state_r
   return true;
 }
 
-void ComponentInterface::add_predicate(const std::string& name, bool predicate) {
-  this->add_variant_predicate(name, PredicateVariant(predicate));
+void ComponentInterface::add_predicate(const std::string& predicate_name, bool predicate_value) {
+  this->add_predicate(predicate_name, [predicate_value]() { return predicate_value; });
 }
 
-void ComponentInterface::add_predicate(const std::string& name, const std::function<bool(void)>& predicate) {
-  this->add_variant_predicate(name, PredicateVariant(predicate));
-}
-
-void ComponentInterface::add_variant_predicate(const std::string& name, const PredicateVariant& predicate) {
-  if (name.empty()) {
+void ComponentInterface::add_predicate(
+    const std::string& predicate_name, const std::function<bool(void)>& predicate_function) {
+  if (predicate_name.empty()) {
     RCLCPP_ERROR(this->node_logging_->get_logger(), "Failed to add predicate: Provide a non empty string as a name.");
     return;
   }
-  if (this->predicates_.find(name) != this->predicates_.end()) {
-    RCLCPP_WARN_STREAM(this->node_logging_->get_logger(),
-                       "Predicate with name '" << name << "' already exists, overwriting.");
+  if (this->predicates_.find(predicate_name) != this->predicates_.end()) {
+    RCLCPP_WARN_STREAM(
+        this->node_logging_->get_logger(),
+        "Predicate with name '" << predicate_name << "' already exists, overwriting.");
   } else {
-    RCLCPP_DEBUG_STREAM(this->node_logging_->get_logger(), "Adding predicate '" << name << "'.");
+    RCLCPP_DEBUG_STREAM(this->node_logging_->get_logger(), "Adding predicate '" << predicate_name << "'.");
   }
-  this->predicates_.insert_or_assign(name, predicate);
+  try {
+    this->predicates_.insert_or_assign(predicate_name, Predicate(predicate_function));
+  } catch (const std::exception& ex) {
+    RCLCPP_ERROR_STREAM_THROTTLE(
+        this->node_logging_->get_logger(), *this->node_clock_->get_clock(), 1000,
+        "Failed to add predicate '" << predicate_name << "': " << ex.what());
+    return;
+  }
 }
 
 bool ComponentInterface::get_predicate(const std::string& predicate_name) const {
-  auto predicate_iterator = this->predicates_.find(predicate_name);
-  // if there is no predicate with that name simply return false with an error message
-  if (predicate_iterator == this->predicates_.end()) {
-    RCLCPP_ERROR_STREAM_THROTTLE(this->node_logging_->get_logger(), *this->node_clock_->get_clock(), 1000,
-                                 "Failed to get predicate '" << predicate_name
-                                                             << "': Predicate does not exists, returning false.");
+  auto predicate_it = this->predicates_.find(predicate_name);
+  if (predicate_it == this->predicates_.end()) {
+    RCLCPP_ERROR_STREAM_THROTTLE(
+        this->node_logging_->get_logger(), *this->node_clock_->get_clock(), 1000,
+        "Failed to get predicate '" << predicate_name << "': Predicate does not exist, returning false.");
     return false;
   }
-  // try to get the value from the variant as a bool
-  auto* ptr_value = std::get_if<bool>(&predicate_iterator->second);
-  if (ptr_value) {
-    return *ptr_value;
-  }
-  // if previous check failed, it means the variant is actually a callback function
-  auto callback_function = std::get<std::function<bool(void)>>(predicate_iterator->second);
-  bool value = false;
   try {
-    value = (callback_function)();
+    return predicate_it->second.get_value();
   } catch (const std::exception& ex) {
-    RCLCPP_ERROR_STREAM_THROTTLE(this->node_logging_->get_logger(), *this->node_clock_->get_clock(), 1000,
-                                 "Failed to evaluate callback of predicate '" << predicate_name
-                                                                              << "', returning false: " << ex.what());
+    RCLCPP_ERROR_STREAM_THROTTLE(
+        this->node_logging_->get_logger(), *this->node_clock_->get_clock(), 1000,
+        "Failed to evaluate callback of predicate '" << predicate_it->first << "', returning false: " << ex.what());
   }
-  return value;
+  return false;
 }
 
-void ComponentInterface::set_predicate(const std::string& name, bool predicate) {
-  this->set_variant_predicate(name, PredicateVariant(predicate));
+void ComponentInterface::set_predicate(const std::string& predicate_name, bool predicate_value) {
+  this->set_predicate(predicate_name, [predicate_value]() { return predicate_value; });
 }
 
 void ComponentInterface::set_predicate(
-    const std::string& name, const std::function<bool(void)>& predicate
-) {
-  this->set_variant_predicate(name, PredicateVariant(predicate));
-}
-
-void ComponentInterface::set_variant_predicate(const std::string& name, const PredicateVariant& predicate) {
-  auto predicate_iterator = this->predicates_.find(name);
-  if (predicate_iterator == this->predicates_.end()) {
-    RCLCPP_ERROR_STREAM_THROTTLE(this->node_logging_->get_logger(), *this->node_clock_->get_clock(), 1000,
-                                 "Failed to set predicate '" << name << "': Predicate does not exist.");
+    const std::string& predicate_name, const std::function<bool(void)>& predicate_function) {
+  auto predicate_it = this->predicates_.find(predicate_name);
+  if (predicate_it == this->predicates_.end()) {
+    RCLCPP_ERROR_STREAM_THROTTLE(
+        this->node_logging_->get_logger(), *this->node_clock_->get_clock(), 1000,
+        "Failed to set predicate '" << predicate_name << "': Predicate does not exist.");
     return;
   }
-  predicate_iterator->second = predicate;
-  this->publish_predicate(name);
+  predicate_it->second.set_predicate(predicate_function);
+  if (auto new_predicate = predicate_it->second.query(); new_predicate) {
+    this->publish_predicate(predicate_name, *new_predicate);
+  }
 }
 
 void ComponentInterface::add_trigger(const std::string& trigger_name) {
@@ -265,29 +259,29 @@ void ComponentInterface::add_trigger(const std::string& trigger_name) {
     RCLCPP_ERROR(this->node_logging_->get_logger(), "Failed to add trigger: Provide a non empty string as a name.");
     return;
   }
-  if (this->triggers_.find(trigger_name) != this->triggers_.end()
-      || this->predicates_.find(trigger_name) != this->predicates_.end()) {
-    RCLCPP_ERROR_STREAM(this->node_logging_->get_logger(), "Failed to add trigger: there is already a trigger or "
-                                                           "predicate with name '" << trigger_name << "'.");
+  if (std::find(this->triggers_.cbegin(), this->triggers_.cend(), trigger_name) != this->triggers_.cend()) {
+    RCLCPP_ERROR_STREAM(
+        this->node_logging_->get_logger(),
+        "Failed to add trigger: there is already a trigger with name '" << trigger_name << "'.");
     return;
   }
-  this->triggers_.insert_or_assign(trigger_name, false);
-  this->add_predicate(
-      trigger_name, [this, trigger_name] {
-        auto value = this->triggers_.at(trigger_name);
-        this->triggers_.at(trigger_name) = false;
-        return value;
-      });
+  if (this->predicates_.find(trigger_name) != this->predicates_.end()) {
+    RCLCPP_ERROR_STREAM(
+        this->node_logging_->get_logger(),
+        "Failed to add trigger: there is already a predicate with name '" << trigger_name << "'.");
+    return;
+  }
+  this->triggers_.push_back(trigger_name);
 }
 
 void ComponentInterface::trigger(const std::string& trigger_name) {
-  if (this->triggers_.find(trigger_name) == this->triggers_.end()) {
-    RCLCPP_ERROR_STREAM(this->node_logging_->get_logger(), "Failed to trigger: could not find trigger"
-                                                           " with name  '" << trigger_name << "'.");
+  if (std::find(this->triggers_.cbegin(), this->triggers_.cend(), trigger_name) == this->triggers_.cend()) {
+    RCLCPP_ERROR_STREAM(
+        this->node_logging_->get_logger(),
+        "Failed to trigger: could not find trigger with name  '" << trigger_name << "'.");
     return;
   }
-  this->triggers_.at(trigger_name) = true;
-  publish_predicate(trigger_name);
+  publish_predicate(trigger_name, true);
 }
 
 void ComponentInterface::declare_input(
@@ -569,25 +563,29 @@ void ComponentInterface::raise_error() {
   this->set_predicate("in_error_state", true);
 }
 
-modulo_interfaces::msg::Predicate ComponentInterface::get_predicate_message(const std::string& name) const {
+modulo_interfaces::msg::Predicate ComponentInterface::get_predicate_message(const std::string& name, bool value) const {
   modulo_interfaces::msg::Predicate message;
   message.predicate = name;
-  message.value = this->get_predicate(name);
+  message.value = value;
   return message;
 }
 
-void ComponentInterface::publish_predicate(const std::string& name) {
-  auto message(predicate_message_);
-  message.predicates.push_back(this->get_predicate_message(name));
+void ComponentInterface::publish_predicate(const std::string& name, bool value) {
+  auto message(this->predicate_message_);
+  message.predicates.push_back(this->get_predicate_message(name, value));
   this->predicate_publisher_->publish(message);
 }
 
 void ComponentInterface::publish_predicates() {
   auto message(this->predicate_message_);
-  for (const auto& predicate : this->predicates_) {
-    message.predicates.push_back(this->get_predicate_message(predicate.first));
+  for (auto predicate_it = this->predicates_.begin(); predicate_it != this->predicates_.end(); ++predicate_it) {
+    if (auto new_predicate = predicate_it->second.query(); new_predicate) {
+      message.predicates.push_back(this->get_predicate_message(predicate_it->first, *new_predicate));
+    }
   }
-  this->predicate_publisher_->publish(message);
+  if (message.predicates.size()) {
+    this->predicate_publisher_->publish(message);
+  }
 }
 
 void ComponentInterface::publish_outputs() {
