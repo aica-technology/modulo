@@ -31,6 +31,7 @@ Release Versions:
 - refactor: move all exceptions into one place (#117)
 - feat(controllers): add flag for collision features to robot controller interface (#114)
 - feat: try catch lifecycle transitions in components and controllers (#120)
+- refactor: change predicate topic of controllers (#121)
 
 ## 4.2.2
 
