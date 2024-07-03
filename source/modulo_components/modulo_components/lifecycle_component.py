@@ -72,7 +72,12 @@ class LifecycleComponent(ComponentInterface, LifecycleNodeMixin):
 
         :return: True if configuration is successful, false otherwise
         """
-        return self.on_configure_callback() and self.__configure_outputs()
+        try:
+            result = self.on_configure_callback()
+        except Exception as e:
+            self.get_logger().error(f"{e}")
+            return False
+        return result and self.__configure_outputs()
 
     def on_configure_callback(self) -> bool:
         """
@@ -108,7 +113,11 @@ class LifecycleComponent(ComponentInterface, LifecycleNodeMixin):
 
         :return: True if cleanup is successful, false otherwise
         """
-        return self.on_cleanup_callback()
+        try:
+            return self.on_cleanup_callback()
+        except Exception as e:
+            self.get_logger().error(f"{e}")
+            return False
 
     def on_cleanup_callback(self) -> bool:
         """
@@ -152,7 +161,11 @@ class LifecycleComponent(ComponentInterface, LifecycleNodeMixin):
 
         :return: True if activation is successful, false otherwise
         """
-        result = self.on_activate_callback()
+        try:
+            result = self.on_activate_callback()
+        except Exception as e:
+            self.get_logger().error(f"{e}")
+            return False
         return result and self.__activate_outputs()
 
     def on_activate_callback(self) -> bool:
@@ -190,8 +203,12 @@ class LifecycleComponent(ComponentInterface, LifecycleNodeMixin):
 
         :return: True if deactivation is successful, false otherwise
         """
-        result = self.on_deactivate_callback()
-        return result and self.__deactivate_outputs()
+        result = self.__deactivate_outputs()
+        try:
+            return result and self.on_deactivate_callback()
+        except Exception as e:
+            self.get_logger().error(f"{e}")
+            return False
 
     def on_deactivate_callback(self) -> bool:
         """
@@ -237,7 +254,11 @@ class LifecycleComponent(ComponentInterface, LifecycleNodeMixin):
 
         :return: True if shutdown is successful, false otherwise
         """
-        return self.on_shutdown_callback()
+        try:
+            return self.on_shutdown_callback()
+        except Exception as e:
+            self.get_logger().error(f"{e}")
+            return False
 
     def on_shutdown_callback(self) -> bool:
         """
