@@ -407,6 +407,7 @@ class ComponentInterface(Node):
             self.get_logger().error(f"Failed to trigger: could not find trigger with name '{trigger_name}'.")
             return
         self.set_predicate(trigger_name, True)
+        # reset the trigger to be published on the next step
         self._predicates[trigger_name].set_predicate(lambda: False)
 
     def remove_output(self, signal_name):

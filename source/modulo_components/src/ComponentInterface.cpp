@@ -282,6 +282,7 @@ void ComponentInterface::trigger(const std::string& trigger_name) {
     return;
   }
   this->set_predicate(trigger_name, true);
+  // reset the trigger to be published on the next step
   this->predicates_.at(trigger_name).set_predicate([]() { return false; });
 }
 
