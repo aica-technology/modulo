@@ -10,10 +10,11 @@ import modulo_core.translators.message_readers as modulo_readers
 import modulo_core.translators.message_writers as modulo_writers
 import state_representation as sr
 from geometry_msgs.msg import TransformStamped
-from modulo_interfaces.msg import Predicate, PredicateCollection
+from modulo_interfaces.msg import Predicate as PredicateMsg
+from modulo_interfaces.msg import PredicateCollection
 from modulo_interfaces.srv import EmptyTrigger, StringTrigger
 from modulo_utils.parsing import parse_topic_name, topic_validation_warning
-from modulo_core import EncodedState
+from modulo_core import EncodedState, Predicate
 from modulo_core.exceptions import *
 from modulo_core.translators.parameter_translators import get_ros_parameter_type, read_parameter_const, write_parameter
 from rcl_interfaces.msg import ParameterDescriptor, SetParametersResult
@@ -48,8 +49,8 @@ class ComponentInterface(Node):
         self.__read_only_parameters: Dict[str, bool] = {}
         self.__pre_set_parameters_callback_called = False
         self.__set_parameters_result = SetParametersResult()
-        self._predicates: Dict[str, Union[bool, Callable[[], bool]]] = {}
-        self._triggers: Dict[str, bool] = {}
+        self._predicates: Dict[str, Predicate] = {}
+        self._triggers: List[str] = []
         self._periodic_callbacks: Dict[str, Callable[[], None]] = {}
         self._inputs = {}
         self._outputs = {}
@@ -76,7 +77,7 @@ class ComponentInterface(Node):
         self._rate = self.get_parameter_value("rate")
         self._period = 1.0 / self._rate
         self.create_timer(self._period, self.__step_with_mutex)
-    
+
     def __del__(self):
         self.__step_lock.acquire()
 
@@ -106,7 +107,7 @@ class ComponentInterface(Node):
         Step function that is called periodically.
         """
         pass
-    
+
     def on_step_callback(self):
         """
         Steps to execute periodically. To be redefined by derived classes.
@@ -263,7 +264,7 @@ class ComponentInterface(Node):
         :return: The validation result
         """
         return True
-    
+
     def __pre_set_parameters_callback(self, ros_parameters: List[Parameter]) -> List[Parameter]:
         """
         Callback function to validate and update parameters on change.
@@ -299,7 +300,6 @@ class ComponentInterface(Node):
         self.__set_parameters_result = result
         return new_parameters
 
-
     def __on_set_parameters_callback(self, ros_parameters: List[Parameter]) -> SetParametersResult:
         """
         Callback function to notify ROS about the validation result from the pre_set_parameters_callback step
@@ -312,12 +312,12 @@ class ComponentInterface(Node):
         self.__set_parameters_result.reason = ""
         return result
 
-    def add_predicate(self, name: str, value: Union[bool, Callable[[], bool]]):
+    def add_predicate(self, name: str, predicate: Union[bool, Callable[[], bool]]):
         """
         Add a predicate to the map of predicates.
 
-        :param name: The name of the associated predicate
-        :param value: The value of the predicate as a bool or a callable function
+        :param name: The name of the predicate
+        :param predicate: The value of the predicate as a bool or a callable function
         """
         if not name:
             self.get_logger().error("Failed to add predicate: Provide a non empty string as a name.")
@@ -325,7 +325,13 @@ class ComponentInterface(Node):
             self.get_logger().warn(f"Predicate with name '{name}' already exists, overwriting.")
         else:
             self.get_logger().debug(f"Adding predicate '{name}'.")
-        self._predicates[name] = value
+        try:
+            if callable(predicate):
+                self._predicates[name] = Predicate(predicate)
+            else:
+                self._predicates[name] = Predicate(lambda: predicate)
+        except Exception as e:
+            self.get_logger().error(f"Failed to add predicate '{name}': {e}")
 
     def get_predicate(self, name: str) -> bool:
         """
@@ -336,36 +342,41 @@ class ComponentInterface(Node):
         :return: The value of the predicate as a boolean
         """
         if name not in self._predicates.keys():
-            self.get_logger().error(f"Predicate {name} does not exist, returning false.",
-                                    throttle_duration_sec=1.0)
+            self.get_logger().error(
+                f"Failed to get predicate '{name} ': Predicate does not exist, returning false.",
+                throttle_duration_sec=1.0)
             return False
-        value = self._predicates[name]
-        if callable(value):
-            bool_value = False
-            try:
-                bool_value = value()
-            except Exception as e:
-                self.get_logger().error(f"Error while evaluating the callback function: {e}",
-                                        throttle_duration_sec=1.0)
-            return bool_value
-        return value
+        try:
+            return self._predicates[name].get_value()
+        except Exception as e:
+            self.get_logger().error(f"Failed to evaluate callback of predicate '{
+                name}', returning false: {e}", throttle_duration_sec=1.0)
+        return False
 
-    def set_predicate(self, name: str, value: Union[bool, Callable[[], bool]]):
+    def set_predicate(self, name: str, predicate: Union[bool, Callable[[], bool]]):
         """
         Set the value of the predicate given as parameter, if the predicate is not found does not do anything. Even
         though the predicates are published periodically, the new value of this predicate will be published once
         immediately after setting it.
 
         :param name: The name of the predicate to retrieve from the map of predicates
-        :param value: The new value of the predicate as a bool or a callable function
+        :param predicate: The new value of the predicate as a bool or a callable function
         """
         if name not in self._predicates.keys():
-            self.get_logger().error(
-                f"Cannot set predicate {name} with a new value because it does not exist.",
-                throttle_duration_sec=1.0)
+            self.get_logger().error(f"Failed to set predicate '{
+                name}': Predicate does not exist.", throttle_duration_sec=1.0)
             return
-        self._predicates[name] = value
-        self._publish_predicate(name)
+        try:
+            if callable(predicate):
+                self._predicates[name].set_predicate(predicate)
+            else:
+                self._predicates[name].set_predicate(lambda: predicate)
+        except Exception as e:
+            self.get_logger().error(f"Failed to set predicate '{name}': {e}", throttle_duration_sec=1.0)
+            return
+        new_value = self._predicates[name].query()
+        if new_value is not None:
+            self._publish_predicate(name, new_value)
 
     def add_trigger(self, trigger_name: str):
         """
@@ -377,23 +388,14 @@ class ComponentInterface(Node):
         if not trigger_name:
             self.get_logger().error("Failed to add trigger: Provide a non empty string as a name.")
             return
-        if trigger_name in self._triggers.keys() or trigger_name in self._predicates.keys():
-            self.get_logger().error(
-                f"Failed to add trigger: there is already a trigger or predicate with name '{trigger_name}'.")
+        if trigger_name in self._triggers:
+            self.get_logger().error(f"Failed to add trigger: there is already a trigger with name '{trigger_name}'.")
             return
-        self._triggers[trigger_name] = False
-        self.add_predicate(trigger_name, partial(self.__get_trigger_value, trigger_name=trigger_name))
-
-    def __get_trigger_value(self, trigger_name: str) -> bool:
-        """
-        Get the trigger value and set it to false independent of the previous value.
-
-        :param trigger_name: The name of the trigger
-        :return: The value of the trigger
-        """
-        value = self._triggers[trigger_name]
-        self._triggers[trigger_name] = False
-        return value
+        if trigger_name in self._predicates.keys():
+            self.get_logger().error(f"Failed to add trigger: there is already a predicate with name '{trigger_name}'.")
+            return
+        self._triggers.append(trigger_name)
+        self.add_predicate(trigger_name, False)
 
     def trigger(self, trigger_name: str):
         """
@@ -401,11 +403,12 @@ class ComponentInterface(Node):
 
         :param trigger_name: The name of the trigger
         """
-        if trigger_name not in self._triggers.keys():
+        if trigger_name not in self._triggers:
             self.get_logger().error(f"Failed to trigger: could not find trigger with name '{trigger_name}'.")
             return
-        self._triggers[trigger_name] = True
-        self._publish_predicate(trigger_name)
+        self.set_predicate(trigger_name, True)
+        # reset the trigger to be published on the next step
+        self._predicates[trigger_name].set_predicate(lambda: False)
 
     def remove_output(self, signal_name):
         if signal_name not in self._outputs.keys():
@@ -778,30 +781,27 @@ class ComponentInterface(Node):
             self.get_logger().debug(f"Adding periodic function '{name}'.")
         self._periodic_callbacks[name] = callback
 
-    def __get_predicate_message(self, name: str) -> Predicate:
+    def __get_predicate_message(self, name: str, value: bool) -> Predicate:
         """
         Populate a Predicate messag with the name and the value of a predicate.
 
         :param name: The name of the predicate
+        :param value: The value of the predicate
         """
-        message = Predicate()
+        message = PredicateMsg()
         message.predicate = name
-        message.value = self.get_predicate(name)
+        message.value = value
         return message
 
-    def _publish_predicate(self, name):
+    def _publish_predicate(self, name: str, value: bool):
         """
         Helper function to publish a predicate.
 
         :param name: The name of the predicate to publish
+        :param value: The value of the predicate
         """
         message = copy.copy(self.__predicate_message)
-        try:
-            message.predicates = [self.__get_predicate_message(name)]
-        except AssertionError:
-            self.get_logger().error(f"Predicate '{name}' has invalid type: expected 'bool', got '{type(self.get_predicate(name))}'.",
-                                    throttle_duration_sec=1.0)
-            return
+        message.predicates = [self.__get_predicate_message(name, value)]
         self._predicate_publisher.publish(message)
 
     def _publish_predicates(self):
@@ -809,16 +809,12 @@ class ComponentInterface(Node):
         Helper function to publish all predicates.
         """
         message = copy.copy(self.__predicate_message)
-        predicates = []
-        try:
-            for name in self._predicates.keys():
-                predicates.append(self.__get_predicate_message(name))
-        except AssertionError:
-            self.get_logger().error(f"Predicate '{name}' has invalid type: expected 'bool', got '{type(self.get_predicate(name))}'.",
-                                    throttle_duration_sec=1.0)
-            return
-        message.predicates = predicates
-        self._predicate_publisher.publish(message)
+        for name in self._predicates.keys():
+            new_value = self._predicates[name].query()
+            if new_value is not None:
+                message.predicates.append(self.__get_predicate_message(name, new_value))
+        if len(message.predicates):
+            self._predicate_publisher.publish(message)
 
     def __translate_and_publish(self, output_name: str):
         """

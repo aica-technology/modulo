@@ -32,6 +32,7 @@ Release Versions:
 - feat(controllers): add flag for collision features to robot controller interface (#114)
 - feat: try catch lifecycle transitions in components and controllers (#120)
 - refactor: change predicate topic of controllers (#121)
+- feat(components): only publish predicates on value change (#123)
 
 ## 4.2.2
 
