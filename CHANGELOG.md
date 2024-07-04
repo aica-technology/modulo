@@ -33,6 +33,7 @@ Release Versions:
 - feat: try catch lifecycle transitions in components and controllers (#120)
 - refactor: change predicate topic of controllers (#121)
 - feat(components): only publish predicates on value change (#123)
+- feat(controllers): only publish predicates on value change (#124)
 
 ## 4.2.2
 
