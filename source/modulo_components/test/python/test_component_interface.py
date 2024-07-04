@@ -225,4 +225,5 @@ def test_raise_error(component_interface):
 def test_add_trigger(component_interface):
     component_interface.add_trigger("trigger")
     assert "trigger" in component_interface._triggers
+    assert not component_interface.get_predicate("trigger")
     component_interface.trigger("trigger")

@@ -88,6 +88,7 @@ public:
   using ComponentInterface::get_parameter_value;
   using ComponentInterface::get_rate;
   using ComponentInterface::get_period;
+  using ComponentInterface::get_predicate;
   using Component::add_output;
   using Component::outputs_;
   using Component::periodic_outputs_;
@@ -97,11 +98,13 @@ public:
 
 class LifecycleComponentPublicInterface : public LifecycleComponent {
 public:
-  explicit LifecycleComponentPublicInterface(const rclcpp::NodeOptions& node_options) :
-      LifecycleComponent(node_options) {}
+  explicit LifecycleComponentPublicInterface(
+      const rclcpp::NodeOptions& node_options, const std::string& fallback_name = "LifecycleComponentPublicInterface")
+      : LifecycleComponent(node_options, fallback_name) {}
   using ComponentInterface::get_parameter_value;
   using ComponentInterface::get_rate;
   using ComponentInterface::get_period;
+  using ComponentInterface::get_predicate;
   using LifecycleComponent::add_output;
   using LifecycleComponent::configure_outputs;
   using LifecycleComponent::activate_outputs;

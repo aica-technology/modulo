@@ -395,6 +395,7 @@ class ComponentInterface(Node):
             self.get_logger().error(f"Failed to add trigger: there is already a predicate with name '{trigger_name}'.")
             return
         self._triggers.append(trigger_name)
+        self.add_predicate(trigger_name, False)
 
     def trigger(self, trigger_name: str):
         """
@@ -405,7 +406,8 @@ class ComponentInterface(Node):
         if trigger_name not in self._triggers:
             self.get_logger().error(f"Failed to trigger: could not find trigger with name '{trigger_name}'.")
             return
-        self._publish_predicate(trigger_name, True)
+        self.set_predicate(trigger_name, True)
+        self._predicates[trigger_name].set_predicate(lambda: False)
 
     def remove_output(self, signal_name):
         if signal_name not in self._outputs.keys():

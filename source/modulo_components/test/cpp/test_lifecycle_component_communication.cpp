@@ -2,14 +2,15 @@
 
 #include <modulo_utils/testutils/PredicatesListener.hpp>
 
-#include "modulo_components/LifecycleComponent.hpp"
 #include "test_modulo_components/communication_components.hpp"
+#include "test_modulo_components/component_public_interfaces.hpp"
 
 using namespace modulo_components;
 
-class LifecycleTrigger : public LifecycleComponent {
+class LifecycleTrigger : public LifecycleComponentPublicInterface {
 public:
-  explicit LifecycleTrigger(const rclcpp::NodeOptions& node_options) : LifecycleComponent(node_options, "trigger") {}
+  explicit LifecycleTrigger(const rclcpp::NodeOptions& node_options)
+      : LifecycleComponentPublicInterface(node_options, "trigger") {}
 
   bool on_configure_callback() final {
     this->add_trigger("test");
@@ -80,4 +81,5 @@ TEST_F(LifecycleComponentCommunicationTest, Trigger) {
   result_code = this->exec_->spin_until_future_complete(listener->get_predicate_future(), 500ms);
   ASSERT_EQ(result_code, rclcpp::FutureReturnCode::SUCCESS);
   EXPECT_TRUE(listener->get_predicate_values().at("test"));
+  EXPECT_FALSE(trigger->get_predicate("trigger"));
 }

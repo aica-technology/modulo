@@ -99,3 +99,4 @@ def test_trigger(ros_exec, make_lifecycle_change_client, make_predicates_listene
     ros_exec.spin_until_future_complete(listener.predicates_future, timeout_sec=0.5)
     assert listener.predicates_future.done()
     assert listener.predicate_values["test"]
+    assert not trigger.get_predicate("trigger")

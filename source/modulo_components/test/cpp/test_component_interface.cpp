@@ -316,6 +316,7 @@ TYPED_TEST(ComponentInterfaceTest, AddTrigger) {
   ASSERT_FALSE(
       std::find(this->component_->triggers_.cbegin(), this->component_->triggers_.cend(), "trigger")
       == this->component_->triggers_.cend());
+  EXPECT_FALSE(this->component_->get_predicate("trigger"));
   EXPECT_NO_THROW(this->component_->trigger("trigger"));
 }
 }// namespace modulo_components

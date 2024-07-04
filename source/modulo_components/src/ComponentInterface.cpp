@@ -271,6 +271,7 @@ void ComponentInterface::add_trigger(const std::string& trigger_name) {
     return;
   }
   this->triggers_.push_back(trigger_name);
+  this->add_predicate(trigger_name, false);
 }
 
 void ComponentInterface::trigger(const std::string& trigger_name) {
@@ -280,7 +281,8 @@ void ComponentInterface::trigger(const std::string& trigger_name) {
         "Failed to trigger: could not find trigger with name  '" << trigger_name << "'.");
     return;
   }
-  publish_predicate(trigger_name, true);
+  this->set_predicate(trigger_name, true);
+  this->predicates_.at(trigger_name).set_predicate([]() { return false; });
 }
 
 void ComponentInterface::declare_input(
