@@ -2,14 +2,14 @@
 
 #include <modulo_utils/testutils/PredicatesListener.hpp>
 
-#include "modulo_components/Component.hpp"
 #include "test_modulo_components/communication_components.hpp"
+#include "test_modulo_components/component_public_interfaces.hpp"
 
 using namespace modulo_components;
 
-class Trigger : public Component {
+class Trigger : public ComponentPublicInterface {
 public:
-  explicit Trigger(const rclcpp::NodeOptions& node_options) : Component(node_options, "trigger") {
+  explicit Trigger(const rclcpp::NodeOptions& node_options) : ComponentPublicInterface(node_options, "trigger") {
     this->add_trigger("test");
   }
 
@@ -75,4 +75,5 @@ TEST_F(ComponentCommunicationTest, Trigger) {
   result_code = this->exec_->spin_until_future_complete(listener->get_predicate_future(), 500ms);
   ASSERT_EQ(result_code, rclcpp::FutureReturnCode::SUCCESS);
   EXPECT_TRUE(listener->get_predicate_values().at("test"));
+  EXPECT_FALSE(trigger->get_predicate("trigger"));
 }

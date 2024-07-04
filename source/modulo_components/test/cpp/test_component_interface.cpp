@@ -47,16 +47,14 @@ TYPED_TEST(ComponentInterfaceTest, AddBoolPredicate) {
   this->component_->add_predicate("foo", true);
   auto predicate_iterator = this->component_->predicates_.find("foo");
   EXPECT_TRUE(predicate_iterator != this->component_->predicates_.end());
-  auto value = std::get<bool>(predicate_iterator->second);
-  EXPECT_TRUE(value);
+  EXPECT_TRUE(predicate_iterator->second.get_value());
 }
 
 TYPED_TEST(ComponentInterfaceTest, AddFunctionPredicate) {
   this->component_->add_predicate("bar", [&]() { return false; });
   auto predicate_iterator = this->component_->predicates_.find("bar");
   EXPECT_TRUE(predicate_iterator != this->component_->predicates_.end());
-  auto value_callback = std::get<std::function<bool(void)>>(predicate_iterator->second);
-  EXPECT_FALSE((value_callback)());
+  EXPECT_FALSE(predicate_iterator->second.get_value());
 }
 
 TYPED_TEST(ComponentInterfaceTest, GetPredicateValue) {
@@ -315,16 +313,10 @@ TYPED_TEST(ComponentInterfaceTest, RaiseError) {
 
 TYPED_TEST(ComponentInterfaceTest, AddTrigger) {
   EXPECT_NO_THROW(this->component_->add_trigger("trigger"));
-  ASSERT_FALSE(this->component_->triggers_.find("trigger") == this->component_->triggers_.end());
-  EXPECT_FALSE(this->component_->triggers_.at("trigger"));
+  ASSERT_FALSE(
+      std::find(this->component_->triggers_.cbegin(), this->component_->triggers_.cend(), "trigger")
+      == this->component_->triggers_.cend());
   EXPECT_FALSE(this->component_->get_predicate("trigger"));
   EXPECT_NO_THROW(this->component_->trigger("trigger"));
-  // When reading, the trigger will be true only once
-  this->component_->triggers_.at("trigger") = true;
-  EXPECT_TRUE(this->component_->triggers_.at("trigger"));
-  EXPECT_TRUE(this->component_->get_predicate("trigger"));
-  // After the predicate function was evaluated once, the trigger is back to false
-  EXPECT_FALSE(this->component_->triggers_.at("trigger"));
-  EXPECT_FALSE(this->component_->get_predicate("trigger"));
 }
 }// namespace modulo_components

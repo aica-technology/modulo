@@ -9,7 +9,7 @@
 
 #include <state_representation/parameters/ParameterMap.hpp>
 
-#include <modulo_core/PredicateVariant.hpp>
+#include <modulo_core/Predicate.hpp>
 #include <modulo_core/communication/PublisherHandler.hpp>
 #include <modulo_core/communication/PublisherType.hpp>
 #include <modulo_core/communication/SubscriptionHandler.hpp>
@@ -430,12 +430,6 @@ protected:
   virtual void raise_error();
 
   /**
-   * @brief Helper function to publish a predicate.
-   * @param name The name of the predicate to publish
-   */
-  void publish_predicate(const std::string& name);
-
-  /**
    * @brief Helper function to publish all predicates.
    */
   void publish_predicates();
@@ -479,24 +473,10 @@ private:
   bool validate_parameter(const std::shared_ptr<state_representation::ParameterInterface>& parameter);
 
   /**
-   * @brief Add a predicate to the map of predicates.
-   * @param name The name of the predicate
-   * @param predicate The predicate variant
-   */
-  void add_variant_predicate(const std::string& name, const modulo_core::PredicateVariant& predicate);
-
-  /**
-   * @brief Set the predicate given as parameter, if the predicate is not found does not do anything.
-   * @param name The name of the predicate
-   * @param predicate The predicate variant
-   */
-  void set_variant_predicate(const std::string& name, const modulo_core::PredicateVariant& predicate);
-
-  /**
    * @brief Populate a Prediate message with the name and the value of a predicate.
    * @param name The name of the predicate
   */
-  modulo_interfaces::msg::Predicate get_predicate_message(const std::string& name) const;
+  modulo_interfaces::msg::Predicate get_predicate_message(const std::string& name, bool value) const;
 
   /**
    * @brief Declare a signal to create the topic parameter without adding it to the map of signals.
@@ -535,6 +515,13 @@ private:
   std::string validate_service_name(const std::string& service_name, const std::string& type) const;
 
   /**
+   * @brief Helper function to publish a predicate.
+   * @param predicate_name The name of the predicate to publish
+   * @param value The value of the predicate
+   */
+  void publish_predicate(const std::string& predicate_name, bool value);
+
+  /**
    * @brief Helper function to send a vector of transforms through a transform broadcaster
    * @tparam T The type of the broadcaster (tf2_ros::TransformBroadcaster or tf2_ros::StaticTransformBroadcaster)
    * @param transforms The transforms to send
@@ -566,11 +553,11 @@ private:
   double period_; ///< The componet period in s
   std::mutex step_mutex_; ///< Mutex for step callback
 
-  std::map<std::string, modulo_core::PredicateVariant> predicates_; ///< Map of predicates
+  std::map<std::string, modulo_core::Predicate> predicates_;///< Map of predicates
   std::shared_ptr<rclcpp::Publisher<modulo_interfaces::msg::PredicateCollection>>
-      predicate_publisher_; ///< Predicate publisher
+      predicate_publisher_;///< Predicate publisher
   modulo_interfaces::msg::PredicateCollection predicate_message_;
-  std::map<std::string, bool> triggers_; ///< Map of triggers
+  std::vector<std::string> triggers_;///< List of triggers
 
   std::map<std::string, std::shared_ptr<rclcpp::Service<modulo_interfaces::srv::EmptyTrigger>>>
       empty_services_; ///< Map of EmptyTrigger services
