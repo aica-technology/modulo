@@ -26,8 +26,7 @@ public:
   }
 
   std::optional<bool> query() {
-    auto new_value = predicate_();
-    if (new_value != previous_value_) {
+    if (const auto new_value = predicate_(); new_value != previous_value_) {
       previous_value_ = new_value;
       return new_value;
     }
