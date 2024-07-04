@@ -10,7 +10,7 @@
 #include <state_representation/parameters/ParameterMap.hpp>
 
 #include <modulo_core/EncodedState.hpp>
-#include <modulo_core/PredicateVariant.hpp>
+#include <modulo_core/Predicate.hpp>
 #include <modulo_core/communication/MessagePair.hpp>
 #include <modulo_core/exceptions.hpp>
 #include <modulo_core/translators/message_writers.hpp>
@@ -487,35 +487,23 @@ private:
   rcl_interfaces::msg::SetParametersResult on_set_parameters_callback(const std::vector<rclcpp::Parameter>& parameters);
 
   /**
-   * @brief Add a predicate to the map of predicates.
-   * @param name The name of the predicate
-   * @param predicate The predicate variant
-   */
-  void add_variant_predicate(const std::string& name, const modulo_core::PredicateVariant& predicate);
-
-  /**
-   * @brief Set the predicate given as parameter, if the predicate is not found does not do anything.
-   * @param name The name of the predicate
-   * @param predicate The predicate variant
-   */
-  void set_variant_predicate(const std::string& name, const modulo_core::PredicateVariant& predicate);
-
-  /**
    * @brief Populate a Prediate message with the name and the value of a predicate.
    * @param name The name of the predicate
+   * @param value The value of the predicate
   */
-  modulo_interfaces::msg::Predicate get_predicate_message(const std::string& name) const;
+  modulo_interfaces::msg::Predicate get_predicate_message(const std::string& name, bool value) const;
 
   /**
    * @brief Helper function to publish a predicate.
-   * @param name The name of the predicate to publish
+   * @param predicate_name The name of the predicate to publish
+   * @param value The value of the predicate
    */
-  void publish_predicate(const std::string& name) const;
+  void publish_predicate(const std::string& predicate_name, bool value) const;
 
   /**
    * @brief Helper function to publish all predicates.
    */
-  void publish_predicates() const;
+  void publish_predicates();
 
   /**
    * @brief Validate a signal name by parsing the name and checking the maps of registered signals
@@ -608,10 +596,10 @@ private:
   std::map<std::string, std::shared_ptr<rclcpp::Service<modulo_interfaces::srv::StringTrigger>>>
       string_services_;///< Map of StringTrigger services
 
-  std::map<std::string, modulo_core::PredicateVariant> predicates_; ///< Map of predicates
+  std::map<std::string, modulo_core::Predicate> predicates_; ///< Map of predicates
   std::shared_ptr<rclcpp::Publisher<modulo_interfaces::msg::PredicateCollection>>
       predicate_publisher_; ///< Predicate publisher
-  std::map<std::string, bool> triggers_; ///< Map of triggers
+  std::vector<std::string> triggers_; ///< Vector of triggers
   modulo_interfaces::msg::PredicateCollection predicate_message_;
   std::shared_ptr<rclcpp::TimerBase> predicate_timer_;
 

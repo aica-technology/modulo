@@ -475,6 +475,7 @@ private:
   /**
    * @brief Populate a Prediate message with the name and the value of a predicate.
    * @param name The name of the predicate
+   * @param value The value of the predicate
   */
   modulo_interfaces::msg::Predicate get_predicate_message(const std::string& name, bool value) const;
 
@@ -519,7 +520,7 @@ private:
    * @param predicate_name The name of the predicate to publish
    * @param value The value of the predicate
    */
-  void publish_predicate(const std::string& predicate_name, bool value);
+  void publish_predicate(const std::string& predicate_name, bool value) const;
 
   /**
    * @brief Helper function to send a vector of transforms through a transform broadcaster
