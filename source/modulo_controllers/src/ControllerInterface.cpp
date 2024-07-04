@@ -402,74 +402,66 @@ bool ControllerInterface::on_validate_parameter_callback(const std::shared_ptr<P
   return true;
 }
 
-void ControllerInterface::add_predicate(const std::string& name, bool predicate) {
-  add_variant_predicate(name, PredicateVariant(predicate));
+void ControllerInterface::add_predicate(const std::string& predicate_name, bool predicate_value) {
+  add_predicate(predicate_name, [predicate_value]() { return predicate_value; });
 }
 
-void ControllerInterface::add_predicate(const std::string& name, const std::function<bool(void)>& predicate) {
-  add_variant_predicate(name, PredicateVariant(predicate));
-}
-
-void ControllerInterface::add_variant_predicate(
-    const std::string& name, const PredicateVariant& predicate) {
-  if (name.empty()) {
+void ControllerInterface::add_predicate(
+    const std::string& predicate_name, const std::function<bool(void)>& predicate_function) {
+  if (predicate_name.empty()) {
     RCLCPP_ERROR(get_node()->get_logger(), "Failed to add predicate: Provide a non empty string as a name.");
     return;
   }
-  if (predicates_.find(name) != predicates_.end()) {
-    RCLCPP_WARN(get_node()->get_logger(), "Predicate with name '%s' already exists, overwriting.", name.c_str());
+  if (predicates_.find(predicate_name) != predicates_.end()) {
+    RCLCPP_WARN(
+        get_node()->get_logger(), "Predicate with name '%s' already exists, overwriting.", predicate_name.c_str());
   } else {
-    RCLCPP_DEBUG(get_node()->get_logger(), "Adding predicate '%s'.", name.c_str());
+    RCLCPP_DEBUG(get_node()->get_logger(), "Adding predicate '%s'.", predicate_name.c_str());
   }
-  predicates_.insert_or_assign(name, predicate);
+  try {
+    this->predicates_.insert_or_assign(predicate_name, modulo_core::Predicate(predicate_function));
+  } catch (const std::exception& ex) {
+    RCLCPP_ERROR(
+        get_node()->get_logger(), "Failed to evaluate callback of predicate '%s', returning false: %s",
+        predicate_name.c_str(), ex.what());
+  }
 }
 
 bool ControllerInterface::get_predicate(const std::string& predicate_name) const {
-  auto predicate_iterator = predicates_.find(predicate_name);
-  // if there is no predicate with that name simply return false with an error message
-  if (predicate_iterator == predicates_.end()) {
+  auto predicate_it = predicates_.find(predicate_name);
+  if (predicate_it == predicates_.end()) {
     RCLCPP_ERROR_THROTTLE(
         get_node()->get_logger(), *get_node()->get_clock(), 1000,
         "Failed to get predicate '%s': Predicate does not exists, returning false.", predicate_name.c_str());
     return false;
   }
-  // try to get the value from the variant as a bool
-  auto* ptr_value = std::get_if<bool>(&predicate_iterator->second);
-  if (ptr_value) {
-    return *ptr_value;
-  }
-  // if previous check failed, it means the variant is actually a callback function
-  auto callback_function = std::get<std::function<bool(void)>>(predicate_iterator->second);
-  bool value = false;
   try {
-    value = (callback_function) ();
+    return predicate_it->second.get_value();
   } catch (const std::exception& ex) {
     RCLCPP_ERROR_THROTTLE(
         get_node()->get_logger(), *get_node()->get_clock(), 1000,
         "Failed to evaluate callback of predicate '%s', returning false: %s", predicate_name.c_str(), ex.what());
   }
-  return value;
+  return false;
 }
 
-void ControllerInterface::set_predicate(const std::string& name, bool predicate) {
-  set_variant_predicate(name, PredicateVariant(predicate));
+void ControllerInterface::set_predicate(const std::string& predicate_name, bool predicate_value) {
+  set_predicate(predicate_name, [predicate_value]() { return predicate_value; });
 }
 
-void ControllerInterface::set_predicate(const std::string& name, const std::function<bool(void)>& predicate) {
-  set_variant_predicate(name, PredicateVariant(predicate));
-}
-
-void ControllerInterface::set_variant_predicate(
-    const std::string& name, const PredicateVariant& predicate) {
-  auto predicate_iterator = predicates_.find(name);
-  if (predicate_iterator == predicates_.end()) {
+void ControllerInterface::set_predicate(
+    const std::string& predicate_name, const std::function<bool(void)>& predicate_function) {
+  auto predicate_it = predicates_.find(predicate_name);
+  if (predicate_it == predicates_.end()) {
     RCLCPP_ERROR_THROTTLE(
         get_node()->get_logger(), *get_node()->get_clock(), 1000,
-        "Failed to set predicate '%s': Predicate does not exist.", name.c_str());
+        "Failed to set predicate '%s': Predicate does not exist.", predicate_name.c_str());
     return;
   }
-  predicate_iterator->second = predicate;
-  publish_predicate(name);// TODO: do we want that
+  predicate_it->second.set_predicate(predicate_function);
+  if (auto new_predicate = predicate_it->second.query(); new_predicate) {
+    publish_predicate(predicate_name, *new_predicate);
+  }
 }
 
 void ControllerInterface::add_trigger(const std::string& trigger_name) {
@@ -477,49 +469,57 @@ void ControllerInterface::add_trigger(const std::string& trigger_name) {
     RCLCPP_ERROR(get_node()->get_logger(), "Failed to add trigger: Provide a non empty string as a name.");
     return;
   }
-  if (triggers_.find(trigger_name) != triggers_.end() || predicates_.find(trigger_name) != predicates_.end()) {
+  if (std::find(triggers_.cbegin(), triggers_.cend(), trigger_name) != triggers_.cend()) {
     RCLCPP_ERROR(
-        get_node()->get_logger(), "Failed to add trigger: there is already a trigger or predicate with name '%s'.",
+        get_node()->get_logger(), "Failed to add trigger: there is already a trigger with name '%s'.",
         trigger_name.c_str());
     return;
   }
-  triggers_.insert_or_assign(trigger_name, false);
-  add_predicate(trigger_name, [this, trigger_name] {
-    auto value = this->triggers_.at(trigger_name);
-    this->triggers_.at(trigger_name) = false;
-    return value;
-  });
+  if (predicates_.find(trigger_name) != predicates_.end()) {
+    RCLCPP_ERROR(
+        get_node()->get_logger(), "Failed to add trigger: there is already a predicate with name '%s'.",
+        trigger_name.c_str());
+    return;
+  }
+  this->triggers_.push_back(trigger_name);
+  this->add_predicate(trigger_name, false);
 }
 
 void ControllerInterface::trigger(const std::string& trigger_name) {
-  if (triggers_.find(trigger_name) == triggers_.end()) {
+  if (std::find(triggers_.cbegin(), triggers_.cend(), trigger_name) != triggers_.cend()) {
     RCLCPP_ERROR(
         get_node()->get_logger(), "Failed to trigger: could not find trigger with name  '%s'.", trigger_name.c_str());
     return;
   }
-  triggers_.at(trigger_name) = true;
-  publish_predicate(trigger_name);
+  this->set_predicate(trigger_name, true);
+  // reset the trigger to be published on the next step
+  this->predicates_.at(trigger_name).set_predicate([]() { return false; });
 }
 
-modulo_interfaces::msg::Predicate ControllerInterface::get_predicate_message(const std::string& name) const {
+modulo_interfaces::msg::Predicate
+ControllerInterface::get_predicate_message(const std::string& name, bool value) const {
   modulo_interfaces::msg::Predicate message;
   message.predicate = name;
-  message.value = get_predicate(name);
+  message.value = value;
   return message;
 }
 
-void ControllerInterface::publish_predicate(const std::string& name) const {
+void ControllerInterface::publish_predicate(const std::string& predicate_name, bool value) const {
   auto message(predicate_message_);
-  message.predicates.push_back(get_predicate_message(name));
+  message.predicates.push_back(get_predicate_message(predicate_name, value));
   predicate_publisher_->publish(message);
 }
 
-void ControllerInterface::publish_predicates() const {
+void ControllerInterface::publish_predicates() {
   auto message(predicate_message_);
-  for (const auto& predicate : predicates_) {
-    message.predicates.push_back(get_predicate_message(predicate.first));
+  for (auto predicate_it = predicates_.begin(); predicate_it != predicates_.end(); ++predicate_it) {
+    if (auto new_predicate = predicate_it->second.query(); new_predicate) {
+      message.predicates.push_back(get_predicate_message(predicate_it->first, *new_predicate));
+    }
   }
-  predicate_publisher_->publish(message);
+  if (message.predicates.size()) {
+    predicate_publisher_->publish(message);
+  }
 }
 
 std::string ControllerInterface::validate_and_declare_signal(

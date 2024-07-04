@@ -227,8 +227,8 @@ bool ComponentInterface::get_predicate(const std::string& predicate_name) const 
   try {
     return predicate_it->second.get_value();
   } catch (const std::exception& ex) {
-    RCLCPP_ERROR_STREAM_THROTTLE(
-        this->node_logging_->get_logger(), *this->node_clock_->get_clock(), 1000,
+    RCLCPP_ERROR_STREAM(
+        this->node_logging_->get_logger(),
         "Failed to evaluate callback of predicate '" << predicate_it->first << "', returning false: " << ex.what());
   }
   return false;
@@ -572,7 +572,7 @@ modulo_interfaces::msg::Predicate ComponentInterface::get_predicate_message(cons
   return message;
 }
 
-void ComponentInterface::publish_predicate(const std::string& name, bool value) {
+void ComponentInterface::publish_predicate(const std::string& name, bool value) const {
   auto message(this->predicate_message_);
   message.predicates.push_back(this->get_predicate_message(name, value));
   this->predicate_publisher_->publish(message);
