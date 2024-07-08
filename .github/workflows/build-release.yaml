@@ -39,7 +39,11 @@ jobs:
           if [ ${{ needs.check-version.outputs.has_changed }} = 'true' ]; then
             CREATE_TAG=true
             GIT_TAG="v${{ needs.check-version.outputs.version }}"
-            IMAGE_TAGS=latest,"${GIT_TAG}",rolling
+            if [[ "${GIT_TAG}" == *"-"* ]]; then
+              IMAGE_TAGS="{GIT_TAG},rolling"
+            else
+              IMAGE_TAGS=latest,"${GIT_TAG}",rolling
+            fi
           else
             IMAGE_TAGS=rolling
           fi
