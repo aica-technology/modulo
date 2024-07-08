@@ -34,6 +34,7 @@ Release Versions:
 - refactor: change predicate topic of controllers (#121)
 - feat(components): only publish predicates on value change (#123)
 - feat(controllers): only publish predicates on value change (#124)
+- fix(controllers): keep parameter values in sync with ros (#125)
 
 ## 4.2.2
 
