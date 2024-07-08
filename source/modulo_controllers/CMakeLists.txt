@@ -39,11 +39,11 @@ install(DIRECTORY ./controller_descriptions
 ament_auto_package()
 
 if(BUILD_TESTING)
-  find_package(ament_cmake_gmock REQUIRED)
+  find_package(ament_cmake_gtest REQUIRED)
 
   include_directories(test/include)
 
-  ament_add_gmock(
+  ament_add_gtest(
     test_modulo_controllers
     test/test_controller_interface.cpp
   )

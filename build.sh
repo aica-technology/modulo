@@ -9,7 +9,7 @@ Options:
 
   --cl-version <VERSION>   Specify the version of the control libraries image to use.
 
-  --base-version <VERSION> Specify the version of base image to use.
+  --base-version <VERSION> Specify the version of the base image to use.
 
   --tag <TAG>              Specify the tag of the generated image.
                            (default: $IMAGE_TAG)

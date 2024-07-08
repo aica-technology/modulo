@@ -25,9 +25,13 @@ ControllerInterface::ControllerInterface(bool claim_all_state_interfaces)
 
 rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn ControllerInterface::on_init() {
   on_init_called_ = true;
-  parameter_cb_handle_ = get_node()->add_on_set_parameters_callback(
+  // registering set_parameter callbacks is only possible on_init since the lifecycle node is not yet initialized
+  // on construction. This means we might not be able to validate parameter overrides - if they are provided.
+  pre_set_parameter_cb_handle_ = get_node()->add_pre_set_parameters_callback(
+      [this](std::vector<rclcpp::Parameter>& parameters) { return this->pre_set_parameters_callback(parameters); });
+  on_set_parameter_cb_handle_ = get_node()->add_on_set_parameters_callback(
       [this](const std::vector<rclcpp::Parameter>& parameters) -> rcl_interfaces::msg::SetParametersResult {
-        return on_set_parameters_callback(parameters);
+        return this->on_set_parameters_callback(parameters);
       });
 
   try {
@@ -314,16 +318,23 @@ void ControllerInterface::set_command_interface(const std::string& name, const s
 
 void ControllerInterface::add_parameter(
     const std::shared_ptr<ParameterInterface>& parameter, const std::string& description, bool read_only) {
-  set_parameter_callback_called_ = false;
   rclcpp::Parameter ros_param;
   try {
     ros_param = translators::write_parameter(parameter);
-    if (!get_node()->has_parameter(parameter->get_name())) {
-      RCLCPP_DEBUG(get_node()->get_logger(), "Adding parameter '%s'.", parameter->get_name().c_str());
-      parameter_map_.set_parameter(parameter);
+  } catch (const modulo_core::exceptions::ParameterTranslationException& ex) {
+    throw modulo_core::exceptions::ParameterException("Failed to add parameter: " + std::string(ex.what()));
+  }
+  if (!get_node()->has_parameter(parameter->get_name())) {
+    RCLCPP_DEBUG(get_node()->get_logger(), "Adding parameter '%s'.", parameter->get_name().c_str());
+    parameter_map_.set_parameter(parameter);
+    read_only_parameters_.insert_or_assign(parameter->get_name(), false);
+    try {
       rcl_interfaces::msg::ParameterDescriptor descriptor;
       descriptor.description = description;
       descriptor.read_only = read_only;
+      // since the pre_set_parameters_callback is not called on parameter declaration, this has to be true
+      set_parameters_result_.successful = true;
+      set_parameters_result_.reason = "";
       if (parameter->is_empty()) {
         descriptor.dynamic_typing = true;
         descriptor.type = translators::get_ros_parameter_type(parameter->get_parameter_type());
@@ -331,57 +342,70 @@ void ControllerInterface::add_parameter(
       } else {
         get_node()->declare_parameter(parameter->get_name(), ros_param.get_parameter_value(), descriptor);
       }
-      if (!set_parameter_callback_called_) {
-        auto result = on_set_parameters_callback({get_node()->get_parameters({parameter->get_name()})});
-        if (!result.successful) {
-          get_node()->undeclare_parameter(parameter->get_name());
-          throw std::runtime_error(result.reason);
-        }
+      std::vector<rclcpp::Parameter> ros_parameters{get_node()->get_parameters({parameter->get_name()})};
+      pre_set_parameters_callback(ros_parameters);
+      auto result = on_set_parameters_callback(ros_parameters);
+      if (!result.successful) {
+        get_node()->undeclare_parameter(parameter->get_name());
+        throw modulo_core::exceptions::ParameterException(result.reason);
       }
-    } else {
-      RCLCPP_DEBUG(get_node()->get_logger(), "Parameter '%s' already exists.", parameter->get_name().c_str());
+      read_only_parameters_.at(parameter->get_name()) = read_only;
+    } catch (const std::exception& ex) {
+      parameter_map_.remove_parameter(parameter->get_name());
+      read_only_parameters_.erase(parameter->get_name());
+      throw modulo_core::exceptions::ParameterException("Failed to add parameter: " + std::string(ex.what()));
     }
-  } catch (const std::exception& ex) {
-    RCLCPP_ERROR(
-        get_node()->get_logger(), "Failed to add parameter '%s': %s", parameter->get_name().c_str(), ex.what());
+  } else {
+    RCLCPP_DEBUG(get_node()->get_logger(), "Parameter '%s' already exists.", parameter->get_name().c_str());
   }
 }
 
 std::shared_ptr<ParameterInterface> ControllerInterface::get_parameter(const std::string& name) const {
   try {
-    return this->parameter_map_.get_parameter(name);
+    return parameter_map_.get_parameter(name);
   } catch (const state_representation::exceptions::InvalidParameterException& ex) {
     throw modulo_core::exceptions::ParameterException("Failed to get parameter '" + name + "': " + ex.what());
   }
 }
 
-rcl_interfaces::msg::SetParametersResult
-ControllerInterface::on_set_parameters_callback(const std::vector<rclcpp::Parameter>& parameters) {
+void ControllerInterface::pre_set_parameters_callback(std::vector<rclcpp::Parameter>& parameters) {
+  if (pre_set_parameter_callback_called_) {
+    pre_set_parameter_callback_called_ = false;
+    return;
+  }
   rcl_interfaces::msg::SetParametersResult result;
   result.successful = true;
-  for (const auto& ros_parameter : parameters) {
+  for (auto& ros_parameter : parameters) {
     try {
-      if (ros_parameter.get_name().substr(0, 17) == "qos_overrides./tf") {
+      auto parameter = parameter_map_.get_parameter(ros_parameter.get_name());
+      if (read_only_parameters_.at(ros_parameter.get_name())) {
+        RCLCPP_DEBUG(get_node()->get_logger(), "Parameter '%s' is read only.", ros_parameter.get_name().c_str());
         continue;
       }
-      // get the associated parameter interface by name
-      auto parameter = parameter_map_.get_parameter(ros_parameter.get_name());
 
       // convert the ROS parameter into a ParameterInterface without modifying the original
       auto new_parameter = translators::read_parameter_const(ros_parameter, parameter);
-      if (!validate_parameter(new_parameter)) {
+      if (!this->validate_parameter(new_parameter)) {
         result.successful = false;
         result.reason += "Validation of parameter '" + ros_parameter.get_name() + "' returned false!";
       } else if (!new_parameter->is_empty()) {
         // update the value of the parameter in the map
         translators::copy_parameter_value(new_parameter, parameter);
+        ros_parameter = translators::write_parameter(new_parameter);
       }
     } catch (const std::exception& ex) {
       result.successful = false;
       result.reason += ex.what();
     }
   }
-  set_parameter_callback_called_ = true;
+  set_parameters_result_ = result;
+}
+
+rcl_interfaces::msg::SetParametersResult
+ControllerInterface::on_set_parameters_callback(const std::vector<rclcpp::Parameter>&) {
+  auto result = set_parameters_result_;
+  set_parameters_result_.successful = true;
+  set_parameters_result_.reason = "";
   return result;
 }
 
@@ -617,8 +641,7 @@ void ControllerInterface::add_outputs() {
           overloaded{
               [&](EncodedStatePublishers& pub) {
                 std::get<1>(pub) = get_node()->create_publisher<EncodedState>(topic, qos_);
-                std::get<2>(pub) =
-                    std::make_shared<realtime_tools::RealtimePublisher<EncodedState>>(std::get<1>(pub));
+                std::get<2>(pub) = std::make_shared<realtime_tools::RealtimePublisher<EncodedState>>(std::get<1>(pub));
               },
               [&](BoolPublishers& pub) {
                 pub.first = get_node()->create_publisher<std_msgs::msg::Bool>(topic, qos_);
