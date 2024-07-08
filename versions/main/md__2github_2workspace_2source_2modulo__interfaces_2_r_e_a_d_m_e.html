@@ -72,7 +72,20 @@ $(function() {
   <div class="headertitle"><div class="title">Modulo Interfaces</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"></div></div><!-- contents -->
+<div class="textblock"><p>This package defines custom standard interfaces for modulo classes.</p>
+<h1>Messages</h1>
+<p>Modulo classes broadcast predicates to a global channel in a predicate message.</p>
+<h2>Predicate</h2>
+<p>The predicate message contains the predicate name and the current value (true or false) of the predicate.</p>
+<h2>PredicateCollection</h2>
+<p>The predicate collection message contains a vector of predicate messages as well as the name of the node that emits the predicates.</p>
+<h1>Services</h1>
+<p>Modulo classes provide a simplified method to add services which trigger a pre-defined callback function. Services are either empty (with no request payload) or carry a string request. They return a common <a class="el" href="structmodulo__components_1_1_component_service_response.html" title="Response structure to be returned by component services.">modulo_components::ComponentServiceResponse</a> structure with a success flag and status message.</p>
+<h2>EmptyTrigger</h2>
+<p>The EmptyTrigger service request takes no parameters. The response contains a boolean <code>success</code> flag and a string <code>message</code>.</p>
+<h2>StringTrigger</h2>
+<p>The EmptyTrigger service request takes a string <code>payload</code>. The response contains a boolean <code>success</code> flag and a string <code>message</code>. It is the responsibility of the component to define the expected payload format and to document it appropriately. </p>
+</div></div><!-- contents -->
 </div><!-- PageDoc -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

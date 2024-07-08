@@ -86,19 +86,19 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="keyword">namespace </span>modulo_utils::testutils {</div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span> </div>
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span>PredicatesListener::PredicatesListener(</div>
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span>    <span class="keyword">const</span> std::string&amp; component, <span class="keyword">const</span> std::vector&lt;std::string&gt;&amp; predicates, <span class="keyword">const</span> rclcpp::NodeOptions&amp; node_options</div>
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span>) : rclcpp::Node(<span class="stringliteral">&quot;predicates_listener&quot;</span>, node_options) {</div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span>    <span class="keyword">const</span> std::string&amp; node, <span class="keyword">const</span> std::vector&lt;std::string&gt;&amp; predicates, <span class="keyword">const</span> rclcpp::NodeOptions&amp; node_options)</div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span>    : rclcpp::Node(<span class="stringliteral">&quot;predicates_listener&quot;</span>, node_options) {</div>
 <div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span>  this-&gt;received_future_ = this-&gt;received_.get_future();</div>
 <div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span>  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; predicate : predicates) {</div>
 <div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span>    this-&gt;predicates_.insert_or_assign(predicate, <span class="keyword">false</span>);</div>
 <div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span>  }</div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span>  this-&gt;subscription_ = this-&gt;create_subscription&lt;modulo_component_interfaces::msg::Predicate&gt;(</div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span>      <span class="stringliteral">&quot;/predicates&quot;</span>, 10, [<span class="keyword">this</span>, component](<span class="keyword">const</span> std::shared_ptr&lt;modulo_component_interfaces::msg::Predicate&gt; message) {</div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>        <span class="keywordflow">if</span> (message-&gt;component == component) {</div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>          for (auto&amp; predicate : this-&gt;predicates_) {</div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>            if (message-&gt;predicate == predicate.first) {</div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>              predicate.second = message-&gt;value;</div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>              if (message-&gt;value) {</div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span>  this-&gt;subscription_ = this-&gt;create_subscription&lt;modulo_interfaces::msg::PredicateCollection&gt;(</div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span>      <span class="stringliteral">&quot;/predicates&quot;</span>, 10, [<span class="keyword">this</span>, node](<span class="keyword">const</span> std::shared_ptr&lt;modulo_interfaces::msg::PredicateCollection&gt; message) {</div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>        <span class="keywordflow">if</span> (message-&gt;node == node) {</div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>          for (const auto&amp; predicate_msg : message-&gt;predicates) {</div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>            if (this-&gt;predicates_.find(predicate_msg.predicate) != this-&gt;predicates_.end()) {</div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>              this-&gt;predicates_.at(predicate_msg.predicate) = predicate_msg.value;</div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>              if (predicate_msg.value) {</div>
 <div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>                this-&gt;received_.set_value();</div>
 <div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>              }</div>
 <div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>            }</div>

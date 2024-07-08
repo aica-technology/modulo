@@ -152,10 +152,10 @@ Functions</h2></td></tr>
 <tr class="memitem:a04a6f2e996dbc7b5ce4dcda8d9d21548"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacemodulo__core_1_1translators.html#a04a6f2e996dbc7b5ce4dcda8d9d21548">safe_spatial_state_conversion</a> (std::shared_ptr&lt; state_representation::State &gt; &amp;state, std::shared_ptr&lt; state_representation::State &gt; &amp;new_state, std::function&lt; void(StateT &amp;, const NewStateT &amp;)&gt; conversion_callback={})</td></tr>
 <tr class="memdesc:a04a6f2e996dbc7b5ce4dcda8d9d21548"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update the value referenced by a state pointer by dynamically casting and converting the value referenced by a new_state pointer.  <br /></td></tr>
 <tr class="separator:a04a6f2e996dbc7b5ce4dcda8d9d21548"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad0f036bf1583f4542468ca69fd66ead0" id="r_ad0f036bf1583f4542468ca69fd66ead0"><td class="memTemplParams" colspan="2">template&lt;typename StateT , typename NewStateT &gt; </td></tr>
-<tr class="memitem:ad0f036bf1583f4542468ca69fd66ead0"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacemodulo__core_1_1translators.html#ad0f036bf1583f4542468ca69fd66ead0">safe_joint_state_conversion</a> (std::shared_ptr&lt; state_representation::State &gt; &amp;state, std::shared_ptr&lt; state_representation::State &gt; &amp;new_state, std::function&lt; void(StateT &amp;, const NewStateT &amp;)&gt; conversion_callback={})</td></tr>
-<tr class="memdesc:ad0f036bf1583f4542468ca69fd66ead0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update the value referenced by a state pointer by dynamically casting and converting the value referenced by a new_state pointer.  <br /></td></tr>
-<tr class="separator:ad0f036bf1583f4542468ca69fd66ead0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac51af1c64864f12d38a4a7d4715a25ee" id="r_ac51af1c64864f12d38a4a7d4715a25ee"><td class="memTemplParams" colspan="2">template&lt;typename StateT , typename NewStateT &gt; </td></tr>
+<tr class="memitem:ac51af1c64864f12d38a4a7d4715a25ee"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacemodulo__core_1_1translators.html#ac51af1c64864f12d38a4a7d4715a25ee">safe_state_with_names_conversion</a> (std::shared_ptr&lt; state_representation::State &gt; &amp;state, std::shared_ptr&lt; state_representation::State &gt; &amp;new_state, std::function&lt; void(StateT &amp;, const NewStateT &amp;)&gt; conversion_callback={})</td></tr>
+<tr class="memdesc:ac51af1c64864f12d38a4a7d4715a25ee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update the value referenced by a state pointer by dynamically casting and converting the value referenced by a new_state pointer.  <br /></td></tr>
+<tr class="separator:ac51af1c64864f12d38a4a7d4715a25ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4fb8cdead7c278bc0328da3b123c9038" id="r_a4fb8cdead7c278bc0328da3b123c9038"><td class="memItemLeft" align="right" valign="top">template&lt;&gt; </td></tr>
 <tr class="memitem:a4fb8cdead7c278bc0328da3b123c9038"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacemodulo__core_1_1translators.html#a4fb8cdead7c278bc0328da3b123c9038">read_message</a> (std::shared_ptr&lt; state_representation::State &gt; &amp;state, const <a class="el" href="namespacemodulo__core.html#aa89356b8fb7ab13ff2514931d3b05fdc">EncodedState</a> &amp;message)</td></tr>
 <tr class="separator:a4fb8cdead7c278bc0328da3b123c9038"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -1485,69 +1485,6 @@ template&lt;typename T &gt; </div>
 
 </div>
 </div>
-<a id="ad0f036bf1583f4542468ca69fd66ead0" name="ad0f036bf1583f4542468ca69fd66ead0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad0f036bf1583f4542468ca69fd66ead0">&#9670;&#160;</a></span>safe_joint_state_conversion()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename StateT , typename NewStateT &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void modulo_core::translators::safe_joint_state_conversion </td>
-          <td>(</td>
-          <td class="paramtype">std::shared_ptr&lt; state_representation::State &gt; &amp;&#160;</td>
-          <td class="paramname"><em>state</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">std::shared_ptr&lt; state_representation::State &gt; &amp;&#160;</td>
-          <td class="paramname"><em>new_state</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">std::function&lt; void(StateT &amp;, const NewStateT &amp;)&gt;&#160;</td>
-          <td class="paramname"><em>conversion_callback</em> = <code>{}</code>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Update the value referenced by a state pointer by dynamically casting and converting the value referenced by a new_state pointer. </p>
-<p>This utility function is intended to help the conversion between joint-state-derived instances encapsulated in base state pointers. It sets the name and joint names of the referenced state instance from the new_state, and then passes the referenced values to a user-defined conversion callback function. For example, if state is referencing a JointPositions instance A and new_state is referencing a JointState instance B, the conversion callback function should invoke A.set_positions(B.get_positions()). </p><dl class="tparams"><dt>Template Parameters</dt><dd>
-  <table class="tparams">
-    <tr><td class="paramname">StateT</td><td>The derived joint state type of the destination state </td></tr>
-    <tr><td class="paramname">NewStateT</td><td>The derived joint state type of the new state </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">state</td><td>A base state pointer referencing a joint-state-derived instance to be modified </td></tr>
-    <tr><td class="paramname">new_state</td><td>A base state pointer referencing a joint-state-derived instance to be converted into the state parameter </td></tr>
-    <tr><td class="paramname">conversion_callback</td><td>A callback function taking parameters of type StateT and NewStateT, where the referenced StateT instance can be modified as needed from the NewStateT value </td></tr>
-  </table>
-  </dd>
-</dl>
-
-<p class="definition">Definition at line <a class="el" href="message__readers_8hpp_source.html#l00262">262</a> of file <a class="el" href="message__readers_8hpp_source.html">message_readers.hpp</a>.</p>
-
-</div>
-</div>
 <a id="a04a6f2e996dbc7b5ce4dcda8d9d21548" name="a04a6f2e996dbc7b5ce4dcda8d9d21548"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a04a6f2e996dbc7b5ce4dcda8d9d21548">&#9670;&#160;</a></span>safe_spatial_state_conversion()</h2>
 
@@ -1608,6 +1545,69 @@ template&lt;typename StateT , typename NewStateT &gt; </div>
 </dl>
 
 <p class="definition">Definition at line <a class="el" href="message__readers_8hpp_source.html#l00227">227</a> of file <a class="el" href="message__readers_8hpp_source.html">message_readers.hpp</a>.</p>
+
+</div>
+</div>
+<a id="ac51af1c64864f12d38a4a7d4715a25ee" name="ac51af1c64864f12d38a4a7d4715a25ee"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac51af1c64864f12d38a4a7d4715a25ee">&#9670;&#160;</a></span>safe_state_with_names_conversion()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename StateT , typename NewStateT &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void modulo_core::translators::safe_state_with_names_conversion </td>
+          <td>(</td>
+          <td class="paramtype">std::shared_ptr&lt; state_representation::State &gt; &amp;&#160;</td>
+          <td class="paramname"><em>state</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::shared_ptr&lt; state_representation::State &gt; &amp;&#160;</td>
+          <td class="paramname"><em>new_state</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::function&lt; void(StateT &amp;, const NewStateT &amp;)&gt;&#160;</td>
+          <td class="paramname"><em>conversion_callback</em> = <code>{}</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Update the value referenced by a state pointer by dynamically casting and converting the value referenced by a new_state pointer. </p>
+<p>This utility function is intended to help the conversion between joint-state-derived instances encapsulated in base state pointers. It sets the name and joint names of the referenced state instance from the new_state, and then passes the referenced values to a user-defined conversion callback function. For example, if state is referencing a JointPositions instance A and new_state is referencing a JointState instance B, the conversion callback function should invoke A.set_positions(B.get_positions()). </p><dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">StateT</td><td>The derived joint state type of the destination state </td></tr>
+    <tr><td class="paramname">NewStateT</td><td>The derived joint state type of the new state </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">state</td><td>A base state pointer referencing a joint-state-derived instance to be modified </td></tr>
+    <tr><td class="paramname">new_state</td><td>A base state pointer referencing a joint-state-derived instance to be converted into the state parameter </td></tr>
+    <tr><td class="paramname">conversion_callback</td><td>A callback function taking parameters of type StateT and NewStateT, where the referenced StateT instance can be modified as needed from the NewStateT value </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="message__readers_8hpp_source.html#l00262">262</a> of file <a class="el" href="message__readers_8hpp_source.html">message_readers.hpp</a>.</p>
 
 </div>
 </div>

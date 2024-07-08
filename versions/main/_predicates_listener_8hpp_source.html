@@ -87,7 +87,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &lt;map&gt;</span></div>
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span> </div>
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &lt;rclcpp/rclcpp.hpp&gt;</span></div>
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#include &lt;modulo_component_interfaces/msg/predicate.hpp&gt;</span></div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#include &lt;modulo_interfaces/msg/predicate_collection.hpp&gt;</span></div>
 <div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span> </div>
 <div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="keyword">namespace </span>modulo_utils::testutils {</div>
 <div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span> </div>
@@ -97,7 +97,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00013" name="l00013"></a><span class="lineno"><a class="line" href="classmodulo__utils_1_1testutils_1_1_predicates_listener.html">   13</a></span><span class="keyword">class </span><a class="code hl_class" href="classmodulo__utils_1_1testutils_1_1_predicates_listener.html">PredicatesListener</a> : <span class="keyword">public</span> rclcpp::Node {</div>
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="keyword">public</span>:</div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>  <a class="code hl_class" href="classmodulo__utils_1_1testutils_1_1_predicates_listener.html">PredicatesListener</a>(</div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>      <span class="keyword">const</span> std::string&amp; component, <span class="keyword">const</span> std::vector&lt;std::string&gt;&amp; predicates,</div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>      <span class="keyword">const</span> std::string&amp; node, <span class="keyword">const</span> std::vector&lt;std::string&gt;&amp; predicates,</div>
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>      <span class="keyword">const</span> rclcpp::NodeOptions&amp; node_options = rclcpp::NodeOptions());</div>
 <div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span> </div>
 <div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>  <span class="keywordtype">void</span> reset_future();</div>
@@ -107,7 +107,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>  [[nodiscard]] <span class="keyword">const</span> std::map&lt;std::string, bool&gt;&amp; get_predicate_values() <span class="keyword">const</span>;</div>
 <div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span> </div>
 <div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span><span class="keyword">private</span>:</div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>  std::shared_ptr&lt;rclcpp::Subscription&lt;modulo_component_interfaces::msg::Predicate&gt;&gt; subscription_;</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>  std::shared_ptr&lt;rclcpp::Subscription&lt;modulo_interfaces::msg::PredicateCollection&gt;&gt; subscription_;</div>
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>  std::map&lt;std::string, bool&gt; predicates_;</div>
 <div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>  std::shared_future&lt;void&gt; received_future_;</div>
 <div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>  std::promise&lt;void&gt; received_;</div>

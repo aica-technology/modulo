@@ -2,8 +2,8 @@ var searchData=
 [
   ['safe_5fdynamic_5fcast_0',['safe_dynamic_cast',['../namespacemodulo__core_1_1translators.html#a9b01bebfd4d9e35131e0d04620446c08',1,'modulo_core::translators']]],
   ['safe_5fdynamic_5fpointer_5fcast_1',['safe_dynamic_pointer_cast',['../namespacemodulo__core_1_1translators.html#a6ef1c765b829bf82c25a6e4f409c618e',1,'modulo_core::translators']]],
-  ['safe_5fjoint_5fstate_5fconversion_2',['safe_joint_state_conversion',['../namespacemodulo__core_1_1translators.html#ad0f036bf1583f4542468ca69fd66ead0',1,'modulo_core::translators']]],
-  ['safe_5fspatial_5fstate_5fconversion_3',['safe_spatial_state_conversion',['../namespacemodulo__core_1_1translators.html#a04a6f2e996dbc7b5ce4dcda8d9d21548',1,'modulo_core::translators']]],
+  ['safe_5fspatial_5fstate_5fconversion_2',['safe_spatial_state_conversion',['../namespacemodulo__core_1_1translators.html#a04a6f2e996dbc7b5ce4dcda8d9d21548',1,'modulo_core::translators']]],
+  ['safe_5fstate_5fwith_5fnames_5fconversion_3',['safe_state_with_names_conversion',['../namespacemodulo__core_1_1translators.html#ac51af1c64864f12d38a4a7d4715a25ee',1,'modulo_core::translators']]],
   ['send_5fstatic_5ftransform_4',['send_static_transform',['../classmodulo__components_1_1_component_interface.html#ae9fb8bc91a29935a0e4d469e45e62a7b',1,'modulo_components::ComponentInterface']]],
   ['send_5fstatic_5ftransforms_5',['send_static_transforms',['../classmodulo__components_1_1_component_interface.html#a39293f62ba806c5f599f70cdf876ccae',1,'modulo_components::ComponentInterface']]],
   ['send_5ftransform_6',['send_transform',['../classmodulo__components_1_1_component_interface.html#ab3d9b98663be5983a1c677c32f582d3e',1,'modulo_components::ComponentInterface']]],

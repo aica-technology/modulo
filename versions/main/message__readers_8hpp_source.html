@@ -106,7 +106,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="preprocessor">#include &lt;state_representation/space/Jacobian.hpp&gt;</span></div>
 <div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span> </div>
 <div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span><span class="preprocessor">#include &quot;modulo_core/EncodedState.hpp&quot;</span></div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="preprocessor">#include &quot;modulo_core/exceptions/MessageTranslationException.hpp&quot;</span></div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="preprocessor">#include &quot;modulo_core/exceptions.hpp&quot;</span></div>
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span> </div>
 <div class="foldopen" id="foldopen00028" data-start="{" data-end="}">
 <div class="line"><a id="l00028" name="l00028"></a><span class="lineno"><a class="line" href="namespacemodulo__core_1_1translators.html">   28</a></span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacemodulo__core_1_1translators.html">modulo_core::translators</a> {</div>
@@ -208,7 +208,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00260" name="l00260"></a><span class="lineno">  260</span><span class="comment">// FIXME(#77): rename this upon modulo 5.0</span></div>
 <div class="line"><a id="l00261" name="l00261"></a><span class="lineno">  261</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> StateT, <span class="keyword">typename</span> NewStateT&gt;</div>
 <div class="foldopen" id="foldopen00262" data-start="{" data-end="}">
-<div class="line"><a id="l00262" name="l00262"></a><span class="lineno"><a class="line" href="namespacemodulo__core_1_1translators.html#ad0f036bf1583f4542468ca69fd66ead0">  262</a></span><span class="keyword">inline</span> <span class="keywordtype">void</span> <a class="code hl_function" href="namespacemodulo__core_1_1translators.html#ad0f036bf1583f4542468ca69fd66ead0">safe_joint_state_conversion</a>(</div>
+<div class="line"><a id="l00262" name="l00262"></a><span class="lineno"><a class="line" href="namespacemodulo__core_1_1translators.html#ac51af1c64864f12d38a4a7d4715a25ee">  262</a></span><span class="keyword">inline</span> <span class="keywordtype">void</span> <a class="code hl_function" href="namespacemodulo__core_1_1translators.html#ac51af1c64864f12d38a4a7d4715a25ee">safe_state_with_names_conversion</a>(</div>
 <div class="line"><a id="l00263" name="l00263"></a><span class="lineno">  263</span>    std::shared_ptr&lt;state_representation::State&gt;&amp; state, std::shared_ptr&lt;state_representation::State&gt;&amp; new_state,</div>
 <div class="line"><a id="l00264" name="l00264"></a><span class="lineno">  264</span>    std::function&lt;<span class="keywordtype">void</span>(StateT&amp;, <span class="keyword">const</span> NewStateT&amp;)&gt; conversion_callback = {}</div>
 <div class="line"><a id="l00265" name="l00265"></a><span class="lineno">  265</span>) {</div>
@@ -246,7 +246,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00296" name="l00296"></a><span class="lineno">  296</span>      }</div>
 <div class="line"><a id="l00297" name="l00297"></a><span class="lineno">  297</span>      <span class="keywordflow">case</span> StateType::DIGITAL_IO_STATE: {</div>
 <div class="line"><a id="l00298" name="l00298"></a><span class="lineno">  298</span>        <span class="keywordflow">if</span> (new_state-&gt;get_type() == StateType::DIGITAL_IO_STATE) {</div>
-<div class="line"><a id="l00299" name="l00299"></a><span class="lineno">  299</span>          safe_joint_state_conversion&lt;DigitalIOState, DigitalIOState&gt;(</div>
+<div class="line"><a id="l00299" name="l00299"></a><span class="lineno">  299</span>          safe_state_with_names_conversion&lt;DigitalIOState, DigitalIOState&gt;(</div>
 <div class="line"><a id="l00300" name="l00300"></a><span class="lineno">  300</span>              state, new_state, [](DigitalIOState&amp; a, <span class="keyword">const</span> DigitalIOState&amp; b) {</div>
 <div class="line"><a id="l00301" name="l00301"></a><span class="lineno">  301</span>                a.set_data(b.data());</div>
 <div class="line"><a id="l00302" name="l00302"></a><span class="lineno">  302</span>              });</div>
@@ -257,7 +257,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00307" name="l00307"></a><span class="lineno">  307</span>      }</div>
 <div class="line"><a id="l00308" name="l00308"></a><span class="lineno">  308</span>      <span class="keywordflow">case</span> StateType::ANALOG_IO_STATE: {</div>
 <div class="line"><a id="l00309" name="l00309"></a><span class="lineno">  309</span>        <span class="keywordflow">if</span> (new_state-&gt;get_type() == StateType::ANALOG_IO_STATE) {</div>
-<div class="line"><a id="l00310" name="l00310"></a><span class="lineno">  310</span>          safe_joint_state_conversion&lt;AnalogIOState, AnalogIOState&gt;(</div>
+<div class="line"><a id="l00310" name="l00310"></a><span class="lineno">  310</span>          safe_state_with_names_conversion&lt;AnalogIOState, AnalogIOState&gt;(</div>
 <div class="line"><a id="l00311" name="l00311"></a><span class="lineno">  311</span>              state, new_state, [](AnalogIOState&amp; a, <span class="keyword">const</span> AnalogIOState&amp; b) {</div>
 <div class="line"><a id="l00312" name="l00312"></a><span class="lineno">  312</span>                a.set_data(b.data());</div>
 <div class="line"><a id="l00313" name="l00313"></a><span class="lineno">  313</span>              });</div>
@@ -351,22 +351,22 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00401" name="l00401"></a><span class="lineno">  401</span>      <span class="keywordflow">case</span> StateType::JOINT_STATE: {</div>
 <div class="line"><a id="l00402" name="l00402"></a><span class="lineno">  402</span>        <span class="keyword">auto</span> derived_state = safe_dynamic_pointer_cast&lt;JointState&gt;(state);</div>
 <div class="line"><a id="l00403" name="l00403"></a><span class="lineno">  403</span>        <span class="keywordflow">if</span> (new_state-&gt;get_type() == StateType::JOINT_POSITIONS) {</div>
-<div class="line"><a id="l00404" name="l00404"></a><span class="lineno">  404</span>          safe_joint_state_conversion&lt;JointState, JointPositions&gt;(</div>
+<div class="line"><a id="l00404" name="l00404"></a><span class="lineno">  404</span>          safe_state_with_names_conversion&lt;JointState, JointPositions&gt;(</div>
 <div class="line"><a id="l00405" name="l00405"></a><span class="lineno">  405</span>              state, new_state, [](JointState&amp; a, <span class="keyword">const</span> JointPositions&amp; b) {</div>
 <div class="line"><a id="l00406" name="l00406"></a><span class="lineno">  406</span>                a.set_positions(b.get_positions());</div>
 <div class="line"><a id="l00407" name="l00407"></a><span class="lineno">  407</span>              });</div>
 <div class="line"><a id="l00408" name="l00408"></a><span class="lineno">  408</span>        } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (new_state-&gt;get_type() == StateType::JOINT_VELOCITIES) {</div>
-<div class="line"><a id="l00409" name="l00409"></a><span class="lineno">  409</span>          safe_joint_state_conversion&lt;JointState, JointVelocities&gt;(</div>
+<div class="line"><a id="l00409" name="l00409"></a><span class="lineno">  409</span>          safe_state_with_names_conversion&lt;JointState, JointVelocities&gt;(</div>
 <div class="line"><a id="l00410" name="l00410"></a><span class="lineno">  410</span>              state, new_state, [](JointState&amp; a, <span class="keyword">const</span> JointVelocities&amp; b) {</div>
 <div class="line"><a id="l00411" name="l00411"></a><span class="lineno">  411</span>                a.set_velocities(b.get_velocities());</div>
 <div class="line"><a id="l00412" name="l00412"></a><span class="lineno">  412</span>              });</div>
 <div class="line"><a id="l00413" name="l00413"></a><span class="lineno">  413</span>        } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (new_state-&gt;get_type() == StateType::JOINT_ACCELERATIONS) {</div>
-<div class="line"><a id="l00414" name="l00414"></a><span class="lineno">  414</span>          safe_joint_state_conversion&lt;JointState, JointAccelerations&gt;(</div>
+<div class="line"><a id="l00414" name="l00414"></a><span class="lineno">  414</span>          safe_state_with_names_conversion&lt;JointState, JointAccelerations&gt;(</div>
 <div class="line"><a id="l00415" name="l00415"></a><span class="lineno">  415</span>              state, new_state, [](JointState&amp; a, <span class="keyword">const</span> JointAccelerations&amp; b) {</div>
 <div class="line"><a id="l00416" name="l00416"></a><span class="lineno">  416</span>                a.set_accelerations(b.get_accelerations());</div>
 <div class="line"><a id="l00417" name="l00417"></a><span class="lineno">  417</span>              });</div>
 <div class="line"><a id="l00418" name="l00418"></a><span class="lineno">  418</span>        } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (new_state-&gt;get_type() == StateType::JOINT_TORQUES) {</div>
-<div class="line"><a id="l00419" name="l00419"></a><span class="lineno">  419</span>          safe_joint_state_conversion&lt;JointState, JointTorques&gt;(</div>
+<div class="line"><a id="l00419" name="l00419"></a><span class="lineno">  419</span>          safe_state_with_names_conversion&lt;JointState, JointTorques&gt;(</div>
 <div class="line"><a id="l00420" name="l00420"></a><span class="lineno">  420</span>              state, new_state, [](JointState&amp; a, <span class="keyword">const</span> JointTorques&amp; b) {</div>
 <div class="line"><a id="l00421" name="l00421"></a><span class="lineno">  421</span>                a.set_torques(b.get_torques());</div>
 <div class="line"><a id="l00422" name="l00422"></a><span class="lineno">  422</span>              });</div>
@@ -377,7 +377,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00427" name="l00427"></a><span class="lineno">  427</span>      }</div>
 <div class="line"><a id="l00428" name="l00428"></a><span class="lineno">  428</span>      <span class="keywordflow">case</span> StateType::JOINT_POSITIONS: {</div>
 <div class="line"><a id="l00429" name="l00429"></a><span class="lineno">  429</span>        <span class="keywordflow">if</span> (new_state-&gt;get_type() == StateType::JOINT_STATE) {</div>
-<div class="line"><a id="l00430" name="l00430"></a><span class="lineno">  430</span>          safe_joint_state_conversion&lt;JointPositions, JointState&gt;(</div>
+<div class="line"><a id="l00430" name="l00430"></a><span class="lineno">  430</span>          safe_state_with_names_conversion&lt;JointPositions, JointState&gt;(</div>
 <div class="line"><a id="l00431" name="l00431"></a><span class="lineno">  431</span>              state, new_state, [](JointPositions&amp; a, <span class="keyword">const</span> JointState&amp; b) {</div>
 <div class="line"><a id="l00432" name="l00432"></a><span class="lineno">  432</span>                a.set_positions(b.get_positions());</div>
 <div class="line"><a id="l00433" name="l00433"></a><span class="lineno">  433</span>              });</div>
@@ -388,7 +388,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00438" name="l00438"></a><span class="lineno">  438</span>      }</div>
 <div class="line"><a id="l00439" name="l00439"></a><span class="lineno">  439</span>      <span class="keywordflow">case</span> StateType::JOINT_VELOCITIES: {</div>
 <div class="line"><a id="l00440" name="l00440"></a><span class="lineno">  440</span>        <span class="keywordflow">if</span> (new_state-&gt;get_type() == StateType::JOINT_STATE) {</div>
-<div class="line"><a id="l00441" name="l00441"></a><span class="lineno">  441</span>          safe_joint_state_conversion&lt;JointVelocities, JointState&gt;(</div>
+<div class="line"><a id="l00441" name="l00441"></a><span class="lineno">  441</span>          safe_state_with_names_conversion&lt;JointVelocities, JointState&gt;(</div>
 <div class="line"><a id="l00442" name="l00442"></a><span class="lineno">  442</span>              state, new_state, [](JointVelocities&amp; a, <span class="keyword">const</span> JointState&amp; b) {</div>
 <div class="line"><a id="l00443" name="l00443"></a><span class="lineno">  443</span>                a.set_velocities(b.get_velocities());</div>
 <div class="line"><a id="l00444" name="l00444"></a><span class="lineno">  444</span>              });</div>
@@ -399,7 +399,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00449" name="l00449"></a><span class="lineno">  449</span>      }</div>
 <div class="line"><a id="l00450" name="l00450"></a><span class="lineno">  450</span>      <span class="keywordflow">case</span> StateType::JOINT_ACCELERATIONS: {</div>
 <div class="line"><a id="l00451" name="l00451"></a><span class="lineno">  451</span>        <span class="keywordflow">if</span> (new_state-&gt;get_type() == StateType::JOINT_STATE) {</div>
-<div class="line"><a id="l00452" name="l00452"></a><span class="lineno">  452</span>          safe_joint_state_conversion&lt;JointAccelerations, JointState&gt;(</div>
+<div class="line"><a id="l00452" name="l00452"></a><span class="lineno">  452</span>          safe_state_with_names_conversion&lt;JointAccelerations, JointState&gt;(</div>
 <div class="line"><a id="l00453" name="l00453"></a><span class="lineno">  453</span>              state, new_state, [](JointAccelerations&amp; a, <span class="keyword">const</span> JointState&amp; b) {</div>
 <div class="line"><a id="l00454" name="l00454"></a><span class="lineno">  454</span>                a.set_accelerations(b.get_accelerations());</div>
 <div class="line"><a id="l00455" name="l00455"></a><span class="lineno">  455</span>              });</div>
@@ -410,7 +410,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00460" name="l00460"></a><span class="lineno">  460</span>      }</div>
 <div class="line"><a id="l00461" name="l00461"></a><span class="lineno">  461</span>      <span class="keywordflow">case</span> StateType::JOINT_TORQUES: {</div>
 <div class="line"><a id="l00462" name="l00462"></a><span class="lineno">  462</span>        <span class="keywordflow">if</span> (new_state-&gt;get_type() == StateType::JOINT_STATE) {</div>
-<div class="line"><a id="l00463" name="l00463"></a><span class="lineno">  463</span>          safe_joint_state_conversion&lt;JointTorques, JointState&gt;(</div>
+<div class="line"><a id="l00463" name="l00463"></a><span class="lineno">  463</span>          safe_state_with_names_conversion&lt;JointTorques, JointState&gt;(</div>
 <div class="line"><a id="l00464" name="l00464"></a><span class="lineno">  464</span>              state, new_state, [](JointTorques&amp; a, <span class="keyword">const</span> JointState&amp; b) {</div>
 <div class="line"><a id="l00465" name="l00465"></a><span class="lineno">  465</span>                a.set_torques(b.get_torques());</div>
 <div class="line"><a id="l00466" name="l00466"></a><span class="lineno">  466</span>              });</div>
@@ -471,12 +471,12 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00521" name="l00521"></a><span class="lineno">  521</span>}</div>
 <div class="line"><a id="l00522" name="l00522"></a><span class="lineno">  522</span>}<span class="comment">// namespace modulo_core::translators</span></div>
 </div>
-<div class="ttc" id="aclassmodulo__core_1_1exceptions_1_1_message_translation_exception_html"><div class="ttname"><a href="classmodulo__core_1_1exceptions_1_1_message_translation_exception.html">modulo_core::exceptions::MessageTranslationException</a></div><div class="ttdoc">An exception class to notify that the translation of a ROS message failed.</div><div class="ttdef"><b>Definition</b> <a href="_message_translation_exception_8hpp_source.html#l00011">MessageTranslationException.hpp:11</a></div></div>
+<div class="ttc" id="aclassmodulo__core_1_1exceptions_1_1_message_translation_exception_html"><div class="ttname"><a href="classmodulo__core_1_1exceptions_1_1_message_translation_exception.html">modulo_core::exceptions::MessageTranslationException</a></div><div class="ttdoc">An exception class to notify that the translation of a ROS message failed.</div><div class="ttdef"><b>Definition</b> <a href="exceptions_8hpp_source.html#l00079">exceptions.hpp:79</a></div></div>
 <div class="ttc" id="anamespacemodulo__core_1_1translators_html"><div class="ttname"><a href="namespacemodulo__core_1_1translators.html">modulo_core::translators</a></div><div class="ttdoc">Modulo Core translation module for converting between ROS2 and state_representation data types.</div><div class="ttdef"><b>Definition</b> <a href="message__readers_8hpp_source.html#l00028">message_readers.hpp:28</a></div></div>
 <div class="ttc" id="anamespacemodulo__core_1_1translators_html_a04a6f2e996dbc7b5ce4dcda8d9d21548"><div class="ttname"><a href="namespacemodulo__core_1_1translators.html#a04a6f2e996dbc7b5ce4dcda8d9d21548">modulo_core::translators::safe_spatial_state_conversion</a></div><div class="ttdeci">void safe_spatial_state_conversion(std::shared_ptr&lt; state_representation::State &gt; &amp;state, std::shared_ptr&lt; state_representation::State &gt; &amp;new_state, std::function&lt; void(StateT &amp;, const NewStateT &amp;)&gt; conversion_callback={})</div><div class="ttdoc">Update the value referenced by a state pointer by dynamically casting and converting the value refere...</div><div class="ttdef"><b>Definition</b> <a href="message__readers_8hpp_source.html#l00227">message_readers.hpp:227</a></div></div>
 <div class="ttc" id="anamespacemodulo__core_1_1translators_html_a6ef1c765b829bf82c25a6e4f409c618e"><div class="ttname"><a href="namespacemodulo__core_1_1translators.html#a6ef1c765b829bf82c25a6e4f409c618e">modulo_core::translators::safe_dynamic_pointer_cast</a></div><div class="ttdeci">std::shared_ptr&lt; T &gt; safe_dynamic_pointer_cast(std::shared_ptr&lt; state_representation::State &gt; &amp;state)</div><div class="ttdoc">Safely downcast a base state pointer to a derived state pointer.</div><div class="ttdef"><b>Definition</b> <a href="message__readers_8hpp_source.html#l00182">message_readers.hpp:182</a></div></div>
 <div class="ttc" id="anamespacemodulo__core_1_1translators_html_a9b01bebfd4d9e35131e0d04620446c08"><div class="ttname"><a href="namespacemodulo__core_1_1translators.html#a9b01bebfd4d9e35131e0d04620446c08">modulo_core::translators::safe_dynamic_cast</a></div><div class="ttdeci">void safe_dynamic_cast(std::shared_ptr&lt; state_representation::State &gt; &amp;state, std::shared_ptr&lt; state_representation::State &gt; &amp;new_state)</div><div class="ttdoc">Update the value referenced by a state pointer from a new_state pointer.</div><div class="ttdef"><b>Definition</b> <a href="message__readers_8hpp_source.html#l00202">message_readers.hpp:202</a></div></div>
-<div class="ttc" id="anamespacemodulo__core_1_1translators_html_ad0f036bf1583f4542468ca69fd66ead0"><div class="ttname"><a href="namespacemodulo__core_1_1translators.html#ad0f036bf1583f4542468ca69fd66ead0">modulo_core::translators::safe_joint_state_conversion</a></div><div class="ttdeci">void safe_joint_state_conversion(std::shared_ptr&lt; state_representation::State &gt; &amp;state, std::shared_ptr&lt; state_representation::State &gt; &amp;new_state, std::function&lt; void(StateT &amp;, const NewStateT &amp;)&gt; conversion_callback={})</div><div class="ttdoc">Update the value referenced by a state pointer by dynamically casting and converting the value refere...</div><div class="ttdef"><b>Definition</b> <a href="message__readers_8hpp_source.html#l00262">message_readers.hpp:262</a></div></div>
+<div class="ttc" id="anamespacemodulo__core_1_1translators_html_ac51af1c64864f12d38a4a7d4715a25ee"><div class="ttname"><a href="namespacemodulo__core_1_1translators.html#ac51af1c64864f12d38a4a7d4715a25ee">modulo_core::translators::safe_state_with_names_conversion</a></div><div class="ttdeci">void safe_state_with_names_conversion(std::shared_ptr&lt; state_representation::State &gt; &amp;state, std::shared_ptr&lt; state_representation::State &gt; &amp;new_state, std::function&lt; void(StateT &amp;, const NewStateT &amp;)&gt; conversion_callback={})</div><div class="ttdoc">Update the value referenced by a state pointer by dynamically casting and converting the value refere...</div><div class="ttdef"><b>Definition</b> <a href="message__readers_8hpp_source.html#l00262">message_readers.hpp:262</a></div></div>
 <div class="ttc" id="anamespacemodulo__core_1_1translators_html_af7b0fbec62bd9b885d289a7fb1ddba76"><div class="ttname"><a href="namespacemodulo__core_1_1translators.html#af7b0fbec62bd9b885d289a7fb1ddba76">modulo_core::translators::read_message</a></div><div class="ttdeci">void read_message(state_representation::CartesianState &amp;state, const geometry_msgs::msg::Accel &amp;message)</div><div class="ttdoc">Convert a ROS geometry_msgs::msg::Accel to a CartesianState.</div><div class="ttdef"><b>Definition</b> <a href="message__readers_8cpp_source.html#l00017">message_readers.cpp:17</a></div></div>
 <div class="ttc" id="anamespacemodulo__core_html_aa89356b8fb7ab13ff2514931d3b05fdc"><div class="ttname"><a href="namespacemodulo__core.html#aa89356b8fb7ab13ff2514931d3b05fdc">modulo_core::EncodedState</a></div><div class="ttdeci">std_msgs::msg::UInt8MultiArray EncodedState</div><div class="ttdoc">Define the EncodedState as UInt8MultiArray message type.</div><div class="ttdef"><b>Definition</b> <a href="_encoded_state_8hpp_source.html#l00015">EncodedState.hpp:15</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
