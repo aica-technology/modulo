@@ -1,6 +1,7 @@
 #!/bin/bash
 
-VERSION=$(<VERSION)
+VERSION=$(awk -F "= " '/version/ {print $2}' < aica-package.toml)
+VERSION=$(echo "${VERSION}" | tr -d '"')
 
 DIFF_TYPE=''
 DECREMENT=false
@@ -25,7 +26,6 @@ This script modifies the version in the following files:
   ./source/modulo_utils/package.xml
   ./doxygen/doxygen.conf
   ./aica-package.toml
-  ./VERSION
 
 Options:
   --major                  Update the major version number.
@@ -108,13 +108,11 @@ if [ "${DRY_RUN}" == true ]; then
   exit 0
 fi
 
-SED_STR_VERSION="s/${VERSION}/${NEW_VERSION}/g"
 SED_STR_PACKAGE="s/<version>${VERSION}<\/version>/<version>${NEW_VERSION}<\/version>/g"
 SED_STR_DOXYGEN="s/PROJECT_NUMBER = ${VERSION}/PROJECT_NUMBER = ${NEW_VERSION}/g"
 SED_STR_TOML="s/version = \"${VERSION}\"/version = \"${NEW_VERSION}\"/g"
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
-  sed -i '' "${SED_STR_VERSION}" ./VERSION
   sed -i '' "${SED_STR_PACKAGE}" ./source/modulo_components/package.xml
   sed -i '' "${SED_STR_PACKAGE}" ./source/modulo_controllers/package.xml
   sed -i '' "${SED_STR_PACKAGE}" ./source/modulo_core/package.xml
@@ -122,9 +120,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
   sed -i '' "${SED_STR_PACKAGE}" ./source/modulo_utils/package.xml
   sed -i '' "${SED_STR_DOXYGEN}" ./doxygen/doxygen.conf
   sed -i '' "${SED_STR_TOML}" ./aica-package.toml
-  sed -i '' "${SED_STR_VERSION}" ./VERSION
 else
-  sed -i "${SED_STR_VERSION}" ./VERSION
   sed -i "${SED_STR_PACKAGE}" ./source/modulo_components/package.xml
   sed -i "${SED_STR_PACKAGE}" ./source/modulo_controllers/package.xml
   sed -i "${SED_STR_PACKAGE}" ./source/modulo_core/package.xml
@@ -132,13 +128,12 @@ else
   sed -i "${SED_STR_PACKAGE}" ./source/modulo_utils/package.xml
   sed -i "${SED_STR_DOXYGEN}" ./doxygen/doxygen.conf
   sed -i "${SED_STR_TOML}" ./aica-package.toml
-  sed -i "${SED_STR_VERSION}" ./VERSION
 fi
 
 if [ "${COMMIT}" == true ]; then
   echo "Committing changes to source control"
   git add ./source/modulo_components/package.xml ./source/modulo_controllers/package.xml \
       ./source/modulo_core/package.xml ./source/modulo_interfaces/package.xml ./source/modulo_utils/package.xml \
-      ./doxygen/doxygen.conf aica-package.toml VERSION
+      ./doxygen/doxygen.conf aica-package.toml
   git commit -m "${VERSION} -> ${NEW_VERSION}"
 fi
