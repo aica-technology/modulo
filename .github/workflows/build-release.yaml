@@ -40,7 +40,7 @@ jobs:
             CREATE_TAG=true
             GIT_TAG="v${{ needs.check-version.outputs.version }}"
             if [[ "${GIT_TAG}" == *"-"* ]]; then
-              IMAGE_TAGS="{GIT_TAG},rolling"
+              IMAGE_TAGS="${GIT_TAG}",rolling
             else
               IMAGE_TAGS=latest,"${GIT_TAG}",rolling
             fi
