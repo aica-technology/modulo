@@ -4,7 +4,9 @@ import clproto
 from lifecycle_msgs.msg import State
 from modulo_components.component_interface import ComponentInterface
 from modulo_core.exceptions import AddSignalError
-from rclpy.lifecycle import LifecycleNodeMixin, LifecycleState
+from modulo_core import LifecycleState
+from rclpy.lifecycle import LifecycleNodeMixin
+from rclpy.lifecycle import LifecycleState as RosLifecycleState
 from rclpy.lifecycle.node import TransitionCallbackReturn
 
 MsgT = TypeVar('MsgT')
@@ -27,15 +29,24 @@ class LifecycleComponent(ComponentInterface, LifecycleNodeMixin):
         ComponentInterface.__init__(self, node_name, *args, **kwargs)
         LifecycleNodeMixin.__init__(self, *args, **lifecycle_node_kwargs)
 
-    def get_state(self) -> LifecycleState:
+    def get_lifecycle_state(self) -> LifecycleState:
         """
-        Get the current state of the component.
+        Get the current lifecycle state of the component.
 
         :return: The current state
         """
-        return LifecycleState(self._state_machine.current_state[1], self._state_machine.current_state[0])
+        if self._state_machine.current_state[0] == State.PRIMARY_STATE_UNCONFIGURED:
+            return LifecycleState.UNCONFIGURED
+        elif self._state_machine.current_state[0] == State.PRIMARY_STATE_INACTIVE:
+            return LifecycleState.INACTIVE
+        elif self._state_machine.current_state[0] == State.PRIMARY_STATE_ACTIVE:
+            return LifecycleState.ACTIVE
+        elif self._state_machine.current_state[0] == State.PRIMARY_STATE_FINALIZED:
+            return LifecycleState.FINALIZED
+        else:
+            return LifecycleState.UNKNOWN
 
-    def on_configure(self, previous_state: LifecycleState) -> TransitionCallbackReturn:
+    def on_configure(self, previous_state: RosLifecycleState) -> TransitionCallbackReturn:
         """
         Transition callback for state 'Configuring'.
 
@@ -83,7 +94,7 @@ class LifecycleComponent(ComponentInterface, LifecycleNodeMixin):
         """
         return True
 
-    def on_cleanup(self, previous_state: LifecycleState) -> TransitionCallbackReturn:
+    def on_cleanup(self, previous_state: RosLifecycleState) -> TransitionCallbackReturn:
         """
         Transition callback for state 'CleaningUp'.
 
@@ -123,7 +134,7 @@ class LifecycleComponent(ComponentInterface, LifecycleNodeMixin):
         """
         return True
 
-    def on_activate(self, previous_state: LifecycleState) -> TransitionCallbackReturn:
+    def on_activate(self, previous_state: RosLifecycleState) -> TransitionCallbackReturn:
         """
         Transition callback for state 'Activating'.
 
@@ -172,7 +183,7 @@ class LifecycleComponent(ComponentInterface, LifecycleNodeMixin):
         """
         return True
 
-    def on_deactivate(self, previous_state: LifecycleState) -> TransitionCallbackReturn:
+    def on_deactivate(self, previous_state: RosLifecycleState) -> TransitionCallbackReturn:
         """
         Transition callback for state 'Deactivating'.
 
@@ -214,7 +225,7 @@ class LifecycleComponent(ComponentInterface, LifecycleNodeMixin):
         """
         return True
 
-    def on_shutdown(self, previous_state: LifecycleState) -> TransitionCallbackReturn:
+    def on_shutdown(self, previous_state: RosLifecycleState) -> TransitionCallbackReturn:
         """
         Transition callback for state 'ShuttingDown'.
 
@@ -264,7 +275,7 @@ class LifecycleComponent(ComponentInterface, LifecycleNodeMixin):
         """
         return True
 
-    def on_error(self, previous_state: LifecycleState) -> TransitionCallbackReturn:
+    def on_error(self, previous_state: RosLifecycleState) -> TransitionCallbackReturn:
         """
         Transition callback for state 'ErrorProcessing'.
 
@@ -314,7 +325,7 @@ class LifecycleComponent(ComponentInterface, LifecycleNodeMixin):
         calls the on_step function.
         """
         try:
-            if self.get_state().state_id == State.PRIMARY_STATE_ACTIVE:
+            if self.get_lifecycle_state() == LifecycleState.ACTIVE:
                 self._evaluate_periodic_callbacks()
                 self.on_step_callback()
                 self._publish_outputs()
@@ -356,8 +367,8 @@ class LifecycleComponent(ComponentInterface, LifecycleNodeMixin):
         :param fixed_topic: If true, the topic name of the output signal is fixed
         :param publish_on_step: If true, the output is published periodically on step
         """
-        if self.get_state().state_id not in [State.PRIMARY_STATE_UNCONFIGURED, State.PRIMARY_STATE_INACTIVE]:
-            self.get_logger().warn(f"Adding output in state {self.get_state().label} is not allowed.",
+        if self.get_lifecycle_state() not in [LifecycleState.UNCONFIGURED, LifecycleState.INACTIVE]:
+            self.get_logger().warn(f"Adding output in state {self._state_machine.current_state[1]} is not allowed.",
                                    throttle_duration_sec=1.0)
             return
         try:
@@ -370,7 +381,7 @@ class LifecycleComponent(ComponentInterface, LifecycleNodeMixin):
 
     def __activate_outputs(self):
         success = True
-        state = self.get_state().state_id
+        state = self._state_machine.current_state[0]
         for signal_name, output_dict in self._outputs.items():
             try:
                 output_dict["publisher"].on_activate(state)
@@ -382,7 +393,7 @@ class LifecycleComponent(ComponentInterface, LifecycleNodeMixin):
 
     def __deactivate_outputs(self):
         success = True
-        state = self.get_state().state_id
+        state = self._state_machine.current_state[0]
         for signal_name, output_dict in self._outputs.items():
             try:
                 output_dict["publisher"].on_deactivate(state)

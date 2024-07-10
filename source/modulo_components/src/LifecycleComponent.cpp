@@ -1,5 +1,7 @@
 #include "modulo_components/LifecycleComponent.hpp"
 
+#include <lifecycle_msgs/msg/state.hpp>
+
 using namespace modulo_core::communication;
 using namespace rclcpp_lifecycle;
 
@@ -22,7 +24,7 @@ LifecycleComponent::get_parameter(const std::string& name) const {
 
 void LifecycleComponent::step() {
   try {
-    if (this->get_predicate("is_active")) {
+    if (this->get_lifecycle_state() == modulo_core::LifecycleState::ACTIVE) {
       this->evaluate_periodic_callbacks();
       this->on_step_callback();
       this->publish_outputs();
@@ -233,6 +235,22 @@ bool LifecycleComponent::handle_error() {
 
 bool LifecycleComponent::on_error_callback() {
   return true;
+}
+
+modulo_core::LifecycleState LifecycleComponent::get_lifecycle_state() const {
+  switch (this->get_current_state().id()) {
+    case lifecycle_msgs::msg::State::PRIMARY_STATE_UNCONFIGURED:
+      return modulo_core::LifecycleState::UNCONFIGURED;
+    case lifecycle_msgs::msg::State::PRIMARY_STATE_INACTIVE:
+      return modulo_core::LifecycleState::INACTIVE;
+    case lifecycle_msgs::msg::State::PRIMARY_STATE_ACTIVE:
+      return modulo_core::LifecycleState::ACTIVE;
+    case lifecycle_msgs::msg::State::PRIMARY_STATE_FINALIZED:
+      return modulo_core::LifecycleState::FINALIZED;
+    case lifecycle_msgs::msg::State::PRIMARY_STATE_UNKNOWN:
+    default:
+      return modulo_core::LifecycleState::UNKNOWN;
+  }
 }
 
 bool LifecycleComponent::configure_outputs() {
