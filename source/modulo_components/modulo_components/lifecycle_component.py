@@ -27,11 +27,6 @@ class LifecycleComponent(ComponentInterface, LifecycleNodeMixin):
         ComponentInterface.__init__(self, node_name, *args, **kwargs)
         LifecycleNodeMixin.__init__(self, *args, **lifecycle_node_kwargs)
 
-        self.add_predicate("is_unconfigured", lambda: self.get_state().state_id == State.PRIMARY_STATE_UNCONFIGURED)
-        self.add_predicate("is_inactive", lambda: self.get_state().state_id == State.PRIMARY_STATE_INACTIVE)
-        self.add_predicate("is_active", lambda: self.get_state().state_id == State.PRIMARY_STATE_ACTIVE)
-        self.add_predicate("is_finalized", lambda: self.get_state().state_id == State.PRIMARY_STATE_FINALIZED)
-
     def get_state(self) -> LifecycleState:
         """
         Get the current state of the component.

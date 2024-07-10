@@ -21,26 +21,6 @@
       "display_name": "In error state",
       "description": "True if the component is in error state",
       "predicate_name": "in_error_state"
-    },
-    {
-      "display_name": "Is unconfigured",
-      "description": "True if the component is in an unconfigured state, either through construction or cleanup transition",
-      "predicate_name": "is_unconfigured"
-    },
-    {
-      "display_name": "Is inactive",
-      "description": "True if the component is in an inactive state, either through the configuration or deactivation transition",
-      "predicate_name": "is_inactive"
-    },
-    {
-      "display_name": "Is active",
-      "description": "True if the component is in an active state, executing the step function periodically",
-      "predicate_name": "is_active"
-    },
-    {
-      "display_name": "Is finalized",
-      "description": "True if component is in a finalized state, either through the shutdown or error transition",
-      "predicate_name": "is_finalized"
     }
   ]
 }

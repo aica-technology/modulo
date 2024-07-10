@@ -13,24 +13,7 @@ LifecycleComponent::LifecycleComponent(const rclcpp::NodeOptions& node_options, 
           LifecycleNode::get_node_parameters_interface(), LifecycleNode::get_node_services_interface(),
           LifecycleNode::get_node_time_source_interface(), LifecycleNode::get_node_timers_interface(),
           LifecycleNode::get_node_topics_interface(), LifecycleNode::get_node_type_descriptions_interface(),
-          LifecycleNode::get_node_waitables_interface())) {
-  this->add_predicate(
-      "is_unconfigured", [this] {
-        return this->get_current_state().id() == lifecycle_msgs::msg::State::PRIMARY_STATE_UNCONFIGURED;
-      });
-  this->add_predicate(
-      "is_inactive", [this] {
-        return this->get_current_state().id() == lifecycle_msgs::msg::State::PRIMARY_STATE_INACTIVE;
-      });
-  this->add_predicate(
-      "is_active", [this] {
-        return this->get_current_state().id() == lifecycle_msgs::msg::State::PRIMARY_STATE_ACTIVE;
-      });
-  this->add_predicate(
-      "is_finalized", [this] {
-        return this->get_current_state().id() == lifecycle_msgs::msg::State::PRIMARY_STATE_FINALIZED;
-      });
-}
+          LifecycleNode::get_node_waitables_interface())) {}
 
 std::shared_ptr<state_representation::ParameterInterface>
 LifecycleComponent::get_parameter(const std::string& name) const {
