@@ -29,16 +29,16 @@ handled by the [translators](#translators) module.
 The supported groupings of data types and message types is defined by the `MessageType` enumeration.
 See the [`MessageType` header file](./include/modulo_core/communication/MessageType.h).
 
-| MessageType           | C++ data type                 | ROS message type                    |
-|-----------------------|-------------------------------|-------------------------------------|
-| `BOOL`                | `bool`                        | `std_msgs::msgs::Bool`              |
-| `INT32`               | `int`                         | `std_msgs::msgs::Int32`             |
-| `FLOAT64`             | `double`                      | `std_msgs::msgs::FLOAT64`           |
-| `FLOAT64_MUlTI_ARRAY` | `std::vector<double>`         | `std_msgs::msgs::FLOAT64MultiArray` |
-| `STRING`              | `std::string`                 | `std_msgs::msgs::String`            |
-| `ENCODED_STATE`       | `state_representation::State` | `modulo_core::EncodedState`         |
+| MessageType           | C++ data type                 | ROS message type                       |
+|-----------------------|-------------------------------|----------------------------------------|
+| `BOOL`                | `bool`                        | `std_msgs::msgs::Bool`                 |
+| `INT32`               | `int`                         | `std_msgs::msgs::Int32`                |
+| `FLOAT64`             | `double`                      | `std_msgs::msgs::FLOAT64`              |
+| `FLOAT64_MUlTI_ARRAY` | `std::vector<double>`         | `std_msgs::msgs::FLOAT64MultiArray`    |
+| `STRING`              | `std::string`                 | `std_msgs::msgs::String`               |
+| `ENCODED_STATE`       | `state_representation::State` | `modulo_interfaces::msg::EncodedState` |
 
-### Encoded State
+### Encoded State (TODO)
 
 The `ENCODED_STATE` type supports all classes in the family of `state_representation::State`. It uses the
 `clproto` serialization library from control_libraries to encode `State` type messages to and from a binary format.

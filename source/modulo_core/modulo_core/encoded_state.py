@@ -1,3 +1,3 @@
-from std_msgs.msg import UInt8MultiArray
+from modulo_interfaces.msg import EncodedState as EncodedStateMsg
 
-EncodedState = UInt8MultiArray
+EncodedState = EncodedStateMsg

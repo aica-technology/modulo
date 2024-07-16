@@ -25,6 +25,7 @@ find_package(std_msgs REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_lifecycle REQUIRED)
 find_package(tf2_msgs REQUIRED)
+find_package(modulo_interfaces REQUIRED)
 
 find_package(control_libraries 9.0.0 REQUIRED COMPONENTS state_representation)
 find_package(clproto 9.0.0 REQUIRED)
@@ -53,6 +54,7 @@ ament_target_dependencies(
   sensor_msgs
   std_msgs
   tf2_msgs
+  modulo_interfaces
 )
 
 install(DIRECTORY include/
@@ -101,6 +103,7 @@ ament_export_dependencies(
   rclcpp
   rclcpp_lifecycle
   tf2_msgs
+  modulo_interfaces
 )
 
 ament_export_include_directories(

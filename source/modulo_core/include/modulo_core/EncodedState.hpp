@@ -1,6 +1,6 @@
 #pragma once
 
-#include <std_msgs/msg/u_int8_multi_array.hpp>
+#include <modulo_interfaces/msg/encoded_state.hpp>
 
 /**
  * @namespace modulo_core
@@ -10,8 +10,7 @@ namespace modulo_core {
 
 /**
  * @typedef EncodedState
- * @brief Define the EncodedState as UInt8MultiArray message type.
  */
-typedef std_msgs::msg::UInt8MultiArray EncodedState;
+typedef modulo_interfaces::msg::EncodedState EncodedState;
 
 }// namespace modulo_core
