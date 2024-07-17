@@ -38,11 +38,10 @@ See the [`MessageType` header file](./include/modulo_core/communication/MessageT
 | `STRING`              | `std::string`                 | `std_msgs::msgs::String`               |
 | `ENCODED_STATE`       | `state_representation::State` | `modulo_interfaces::msg::EncodedState` |
 
-### Encoded State (TODO)
+### Encoded State
 
 The `ENCODED_STATE` type supports all classes in the family of `state_representation::State`. It uses the
 `clproto` serialization library from control_libraries to encode `State` type messages to and from a binary format.
-The message type `modulo_core::EncodedState` is equivalent to the ROS `std_msgs::msg::UInt8MultiArray`.
 
 The helper function `state_representation::make_shared_state(state_instance)` can be used to inject any `State`-derived
 instance in a `std::shared_ptr<state_representation::State>` pointer for the MessagePair.
