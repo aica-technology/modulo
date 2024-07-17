@@ -36,6 +36,7 @@ Release Versions:
 - feat(controllers): only publish predicates on value change (#124)
 - fix(controllers): keep parameter values in sync with ros (#125)
 - feat: use v2.0.0-rc1-jazzy image (#126)
+- feat: add message definition for encoded state (#132)
 
 ## 4.2.2
 
