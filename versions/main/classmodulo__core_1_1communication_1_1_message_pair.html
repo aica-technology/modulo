@@ -111,9 +111,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ae71ad28f6e4270b5a318ddbdbf620585" id="r_ae71ad28f6e4270b5a318ddbdbf620585"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmodulo__core_1_1communication_1_1_message_pair.html#ae71ad28f6e4270b5a318ddbdbf620585">set_data</a> (const std::shared_ptr&lt; DataT &gt; &amp;data)</td></tr>
 <tr class="memdesc:ae71ad28f6e4270b5a318ddbdbf620585"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the data pointer.  <br /></td></tr>
 <tr class="separator:ae71ad28f6e4270b5a318ddbdbf620585"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac043f1be1b0a4f0326f94db2cdd4b6e4" id="r_ac043f1be1b0a4f0326f94db2cdd4b6e4"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacemodulo__core.html#aa89356b8fb7ab13ff2514931d3b05fdc">EncodedState</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmodulo__core_1_1communication_1_1_message_pair.html#ac043f1be1b0a4f0326f94db2cdd4b6e4">write_message</a> () const</td></tr>
+<tr class="memitem:ac043f1be1b0a4f0326f94db2cdd4b6e4" id="r_ac043f1be1b0a4f0326f94db2cdd4b6e4"><td class="memItemLeft" align="right" valign="top">EncodedState&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmodulo__core_1_1communication_1_1_message_pair.html#ac043f1be1b0a4f0326f94db2cdd4b6e4">write_message</a> () const</td></tr>
 <tr class="separator:ac043f1be1b0a4f0326f94db2cdd4b6e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5e1fdb9d903f7e01b56ed176f92801a7" id="r_a5e1fdb9d903f7e01b56ed176f92801a7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmodulo__core_1_1communication_1_1_message_pair.html#a5e1fdb9d903f7e01b56ed176f92801a7">read_message</a> (const <a class="el" href="namespacemodulo__core.html#aa89356b8fb7ab13ff2514931d3b05fdc">EncodedState</a> &amp;message)</td></tr>
+<tr class="memitem:a5e1fdb9d903f7e01b56ed176f92801a7" id="r_a5e1fdb9d903f7e01b56ed176f92801a7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmodulo__core_1_1communication_1_1_message_pair.html#a5e1fdb9d903f7e01b56ed176f92801a7">read_message</a> (const EncodedState &amp;message)</td></tr>
 <tr class="separator:a5e1fdb9d903f7e01b56ed176f92801a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7dda2dba10686703a1fdcef25b6837ef" id="r_a7dda2dba10686703a1fdcef25b6837ef"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmodulo__core_1_1communication_1_1_message_pair.html#a7dda2dba10686703a1fdcef25b6837ef">MessagePair</a> (std::shared_ptr&lt; bool &gt; data, std::shared_ptr&lt; rclcpp::Clock &gt; clock)</td></tr>
 <tr class="separator:a7dda2dba10686703a1fdcef25b6837ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -364,7 +364,7 @@ template&lt;typename MsgT , typename DataT &gt; </div>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classmodulo__core_1_1communication_1_1_message_pair.html">modulo_core::communication::MessagePair</a>&lt; <a class="el" href="namespacemodulo__core.html#aa89356b8fb7ab13ff2514931d3b05fdc">EncodedState</a>, state_representation::State &gt;::MessagePair </td>
+          <td class="memname"><a class="el" href="classmodulo__core_1_1communication_1_1_message_pair.html">modulo_core::communication::MessagePair</a>&lt; EncodedState, state_representation::State &gt;::MessagePair </td>
           <td>(</td>
           <td class="paramtype">std::shared_ptr&lt; state_representation::State &gt;&#160;</td>
           <td class="paramname"><em>data</em>, </td>
@@ -429,9 +429,9 @@ template&lt;typename MsgT , typename DataT &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classmodulo__core_1_1communication_1_1_message_pair.html">modulo_core::communication::MessagePair</a>&lt; <a class="el" href="namespacemodulo__core.html#aa89356b8fb7ab13ff2514931d3b05fdc">EncodedState</a>, state_representation::State &gt;::read_message </td>
+          <td class="memname">void <a class="el" href="classmodulo__core_1_1communication_1_1_message_pair.html">modulo_core::communication::MessagePair</a>&lt; EncodedState, state_representation::State &gt;::read_message </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="namespacemodulo__core.html#aa89356b8fb7ab13ff2514931d3b05fdc">EncodedState</a> &amp;&#160;</td>
+          <td class="paramtype">const EncodedState &amp;&#160;</td>
           <td class="paramname"><em>message</em></td><td>)</td>
           <td></td>
         </tr>
@@ -579,7 +579,7 @@ template&lt;typename MsgT , typename DataT &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="namespacemodulo__core.html#aa89356b8fb7ab13ff2514931d3b05fdc">EncodedState</a> <a class="el" href="classmodulo__core_1_1communication_1_1_message_pair.html">modulo_core::communication::MessagePair</a>&lt; <a class="el" href="namespacemodulo__core.html#aa89356b8fb7ab13ff2514931d3b05fdc">EncodedState</a>, state_representation::State &gt;::write_message </td>
+          <td class="memname">EncodedState <a class="el" href="classmodulo__core_1_1communication_1_1_message_pair.html">modulo_core::communication::MessagePair</a>&lt; EncodedState, state_representation::State &gt;::write_message </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>

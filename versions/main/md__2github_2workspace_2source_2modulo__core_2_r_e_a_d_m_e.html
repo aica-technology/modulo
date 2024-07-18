@@ -95,10 +95,10 @@ $(function() {
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone"><code>STRING</code>   </td><td class="markdownTableBodyNone"><code>std::string</code>   </td><td class="markdownTableBodyNone"><code>std_msgs::msgs::String</code>    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><code>ENCODED_STATE</code>   </td><td class="markdownTableBodyNone"><code>state_representation::State</code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="namespacemodulo__core.html#aa89356b8fb7ab13ff2514931d3b05fdc" title="Define the EncodedState as UInt8MultiArray message type.">modulo_core::EncodedState</a></code>   </td></tr>
+<td class="markdownTableBodyNone"><code>ENCODED_STATE</code>   </td><td class="markdownTableBodyNone"><code>state_representation::State</code>   </td><td class="markdownTableBodyNone"><code>modulo_interfaces::msg::EncodedState</code>   </td></tr>
 </table>
 <h2>Encoded State</h2>
-<p>The <code>ENCODED_STATE</code> type supports all classes in the family of <code>state_representation::State</code>. It uses the <code>clproto</code> serialization library from control_libraries to encode <code>State</code> type messages to and from a binary format. The message type <code><a class="el" href="namespacemodulo__core.html#aa89356b8fb7ab13ff2514931d3b05fdc" title="Define the EncodedState as UInt8MultiArray message type.">modulo_core::EncodedState</a></code> is equivalent to the ROS <code>std_msgs::msg::UInt8MultiArray</code>.</p>
+<p>The <code>ENCODED_STATE</code> type supports all classes in the family of <code>state_representation::State</code>. It uses the <code>clproto</code> serialization library from control_libraries to encode <code>State</code> type messages to and from a binary format.</p>
 <p>The helper function <code>state_representation::make_shared_state(state_instance)</code> can be used to inject any <code>State</code>-derived instance in a <code>std::shared_ptr&lt;state_representation::State&gt;</code> pointer for the MessagePair.</p>
 <h2>MessagePairInterface</h2>
 <p>As <code>MessagePair</code> instances need to be templated by the data type and message type, they can be somewhat verbose to manage directly. For example, storing multiple <code>MessagePair</code> instances in a container or passing them as function arguments would require additional templating.</p>
@@ -160,7 +160,7 @@ $(function() {
 <div class="line"><span class="keyword">auto</span> subscription_handler = std::make_shared&lt;SubscriptionHandler&lt;modulo_core::EncodedState&gt;&gt;(message_pair);</div>
 <div class="line"> </div>
 <div class="line"><span class="comment">// create the ROS subscription and associate the SubscriptionHandler callback</span></div>
-<div class="line"><span class="keyword">auto</span> subscription = node-&gt;create_subscription&lt;<a class="code hl_typedef" href="namespacemodulo__core.html#aa89356b8fb7ab13ff2514931d3b05fdc">modulo_core::EncodedState</a>&gt;(</div>
+<div class="line"><span class="keyword">auto</span> subscription = node-&gt;create_subscription&lt;modulo_core::EncodedState&gt;(</div>
 <div class="line">    <span class="stringliteral">&quot;topic&quot;</span>, 10, subscription_handler-&gt;get_callback());</div>
 <div class="line"> </div>
 <div class="line"><span class="comment">// encapsulate the SubscriptionHandler in a SubscriptionInterface</span></div>
@@ -170,7 +170,6 @@ $(function() {
 <div class="line"><span class="comment">// any received ROS message will be translated to update the referenced data value</span></div>
 <div class="line">wait_until_some_subscription_received();</div>
 <div class="line">assert(*data == 2.0);</div>
-<div class="ttc" id="anamespacemodulo__core_html_aa89356b8fb7ab13ff2514931d3b05fdc"><div class="ttname"><a href="namespacemodulo__core.html#aa89356b8fb7ab13ff2514931d3b05fdc">modulo_core::EncodedState</a></div><div class="ttdeci">std_msgs::msg::UInt8MultiArray EncodedState</div><div class="ttdoc">Define the EncodedState as UInt8MultiArray message type.</div><div class="ttdef"><b>Definition</b> <a href="_encoded_state_8hpp_source.html#l00015">EncodedState.hpp:15</a></div></div>
 </div><!-- fragment --><h1>Translators</h1>
 <p>The translation module provides functions to convert between ROS2 and state_representation data types.</p>
 <h2>Message Translators</h2>

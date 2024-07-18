@@ -134,7 +134,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>      &gt;()-&gt;on_activate();</div>
 <div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>      <span class="keywordflow">break</span>;</div>
 <div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>    <span class="keywordflow">case</span> MessageType::ENCODED_STATE:</div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>      this-&gt;<span class="keyword">template</span> get_handler&lt;rclcpp_lifecycle::LifecyclePublisher&lt;EncodedState&gt;, <a class="code hl_typedef" href="namespacemodulo__core.html#aa89356b8fb7ab13ff2514931d3b05fdc">EncodedState</a>&gt;()-&gt;on_activate();</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>      this-&gt;<span class="keyword">template</span> get_handler&lt;rclcpp_lifecycle::LifecyclePublisher&lt;EncodedState&gt;, EncodedState&gt;()-&gt;on_activate();</div>
 <div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>      <span class="keywordflow">break</span>;</div>
 <div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>  }</div>
 <div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>}</div>
@@ -172,7 +172,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>      &gt;()-&gt;on_deactivate();</div>
 <div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>      <span class="keywordflow">break</span>;</div>
 <div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>    <span class="keywordflow">case</span> MessageType::ENCODED_STATE:</div>
-<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>      this-&gt;<span class="keyword">template</span> get_handler&lt;rclcpp_lifecycle::LifecyclePublisher&lt;EncodedState&gt;, <a class="code hl_typedef" href="namespacemodulo__core.html#aa89356b8fb7ab13ff2514931d3b05fdc">EncodedState</a>&gt;()-&gt;on_deactivate();</div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>      this-&gt;<span class="keyword">template</span> get_handler&lt;rclcpp_lifecycle::LifecyclePublisher&lt;EncodedState&gt;, EncodedState&gt;()-&gt;on_deactivate();</div>
 <div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>      <span class="keywordflow">break</span>;</div>
 <div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>  }</div>
 <div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>}</div>
@@ -202,9 +202,9 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>        <span class="keywordflow">break</span>;</div>
 <div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>      <span class="keywordflow">case</span> MessageType::ENCODED_STATE:</div>
 <div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>        <span class="keywordflow">if</span> (!this-&gt;message_pair_-&gt;get_message_pair&lt;</div>
-<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>            <a class="code hl_typedef" href="namespacemodulo__core.html#aa89356b8fb7ab13ff2514931d3b05fdc">EncodedState</a>, state_representation::State</div>
+<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>            EncodedState, state_representation::State</div>
 <div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>        &gt;()-&gt;get_data()-&gt;is_empty()) {</div>
-<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>          this-&gt;<a class="code hl_function" href="classmodulo__core_1_1communication_1_1_publisher_interface.html#a3e4d5682dc38835d7e1f02a2e71503ed">publish</a>(this-&gt;message_pair_-&gt;write&lt;<a class="code hl_typedef" href="namespacemodulo__core.html#aa89356b8fb7ab13ff2514931d3b05fdc">EncodedState</a>, state_representation::State&gt;());</div>
+<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>          this-&gt;<a class="code hl_function" href="classmodulo__core_1_1communication_1_1_publisher_interface.html#a3e4d5682dc38835d7e1f02a2e71503ed">publish</a>(this-&gt;message_pair_-&gt;write&lt;EncodedState, state_representation::State&gt;());</div>
 <div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>        }</div>
 <div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span>        <span class="keywordflow">break</span>;</div>
 <div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span>    }</div>
@@ -259,7 +259,6 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="aclassmodulo__core_1_1exceptions_1_1_null_pointer_exception_html"><div class="ttname"><a href="classmodulo__core_1_1exceptions_1_1_null_pointer_exception.html">modulo_core::exceptions::NullPointerException</a></div><div class="ttdoc">An exception class to notify that a certain pointer is null.</div><div class="ttdef"><b>Definition</b> <a href="exceptions_8hpp_source.html#l00089">exceptions.hpp:89</a></div></div>
 <div class="ttc" id="anamespacemodulo__core_1_1communication_html"><div class="ttname"><a href="namespacemodulo__core_1_1communication.html">modulo_core::communication</a></div><div class="ttdoc">Modulo Core communication module for handling messages on publication and subscription interfaces.</div><div class="ttdef"><b>Definition</b> <a href="_message_pair_8hpp_source.html#l00009">MessagePair.hpp:9</a></div></div>
 <div class="ttc" id="anamespacemodulo__core_1_1communication_html_a11c26e7082f80b74fb35da3f901f9366"><div class="ttname"><a href="namespacemodulo__core_1_1communication.html#a11c26e7082f80b74fb35da3f901f9366">modulo_core::communication::PublisherType</a></div><div class="ttdeci">PublisherType</div><div class="ttdoc">Enum of supported ROS publisher types for the PublisherInterface.</div><div class="ttdef"><b>Definition</b> <a href="_publisher_type_8hpp_source.html#l00009">PublisherType.hpp:9</a></div></div>
-<div class="ttc" id="anamespacemodulo__core_html_aa89356b8fb7ab13ff2514931d3b05fdc"><div class="ttname"><a href="namespacemodulo__core.html#aa89356b8fb7ab13ff2514931d3b05fdc">modulo_core::EncodedState</a></div><div class="ttdeci">std_msgs::msg::UInt8MultiArray EncodedState</div><div class="ttdoc">Define the EncodedState as UInt8MultiArray message type.</div><div class="ttdef"><b>Definition</b> <a href="_encoded_state_8hpp_source.html#l00015">EncodedState.hpp:15</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

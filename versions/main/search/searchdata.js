@@ -5,9 +5,8 @@ var indexSectionsWithContent =
   2: "m",
   3: "acdegilmoprstuw~",
   4: "fhioprt",
-  5: "e",
-  6: "mp",
-  7: "cimu"
+  5: "mp",
+  6: "cimu"
 };
 
 var indexSectionNames =
@@ -17,9 +16,8 @@ var indexSectionNames =
   2: "namespaces",
   3: "functions",
   4: "variables",
-  5: "typedefs",
-  6: "enums",
-  7: "pages"
+  5: "enums",
+  6: "pages"
 };
 
 var indexSectionLabels =
@@ -29,8 +27,7 @@ var indexSectionLabels =
   2: "Namespaces",
   3: "Functions",
   4: "Variables",
-  5: "Typedefs",
-  6: "Enumerations",
-  7: "Pages"
+  5: "Enumerations",
+  6: "Pages"
 };
 
