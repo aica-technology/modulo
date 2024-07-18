@@ -6,6 +6,11 @@ This package defines custom standard interfaces for modulo classes.
 
 Modulo classes broadcast predicates to a global channel in a predicate message.
 
+### EncodedState
+
+The encoded state message contains `state_representation::State` classes as binary format after serialization with
+`clproto`.
+
 ### Predicate
 
 The predicate message contains the predicate name and the current value (true or false) of the predicate.
