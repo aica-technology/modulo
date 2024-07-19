@@ -1,8 +1,7 @@
 #pragma once
 
+#include <lifecycle_msgs/msg/state.hpp>
 #include <rclcpp_lifecycle/lifecycle_node.hpp>
-
-#include <modulo_core/LifecycleState.hpp>
 
 #include "modulo_components/ComponentInterface.hpp"
 
@@ -113,11 +112,6 @@ protected:
       const std::string& signal_name, const std::shared_ptr<DataT>& data, const std::string& default_topic = "",
       bool fixed_topic = false, bool publish_on_step = true
   );
-
-  /**
-   * @brief Get the current lifecycle state of the component
-   */
-  modulo_core::LifecycleState get_lifecycle_state() const;
 
 private:
   /**
@@ -283,8 +277,8 @@ inline void LifecycleComponent::add_output(
     const std::string& signal_name, const std::shared_ptr<DataT>& data, const std::string& default_topic,
     bool fixed_topic, bool publish_on_step
 ) {
-  if (this->get_lifecycle_state() != modulo_core::LifecycleState::UNCONFIGURED
-      && this->get_lifecycle_state() != modulo_core::LifecycleState::INACTIVE) {
+  if (this->get_current_state().id() != lifecycle_msgs::msg::State::PRIMARY_STATE_UNCONFIGURED
+      && this->get_current_state().id() != lifecycle_msgs::msg::State::PRIMARY_STATE_INACTIVE) {
     RCLCPP_WARN_STREAM_THROTTLE(this->get_logger(), *this->get_clock(), 1000,
                                 "Adding output in state " << this->get_current_state().label() << " is not allowed.");
     return;

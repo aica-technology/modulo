@@ -10,7 +10,6 @@
 #include <state_representation/parameters/ParameterMap.hpp>
 
 #include <modulo_core/EncodedState.hpp>
-#include <modulo_core/LifecycleState.hpp>
 #include <modulo_core/Predicate.hpp>
 #include <modulo_core/communication/MessagePair.hpp>
 #include <modulo_core/exceptions.hpp>
@@ -453,9 +452,10 @@ protected:
   void set_qos(const rclcpp::QoS& qos);
 
   /**
-   * @brief Get the current lifecycle state of the controller node
+   * @brief Check if the controller is currently in state active or not.
+   * @return True if the controller is active, false otherwise
    */
-  modulo_core::LifecycleState get_lifecycle_state() const;
+  bool is_active() const;
 
   std::string hardware_name_;///< The hardware name provided by a parameter
 
