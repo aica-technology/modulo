@@ -2,6 +2,8 @@
 
 #include <chrono>
 
+#include <lifecycle_msgs/msg/state.hpp>
+
 #include <modulo_core/translators/message_readers.hpp>
 
 template<class... Ts>
@@ -795,8 +797,12 @@ void ControllerInterface::set_qos(const rclcpp::QoS& qos) {
   qos_ = qos;
 }
 
+rclcpp_lifecycle::State ControllerInterface::get_lifecycle_state() const {
+  return get_node()->get_current_state();
+}
+
 bool ControllerInterface::is_active() const {
-  return get_node()->get_current_state().label() == "active";
+  return get_lifecycle_state().id() == lifecycle_msgs::msg::State::PRIMARY_STATE_ACTIVE;
 }
 
 }// namespace modulo_controllers

@@ -27,12 +27,7 @@ class LifecycleComponent(ComponentInterface, LifecycleNodeMixin):
         ComponentInterface.__init__(self, node_name, *args, **kwargs)
         LifecycleNodeMixin.__init__(self, *args, **lifecycle_node_kwargs)
 
-        self.add_predicate("is_unconfigured", lambda: self.get_state().state_id == State.PRIMARY_STATE_UNCONFIGURED)
-        self.add_predicate("is_inactive", lambda: self.get_state().state_id == State.PRIMARY_STATE_INACTIVE)
-        self.add_predicate("is_active", lambda: self.get_state().state_id == State.PRIMARY_STATE_ACTIVE)
-        self.add_predicate("is_finalized", lambda: self.get_state().state_id == State.PRIMARY_STATE_FINALIZED)
-
-    def get_state(self) -> LifecycleState:
+    def get_lifecycle_state(self) -> LifecycleState:
         """
         Get the current state of the component.
 
@@ -319,7 +314,7 @@ class LifecycleComponent(ComponentInterface, LifecycleNodeMixin):
         calls the on_step function.
         """
         try:
-            if self.get_state().state_id == State.PRIMARY_STATE_ACTIVE:
+            if self.get_lifecycle_state().state_id == State.PRIMARY_STATE_ACTIVE:
                 self._evaluate_periodic_callbacks()
                 self.on_step_callback()
                 self._publish_outputs()
@@ -361,8 +356,8 @@ class LifecycleComponent(ComponentInterface, LifecycleNodeMixin):
         :param fixed_topic: If true, the topic name of the output signal is fixed
         :param publish_on_step: If true, the output is published periodically on step
         """
-        if self.get_state().state_id not in [State.PRIMARY_STATE_UNCONFIGURED, State.PRIMARY_STATE_INACTIVE]:
-            self.get_logger().warn(f"Adding output in state {self.get_state().label} is not allowed.",
+        if self.get_lifecycle_state().state_id not in [State.PRIMARY_STATE_UNCONFIGURED, State.PRIMARY_STATE_INACTIVE]:
+            self.get_logger().warn(f"Adding output in state {self.get_lifecycle_state().label} is not allowed.",
                                    throttle_duration_sec=1.0)
             return
         try:
@@ -375,7 +370,7 @@ class LifecycleComponent(ComponentInterface, LifecycleNodeMixin):
 
     def __activate_outputs(self):
         success = True
-        state = self.get_state().state_id
+        state = self.get_lifecycle_state().state_id
         for signal_name, output_dict in self._outputs.items():
             try:
                 output_dict["publisher"].on_activate(state)
@@ -387,7 +382,7 @@ class LifecycleComponent(ComponentInterface, LifecycleNodeMixin):
 
     def __deactivate_outputs(self):
         success = True
-        state = self.get_state().state_id
+        state = self.get_lifecycle_state().state_id
         for signal_name, output_dict in self._outputs.items():
             try:
                 output_dict["publisher"].on_deactivate(state)

@@ -37,6 +37,7 @@ Release Versions:
 - fix(controllers): keep parameter values in sync with ros (#125)
 - feat: use v2.0.0-rc1-jazzy image (#126)
 - feat: add message definition for encoded state (#132)
+- refactor: remove lifecycle predicates and add lifecycle state getter (#130)
 
 ## 4.2.2
 
