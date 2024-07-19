@@ -113,6 +113,11 @@ protected:
       bool fixed_topic = false, bool publish_on_step = true
   );
 
+  /**
+   * @brief Get the current lifecycle state of the component
+   */
+  rclcpp_lifecycle::State get_lifecycle_state() const;
+
 private:
   /**
    * @brief Transition callback for state 'Configuring'.
@@ -277,10 +282,10 @@ inline void LifecycleComponent::add_output(
     const std::string& signal_name, const std::shared_ptr<DataT>& data, const std::string& default_topic,
     bool fixed_topic, bool publish_on_step
 ) {
-  if (this->get_current_state().id() != lifecycle_msgs::msg::State::PRIMARY_STATE_UNCONFIGURED
-      && this->get_current_state().id() != lifecycle_msgs::msg::State::PRIMARY_STATE_INACTIVE) {
+  if (this->get_lifecycle_state().id() != lifecycle_msgs::msg::State::PRIMARY_STATE_UNCONFIGURED
+      && this->get_lifecycle_state().id() != lifecycle_msgs::msg::State::PRIMARY_STATE_INACTIVE) {
     RCLCPP_WARN_STREAM_THROTTLE(this->get_logger(), *this->get_clock(), 1000,
-                                "Adding output in state " << this->get_current_state().label() << " is not allowed.");
+                                "Adding output in state " << this->get_lifecycle_state().label() << " is not allowed.");
     return;
   }
   try {

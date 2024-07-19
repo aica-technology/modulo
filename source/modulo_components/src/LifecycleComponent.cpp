@@ -22,7 +22,7 @@ LifecycleComponent::get_parameter(const std::string& name) const {
 
 void LifecycleComponent::step() {
   try {
-    if (this->get_predicate("is_active")) {
+    if (this->get_lifecycle_state().id() == lifecycle_msgs::msg::State::PRIMARY_STATE_ACTIVE) {
       this->evaluate_periodic_callbacks();
       this->on_step_callback();
       this->publish_outputs();
@@ -335,5 +335,9 @@ bool LifecycleComponent::deactivate_outputs() {
   }
   RCLCPP_DEBUG(this->get_logger(), "All outputs deactivated.");
   return success;
+}
+
+rclcpp_lifecycle::State LifecycleComponent::get_lifecycle_state() const {
+  return this->get_current_state();
 }
 }// namespace modulo_components
