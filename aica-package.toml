@@ -1,7 +1,7 @@
 #syntax=ghcr.io/aica-technology/package-builder:v1.0.1
 
 [metadata]
-version = "5.0.0-rc0004"
+version = "5.0.0-rc0005"
 description = "Modular ROS 2 extension library for dynamic composition of components and controllers with the AICA robotics framework"
 
 [metadata.collection]
@@ -9,7 +9,7 @@ name = "modulo"
 
 [build]
 type = "ros"
-image = "v2.0.0-rc1-jazzy"
+image = "v2.0.0-rc2-jazzy"
 
 [build.dependencies]
 "@aica/foss/control-libraries" = "v9.0.0"
