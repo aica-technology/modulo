@@ -38,6 +38,7 @@ Release Versions:
 - feat: use v2.0.0-rc1-jazzy image (#126)
 - feat: add message definition for encoded state (#132)
 - refactor: remove lifecycle predicates and add lifecycle state getter (#130)
+- feat(components): use component description schema 1-1-1 to mark lifecycle property (#136)
 
 ## 4.2.2
 
