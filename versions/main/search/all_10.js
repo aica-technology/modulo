@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['update_0',['update',['../classmodulo__controllers_1_1_controller_interface.html#a8f2ab4824543884e6d4e16a903c9a1bf',1,'modulo_controllers::ControllerInterface']]],
-  ['utils_1',['Modulo Utils',['../md__2github_2workspace_2source_2modulo__utils_2_r_e_a_d_m_e.html',1,'']]]
+  ['task_5fspace_5fframe_5f_0',['task_space_frame_',['../classmodulo__controllers_1_1_robot_controller_interface.html#aceb45b495a9ed7b4225b8c619ee6867a',1,'modulo_controllers::RobotControllerInterface']]],
+  ['trigger_1',['trigger',['../classmodulo__components_1_1_component_interface.html#a6460ddfe54a6cdf5c52edcec86658f3f',1,'modulo_components::ComponentInterface::trigger()'],['../classmodulo__controllers_1_1_base_controller_interface.html#ab4dca6a7f56af5b758ca75f8e36eeb8f',1,'modulo_controllers::BaseControllerInterface::trigger()']]]
 ];
