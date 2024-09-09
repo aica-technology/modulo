@@ -28,6 +28,7 @@ ament_auto_find_build_dependencies()
 include_directories(include)
 
 ament_auto_add_library(${PROJECT_NAME} SHARED
+        src/BaseControllerInterface.cpp
         src/ControllerInterface.cpp
         src/RobotControllerInterface.cpp)
 

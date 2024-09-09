@@ -39,6 +39,7 @@ Release Versions:
 - feat: add message definition for encoded state (#132)
 - refactor: remove lifecycle predicates and add lifecycle state getter (#130)
 - feat(components): use component description schema 1-1-1 to mark lifecycle property (#136)
+- refactor(controllers): split up base class (#135)
 
 ## 4.2.2
 
