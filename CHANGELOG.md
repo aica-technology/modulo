@@ -40,6 +40,7 @@ Release Versions:
 - refactor: remove lifecycle predicates and add lifecycle state getter (#130)
 - feat(components): use component description schema 1-1-1 to mark lifecycle property (#136)
 - refactor(controllers): split up base class (#135)
+- release: use updated base image (#139)
 
 ## 4.2.2
 
