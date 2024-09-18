@@ -232,7 +232,7 @@ bool LifecycleComponent::handle_error() {
 }
 
 bool LifecycleComponent::on_error_callback() {
-  return true;
+  return false;
 }
 
 bool LifecycleComponent::configure_outputs() {

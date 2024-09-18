@@ -306,7 +306,7 @@ class LifecycleComponent(ComponentInterface, LifecycleNodeMixin):
 
         :return: True if error handling is successful, false otherwise
         """
-        return True
+        return False
 
     def _step(self):
         """
