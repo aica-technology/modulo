@@ -41,6 +41,7 @@ Release Versions:
 - feat(components): use component description schema 1-1-1 to mark lifecycle property (#136)
 - refactor(controllers): split up base class (#135)
 - release: use updated base image (#139)
+- fix(controllers): remove duplicate function (#140)
 
 ## 4.2.2
 
