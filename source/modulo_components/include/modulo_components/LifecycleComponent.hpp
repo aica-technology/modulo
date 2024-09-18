@@ -117,7 +117,7 @@ protected:
   rclcpp_lifecycle::State get_lifecycle_state() const;
 
   /**
-   * @brief Trigger the shutdown transition.
+   * @brief Trigger the shutdown and error transitions.
    */
   void raise_error() override;
 

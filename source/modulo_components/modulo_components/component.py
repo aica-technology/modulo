@@ -99,7 +99,7 @@ class Component(ComponentInterface):
 
     def raise_error(self):
         """
-        Set the in_error_state predicate to true.
+        Set the in_error_state predicate to true and cancel the step timer.
         """
         super().raise_error()
         self.set_predicate("in_error_state", True)

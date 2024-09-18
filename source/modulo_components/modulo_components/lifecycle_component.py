@@ -395,7 +395,7 @@ class LifecycleComponent(ComponentInterface, LifecycleNodeMixin):
     
     def raise_error(self):
         """
-        Trigger the shutdown transition.
+        Trigger the shutdown and error transitions.
         """
         super().raise_error()
         self._has_error = True

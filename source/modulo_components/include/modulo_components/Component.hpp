@@ -68,7 +68,7 @@ protected:
       bool fixed_topic = false, bool publish_on_step = true);
 
   /**
-   * Set the in_error_state predicate to true.
+   * Set the in_error_state predicate to true and cancel the step timer.
    */
   void raise_error() override;
 
