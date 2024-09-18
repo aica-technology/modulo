@@ -76,7 +76,7 @@ class ComponentInterface(Node):
 
         self._rate = self.get_parameter_value("rate")
         self._period = 1.0 / self._rate
-        self.create_timer(self._period, self.__step_with_mutex)
+        self.__step_timer = self.create_timer(self._period, self.__step_with_mutex)
 
     def __del__(self):
         self.__step_lock.acquire()
@@ -113,6 +113,13 @@ class ComponentInterface(Node):
         Steps to execute periodically. To be redefined by derived classes.
         """
         pass
+
+    def _cancel_step(self):
+        """
+        Cancel the step timer.
+        """
+        if self.__step_timer:
+            self.__step_timer.cancel()
 
     def add_parameter(self, parameter: Union[str, sr.Parameter], description: str, read_only=False) -> None:
         """

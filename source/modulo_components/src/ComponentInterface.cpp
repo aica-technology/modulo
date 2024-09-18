@@ -74,6 +74,12 @@ void ComponentInterface::step() {}
 
 void ComponentInterface::on_step_callback() {}
 
+void ComponentInterface::cancel_step() {
+  if (this->step_timer_ != nullptr) {
+    this->step_timer_->cancel();
+  }
+}
+
 void ComponentInterface::add_parameter(
     const std::shared_ptr<state_representation::ParameterInterface>& parameter, const std::string& description,
     bool read_only) {
