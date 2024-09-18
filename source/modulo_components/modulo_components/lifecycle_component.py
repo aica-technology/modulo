@@ -26,6 +26,7 @@ class LifecycleComponent(ComponentInterface, LifecycleNodeMixin):
         lifecycle_node_kwargs = {key: value for key, value in kwargs.items() if key in LIFECYCLE_NODE_MIXIN_KWARGS}
         ComponentInterface.__init__(self, node_name, *args, **kwargs)
         LifecycleNodeMixin.__init__(self, *args, **lifecycle_node_kwargs)
+        self._has_error = False
 
     def get_lifecycle_state(self) -> LifecycleState:
         """
@@ -226,7 +227,7 @@ class LifecycleComponent(ComponentInterface, LifecycleNodeMixin):
         TRANSITION_CALLBACK_FAILURE, TRANSITION_CALLBACK_ERROR or any uncaught exceptions to 'ErrorProcessing'
         """
         self.get_logger().debug(f"on_shutdown called from previous state {previous_state.label}.")
-        if not self.has_error():
+        if not self._has_error:
             if previous_state.state_id == State.PRIMARY_STATE_FINALIZED:
                 return TransitionCallbackReturn.SUCCESS
             if previous_state.state_id == State.PRIMARY_STATE_ACTIVE:
@@ -397,4 +398,5 @@ class LifecycleComponent(ComponentInterface, LifecycleNodeMixin):
         Trigger the shutdown transition.
         """
         super().raise_error()
+        self._has_error = True
         self.trigger_shutdown()

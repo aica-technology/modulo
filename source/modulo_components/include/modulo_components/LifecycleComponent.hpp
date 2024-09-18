@@ -268,6 +268,8 @@ private:
    */
   bool clear_signals();
 
+  bool has_error_;
+
   // TODO hide ROS methods
   using ComponentInterface::cancel_step;
   using ComponentInterface::create_output;

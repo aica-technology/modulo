@@ -13,7 +13,8 @@ LifecycleComponent::LifecycleComponent(const rclcpp::NodeOptions& node_options, 
           LifecycleNode::get_node_parameters_interface(), LifecycleNode::get_node_services_interface(),
           LifecycleNode::get_node_time_source_interface(), LifecycleNode::get_node_timers_interface(),
           LifecycleNode::get_node_topics_interface(), LifecycleNode::get_node_type_descriptions_interface(),
-          LifecycleNode::get_node_waitables_interface())) {}
+          LifecycleNode::get_node_waitables_interface())),
+      has_error_(true) {}
 
 std::shared_ptr<state_representation::ParameterInterface>
 LifecycleComponent::get_parameter(const std::string& name) const {
@@ -160,7 +161,7 @@ bool LifecycleComponent::on_deactivate_callback() {
 
 node_interfaces::LifecycleNodeInterface::CallbackReturn LifecycleComponent::on_shutdown(const State& previous_state) {
   RCLCPP_DEBUG(this->get_logger(), "on_shutdown called from previous state %s", previous_state.label().c_str());
-  if (!this->has_error()) {
+  if (!this->has_error_) {
     switch (previous_state.id()) {
       case lifecycle_msgs::msg::State::PRIMARY_STATE_FINALIZED:
         return node_interfaces::LifecycleNodeInterface::CallbackReturn::SUCCESS;
@@ -345,6 +346,7 @@ rclcpp_lifecycle::State LifecycleComponent::get_lifecycle_state() const {
 
 void LifecycleComponent::raise_error() {
   ComponentInterface::raise_error();
+  this->has_error_ = true;
   if (get_current_state().id() == lifecycle_msgs::msg::State::PRIMARY_STATE_UNCONFIGURED) {
     this->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_UNCONFIGURED_SHUTDOWN);
   } else if (get_current_state().id() == lifecycle_msgs::msg::State::PRIMARY_STATE_INACTIVE) {

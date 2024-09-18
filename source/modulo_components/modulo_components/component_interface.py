@@ -45,7 +45,6 @@ class ComponentInterface(Node):
         node_kwargs = {key: value for key, value in kwargs.items() if key in NODE_KWARGS}
         super().__init__(node_name, *args, **node_kwargs)
         self.__step_lock = Lock()
-        self.__has_error = False
         self._parameter_dict: Dict[str, Union[str, sr.Parameter]] = {}
         self.__read_only_parameters: Dict[str, bool] = {}
         self.__pre_set_parameters_callback_called = False
@@ -925,14 +924,8 @@ class ComponentInterface(Node):
         except (MessageTranslationError, TransformException) as e:
             self.get_logger().error(f"Failed to send {modifier}transform: {e}", throttle_duration_sec=1.0)
 
-    def has_error(self):
-        """
-        Check if the component has an error.
-        """
-        return self.__has_error
-
     def raise_error(self):
         """
         Notify an error in the component.
         """
-        self.__has_error = True
+        self.get_logger().error("An error was raised in the component.")

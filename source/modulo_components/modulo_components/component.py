@@ -29,15 +29,14 @@ class Component(ComponentInterface):
         """
         Step function that is called periodically.
         """
-        if not self.has_error():
-            try:
-                self._evaluate_periodic_callbacks()
-                self.on_step_callback()
-                self._publish_outputs()
-                self._publish_predicates()
-            except Exception as e:
-                self.get_logger().error(f"Failed to execute step function: {e}", throttle_duration_sec=1.0)
-                self.raise_error()
+        try:
+            self._evaluate_periodic_callbacks()
+            self.on_step_callback()
+            self._publish_outputs()
+            self._publish_predicates()
+        except Exception as e:
+            self.get_logger().error(f"Failed to execute step function: {e}", throttle_duration_sec=1.0)
+            self.raise_error()
 
     def execute(self):
         """

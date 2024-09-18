@@ -561,13 +561,8 @@ void ComponentInterface::set_qos(const rclcpp::QoS& qos) {
   this->qos_ = qos;
 }
 
-bool ComponentInterface::has_error() const {
-  return this->has_error_;
-}
-
 void ComponentInterface::raise_error() {
   RCLCPP_ERROR(this->node_logging_->get_logger(), "An error was raised in the component.");
-  this->has_error_ = true;
 }
 
 modulo_interfaces::msg::Predicate ComponentInterface::get_predicate_message(const std::string& name, bool value) const {
