@@ -47,6 +47,7 @@ Release Versions:
 - feat(utils): add binary reader and recorder for encoded states (#152)
 - feat!: add support for custom inputs and outputs (#133)
 - release: version v5.0.0-rc0009 (#155)
+- refactor(components): improve component error handling (#138)
 
 ## 4.2.2
 
