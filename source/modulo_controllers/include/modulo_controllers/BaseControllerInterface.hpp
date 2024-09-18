@@ -317,11 +317,6 @@ protected:
   void set_qos(const rclcpp::QoS& qos);
 
   /**
-   * @brief Get the current lifecycle state of the controller
-   */
-  rclcpp_lifecycle::State get_lifecycle_state() const;
-
-  /**
    * @brief Check if the controller is currently in state active or not.
    * @return True if the controller is active, false otherwise
    */

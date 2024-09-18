@@ -540,10 +540,6 @@ void BaseControllerInterface::set_qos(const rclcpp::QoS& qos) {
   qos_ = qos;
 }
 
-rclcpp_lifecycle::State BaseControllerInterface::get_lifecycle_state() const {
-  return get_node()->get_current_state();
-}
-
 bool BaseControllerInterface::is_active() const {
   return get_lifecycle_state().id() == lifecycle_msgs::msg::State::PRIMARY_STATE_ACTIVE;
 }
