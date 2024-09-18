@@ -12,7 +12,8 @@ namespace modulo_components {
 
 ComponentInterface::ComponentInterface(
     const std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<ALL_RCLCPP_NODE_INTERFACES>>& interfaces)
-    : node_base_(interfaces->get_node_base_interface()),
+    : has_error_(false),
+      node_base_(interfaces->get_node_base_interface()),
       node_clock_(interfaces->get_node_clock_interface()),
       node_logging_(interfaces->get_node_logging_interface()),
       node_parameters_(interfaces->get_node_parameters_interface()),
@@ -32,8 +33,6 @@ ComponentInterface::ComponentInterface(
       this->node_parameters_, this->node_topics_, "/predicates", this->qos_);
   this->predicate_message_.node = this->node_base_->get_fully_qualified_name();
   this->predicate_message_.type = modulo_interfaces::msg::PredicateCollection::COMPONENT;
-
-  this->add_predicate("in_error_state", false);
 
   this->rate_ = this->get_parameter_value<double>("rate");
   this->period_ = 1.0 / this->rate_;
@@ -556,9 +555,13 @@ void ComponentInterface::set_qos(const rclcpp::QoS& qos) {
   this->qos_ = qos;
 }
 
+bool ComponentInterface::has_error() const {
+  return this->has_error_;
+}
+
 void ComponentInterface::raise_error() {
-  RCLCPP_DEBUG(this->node_logging_->get_logger(), "raise_error called: Setting predicate 'in_error_state' to true.");
-  this->set_predicate("in_error_state", true);
+  RCLCPP_ERROR(this->node_logging_->get_logger(), "An error was raised in the component.");
+  this->has_error_ = true;
 }
 
 modulo_interfaces::msg::Predicate ComponentInterface::get_predicate_message(const std::string& name, bool value) const {

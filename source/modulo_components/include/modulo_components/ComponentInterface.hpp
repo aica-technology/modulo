@@ -418,7 +418,12 @@ protected:
   void set_qos(const rclcpp::QoS& qos);
 
   /**
-   * @brief Put the component in error state by setting the 'in_error_state' predicate to true.
+   * @brief Check if the component has an error.
+   */
+  bool has_error() const;
+
+  /**
+   * @brief Notify an error in the component.
    */
   virtual void raise_error();
 
@@ -542,6 +547,7 @@ private:
   double rate_;          ///< The component rate in Hz
   double period_;        ///< The componet period in s
   std::mutex step_mutex_;///< Mutex for step callback
+  bool has_error_;       ///< Flag to indicate if error was raised
 
   std::map<std::string, modulo_core::Predicate> predicates_;///< Map of predicates
   std::shared_ptr<rclcpp::Publisher<modulo_interfaces::msg::PredicateCollection>>

@@ -230,12 +230,6 @@ def test_get_set_qos(component_interface):
     assert qos == component_interface.get_qos()
 
 
-def test_raise_error(component_interface):
-    assert not component_interface.get_predicate("in_error_state")
-    component_interface.raise_error()
-    assert component_interface.get_predicate("in_error_state")
-
-
 def test_add_trigger(component_interface):
     component_interface.add_trigger("trigger")
     assert "trigger" in component_interface._triggers

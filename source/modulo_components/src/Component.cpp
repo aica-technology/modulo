@@ -15,17 +15,20 @@ Component::Component(const NodeOptions& node_options, const std::string& fallbac
           Node::get_node_type_descriptions_interface(), Node::get_node_waitables_interface())),
       started_(false) {
   this->add_predicate("is_finished", false);
+  this->add_predicate("in_error_state", false);
 }
 
 void Component::step() {
-  try {
-    this->evaluate_periodic_callbacks();
-    this->on_step_callback();
-    this->publish_outputs();
-    this->publish_predicates();
-  } catch (const std::exception& ex) {
-    RCLCPP_ERROR_STREAM(this->get_logger(), "Failed to execute step function: " << ex.what());
-    this->raise_error();
+  if (!this->has_error()) {
+    try {
+      this->evaluate_periodic_callbacks();
+      this->on_step_callback();
+      this->publish_outputs();
+      this->publish_predicates();
+    } catch (const std::exception& ex) {
+      RCLCPP_ERROR_STREAM(this->get_logger(), "Failed to execute step function: " << ex.what());
+      this->raise_error();
+    }
   }
 }
 
@@ -59,5 +62,10 @@ bool Component::on_execute_callback() {
 
 std::shared_ptr<state_representation::ParameterInterface> Component::get_parameter(const std::string& name) const {
   return ComponentInterface::get_parameter(name);
+}
+
+void Component::raise_error() {
+  ComponentInterface::raise_error();
+  this->set_predicate("in_error_state", true);
 }
 }// namespace modulo_components

@@ -23,18 +23,21 @@ class Component(ComponentInterface):
         self.__started = False
         self.__execute_thread = None
         self.add_predicate("is_finished", False)
+        self.add_predicate("in_error_state", False)
 
     def _step(self):
         """
         Step function that is called periodically.
         """
-        try:
-            self._evaluate_periodic_callbacks()
-            self.on_step_callback()
-            self._publish_outputs()
-            self._publish_predicates()
-        except Exception as e:
-            self.get_logger().error(f"Failed to execute step function: {e}", throttle_duration_sec=1.0)
+        if not self.has_error():
+            try:
+                self._evaluate_periodic_callbacks()
+                self.on_step_callback()
+                self._publish_outputs()
+                self._publish_predicates()
+            except Exception as e:
+                self.get_logger().error(f"Failed to execute step function: {e}", throttle_duration_sec=1.0)
+                self.raise_error()
 
     def execute(self):
         """
@@ -94,3 +97,10 @@ class Component(ComponentInterface):
             self._outputs[parsed_signal_name]["publisher"] = publisher
         except Exception as e:
             self.get_logger().error(f"Failed to add output '{signal_name}': {e}")
+
+    def raise_error(self):
+        """
+        Set the in_error_state predicate to true.
+        """
+        super().raise_error()
+        self.set_predicate("in_error_state", True)

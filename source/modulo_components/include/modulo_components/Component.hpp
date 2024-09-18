@@ -67,6 +67,11 @@ protected:
       const std::string& signal_name, const std::shared_ptr<DataT>& data, const std::string& default_topic = "",
       bool fixed_topic = false, bool publish_on_step = true);
 
+  /**
+   * Set the in_error_state predicate to true.
+   */
+  void raise_error() override;
+
 private:
   /**
    * @brief Step function that is called periodically and publishes predicates, outputs, and evaluates daemon callbacks.

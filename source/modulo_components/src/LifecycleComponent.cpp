@@ -30,8 +30,7 @@ void LifecycleComponent::step() {
     this->publish_predicates();
   } catch (const std::exception& ex) {
     RCLCPP_ERROR_STREAM(this->get_logger(), "Failed to execute step function: " << ex.what());
-    // TODO handle error in lifecycle component
-    //    this->raise_error();
+    this->raise_error();
   }
 }
 
@@ -161,34 +160,36 @@ bool LifecycleComponent::on_deactivate_callback() {
 
 node_interfaces::LifecycleNodeInterface::CallbackReturn LifecycleComponent::on_shutdown(const State& previous_state) {
   RCLCPP_DEBUG(this->get_logger(), "on_shutdown called from previous state %s", previous_state.label().c_str());
-  switch (previous_state.id()) {
-    case lifecycle_msgs::msg::State::PRIMARY_STATE_FINALIZED:
-      return node_interfaces::LifecycleNodeInterface::CallbackReturn::SUCCESS;
-    case lifecycle_msgs::msg::State::PRIMARY_STATE_ACTIVE:
-      if (!this->handle_deactivate()) {
-        RCLCPP_DEBUG(get_logger(), "Shutdown failed during intermediate deactivation!");
+  if (!this->has_error()) {
+    switch (previous_state.id()) {
+      case lifecycle_msgs::msg::State::PRIMARY_STATE_FINALIZED:
+        return node_interfaces::LifecycleNodeInterface::CallbackReturn::SUCCESS;
+      case lifecycle_msgs::msg::State::PRIMARY_STATE_ACTIVE:
+        if (!this->handle_deactivate()) {
+          RCLCPP_DEBUG(get_logger(), "Shutdown failed during intermediate deactivation!");
+          break;
+        }
+        [[fallthrough]];
+      case lifecycle_msgs::msg::State::PRIMARY_STATE_INACTIVE:
+        if (!this->handle_cleanup()) {
+          RCLCPP_DEBUG(get_logger(), "Shutdown failed during intermediate cleanup!");
+          break;
+        }
+        [[fallthrough]];
+      case lifecycle_msgs::msg::State::PRIMARY_STATE_UNCONFIGURED:
+        if (!this->handle_shutdown()) {
+          break;
+        }
+        //  TODO: reset and finalize all needed properties
+        //  this->handlers_.clear();
+        //  this->daemons_.clear();
+        //  this->parameters_.clear();
+        //  this->shutdown_ = true;
+        return node_interfaces::LifecycleNodeInterface::CallbackReturn::SUCCESS;
+      default:
+        RCLCPP_WARN(get_logger(), "Invalid transition 'shutdown' from state %s.", previous_state.label().c_str());
         break;
-      }
-      [[fallthrough]];
-    case lifecycle_msgs::msg::State::PRIMARY_STATE_INACTIVE:
-      if (!this->handle_cleanup()) {
-        RCLCPP_DEBUG(get_logger(), "Shutdown failed during intermediate cleanup!");
-        break;
-      }
-      [[fallthrough]];
-    case lifecycle_msgs::msg::State::PRIMARY_STATE_UNCONFIGURED:
-      if (!this->handle_shutdown()) {
-        break;
-      }
-      //  TODO: reset and finalize all needed properties
-      //  this->handlers_.clear();
-      //  this->daemons_.clear();
-      //  this->parameters_.clear();
-      //  this->shutdown_ = true;
-      return node_interfaces::LifecycleNodeInterface::CallbackReturn::SUCCESS;
-    default:
-      RCLCPP_WARN(get_logger(), "Invalid transition 'shutdown' from state %s.", previous_state.label().c_str());
-      break;
+    }
   }
   RCLCPP_ERROR(get_logger(), "Entering into the error processing transition state.");
   return node_interfaces::LifecycleNodeInterface::CallbackReturn::ERROR;
@@ -211,7 +212,6 @@ bool LifecycleComponent::on_shutdown_callback() {
 
 node_interfaces::LifecycleNodeInterface::CallbackReturn LifecycleComponent::on_error(const State& previous_state) {
   RCLCPP_DEBUG(this->get_logger(), "on_error called from previous state %s", previous_state.label().c_str());
-  this->set_predicate("in_error_state", true);
   bool error_handled;
   try {
     error_handled = this->handle_error();
@@ -224,7 +224,6 @@ node_interfaces::LifecycleNodeInterface::CallbackReturn LifecycleComponent::on_e
     // TODO: reset and finalize all needed properties
     return node_interfaces::LifecycleNodeInterface::CallbackReturn::ERROR;
   }
-  this->set_predicate("in_error_state", false);
   return node_interfaces::LifecycleNodeInterface::CallbackReturn::SUCCESS;
 }
 
@@ -342,5 +341,16 @@ bool LifecycleComponent::deactivate_outputs() {
 
 rclcpp_lifecycle::State LifecycleComponent::get_lifecycle_state() const {
   return this->get_current_state();
+}
+
+void LifecycleComponent::raise_error() {
+  ComponentInterface::raise_error();
+  if (get_current_state().id() == lifecycle_msgs::msg::State::PRIMARY_STATE_UNCONFIGURED) {
+    this->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_UNCONFIGURED_SHUTDOWN);
+  } else if (get_current_state().id() == lifecycle_msgs::msg::State::PRIMARY_STATE_INACTIVE) {
+    this->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_INACTIVE_SHUTDOWN);
+  } else if (get_current_state().id() == lifecycle_msgs::msg::State::PRIMARY_STATE_ACTIVE) {
+    this->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_ACTIVE_SHUTDOWN);
+  }
 }
 }// namespace modulo_components

@@ -45,6 +45,7 @@ class ComponentInterface(Node):
         node_kwargs = {key: value for key, value in kwargs.items() if key in NODE_KWARGS}
         super().__init__(node_name, *args, **node_kwargs)
         self.__step_lock = Lock()
+        self.__has_error = False
         self._parameter_dict: Dict[str, Union[str, sr.Parameter]] = {}
         self.__read_only_parameters: Dict[str, bool] = {}
         self.__pre_set_parameters_callback_called = False
@@ -72,7 +73,6 @@ class ComponentInterface(Node):
         self.__predicate_message = PredicateCollection()
         self.__predicate_message.node = self.get_fully_qualified_name()
         self.__predicate_message.type = PredicateCollection.COMPONENT
-        self.add_predicate("in_error_state", False)
 
         self._rate = self.get_parameter_value("rate")
         self._period = 1.0 / self._rate
@@ -918,8 +918,14 @@ class ComponentInterface(Node):
         except (MessageTranslationError, TransformException) as e:
             self.get_logger().error(f"Failed to send {modifier}transform: {e}", throttle_duration_sec=1.0)
 
+    def has_error(self):
+        """
+        Check if the component has an error.
+        """
+        return self.__has_error
+
     def raise_error(self):
         """
-        Put the component in error state by setting the 'in_error_state' predicate to true.
+        Notify an error in the component.
         """
-        self.set_predicate("in_error_state", True)
+        self.__has_error = True

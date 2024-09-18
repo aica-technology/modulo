@@ -307,12 +307,6 @@ TYPED_TEST(ComponentInterfaceTest, GetSetQoS) {
   EXPECT_EQ(qos, this->component_->get_qos());
 }
 
-TYPED_TEST(ComponentInterfaceTest, RaiseError) {
-  EXPECT_FALSE(this->component_->get_predicate("in_error_state"));
-  this->component_->raise_error();
-  EXPECT_TRUE(this->component_->get_predicate("in_error_state"));
-}
-
 TYPED_TEST(ComponentInterfaceTest, AddTrigger) {
   EXPECT_NO_THROW(this->component_->add_trigger("trigger"));
   ASSERT_FALSE(

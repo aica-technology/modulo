@@ -116,6 +116,11 @@ protected:
    */
   rclcpp_lifecycle::State get_lifecycle_state() const;
 
+  /**
+   * @brief Trigger the shutdown transition.
+   */
+  void raise_error() override;
+
 private:
   /**
    * @brief Transition callback for state 'Configuring'.
@@ -314,7 +319,4 @@ inline void LifecycleComponent::add_output(
     RCLCPP_ERROR_STREAM(this->get_logger(), "Failed to add output '" << signal_name << "': " << ex.what());
   }
 }
-
-// TODO, if we raise error we need to manually call the lifecycle change state callback,
-// call callback function that this service calls
 }// namespace modulo_components
