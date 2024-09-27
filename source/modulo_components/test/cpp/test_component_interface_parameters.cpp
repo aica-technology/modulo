@@ -9,13 +9,9 @@ namespace modulo_components {
 template<class NodeT>
 class ComponentInterfaceParameterTest : public ::testing::Test {
 protected:
-  static void SetUpTestSuite() {
-    rclcpp::init(0, nullptr);
-  }
+  static void SetUpTestSuite() { rclcpp::init(0, nullptr); }
 
-  static void TearDownTestSuite() {
-    rclcpp::shutdown();
-  }
+  static void TearDownTestSuite() { rclcpp::shutdown(); }
 
   void SetUp() override {
     this->component_ = std::make_shared<ComponentInterfacePublicInterface>(
@@ -157,4 +153,4 @@ TYPED_TEST(ComponentInterfaceParameterTest, ReadOnlyParameter) {
   this->template expect_parameter_value<int>(1);
   EXPECT_EQ(this->param_->get_value(), 1);
 }
-} // namespace modulo_components
+}// namespace modulo_components

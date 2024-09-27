@@ -1,10 +1,10 @@
 #include <gtest/gtest.h>
 
 #include <clproto.hpp>
-#include <state_representation/space/cartesian/CartesianState.hpp>
 #include <state_representation/space/cartesian/CartesianPose.hpp>
-#include <state_representation/space/joint/JointState.hpp>
+#include <state_representation/space/cartesian/CartesianState.hpp>
 #include <state_representation/space/joint/JointPositions.hpp>
+#include <state_representation/space/joint/JointState.hpp>
 
 #include "modulo_core/exceptions.hpp"
 #include "modulo_core/translators/parameter_translators.hpp"
@@ -15,22 +15,21 @@ using namespace modulo_core::translators;
 // See also: http://www.ashermancinelli.com/gtest-type-val-param
 
 static std::tuple<
-    state_representation::CartesianState,
-    state_representation::CartesianPose,
-    state_representation::JointState,
-    state_representation::JointPositions
-> parameter_state_test_cases{
-    state_representation::CartesianState::Random("frame", "reference"),
-    state_representation::CartesianPose::Random("frame", "reference"),
-    state_representation::JointState::Random("robot", 3), state_representation::JointPositions::Random("robot", 3),
-};
+    state_representation::CartesianState, state_representation::CartesianPose, state_representation::JointState,
+    state_representation::JointPositions>
+    parameter_state_test_cases{
+        state_representation::CartesianState::Random("frame", "reference"),
+        state_representation::CartesianPose::Random("frame", "reference"),
+        state_representation::JointState::Random("robot", 3),
+        state_representation::JointPositions::Random("robot", 3),
+    };
 
 template<typename T>
 class ParameterStateTranslationTest : public testing::Test {
 public:
   ParameterStateTranslationTest() : test_state_{std::get<T>(parameter_state_test_cases)} {}
-protected:
 
+protected:
   void check_state_equality(const T& new_state) {
     EXPECT_STREQ(new_state.get_name().c_str(), this->test_state_.get_name().c_str());
     EXPECT_EQ(new_state.get_type(), this->test_state_.get_type());
@@ -48,8 +47,9 @@ TEST(ParameterStateTranslationTest, ConstReadInvalid) {
 
   auto expected_param = make_shared_parameter("test", JointState("test", 3));
 
-  EXPECT_THROW(auto new_param = read_parameter_const(ros_param, expected_param),
-               modulo_core::exceptions::ParameterTranslationException);
+  EXPECT_THROW(
+      auto new_param = read_parameter_const(ros_param, expected_param),
+      modulo_core::exceptions::ParameterTranslationException);
 }
 
 TYPED_TEST_P(ParameterStateTranslationTest, Write) {
@@ -98,9 +98,6 @@ TYPED_TEST_P(ParameterStateTranslationTest, ConstRead) {
 REGISTER_TYPED_TEST_SUITE_P(ParameterStateTranslationTest, Write, ReadAndReWrite, ConstRead);
 
 using ParameterStateTestTypes = testing::Types<
-    state_representation::CartesianState,
-    state_representation::CartesianPose,
-    state_representation::JointState,
-    state_representation::JointPositions
->;
+    state_representation::CartesianState, state_representation::CartesianPose, state_representation::JointState,
+    state_representation::JointPositions>;
 INSTANTIATE_TYPED_TEST_SUITE_P(TestPrefix, ParameterStateTranslationTest, ParameterStateTestTypes);

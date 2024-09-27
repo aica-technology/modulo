@@ -7,9 +7,7 @@ using namespace std::chrono_literals;
 namespace modulo_controllers {
 
 ControllerInterface::ControllerInterface(bool claim_all_state_interfaces)
-    : BaseControllerInterface(),
-      claim_all_state_interfaces_(claim_all_state_interfaces),
-      on_init_called_(false) {}
+    : BaseControllerInterface(), claim_all_state_interfaces_(claim_all_state_interfaces), on_init_called_(false) {}
 
 rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn ControllerInterface::on_init() {
   auto status = BaseControllerInterface::on_init();
@@ -29,8 +27,7 @@ rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn Contro
     add_parameter<double>(
         "activation_timeout", 1.0, "The seconds to wait for valid data on the state interfaces before activating");
     add_parameter<double>(
-        "input_validity_period", 1.0,
-        "The maximum age of an input state before discarding it as expired");
+        "input_validity_period", 1.0, "The maximum age of an input state before discarding it as expired");
     add_parameter<int>("predicate_publishing_rate", 10, "The rate at which to publish controller predicates");
 
     return add_interfaces();

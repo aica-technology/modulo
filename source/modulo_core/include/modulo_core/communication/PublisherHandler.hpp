@@ -55,12 +55,12 @@ public:
   create_publisher_interface(const std::shared_ptr<MessagePairInterface>& message_pair);
 
 private:
-  std::shared_ptr<PubT> publisher_; ///< The ROS publisher
+  std::shared_ptr<PubT> publisher_;///< The ROS publisher
 };
 
 template<typename PubT, typename MsgT>
-PublisherHandler<PubT, MsgT>::PublisherHandler(PublisherType type, std::shared_ptr<PubT> publisher) :
-    PublisherInterface(type), publisher_(std::move(publisher)) {}
+PublisherHandler<PubT, MsgT>::PublisherHandler(PublisherType type, std::shared_ptr<PubT> publisher)
+    : PublisherInterface(type), publisher_(std::move(publisher)) {}
 
 template<typename PubT, typename MsgT>
 PublisherHandler<PubT, MsgT>::~PublisherHandler() {
@@ -112,9 +112,8 @@ void PublisherHandler<PubT, MsgT>::publish(const MsgT& message) const {
 }
 
 template<typename PubT, typename MsgT>
-std::shared_ptr<PublisherInterface> PublisherHandler<PubT, MsgT>::create_publisher_interface(
-    const std::shared_ptr<MessagePairInterface>& message_pair
-) {
+std::shared_ptr<PublisherInterface>
+PublisherHandler<PubT, MsgT>::create_publisher_interface(const std::shared_ptr<MessagePairInterface>& message_pair) {
   std::shared_ptr<PublisherInterface> publisher_interface;
   try {
     publisher_interface = std::shared_ptr<PublisherInterface>(this->shared_from_this());

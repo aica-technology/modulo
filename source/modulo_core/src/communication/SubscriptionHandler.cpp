@@ -5,29 +5,28 @@
 namespace modulo_core::communication {
 
 template<>
-SubscriptionHandler<std_msgs::msg::Bool>::SubscriptionHandler(std::shared_ptr<MessagePairInterface> message_pair) :
-    SubscriptionInterface(std::move(message_pair)), clock_(std::make_shared<rclcpp::Clock>()) {}
+SubscriptionHandler<std_msgs::msg::Bool>::SubscriptionHandler(std::shared_ptr<MessagePairInterface> message_pair)
+    : SubscriptionInterface(std::move(message_pair)), clock_(std::make_shared<rclcpp::Clock>()) {}
 
 template<>
-SubscriptionHandler<std_msgs::msg::Float64>::SubscriptionHandler(std::shared_ptr<MessagePairInterface> message_pair) :
-    SubscriptionInterface(std::move(message_pair)), clock_(std::make_shared<rclcpp::Clock>()) {}
+SubscriptionHandler<std_msgs::msg::Float64>::SubscriptionHandler(std::shared_ptr<MessagePairInterface> message_pair)
+    : SubscriptionInterface(std::move(message_pair)), clock_(std::make_shared<rclcpp::Clock>()) {}
 template<>
 SubscriptionHandler<std_msgs::msg::Float64MultiArray>::SubscriptionHandler(
-    std::shared_ptr<MessagePairInterface> message_pair
-) :
-    SubscriptionInterface(std::move(message_pair)), clock_(std::make_shared<rclcpp::Clock>()) {}
+    std::shared_ptr<MessagePairInterface> message_pair)
+    : SubscriptionInterface(std::move(message_pair)), clock_(std::make_shared<rclcpp::Clock>()) {}
 
 template<>
-SubscriptionHandler<std_msgs::msg::Int32>::SubscriptionHandler(std::shared_ptr<MessagePairInterface> message_pair) :
-    SubscriptionInterface(std::move(message_pair)), clock_(std::make_shared<rclcpp::Clock>()) {}
+SubscriptionHandler<std_msgs::msg::Int32>::SubscriptionHandler(std::shared_ptr<MessagePairInterface> message_pair)
+    : SubscriptionInterface(std::move(message_pair)), clock_(std::make_shared<rclcpp::Clock>()) {}
 
 template<>
-SubscriptionHandler<std_msgs::msg::String>::SubscriptionHandler(std::shared_ptr<MessagePairInterface> message_pair) :
-    SubscriptionInterface(std::move(message_pair)), clock_(std::make_shared<rclcpp::Clock>()) {}
+SubscriptionHandler<std_msgs::msg::String>::SubscriptionHandler(std::shared_ptr<MessagePairInterface> message_pair)
+    : SubscriptionInterface(std::move(message_pair)), clock_(std::make_shared<rclcpp::Clock>()) {}
 
 template<>
-SubscriptionHandler<EncodedState>::SubscriptionHandler(std::shared_ptr<MessagePairInterface> message_pair) :
-    SubscriptionInterface(std::move(message_pair)), clock_(std::make_shared<rclcpp::Clock>()) {}
+SubscriptionHandler<EncodedState>::SubscriptionHandler(std::shared_ptr<MessagePairInterface> message_pair)
+    : SubscriptionInterface(std::move(message_pair)), clock_(std::make_shared<rclcpp::Clock>()) {}
 
 template<>
 std::function<void(const std::shared_ptr<std_msgs::msg::Bool>)>

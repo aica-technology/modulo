@@ -67,7 +67,7 @@ public:
   void set_message_pair(const std::shared_ptr<MessagePairInterface>& message_pair);
 
 private:
-  std::shared_ptr<MessagePairInterface> message_pair_; ///< The pointer to the stored MessagePair instance
+  std::shared_ptr<MessagePairInterface> message_pair_;///< The pointer to the stored MessagePair instance
 };
 
 template<typename MsgT>

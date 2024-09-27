@@ -12,8 +12,7 @@ namespace modulo_components {
 
 inline void add_configure_activate(
     const std::shared_ptr<rclcpp::executors::SingleThreadedExecutor>& exec,
-    const std::shared_ptr<LifecycleComponent>& component
-) {
+    const std::shared_ptr<LifecycleComponent>& component) {
   exec->add_node(component->get_node_base_interface());
   component->configure();
   component->activate();
@@ -24,14 +23,13 @@ class MinimalCartesianOutput : public ComponentT {
 public:
   MinimalCartesianOutput(
       const rclcpp::NodeOptions& node_options, const std::string& topic, const CartesianState& cartesian_state,
-      bool publish_on_step
-  ) : ComponentT(node_options, "minimal_cartesian_output"), output_(std::make_shared<CartesianState>(cartesian_state)) {
+      bool publish_on_step)
+      : ComponentT(node_options, "minimal_cartesian_output"),
+        output_(std::make_shared<CartesianState>(cartesian_state)) {
     this->add_output("cartesian_state", this->output_, topic, true, publish_on_step);
   }
 
-  void publish() {
-    this->publish_output("cartesian_state");
-  }
+  void publish() { this->publish_output("cartesian_state"); }
 
 private:
   std::shared_ptr<CartesianState> output_;
@@ -40,8 +38,8 @@ private:
 template<class ComponentT>
 class MinimalCartesianInput : public ComponentT {
 public:
-  MinimalCartesianInput(const rclcpp::NodeOptions& node_options, const std::string& topic) :
-      ComponentT(node_options, "minimal_cartesian_input"), input(std::make_shared<CartesianState>()) {
+  MinimalCartesianInput(const rclcpp::NodeOptions& node_options, const std::string& topic)
+      : ComponentT(node_options, "minimal_cartesian_input"), input(std::make_shared<CartesianState>()) {
     this->received_future = this->received_.get_future();
     this->add_input("cartesian_state", this->input, [this]() { this->received_.set_value(); }, topic);
   }

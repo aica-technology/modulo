@@ -22,8 +22,7 @@ namespace modulo_core::translators {
  */
 void copy_parameter_value(
     const std::shared_ptr<const state_representation::ParameterInterface>& source_parameter,
-    const std::shared_ptr<state_representation::ParameterInterface>& parameter
-);
+    const std::shared_ptr<state_representation::ParameterInterface>& parameter);
 
 /**
  * @brief Write a ROS Parameter from a ParameterInterface pointer.
@@ -51,8 +50,7 @@ std::shared_ptr<state_representation::ParameterInterface> read_parameter(const r
  */
 std::shared_ptr<state_representation::ParameterInterface> read_parameter_const(
     const rclcpp::Parameter& ros_parameter,
-    const std::shared_ptr<const state_representation::ParameterInterface>& parameter
-);
+    const std::shared_ptr<const state_representation::ParameterInterface>& parameter);
 
 /**
  * @brief Update the parameter value of a ParameterInterface from a ROS Parameter object.
@@ -62,9 +60,7 @@ std::shared_ptr<state_representation::ParameterInterface> read_parameter_const(
  * @throws modulo_core::exceptions::ParameterTranslationException if the ROS parameter could not be read
  */
 void read_parameter(
-    const rclcpp::Parameter& ros_parameter, const std::shared_ptr<state_representation::ParameterInterface>& parameter
-);
-
+    const rclcpp::Parameter& ros_parameter, const std::shared_ptr<state_representation::ParameterInterface>& parameter);
 
 /**
  * @brief Given a state representation parameter type, get the corresponding ROS parameter type.
@@ -73,4 +69,4 @@ void read_parameter(
  */
 rclcpp::ParameterType get_ros_parameter_type(const state_representation::ParameterType& parameter_type);
 
-}// namespace modulo_core::exceptions
+}// namespace modulo_core::translators

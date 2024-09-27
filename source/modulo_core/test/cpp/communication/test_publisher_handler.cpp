@@ -2,8 +2,8 @@
 
 #include <rclcpp/node.hpp>
 
-#include "modulo_core/communication/PublisherHandler.hpp"
 #include "modulo_core/communication/MessagePair.hpp"
+#include "modulo_core/communication/PublisherHandler.hpp"
 
 using namespace modulo_core::communication;
 
@@ -30,18 +30,12 @@ static void test_publisher_interface(const std::shared_ptr<rclcpp::Node>& node, 
 
 class PublisherTest : public ::testing::Test {
 public:
-  static void SetUpTestSuite() {
-    rclcpp::init(0, nullptr);
-  }
+  static void SetUpTestSuite() { rclcpp::init(0, nullptr); }
 
-  static void TearDownTestSuite() {
-    rclcpp::shutdown();
-  }
+  static void TearDownTestSuite() { rclcpp::shutdown(); }
 
 protected:
-  void SetUp() {
-    node = std::make_shared<rclcpp::Node>("test_node");
-  }
+  void SetUp() { node = std::make_shared<rclcpp::Node>("test_node"); }
 
   std::shared_ptr<rclcpp::Node> node;
 };
@@ -58,8 +52,8 @@ TEST_F(PublisherTest, EncodedState) {
   // create message pair
   auto data =
       std::make_shared<state_representation::CartesianState>(state_representation::CartesianState::Random("test"));
-  auto message_pair = std::make_shared<MessagePair<modulo_core::EncodedState, state_representation::State>>(
-      data, node->get_clock());
+  auto message_pair =
+      std::make_shared<MessagePair<modulo_core::EncodedState, state_representation::State>>(data, node->get_clock());
 
   // create publisher handler
   auto publisher = node->create_publisher<modulo_core::EncodedState>("topic", 10);

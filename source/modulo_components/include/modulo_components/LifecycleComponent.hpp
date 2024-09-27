@@ -36,8 +36,7 @@ public:
    * @param fallback_name The name of the component if it was not provided through the node options
    */
   explicit LifecycleComponent(
-      const rclcpp::NodeOptions& node_options, const std::string& fallback_name = "LifecycleComponent"
-  );
+      const rclcpp::NodeOptions& node_options, const std::string& fallback_name = "LifecycleComponent");
 
   /**
    * @brief Virtual default destructor.
@@ -110,8 +109,7 @@ protected:
   template<typename DataT>
   void add_output(
       const std::string& signal_name, const std::shared_ptr<DataT>& data, const std::string& default_topic = "",
-      bool fixed_topic = false, bool publish_on_step = true
-  );
+      bool fixed_topic = false, bool publish_on_step = true);
 
   /**
    * @brief Get the current lifecycle state of the component
@@ -266,26 +264,26 @@ private:
   bool clear_signals();
 
   // TODO hide ROS methods
-  using ComponentInterface::get_parameter;
   using ComponentInterface::create_output;
+  using ComponentInterface::evaluate_periodic_callbacks;
+  using ComponentInterface::get_parameter;
   using ComponentInterface::inputs_;
   using ComponentInterface::outputs_;
   using ComponentInterface::periodic_outputs_;
-  using ComponentInterface::publish_predicates;
   using ComponentInterface::publish_outputs;
-  using ComponentInterface::evaluate_periodic_callbacks;
+  using ComponentInterface::publish_predicates;
   using rclcpp_lifecycle::LifecycleNode::get_parameter;
 };
 
 template<typename DataT>
 inline void LifecycleComponent::add_output(
     const std::string& signal_name, const std::shared_ptr<DataT>& data, const std::string& default_topic,
-    bool fixed_topic, bool publish_on_step
-) {
+    bool fixed_topic, bool publish_on_step) {
   if (this->get_lifecycle_state().id() != lifecycle_msgs::msg::State::PRIMARY_STATE_UNCONFIGURED
       && this->get_lifecycle_state().id() != lifecycle_msgs::msg::State::PRIMARY_STATE_INACTIVE) {
-    RCLCPP_WARN_STREAM_THROTTLE(this->get_logger(), *this->get_clock(), 1000,
-                                "Adding output in state " << this->get_lifecycle_state().label() << " is not allowed.");
+    RCLCPP_WARN_STREAM_THROTTLE(
+        this->get_logger(), *this->get_clock(), 1000,
+        "Adding output in state " << this->get_lifecycle_state().label() << " is not allowed.");
     return;
   }
   try {

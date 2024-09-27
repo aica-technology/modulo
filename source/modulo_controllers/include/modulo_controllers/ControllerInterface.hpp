@@ -183,7 +183,7 @@ private:
   using controller_interface::ControllerInterfaceBase::state_interfaces_;
 
   std::unordered_map<std::string, std::unordered_map<std::string, double>>
-      state_interface_data_;///< Map of all state interface data
+      state_interface_data_;                  ///< Map of all state interface data
   std::vector<double> command_interface_data_;///< Vector of all command interface data
   std::unordered_map<std::string, std::unordered_map<std::string, unsigned int>>
       command_interface_indices_;                   ///< Map of command interface indices in the command interface data

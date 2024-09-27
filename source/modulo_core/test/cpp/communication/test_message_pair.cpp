@@ -5,9 +5,8 @@
 using namespace modulo_core::communication;
 
 template<typename MsgT, typename DataT>
-static void test_message_interface(
-    const DataT& initial_value, const DataT& new_value, const std::shared_ptr<rclcpp::Clock> clock
-) {
+static void
+test_message_interface(const DataT& initial_value, const DataT& new_value, const std::shared_ptr<rclcpp::Clock> clock) {
   auto data = std::make_shared<DataT>(initial_value);
   auto message_pair = std::make_shared<MessagePair<MsgT, DataT>>(data, clock);
   EXPECT_EQ(initial_value, *message_pair->get_data());
@@ -31,9 +30,7 @@ static void test_message_interface(
 
 class MessagePairTest : public ::testing::Test {
 protected:
-  void SetUp() override {
-    clock_ = std::make_shared<rclcpp::Clock>();
-  }
+  void SetUp() override { clock_ = std::make_shared<rclcpp::Clock>(); }
 
   std::shared_ptr<rclcpp::Clock> clock_;
 };

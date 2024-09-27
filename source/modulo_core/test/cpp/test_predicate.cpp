@@ -15,7 +15,7 @@ TEST(PredicateTest, SimplePredicate) {
   value = predicate.query();
   EXPECT_FALSE(value);
 
-  predicate.set_predicate([]() { return false;} );
+  predicate.set_predicate([]() { return false; });
   EXPECT_FALSE(predicate.get_value());
   value = predicate.query();
   EXPECT_TRUE(value);

@@ -15,13 +15,9 @@ using namespace std::chrono_literals;
 template<class NodeT>
 class ComponentInterfaceTest : public ::testing::Test {
 protected:
-  static void SetUpTestSuite() {
-    rclcpp::init(0, nullptr);
-  }
+  static void SetUpTestSuite() { rclcpp::init(0, nullptr); }
 
-  static void TearDownTestSuite() {
-    rclcpp::shutdown();
-  }
+  static void TearDownTestSuite() { rclcpp::shutdown(); }
 
   void SetUp() override {
     exec_ = std::make_shared<rclcpp::executors::SingleThreadedExecutor>();
@@ -65,8 +61,7 @@ TYPED_TEST(ComponentInterfaceTest, GetPredicateValue) {
   // predicate does not exist, expect false
   EXPECT_FALSE(this->component_->get_predicate("test"));
   // error in callback function except false
-  this->component_->add_predicate(
-      "error", [&]() -> bool { throw std::runtime_error("An error occurred"); });
+  this->component_->add_predicate("error", [&]() -> bool { throw std::runtime_error("An error occurred"); });
   EXPECT_FALSE(this->component_->get_predicate("error"));
 }
 
@@ -105,8 +100,9 @@ TYPED_TEST(ComponentInterfaceTest, AddRemoveInput) {
   // trying to add an input that already exists should fail
   this->component_->template add_input<std_msgs::msg::String>(
       "test_13", [](const std::shared_ptr<std_msgs::msg::String>) {});
-  EXPECT_EQ(this->component_->inputs_.at("test_13")->get_message_pair()->get_type(),
-            modulo_core::communication::MessageType::BOOL);
+  EXPECT_EQ(
+      this->component_->inputs_.at("test_13")->get_message_pair()->get_type(),
+      modulo_core::communication::MessageType::BOOL);
 
   // remove input
   this->component_->remove_input("test_13");
@@ -126,8 +122,7 @@ TYPED_TEST(ComponentInterfaceTest, AddInputWithUserCallback) {
       this->component_->inputs_.at("state")->template get_handler<modulo_core::EncodedState>()->get_callback();
   state_representation::CartesianState new_state("B");
   auto message = std::make_shared<modulo_core::EncodedState>();
-  modulo_core::translators::write_message(
-      *message, new_state, this->component_->node_clock_->get_clock()->now());
+  modulo_core::translators::write_message(*message, new_state, this->component_->node_clock_->get_clock()->now());
   EXPECT_STREQ(state_data->get_name().c_str(), "A");
   EXPECT_NO_THROW(callback(message));
   EXPECT_TRUE(callback_triggered);
@@ -258,13 +253,15 @@ TYPED_TEST(ComponentInterfaceTest, TF) {
   EXPECT_FLOAT_EQ(abs(identity.get_orientation().w()), 1.);
 
   sleep(1);
-  EXPECT_THROW(lookup_tf = this->component_->lookup_transform("test", "world", 0.9),
-               modulo_core::exceptions::LookupTransformException);
+  EXPECT_THROW(
+      lookup_tf = this->component_->lookup_transform("test", "world", 0.9),
+      modulo_core::exceptions::LookupTransformException);
 
   auto send_static_tf = state_representation::CartesianPose::Random("static_test", "world");
   EXPECT_NO_THROW(this->component_->send_static_transform(send_static_tf));
-  EXPECT_THROW(auto throw_tf = this->component_->lookup_transform("dummy", "world"),
-               modulo_core::exceptions::LookupTransformException);
+  EXPECT_THROW(
+      auto throw_tf = this->component_->lookup_transform("dummy", "world"),
+      modulo_core::exceptions::LookupTransformException);
 
   EXPECT_NO_THROW(lookup_tf = this->component_->lookup_transform("static_test", "world"));
   identity = send_static_tf * lookup_tf.inverse();

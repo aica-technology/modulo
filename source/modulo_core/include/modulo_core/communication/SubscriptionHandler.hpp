@@ -70,9 +70,10 @@ private:
    */
   void handle_callback_exceptions();
 
-  std::shared_ptr<rclcpp::Subscription<MsgT>> subscription_; ///< The pointer referring to the ROS subscription
-  std::shared_ptr<rclcpp::Clock> clock_; ///< ROS clock for throttling log
-  std::function<void()> user_callback_ = []{}; ///< User callback to be executed after the subscription callback
+  std::shared_ptr<rclcpp::Subscription<MsgT>> subscription_;///< The pointer referring to the ROS subscription
+  std::shared_ptr<rclcpp::Clock> clock_;                    ///< ROS clock for throttling log
+  std::function<void()> user_callback_ = [] {
+  };///< User callback to be executed after the subscription callback
 };
 
 template<typename MsgT>
@@ -107,8 +108,7 @@ SubscriptionHandler<MsgT>::get_callback(const std::function<void()>& user_callba
 
 template<typename MsgT>
 std::shared_ptr<SubscriptionInterface> SubscriptionHandler<MsgT>::create_subscription_interface(
-    const std::shared_ptr<rclcpp::Subscription<MsgT>>& subscription
-) {
+    const std::shared_ptr<rclcpp::Subscription<MsgT>>& subscription) {
   this->set_subscription(subscription);
   return std::shared_ptr<SubscriptionInterface>(this->shared_from_this());
 }
@@ -119,11 +119,13 @@ void SubscriptionHandler<MsgT>::handle_callback_exceptions() {
     // re-throw the original exception
     throw;
   } catch (const exceptions::CoreException& ex) {
-    RCLCPP_WARN_STREAM_THROTTLE(rclcpp::get_logger("SubscriptionHandler"), *this->clock_, 1000,
-                                "Exception in subscription callback: " << ex.what());
+    RCLCPP_WARN_STREAM_THROTTLE(
+        rclcpp::get_logger("SubscriptionHandler"), *this->clock_, 1000,
+        "Exception in subscription callback: " << ex.what());
   } catch (const std::exception& ex) {
-    RCLCPP_WARN_STREAM_THROTTLE(rclcpp::get_logger("SubscriptionHandler"), *this->clock_, 1000,
-                                "Unhandled exception in subscription user callback: " << ex.what());
+    RCLCPP_WARN_STREAM_THROTTLE(
+        rclcpp::get_logger("SubscriptionHandler"), *this->clock_, 1000,
+        "Unhandled exception in subscription user callback: " << ex.what());
   }
 }
 

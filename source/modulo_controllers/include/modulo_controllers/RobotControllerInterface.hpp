@@ -117,7 +117,7 @@ private:
   std::string control_type_;       ///< The high-level interface type (position, velocity, acceleration or effort)
 
   bool robot_model_required_;///< If true, check that a robot model is available on configure
-  bool load_geometries_;///< If true, load geometries from the URDF into the robot model
+  bool load_geometries_;     ///< If true, load geometries from the URDF into the robot model
   bool
       new_joint_command_ready_;///< If true, joint commands are written to the command interface, else previous commands are decayed
   double

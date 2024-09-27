@@ -64,8 +64,8 @@ void write_message(geometry_msgs::msg::Transform& message, const CartesianState&
   write_quaternion(message.rotation, state.get_orientation());
 }
 
-void
-write_message(geometry_msgs::msg::TransformStamped& message, const CartesianState& state, const rclcpp::Time& time) {
+void write_message(
+    geometry_msgs::msg::TransformStamped& message, const CartesianState& state, const rclcpp::Time& time) {
   write_message(message.transform, state, time);
   message.header.stamp = time;
   message.header.frame_id = state.get_reference_frame();
@@ -137,31 +137,26 @@ void write_message(U& message, const Parameter<T>& state, const rclcpp::Time&) {
 }
 
 template void write_message<std_msgs::msg::Float64, double>(
-    std_msgs::msg::Float64& message, const Parameter<double>& state, const rclcpp::Time&
-);
+    std_msgs::msg::Float64& message, const Parameter<double>& state, const rclcpp::Time&);
 
 template void write_message<std_msgs::msg::Float64MultiArray, std::vector<double>>(
-    std_msgs::msg::Float64MultiArray& message, const Parameter<std::vector<double>>& state, const rclcpp::Time&
-);
+    std_msgs::msg::Float64MultiArray& message, const Parameter<std::vector<double>>& state, const rclcpp::Time&);
 
 template void write_message<std_msgs::msg::Bool, bool>(
-    std_msgs::msg::Bool& message, const Parameter<bool>& state, const rclcpp::Time&
-);
+    std_msgs::msg::Bool& message, const Parameter<bool>& state, const rclcpp::Time&);
 
 template void write_message<std_msgs::msg::String, std::string>(
-    std_msgs::msg::String& message, const Parameter<std::string>& state, const rclcpp::Time&
-);
+    std_msgs::msg::String& message, const Parameter<std::string>& state, const rclcpp::Time&);
 
 template<>
-void
-write_message(geometry_msgs::msg::Transform& message, const Parameter<CartesianPose>& state, const rclcpp::Time& time) {
+void write_message(
+    geometry_msgs::msg::Transform& message, const Parameter<CartesianPose>& state, const rclcpp::Time& time) {
   write_message(message, state.get_value(), time);
 }
 
 template<>
 void write_message(
-    geometry_msgs::msg::TransformStamped& message, const Parameter<CartesianPose>& state, const rclcpp::Time& time
-) {
+    geometry_msgs::msg::TransformStamped& message, const Parameter<CartesianPose>& state, const rclcpp::Time& time) {
   write_message(message, state.get_value(), time);
 }
 

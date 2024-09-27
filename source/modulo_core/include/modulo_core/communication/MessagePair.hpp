@@ -53,8 +53,8 @@ public:
   void set_data(const std::shared_ptr<DataT>& data);
 
 private:
-  std::shared_ptr<DataT> data_; ///< Pointer referring to the data stored in the MessagePair
-  std::shared_ptr<rclcpp::Clock> clock_; ///< ROS clock for translating messages
+  std::shared_ptr<DataT> data_;         ///< Pointer referring to the data stored in the MessagePair
+  std::shared_ptr<rclcpp::Clock> clock_;///< ROS clock for translating messages
 };
 
 template<typename MsgT, typename DataT>
@@ -127,9 +127,8 @@ make_shared_message_pair(const std::shared_ptr<double>& data, const std::shared_
 
 template<>
 inline std::shared_ptr<MessagePairInterface> make_shared_message_pair(
-    const std::shared_ptr<std::vector<double>>& data, const std::shared_ptr<rclcpp::Clock>& clock
-) {
-  return std::make_shared < MessagePair<std_msgs::msg::Float64MultiArray, std::vector < double>>>(data, clock);
+    const std::shared_ptr<std::vector<double>>& data, const std::shared_ptr<rclcpp::Clock>& clock) {
+  return std::make_shared<MessagePair<std_msgs::msg::Float64MultiArray, std::vector<double>>>(data, clock);
 }
 
 template<>
