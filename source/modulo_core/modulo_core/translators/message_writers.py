@@ -14,7 +14,8 @@ MsgT = TypeVar('MsgT')
 StateT = TypeVar('StateT')
 
 
-def write_xyz(message: Union[geometry.Point, geometry.Vector3], vector: np.array):
+def write_xyz(message: Union[geometry.Point,
+              geometry.Vector3], vector: np.array):
     """
     Helper function to write a vector to a Point or Vector3 message.
 
@@ -23,7 +24,8 @@ def write_xyz(message: Union[geometry.Point, geometry.Vector3], vector: np.array
     :raises MessageTranslationError if the message could not be written
     """
     if vector.size != 3:
-        raise MessageTranslationError("Provide a vector of size 3 to transform to a Point or Vector3 message.")
+        raise MessageTranslationError(
+            "Provide a vector of size 3 to transform to a Point or Vector3 message.")
     message.x = vector[0]
     message.y = vector[1]
     message.z = vector[2]
@@ -38,7 +40,8 @@ def write_quaternion(message: geometry.Quaternion, quat: np.array):
     :raises MessageTranslationError if the message could not be written
     """
     if quat.size != 4:
-        raise MessageTranslationError("Provide a vector of size 4 to transform to a Quaternion message.")
+        raise MessageTranslationError(
+            "Provide a vector of size 4 to transform to a Quaternion message.")
     message.w = quat[0]
     message.x = quat[1]
     message.y = quat[2]
@@ -57,17 +60,22 @@ def write_message(message: MsgT, state: StateT):
         if not isinstance(state, sr.State):
             raise MessageTranslationError("This state type is not supported.")
         if not state:
-            raise MessageTranslationError(f"{state.get_name()} state is empty while attempting to write it to message.")
+            raise MessageTranslationError(
+                f"{state.get_name()} state is empty while attempting to write it to message.")
         if isinstance(state, sr.CartesianState):
             if isinstance(message, geometry.Accel):
                 write_xyz(message.linear, state.get_linear_acceleration())
                 write_xyz(message.angular, state.get_angular_acceleration())
             elif isinstance(message, geometry.Pose):
                 write_xyz(message.position, state.get_position())
-                write_quaternion(message.orientation, state.get_orientation_coefficients())
+                write_quaternion(
+                    message.orientation,
+                    state.get_orientation_coefficients())
             elif isinstance(message, geometry.Transform):
                 write_xyz(message.translation, state.get_position())
-                write_quaternion(message.rotation, state.get_orientation_coefficients())
+                write_quaternion(
+                    message.rotation,
+                    state.get_orientation_coefficients())
             elif isinstance(message, geometry.Twist):
                 write_xyz(message.linear, state.get_linear_velocity())
                 write_xyz(message.angular, state.get_angular_velocity())
@@ -75,14 +83,16 @@ def write_message(message: MsgT, state: StateT):
                 write_xyz(message.force, state.get_force())
                 write_xyz(message.torque, state.get_torque())
             else:
-                raise MessageTranslationError("The provided combination of state type and message type is not supported")
+                raise MessageTranslationError(
+                    "The provided combination of state type and message type is not supported")
         elif isinstance(message, JointState) and isinstance(state, sr.JointState):
             message.name = state.get_names()
             message.position = state.get_positions().tolist()
             message.velocity = state.get_velocities().tolist()
             message.effort = state.get_torques().tolist()
         else:
-            raise MessageTranslationError("The provided combination of state type and message type is not supported")
+            raise MessageTranslationError(
+                "The provided combination of state type and message type is not supported")
     except MessageTranslationError:
         raise
     except Exception as e:
@@ -111,7 +121,8 @@ def write_stamped_message(message: MsgT, state: StateT, time: rclpy.time.Time):
         elif isinstance(message, geometry.WrenchStamped):
             write_message(message.wrench, state)
         else:
-            raise MessageTranslationError("The provided combination of state type and message type is not supported")
+            raise MessageTranslationError(
+                "The provided combination of state type and message type is not supported")
         message.header.stamp = time.to_msg()
         message.header.frame_id = state.get_reference_frame()
     except MessageTranslationError:
@@ -130,7 +141,10 @@ def write_std_message(message: MsgT, data: DataT):
     message.data = data
 
 
-def write_clproto_message(message: EncodedState, state: StateT, clproto_message_type: clproto.MessageType):
+def write_clproto_message(
+        message: EncodedState,
+        state: StateT,
+        clproto_message_type: clproto.MessageType):
     """
     Convert a state_representation State to an EncodedState message.
 

@@ -19,9 +19,14 @@ class LifecycleChangeClient(Node):
         self._client = self.create_client(ChangeState, topic)
 
         if not self._client.wait_for_service(timeout_sec=timeout_sec):
-            raise RuntimeError(f"Service 'ChangeState' at {topic} not available")
+            raise RuntimeError(
+                f"Service 'ChangeState' at {topic} not available")
 
-    def trigger_lifecycle_transition(self, ros_exec: rclpy.executors.Executor, transition_id: int, timeout_sec=0.5):
+    def trigger_lifecycle_transition(
+            self,
+            ros_exec: rclpy.executors.Executor,
+            transition_id: int,
+            timeout_sec=0.5):
         """
         Trigger the specified transition on the target component
 
@@ -29,7 +34,10 @@ class LifecycleChangeClient(Node):
         :param transition_id: The desired transition
         :param timeout_sec: The timeout for completion of the transition
         """
-        future = self._client.call_async(ChangeState.Request(transition=Transition(id=transition_id)))
+        future = self._client.call_async(
+            ChangeState.Request(
+                transition=Transition(
+                    id=transition_id)))
         ros_exec.spin_until_future_complete(future, timeout_sec=timeout_sec)
         assert future.done() and future.result().success
 

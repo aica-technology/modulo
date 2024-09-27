@@ -22,7 +22,8 @@ def test_parameter_write(parameters):
         param = sr.Parameter(name, value_types[0], value_types[1])
         ros_param = write_parameter(param)
         assert ros_param.type_ == value_types[3]
-        assert ros_param.to_parameter_msg() == Parameter(name, value=value_types[0]).to_parameter_msg()
+        assert ros_param.to_parameter_msg() == Parameter(
+            name, value=value_types[0]).to_parameter_msg()
 
 
 def test_parameter_read_write(parameters):
@@ -76,7 +77,11 @@ def test_state_parameter_write(state_parameters):
         param = sr.Parameter(name, sr.ParameterType.STATE, value_types[1])
         ros_param = write_parameter(param)
         assert ros_param.type_ == Parameter.Type.NOT_SET
-        param = sr.Parameter(name, value_types[0], sr.ParameterType.STATE, value_types[1])
+        param = sr.Parameter(
+            name,
+            value_types[0],
+            sr.ParameterType.STATE,
+            value_types[1])
         ros_param = write_parameter(param)
         assert ros_param.type_ == Parameter.Type.STRING
         assert ros_param.name == param.get_name()
@@ -101,7 +106,9 @@ def test_state_parameter_read_write(state_parameters):
         assert ros_param.name == new_ros_param.name
         assert ros_param.type_ == new_ros_param.type_
         assert_np_array_equal(
-            clproto.decode(clproto.from_json(new_ros_param.get_parameter_value().string_value)).data(),
+            clproto.decode(
+                clproto.from_json(
+                    new_ros_param.get_parameter_value().string_value)).data(),
             value_types[0].data())
 
 
@@ -153,9 +160,16 @@ def test_matrix_parameter_read_write():
 
 
 def test_state_parameter_const_read_invalid():
-    param = sr.Parameter("test", sr.CartesianState("test"), sr.ParameterType.STATE, sr.StateType.CARTESIAN_STATE)
+    param = sr.Parameter(
+        "test",
+        sr.CartesianState("test"),
+        sr.ParameterType.STATE,
+        sr.StateType.CARTESIAN_STATE)
     ros_param = write_parameter(param)
 
-    expected_param = sr.Parameter("test", sr.ParameterType.STATE, sr.StateType.JOINT_STATE)
+    expected_param = sr.Parameter(
+        "test",
+        sr.ParameterType.STATE,
+        sr.StateType.JOINT_STATE)
     with pytest.raises(ParameterTranslationError):
         read_parameter_const(ros_param, expected_param)

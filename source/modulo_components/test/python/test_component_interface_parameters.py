@@ -30,8 +30,12 @@ def component_interface(ros_context):
     yield ComponentInterfaceTest('component_interface')
 
 
-def assert_param_value_equal(component_interface: ComponentInterfaceTest, name: str, value: float):
-    assert component_interface.get_ros_parameter(name).get_parameter_value().integer_value == value
+def assert_param_value_equal(
+        component_interface: ComponentInterfaceTest,
+        name: str,
+        value: float):
+    assert component_interface.get_ros_parameter(
+        name).get_parameter_value().integer_value == value
     assert component_interface.get_parameter_value(name) == value
     assert component_interface.get_parameter(name).get_value() == value
 
@@ -58,7 +62,8 @@ def test_add_parameter_again(component_interface):
 
     component_interface.add_parameter("param", "Test parameter")
     component_interface.validate_was_called = False
-    component_interface.add_parameter(sr.Parameter("test", 2, sr.ParameterType.INT), "foo")
+    component_interface.add_parameter(
+        sr.Parameter("test", 2, sr.ParameterType.INT), "foo")
     assert not component_interface.validate_was_called
     assert_param_value_equal(component_interface, "test", 1)
 
@@ -69,9 +74,11 @@ def test_add_parameter_again_not_attribute(component_interface):
     with pytest.raises(rclpy.exceptions.ParameterNotDeclaredException):
         rclpy.node.Node.get_parameter(component_interface, "test")
 
-    component_interface.add_parameter(component_interface.param, "Test parameter")
+    component_interface.add_parameter(
+        component_interface.param, "Test parameter")
     component_interface.validate_was_called = False
-    component_interface.add_parameter(sr.Parameter("test", 2, sr.ParameterType.INT), "foo")
+    component_interface.add_parameter(
+        sr.Parameter("test", 2, sr.ParameterType.INT), "foo")
     assert not component_interface.validate_was_called
     assert_param_value_equal(component_interface, "test", 1)
 
@@ -98,7 +105,8 @@ def test_set_parameter(component_interface):
     assert_param_value_equal(component_interface, "test", 2)
     assert component_interface.param.get_value() == 2
 
-    component_interface.set_parameter_value("test", "test", sr.ParameterType.STRING)
+    component_interface.set_parameter_value(
+        "test", "test", sr.ParameterType.STRING)
     assert component_interface.validate_was_called
     assert_param_value_equal(component_interface, "test", 2)
     assert component_interface.param.get_value() == 2
@@ -108,7 +116,8 @@ def test_set_parameter_ros(component_interface):
     component_interface.add_parameter("param", "Test parameter")
 
     component_interface.validate_was_called = False
-    result = component_interface.set_ros_parameter(rclpy.Parameter("test", value=2))
+    result = component_interface.set_ros_parameter(
+        rclpy.Parameter("test", value=2))
     assert component_interface.validate_was_called
     assert result.successful
     assert_param_value_equal(component_interface, "test", 2)
@@ -116,7 +125,8 @@ def test_set_parameter_ros(component_interface):
 
     component_interface.validate_was_called = False
     component_interface.validation_return_value = False
-    result = component_interface.set_ros_parameter(rclpy.Parameter("test", value=3))
+    result = component_interface.set_ros_parameter(
+        rclpy.Parameter("test", value=3))
     assert component_interface.validate_was_called
     assert not result.successful
     assert_param_value_equal(component_interface, "test", 2)
@@ -124,8 +134,10 @@ def test_set_parameter_ros(component_interface):
 
 
 def test_get_parameter_description(component_interface):
-    component_interface.add_parameter(component_interface.param, "Test parameter")
-    assert component_interface.describe_parameter("test").description == "Test parameter"
+    component_interface.add_parameter(
+        component_interface.param, "Test parameter")
+    assert component_interface.describe_parameter(
+        "test").description == "Test parameter"
 
     with pytest.raises(rclpy.exceptions.ParameterNotDeclaredException):
         component_interface.describe_parameter("foo")
@@ -145,7 +157,8 @@ def test_read_only_parameter(component_interface):
     assert component_interface.param.get_value() == 1
 
     component_interface.validate_was_called = False
-    result = component_interface.set_ros_parameter(rclpy.Parameter("test", value=2))
+    result = component_interface.set_ros_parameter(
+        rclpy.Parameter("test", value=2))
     assert not component_interface.validate_was_called
     assert not result.successful
     assert_param_value_equal(component_interface, "test", 1)

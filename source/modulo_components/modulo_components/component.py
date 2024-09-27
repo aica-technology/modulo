@@ -34,14 +34,17 @@ class Component(ComponentInterface):
             self._publish_outputs()
             self._publish_predicates()
         except Exception as e:
-            self.get_logger().error(f"Failed to execute step function: {e}", throttle_duration_sec=1.0)
+            self.get_logger().error(
+                f"Failed to execute step function: {e}",
+                throttle_duration_sec=1.0)
 
     def execute(self):
         """
         Start the execution thread.
         """
         if self.__started:
-            self.get_logger().error("Failed to start execution thread: Thread has already been started.")
+            self.get_logger().error(
+                "Failed to start execution thread: Thread has already been started.")
             return
         self.__started = True
         self.__execute_thread = Thread(target=self.__on_execute)
@@ -71,9 +74,15 @@ class Component(ComponentInterface):
         """
         return True
 
-    def add_output(self, signal_name: str, data: str, message_type: MsgT,
-                   clproto_message_type=clproto.MessageType.UNKNOWN_MESSAGE, default_topic="", fixed_topic=False,
-                   publish_on_step=True):
+    def add_output(
+            self,
+            signal_name: str,
+            data: str,
+            message_type: MsgT,
+            clproto_message_type=clproto.MessageType.UNKNOWN_MESSAGE,
+            default_topic="",
+            fixed_topic=False,
+            publish_on_step=True):
         """
         Add and configure an output signal of the component.
 
@@ -86,11 +95,21 @@ class Component(ComponentInterface):
         :param publish_on_step: If true, the output is published periodically on step
         """
         try:
-            parsed_signal_name = self._create_output(signal_name, data, message_type, clproto_message_type,
-                                                     default_topic, fixed_topic, publish_on_step)
-            topic_name = self.get_parameter_value(parsed_signal_name + "_topic")
-            self.get_logger().debug(f"Adding output '{parsed_signal_name}' with topic name '{topic_name}'.")
-            publisher = self.create_publisher(message_type, topic_name, self._qos)
+            parsed_signal_name = self._create_output(
+                signal_name,
+                data,
+                message_type,
+                clproto_message_type,
+                default_topic,
+                fixed_topic,
+                publish_on_step)
+            topic_name = self.get_parameter_value(
+                parsed_signal_name + "_topic")
+            self.get_logger().debug(
+                f"Adding output '{parsed_signal_name}' with topic name '{topic_name}'.")
+            publisher = self.create_publisher(
+                message_type, topic_name, self._qos)
             self._outputs[parsed_signal_name]["publisher"] = publisher
         except Exception as e:
-            self.get_logger().error(f"Failed to add output '{signal_name}': {e}")
+            self.get_logger().error(
+                f"Failed to add output '{signal_name}': {e}")
