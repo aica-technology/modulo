@@ -9,8 +9,8 @@ class EmptyParameterInterface : public ComponentInterfacePublicInterface {
 public:
   explicit EmptyParameterInterface(
       const std::shared_ptr<NodeT>& node, bool allow_empty = true, bool add_parameter = true,
-      bool empty_parameter = true
-  ) : ComponentInterfacePublicInterface(node), allow_empty_(allow_empty) {
+      bool empty_parameter = true)
+      : ComponentInterfacePublicInterface(node), allow_empty_(allow_empty) {
     if (add_parameter) {
       if (empty_parameter) {
         this->add_parameter(std::make_shared<Parameter<std::string>>("name"), "Name parameter");
@@ -50,13 +50,9 @@ private:
 template<class NodeT>
 class ComponentInterfaceEmptyParameterTest : public ::testing::Test {
 protected:
-  static void SetUpTestSuite() {
-    rclcpp::init(0, nullptr);
-  }
+  static void SetUpTestSuite() { rclcpp::init(0, nullptr); }
 
-  static void TearDownTestSuite() {
-    rclcpp::shutdown();
-  }
+  static void TearDownTestSuite() { rclcpp::shutdown(); }
 
   void SetUp() override {
     this->component_ = std::make_shared<EmptyParameterInterface<NodeT>>(
@@ -70,16 +66,17 @@ TYPED_TEST_SUITE(ComponentInterfaceEmptyParameterTest, NodeTypes);
 
 TYPED_TEST(ComponentInterfaceEmptyParameterTest, NotAllowEmptyOnConstruction) {
   auto node = std::make_shared<TypeParam>("EmptyParameterComponent", rclcpp::NodeOptions());
-  EXPECT_THROW(std::make_shared<EmptyParameterInterface<TypeParam>>(node, false),
-               modulo_core::exceptions::ParameterException);
+  EXPECT_THROW(
+      std::make_shared<EmptyParameterInterface<TypeParam>>(node, false), modulo_core::exceptions::ParameterException);
 }
 
 TYPED_TEST(ComponentInterfaceEmptyParameterTest, NotAllowEmpty) {
   std::shared_ptr<EmptyParameterInterface<TypeParam>> component;
   auto node = std::make_shared<TypeParam>("EmptyParameterComponent", rclcpp::NodeOptions());
   component = std::make_shared<EmptyParameterInterface<TypeParam>>(node, false, false);
-  EXPECT_THROW(component->add_parameter(std::make_shared<Parameter<std::string>>("name"), "Test parameter"),
-               modulo_core::exceptions::ParameterException);
+  EXPECT_THROW(
+      component->add_parameter(std::make_shared<Parameter<std::string>>("name"), "Test parameter"),
+      modulo_core::exceptions::ParameterException);
   EXPECT_THROW(auto param = component->get_parameter("name"), modulo_core::exceptions::ParameterException);
   EXPECT_THROW(component->get_ros_parameter("name"), rclcpp::exceptions::ParameterNotDeclaredException);
 }
@@ -187,8 +184,9 @@ TYPED_TEST(ComponentInterfaceEmptyParameterTest, ParameterOverridesEmpty) {
   // Construction with not allowing empty parameters and providing an uninitialized parameter override should not succeed
   auto node = std::make_shared<TypeParam>(
       "EmptyParameterInterface", rclcpp::NodeOptions().parameter_overrides({rclcpp::Parameter("name")}));
-  EXPECT_THROW(std::make_shared<EmptyParameterInterface<TypeParam>>(node, false, true, false),
-               modulo_core::exceptions::ParameterException);
+  EXPECT_THROW(
+      std::make_shared<EmptyParameterInterface<TypeParam>>(node, false, true, false),
+      modulo_core::exceptions::ParameterException);
 }
 
 TYPED_TEST(ComponentInterfaceEmptyParameterTest, ValueParameter) {
@@ -213,4 +211,4 @@ TYPED_TEST(ComponentInterfaceEmptyParameterTest, ValueParameter) {
   EXPECT_EQ(this->component_->get_parameter("value")->template get_parameter_value<double>(), 4);
   EXPECT_EQ(this->component_->get_ros_parameter("value").as_double(), 4);
 }
-} // namespace modulo_components
+}// namespace modulo_components

@@ -19,16 +19,15 @@ protected:
     exec_ = std::make_shared<rclcpp::executors::SingleThreadedExecutor>();
   }
 
-  void TearDown() override {
-    rclcpp::shutdown();
-  }
+  void TearDown() override { rclcpp::shutdown(); }
 
   std::shared_ptr<rclcpp::executors::SingleThreadedExecutor> exec_;
 };
 
 TEST_F(FixturesTest, ServiceClient) {
-  EXPECT_THROW(std::make_shared<testutils::ServiceClient<std_srvs::srv::Empty>>(
-      rclcpp::NodeOptions(), "/bool"), std::runtime_error);
+  EXPECT_THROW(
+      std::make_shared<testutils::ServiceClient<std_srvs::srv::Empty>>(rclcpp::NodeOptions(), "/bool"),
+      std::runtime_error);
 }
 
 TEST_F(FixturesTest, PredicatesListener) {

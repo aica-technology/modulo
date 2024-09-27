@@ -15,9 +15,9 @@
 #include <tf2_msgs/msg/tf_message.hpp>
 
 #include <clproto.hpp>
+#include <state_representation/parameters/Parameter.hpp>
 #include <state_representation/space/cartesian/CartesianState.hpp>
 #include <state_representation/space/joint/JointState.hpp>
-#include <state_representation/parameters/Parameter.hpp>
 
 #include "modulo_core/EncodedState.hpp"
 #include "modulo_core/exceptions.hpp"
@@ -32,8 +32,7 @@ namespace modulo_core::translators {
  * @throws modulo_core::exceptions::MessageTranslationException if the provided state is empty.
  */
 void write_message(
-    geometry_msgs::msg::Accel& message, const state_representation::CartesianState& state, const rclcpp::Time& time
-);
+    geometry_msgs::msg::Accel& message, const state_representation::CartesianState& state, const rclcpp::Time& time);
 
 /**
  * @brief Convert a CartesianState to a ROS geometry_msgs::msg::AccelStamped
@@ -44,8 +43,7 @@ void write_message(
  */
 void write_message(
     geometry_msgs::msg::AccelStamped& message, const state_representation::CartesianState& state,
-    const rclcpp::Time& time
-);
+    const rclcpp::Time& time);
 
 /**
  * @brief Convert a CartesianState to a ROS geometry_msgs::msg::Pose
@@ -55,8 +53,7 @@ void write_message(
  * @throws modulo_core::exceptions::MessageTranslationException if the provided state is empty.
  */
 void write_message(
-    geometry_msgs::msg::Pose& message, const state_representation::CartesianState& state, const rclcpp::Time& time
-);
+    geometry_msgs::msg::Pose& message, const state_representation::CartesianState& state, const rclcpp::Time& time);
 
 /**
  * @brief Convert a CartesianState to a ROS geometry_msgs::msg::PoseStamped
@@ -67,8 +64,7 @@ void write_message(
  */
 void write_message(
     geometry_msgs::msg::PoseStamped& message, const state_representation::CartesianState& state,
-    const rclcpp::Time& time
-);
+    const rclcpp::Time& time);
 
 /**
  * @brief Convert a CartesianState to a ROS geometry_msgs::msg::Transform
@@ -78,8 +74,8 @@ void write_message(
  * @throws modulo_core::exceptions::MessageTranslationException if the provided state is empty.
  */
 void write_message(
-    geometry_msgs::msg::Transform& message, const state_representation::CartesianState& state, const rclcpp::Time& time
-);
+    geometry_msgs::msg::Transform& message, const state_representation::CartesianState& state,
+    const rclcpp::Time& time);
 
 /**
  * @brief Convert a CartesianState to a ROS geometry_msgs::msg::TransformStamped
@@ -90,8 +86,7 @@ void write_message(
  */
 void write_message(
     geometry_msgs::msg::TransformStamped& message, const state_representation::CartesianState& state,
-    const rclcpp::Time& time
-);
+    const rclcpp::Time& time);
 
 /**
  * @brief Convert a CartesianState to a ROS geometry_msgs::msg::Twist
@@ -101,8 +96,7 @@ void write_message(
  * @throws modulo_core::exceptions::MessageTranslationException if the provided state is empty.
  */
 void write_message(
-    geometry_msgs::msg::Twist& message, const state_representation::CartesianState& state, const rclcpp::Time& time
-);
+    geometry_msgs::msg::Twist& message, const state_representation::CartesianState& state, const rclcpp::Time& time);
 
 /**
  * @brief Convert a CartesianState to a ROS geometry_msgs::msg::TwistStamped
@@ -113,8 +107,7 @@ void write_message(
  */
 void write_message(
     geometry_msgs::msg::TwistStamped& message, const state_representation::CartesianState& state,
-    const rclcpp::Time& time
-);
+    const rclcpp::Time& time);
 
 /**
  * @brief Convert a CartesianState to a ROS geometry_msgs::msg::Wrench
@@ -124,8 +117,7 @@ void write_message(
  * @throws modulo_core::exceptions::MessageTranslationException if the provided state is empty.
  */
 void write_message(
-    geometry_msgs::msg::Wrench& message, const state_representation::CartesianState& state, const rclcpp::Time& time
-);
+    geometry_msgs::msg::Wrench& message, const state_representation::CartesianState& state, const rclcpp::Time& time);
 
 /**
  * @brief Convert a CartesianState to a ROS geometry_msgs::msg::WrenchStamped
@@ -136,8 +128,7 @@ void write_message(
  */
 void write_message(
     geometry_msgs::msg::WrenchStamped& message, const state_representation::CartesianState& state,
-    const rclcpp::Time& time
-);
+    const rclcpp::Time& time);
 
 /**
  * @brief Convert a JointState to a ROS sensor_msgs::msg::JointState
@@ -147,8 +138,7 @@ void write_message(
  * @throws modulo_core::exceptions::MessageTranslationException if the provided state is empty.
  */
 void write_message(
-    sensor_msgs::msg::JointState& message, const state_representation::JointState& state, const rclcpp::Time& time
-);
+    sensor_msgs::msg::JointState& message, const state_representation::JointState& state, const rclcpp::Time& time);
 
 /**
  * @brief Convert a CartesianState to a ROS tf2_msgs::msg::TFMessage
@@ -158,8 +148,7 @@ void write_message(
  * @throws modulo_core::exceptions::MessageTranslationException if the provided state is empty.
  */
 void write_message(
-    tf2_msgs::msg::TFMessage& message, const state_representation::CartesianState& state, const rclcpp::Time& time
-);
+    tf2_msgs::msg::TFMessage& message, const state_representation::CartesianState& state, const rclcpp::Time& time);
 
 /**
  * @brief Convert a Parameter<T> to a ROS equivalent representation
@@ -195,8 +184,8 @@ void write_message(std_msgs::msg::Float64& message, const double& state, const r
  * @param state The state to read from
  * @param time The time of the message
  */
-void
-write_message(std_msgs::msg::Float64MultiArray& message, const std::vector<double>& state, const rclcpp::Time& time);
+void write_message(
+    std_msgs::msg::Float64MultiArray& message, const std::vector<double>& state, const rclcpp::Time& time);
 
 /**
  * @brief Convert an integer to a ROS std_msgs::msg::Int32

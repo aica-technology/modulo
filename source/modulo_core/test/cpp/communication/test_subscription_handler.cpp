@@ -14,8 +14,7 @@ static void test_subscription_interface(const std::shared_ptr<rclcpp::Node>& nod
 
   // create subscription handler
   auto subscription_handler = std::make_shared<SubscriptionHandler<MsgT>>(message_pair);
-  auto subscription = node->template create_subscription<MsgT>(
-      "topic", 10, subscription_handler->get_callback());
+  auto subscription = node->template create_subscription<MsgT>("topic", 10, subscription_handler->get_callback());
 
   // use in subscription interface
   auto subscription_interface = subscription_handler->create_subscription_interface(subscription);
@@ -23,18 +22,12 @@ static void test_subscription_interface(const std::shared_ptr<rclcpp::Node>& nod
 
 class SubscriptionTest : public ::testing::Test {
 public:
-  static void SetUpTestSuite() {
-    rclcpp::init(0, nullptr);
-  }
+  static void SetUpTestSuite() { rclcpp::init(0, nullptr); }
 
-  static void TearDownTestSuite() {
-    rclcpp::shutdown();
-  }
+  static void TearDownTestSuite() { rclcpp::shutdown(); }
 
 protected:
-  void SetUp() {
-    node = std::make_shared<rclcpp::Node>("test_node");
-  }
+  void SetUp() { node = std::make_shared<rclcpp::Node>("test_node"); }
 
   std::shared_ptr<rclcpp::Node> node;
 };
@@ -51,13 +44,13 @@ TEST_F(SubscriptionTest, EncodedState) {
   // create message pair
   auto data =
       std::make_shared<state_representation::CartesianState>(state_representation::CartesianState::Random("test"));
-  auto message_pair = std::make_shared<MessagePair<modulo_core::EncodedState, state_representation::State>>(
-      data, node->get_clock());
+  auto message_pair =
+      std::make_shared<MessagePair<modulo_core::EncodedState, state_representation::State>>(data, node->get_clock());
 
   // create subscription handler
   auto subscription_handler = std::make_shared<SubscriptionHandler<modulo_core::EncodedState>>(message_pair);
-  auto subscription = node->create_subscription<modulo_core::EncodedState>(
-      "topic", 10, subscription_handler->get_callback());
+  auto subscription =
+      node->create_subscription<modulo_core::EncodedState>("topic", 10, subscription_handler->get_callback());
 
   // use in subscription interface
   auto subscription_interface = subscription_handler->create_subscription_interface(subscription);

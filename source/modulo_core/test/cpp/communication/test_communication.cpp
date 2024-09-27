@@ -13,15 +13,12 @@ protected:
     clock_ = std::make_shared<rclcpp::Clock>();
   }
 
-  void TearDown() override {
-    rclcpp::shutdown();
-  }
+  void TearDown() override { rclcpp::shutdown(); }
 
   template<typename MsgT>
   void add_nodes(
       const std::string& topic_name, const std::shared_ptr<MessagePairInterface>& pub_message,
-      const std::shared_ptr<MessagePairInterface>& sub_message
-  ) {
+      const std::shared_ptr<MessagePairInterface>& sub_message) {
     pub_node_ = std::make_shared<MinimalPublisher<MsgT>>(topic_name, pub_message);
     sub_node_ = std::make_shared<MinimalSubscriber<MsgT>>(topic_name, sub_message);
     exec_->add_node(pub_node_);

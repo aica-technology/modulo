@@ -3,8 +3,8 @@
 #include <future>
 #include <map>
 
-#include <rclcpp/rclcpp.hpp>
 #include <modulo_interfaces/msg/predicate_collection.hpp>
+#include <rclcpp/rclcpp.hpp>
 
 namespace modulo_utils::testutils {
 

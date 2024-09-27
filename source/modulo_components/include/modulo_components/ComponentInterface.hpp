@@ -2,9 +2,9 @@
 
 #include <rclcpp/node_interfaces/node_interfaces.hpp>
 
-#include <tf2_ros/transform_broadcaster.h>
-#include <tf2_ros/static_transform_broadcaster.h>
 #include <tf2_ros/buffer.h>
+#include <tf2_ros/static_transform_broadcaster.h>
+#include <tf2_ros/transform_broadcaster.h>
 #include <tf2_ros/transform_listener.h>
 
 #include <state_representation/parameters/ParameterMap.hpp>
@@ -16,9 +16,9 @@
 #include <modulo_core/exceptions.hpp>
 #include <modulo_core/translators/parameter_translators.hpp>
 
+#include <modulo_interfaces/msg/predicate_collection.hpp>
 #include <modulo_interfaces/srv/empty_trigger.hpp>
 #include <modulo_interfaces/srv/string_trigger.hpp>
-#include <modulo_interfaces/msg/predicate_collection.hpp>
 
 #include <modulo_utils/parsing.hpp>
 
@@ -67,8 +67,7 @@ protected:
    * @param interfaces Shared pointer to all the node interfaces of parent class
    */
   explicit ComponentInterface(
-      const std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<ALL_RCLCPP_NODE_INTERFACES>>& interfaces
-  );
+      const std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<ALL_RCLCPP_NODE_INTERFACES>>& interfaces);
 
   /**
    * @brief Get the component rate in Hertz
@@ -104,8 +103,7 @@ protected:
    */
   void add_parameter(
       const std::shared_ptr<state_representation::ParameterInterface>& parameter, const std::string& description,
-      bool read_only = false
-  );
+      bool read_only = false);
 
   /**
    * @brief Add a parameter.
@@ -247,8 +245,7 @@ protected:
   template<typename DataT>
   void add_input(
       const std::string& signal_name, const std::shared_ptr<DataT>& data, const std::string& default_topic = "",
-      bool fixed_topic = false
-  );
+      bool fixed_topic = false);
 
   /**
    * @brief Add and configure an input signal of the component.
@@ -262,8 +259,7 @@ protected:
   template<typename DataT>
   void add_input(
       const std::string& signal_name, const std::shared_ptr<DataT>& data, const std::function<void()>& callback,
-      const std::string& default_topic = "", bool fixed_topic = false
-  );
+      const std::string& default_topic = "", bool fixed_topic = false);
 
   /**
    * @brief Add and configure an input signal of the component.
@@ -276,8 +272,7 @@ protected:
   template<typename MsgT>
   void add_input(
       const std::string& signal_name, const std::function<void(const std::shared_ptr<MsgT>)>& callback,
-      const std::string& default_topic = "", bool fixed_topic = false
-  );
+      const std::string& default_topic = "", bool fixed_topic = false);
 
   /**
    * @brief Helper function to parse the signal name and add an unconfigured PublisherInterface to the map of outputs.
@@ -294,8 +289,7 @@ protected:
   template<typename DataT>
   std::string create_output(
       modulo_core::communication::PublisherType publisher_type, const std::string& signal_name,
-      const std::shared_ptr<DataT>& data, const std::string& default_topic, bool fixed_topic, bool publish_on_step
-  );
+      const std::shared_ptr<DataT>& data, const std::string& default_topic, bool fixed_topic, bool publish_on_step);
 
   /**
    * @brief Trigger the publishing of an output
@@ -333,8 +327,7 @@ protected:
    */
   void add_service(
       const std::string& service_name,
-      const std::function<ComponentServiceResponse(const std::string& string)>& callback
-  );
+      const std::function<ComponentServiceResponse(const std::string& string)>& callback);
 
   /**
    * @brief Add a periodic callback function.
@@ -395,8 +388,7 @@ protected:
    */
   [[nodiscard]] state_representation::CartesianPose lookup_transform(
       const std::string& frame, const std::string& reference_frame, const tf2::TimePoint& time_point,
-      const tf2::Duration& duration
-  );
+      const tf2::Duration& duration);
 
   /**
    * @brief Look up a transform from TF.
@@ -444,9 +436,9 @@ protected:
    */
   void evaluate_periodic_callbacks();
 
-  std::map<std::string, std::shared_ptr<modulo_core::communication::SubscriptionInterface>> inputs_; ///< Map of inputs
-  std::map<std::string, std::shared_ptr<modulo_core::communication::PublisherInterface>> outputs_; ///< Map of outputs
-  std::map<std::string, bool> periodic_outputs_; ///< Map of outputs with periodic publishing flag
+  std::map<std::string, std::shared_ptr<modulo_core::communication::SubscriptionInterface>> inputs_;///< Map of inputs
+  std::map<std::string, std::shared_ptr<modulo_core::communication::PublisherInterface>> outputs_;  ///< Map of outputs
+  std::map<std::string, bool> periodic_outputs_;///< Map of outputs with periodic publishing flag
 
 private:
   /**
@@ -489,8 +481,7 @@ private:
    * (empty name or already created)
    */
   void declare_signal(
-      const std::string& signal_name, const std::string& type, const std::string& default_topic, bool fixed_topic
-  );
+      const std::string& signal_name, const std::string& type, const std::string& default_topic, bool fixed_topic);
 
   /**
    * @brief Remove a signal from the map of inputs or outputs.
@@ -502,8 +493,7 @@ private:
    */
   template<typename T>
   bool remove_signal(
-      const std::string& signal_name, std::map<std::string, std::shared_ptr<T>>& signal_map, bool skip_check = false
-  );
+      const std::string& signal_name, std::map<std::string, std::shared_ptr<T>>& signal_map, bool skip_check = false);
 
   /**
    * @brief Validate an add_service request by parsing the service name and checking the maps of registered services.
@@ -532,8 +522,7 @@ private:
   template<typename T>
   void publish_transforms(
       const std::vector<state_representation::CartesianPose>& transforms, const std::shared_ptr<T>& tf_broadcaster,
-      bool is_static = false
-  );
+      bool is_static = false);
 
   /**
  * @brief Helper method to look up a transform from TF.
@@ -547,12 +536,11 @@ private:
  */
   [[nodiscard]] geometry_msgs::msg::TransformStamped lookup_ros_transform(
       const std::string& frame, const std::string& reference_frame, const tf2::TimePoint& time_point,
-      const tf2::Duration& duration
-  );
+      const tf2::Duration& duration);
 
-  double rate_; ///< The component rate in Hz
-  double period_; ///< The componet period in s
-  std::mutex step_mutex_; ///< Mutex for step callback
+  double rate_;          ///< The component rate in Hz
+  double period_;        ///< The componet period in s
+  std::mutex step_mutex_;///< Mutex for step callback
 
   std::map<std::string, modulo_core::Predicate> predicates_;///< Map of predicates
   std::shared_ptr<rclcpp::Publisher<modulo_interfaces::msg::PredicateCollection>>
@@ -561,26 +549,26 @@ private:
   std::vector<std::string> triggers_;///< List of triggers
 
   std::map<std::string, std::shared_ptr<rclcpp::Service<modulo_interfaces::srv::EmptyTrigger>>>
-      empty_services_; ///< Map of EmptyTrigger services
+      empty_services_;///< Map of EmptyTrigger services
   std::map<std::string, std::shared_ptr<rclcpp::Service<modulo_interfaces::srv::StringTrigger>>>
-      string_services_; ///< Map of StringTrigger services
+      string_services_;///< Map of StringTrigger services
 
-  std::map<std::string, std::function<void(void)>> periodic_callbacks_; ///< Map of periodic function callbacks
+  std::map<std::string, std::function<void(void)>> periodic_callbacks_;///< Map of periodic function callbacks
 
-  state_representation::ParameterMap parameter_map_; ///< ParameterMap for handling parameters
+  state_representation::ParameterMap parameter_map_;///< ParameterMap for handling parameters
   std::unordered_map<std::string, bool> read_only_parameters_;
   std::shared_ptr<rclcpp::node_interfaces::PreSetParametersCallbackHandle>
-      pre_set_parameter_cb_handle_; ///< ROS callback function handle on pre set of parameters
+      pre_set_parameter_cb_handle_;///< ROS callback function handle on pre set of parameters
   std::shared_ptr<rclcpp::node_interfaces::OnSetParametersCallbackHandle>
-      on_set_parameter_cb_handle_; ///< ROS callback function handle on set of parameters
+      on_set_parameter_cb_handle_;///< ROS callback function handle on set of parameters
   rcl_interfaces::msg::SetParametersResult set_parameters_result_;
-  bool pre_set_parameter_callback_called_ = false; ///< Flag to indicate if pre_set_parameter_callback was called
+  bool pre_set_parameter_callback_called_ = false;///< Flag to indicate if pre_set_parameter_callback was called
 
-  std::shared_ptr<rclcpp::TimerBase> step_timer_; ///< Timer for the step function
-  std::shared_ptr<tf2_ros::Buffer> tf_buffer_; ///< TF buffer
-  std::shared_ptr<tf2_ros::TransformListener> tf_listener_; ///< TF listener
-  std::shared_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_; ///< TF broadcaster
-  std::shared_ptr<tf2_ros::StaticTransformBroadcaster> static_tf_broadcaster_; ///< TF static broadcaster
+  std::shared_ptr<rclcpp::TimerBase> step_timer_;                             ///< Timer for the step function
+  std::shared_ptr<tf2_ros::Buffer> tf_buffer_;                                ///< TF buffer
+  std::shared_ptr<tf2_ros::TransformListener> tf_listener_;                   ///< TF listener
+  std::shared_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;             ///< TF broadcaster
+  std::shared_ptr<tf2_ros::StaticTransformBroadcaster> static_tf_broadcaster_;///< TF static broadcaster
 
   std::shared_ptr<rclcpp::node_interfaces::NodeBaseInterface> node_base_;
   std::shared_ptr<rclcpp::node_interfaces::NodeClockInterface> node_clock_;
@@ -589,13 +577,12 @@ private:
   std::shared_ptr<rclcpp::node_interfaces::NodeServicesInterface> node_services_;
   std::shared_ptr<rclcpp::node_interfaces::NodeTimersInterface> node_timers_;
   std::shared_ptr<rclcpp::node_interfaces::NodeTopicsInterface> node_topics_;
-  rclcpp::QoS qos_ = rclcpp::QoS(10); ///< Quality of Service for ROS publishers and subscribers
+  rclcpp::QoS qos_ = rclcpp::QoS(10);///< Quality of Service for ROS publishers and subscribers
 };
 
 template<typename T>
 inline void ComponentInterface::add_parameter(
-    const std::string& name, const T& value, const std::string& description, bool read_only
-) {
+    const std::string& name, const T& value, const std::string& description, bool read_only) {
   if (name.empty()) {
     RCLCPP_ERROR(this->node_logging_->get_logger(), "Failed to add parameter: Provide a non empty string as a name.");
     return;
@@ -622,39 +609,39 @@ inline void ComponentInterface::set_parameter_value(const std::string& name, con
     this->pre_set_parameter_callback_called_ = true;
     auto result = this->node_parameters_->set_parameters(parameters).at(0);
     if (!result.successful) {
-      RCLCPP_ERROR_STREAM_THROTTLE(this->node_logging_->get_logger(), *this->node_clock_->get_clock(), 1000,
-                                   "Failed to set parameter value of parameter '" << name << "': " << result.reason);
+      RCLCPP_ERROR_STREAM_THROTTLE(
+          this->node_logging_->get_logger(), *this->node_clock_->get_clock(), 1000,
+          "Failed to set parameter value of parameter '" << name << "': " << result.reason);
     }
   } catch (const std::exception& ex) {
-    RCLCPP_ERROR_STREAM_THROTTLE(this->node_logging_->get_logger(), *this->node_clock_->get_clock(), 1000,
-                                 "Failed to set parameter value of parameter '" << name << "': " << ex.what());
+    RCLCPP_ERROR_STREAM_THROTTLE(
+        this->node_logging_->get_logger(), *this->node_clock_->get_clock(), 1000,
+        "Failed to set parameter value of parameter '" << name << "': " << ex.what());
   }
 }
 
 template<typename DataT>
 inline void ComponentInterface::add_input(
     const std::string& signal_name, const std::shared_ptr<DataT>& data, const std::string& default_topic,
-    bool fixed_topic
-) {
+    bool fixed_topic) {
   this->add_input(signal_name, data, [] {}, default_topic, fixed_topic);
 }
 
 template<typename DataT>
 inline void ComponentInterface::add_input(
     const std::string& signal_name, const std::shared_ptr<DataT>& data, const std::function<void()>& user_callback,
-    const std::string& default_topic, bool fixed_topic
-) {
+    const std::string& default_topic, bool fixed_topic) {
   using namespace modulo_core::communication;
   try {
     if (data == nullptr) {
-      throw modulo_core::exceptions::NullPointerException(
-          "Invalid data pointer for input '" + signal_name + "'.");
+      throw modulo_core::exceptions::NullPointerException("Invalid data pointer for input '" + signal_name + "'.");
     }
     this->declare_input(signal_name, default_topic, fixed_topic);
     std::string parsed_signal_name = modulo_utils::parsing::parse_topic_name(signal_name);
     auto topic_name = this->get_parameter_value<std::string>(parsed_signal_name + "_topic");
-    RCLCPP_DEBUG_STREAM(this->node_logging_->get_logger(),
-                        "Adding input '" << parsed_signal_name << "' with topic name '" << topic_name << "'.");
+    RCLCPP_DEBUG_STREAM(
+        this->node_logging_->get_logger(),
+        "Adding input '" << parsed_signal_name << "' with topic name '" << topic_name << "'.");
     auto message_pair = make_shared_message_pair(data, this->node_clock_->get_clock());
     std::shared_ptr<SubscriptionInterface> subscription_interface;
     switch (message_pair->get_type()) {
@@ -710,39 +697,38 @@ inline void ComponentInterface::add_input(
     }
     this->inputs_.insert_or_assign(parsed_signal_name, subscription_interface);
   } catch (const std::exception& ex) {
-    RCLCPP_ERROR_STREAM(this->node_logging_->get_logger(),
-                        "Failed to add input '" << signal_name << "': " << ex.what());
+    RCLCPP_ERROR_STREAM(
+        this->node_logging_->get_logger(), "Failed to add input '" << signal_name << "': " << ex.what());
   }
 }
 
 template<typename MsgT>
 inline void ComponentInterface::add_input(
     const std::string& signal_name, const std::function<void(const std::shared_ptr<MsgT>)>& callback,
-    const std::string& default_topic, bool fixed_topic
-) {
+    const std::string& default_topic, bool fixed_topic) {
   using namespace modulo_core::communication;
   try {
     std::string parsed_signal_name = modulo_utils::parsing::parse_topic_name(signal_name);
     this->declare_input(parsed_signal_name, default_topic, fixed_topic);
     auto topic_name = this->get_parameter_value<std::string>(parsed_signal_name + "_topic");
-    RCLCPP_DEBUG_STREAM(this->node_logging_->get_logger(),
-                        "Adding input '" << parsed_signal_name << "' with topic name '" << topic_name << "'.");
-    auto subscription = rclcpp::create_subscription<MsgT>(
-        this->node_parameters_, this->node_topics_, topic_name, this->qos_, callback);
+    RCLCPP_DEBUG_STREAM(
+        this->node_logging_->get_logger(),
+        "Adding input '" << parsed_signal_name << "' with topic name '" << topic_name << "'.");
+    auto subscription =
+        rclcpp::create_subscription<MsgT>(this->node_parameters_, this->node_topics_, topic_name, this->qos_, callback);
     auto subscription_interface =
         std::make_shared<SubscriptionHandler<MsgT>>()->create_subscription_interface(subscription);
     this->inputs_.insert_or_assign(parsed_signal_name, subscription_interface);
   } catch (const std::exception& ex) {
-    RCLCPP_ERROR_STREAM(this->node_logging_->get_logger(),
-                        "Failed to add input '" << signal_name << "': " << ex.what());
+    RCLCPP_ERROR_STREAM(
+        this->node_logging_->get_logger(), "Failed to add input '" << signal_name << "': " << ex.what());
   }
 }
 
 template<typename DataT>
 inline std::string ComponentInterface::create_output(
     modulo_core::communication::PublisherType publisher_type, const std::string& signal_name,
-    const std::shared_ptr<DataT>& data, const std::string& default_topic, bool fixed_topic, bool publish_on_step
-) {
+    const std::shared_ptr<DataT>& data, const std::string& default_topic, bool fixed_topic, bool publish_on_step) {
   using namespace modulo_core::communication;
   try {
     if (data == nullptr) {
@@ -750,9 +736,9 @@ inline std::string ComponentInterface::create_output(
     }
     this->declare_output(signal_name, default_topic, fixed_topic);
     auto parsed_signal_name = modulo_utils::parsing::parse_topic_name(signal_name);
-    RCLCPP_DEBUG_STREAM(this->node_logging_->get_logger(),
-                        "Creating output '" << parsed_signal_name << "' (provided signal name was '" << signal_name
-                                            << "').");
+    RCLCPP_DEBUG_STREAM(
+        this->node_logging_->get_logger(),
+        "Creating output '" << parsed_signal_name << "' (provided signal name was '" << signal_name << "').");
     auto message_pair = make_shared_message_pair(data, this->node_clock_->get_clock());
     this->outputs_.insert_or_assign(
         parsed_signal_name, std::make_shared<PublisherInterface>(publisher_type, message_pair));
@@ -767,8 +753,7 @@ inline std::string ComponentInterface::create_output(
 
 template<typename T>
 inline bool ComponentInterface::remove_signal(
-    const std::string& signal_name, std::map<std::string, std::shared_ptr<T>>& signal_map, bool skip_check
-) {
+    const std::string& signal_name, std::map<std::string, std::shared_ptr<T>>& signal_map, bool skip_check) {
   if (!skip_check && signal_map.find(signal_name) == signal_map.cend()) {
     return false;
   } else {
@@ -781,13 +766,12 @@ inline bool ComponentInterface::remove_signal(
 template<typename T>
 inline void ComponentInterface::publish_transforms(
     const std::vector<state_representation::CartesianPose>& transforms, const std::shared_ptr<T>& tf_broadcaster,
-    bool is_static
-) {
+    bool is_static) {
   std::string modifier = is_static ? "static " : "";
   if (tf_broadcaster == nullptr) {
-    RCLCPP_ERROR_STREAM_THROTTLE(this->node_logging_->get_logger(), *this->node_clock_->get_clock(), 1000,
-                                 "Failed to send " << modifier << "transform: No " << modifier
-                                                   << "TF broadcaster configured.");
+    RCLCPP_ERROR_STREAM_THROTTLE(
+        this->node_logging_->get_logger(), *this->node_clock_->get_clock(), 1000,
+        "Failed to send " << modifier << "transform: No " << modifier << "TF broadcaster configured.");
     return;
   }
   try {
@@ -795,14 +779,14 @@ inline void ComponentInterface::publish_transforms(
     transform_messages.reserve(transforms.size());
     for (const auto& tf : transforms) {
       geometry_msgs::msg::TransformStamped transform_message;
-      modulo_core::translators::write_message(
-          transform_message, tf, this->node_clock_->get_clock()->now());
+      modulo_core::translators::write_message(transform_message, tf, this->node_clock_->get_clock()->now());
       transform_messages.emplace_back(transform_message);
     }
     tf_broadcaster->sendTransform(transform_messages);
   } catch (const std::exception& ex) {
-    RCLCPP_ERROR_STREAM_THROTTLE(this->node_logging_->get_logger(), *this->node_clock_->get_clock(), 1000,
-                                 "Failed to send " << modifier << "transform: " << ex.what());
+    RCLCPP_ERROR_STREAM_THROTTLE(
+        this->node_logging_->get_logger(), *this->node_clock_->get_clock(), 1000,
+        "Failed to send " << modifier << "transform: " << ex.what());
   }
 }
 }// namespace modulo_components

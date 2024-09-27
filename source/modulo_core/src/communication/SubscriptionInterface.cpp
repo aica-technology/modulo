@@ -2,8 +2,8 @@
 
 namespace modulo_core::communication {
 
-SubscriptionInterface::SubscriptionInterface(std::shared_ptr<MessagePairInterface> message_pair) :
-    message_pair_(std::move(message_pair)) {}
+SubscriptionInterface::SubscriptionInterface(std::shared_ptr<MessagePairInterface> message_pair)
+    : message_pair_(std::move(message_pair)) {}
 
 std::shared_ptr<MessagePairInterface> SubscriptionInterface::get_message_pair() const {
   return this->message_pair_;

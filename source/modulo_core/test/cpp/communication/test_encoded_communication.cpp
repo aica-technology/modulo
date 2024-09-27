@@ -10,8 +10,7 @@ using namespace state_representation;
 template<typename PubT, typename RecvT>
 void test_cartesian_dist(
     const std::shared_ptr<PubT>& pub_state, const std::shared_ptr<RecvT>& recv_state,
-    CartesianStateVariable distance_variable
-) {
+    CartesianStateVariable distance_variable) {
   EXPECT_EQ(pub_state->get_reference_frame(), recv_state->get_reference_frame());
   if (!recv_state->is_empty()) {
     EXPECT_LT(pub_state->dist(*recv_state, distance_variable), tol);
@@ -21,8 +20,7 @@ void test_cartesian_dist(
 template<typename PubT, typename RecvT>
 void test_joint_dist(
     const std::shared_ptr<PubT>& pub_state, const std::shared_ptr<RecvT>& recv_state,
-    JointStateVariable distance_variable
-) {
+    JointStateVariable distance_variable) {
   if (!recv_state->is_empty()) {
     EXPECT_EQ(pub_state->get_size(), recv_state->get_size());
     EXPECT_LT(pub_state->dist(*recv_state, distance_variable), tol);
@@ -40,14 +38,11 @@ protected:
     clock_ = std::make_shared<rclcpp::Clock>();
   }
 
-  void TearDown() override {
-    rclcpp::shutdown();
-  }
+  void TearDown() override { rclcpp::shutdown(); }
 
   void add_nodes(
       const std::string& topic_name, const std::shared_ptr<MessagePairInterface>& pub_message,
-      const std::shared_ptr<MessagePairInterface>& sub_message
-  ) {
+      const std::shared_ptr<MessagePairInterface>& sub_message) {
     pub_node_ = std::make_shared<MinimalPublisher<modulo_core::EncodedState>>(topic_name, pub_message);
     sub_node_ = std::make_shared<MinimalSubscriber<modulo_core::EncodedState>>(topic_name, sub_message);
     exec_->add_node(pub_node_);
@@ -62,8 +57,7 @@ protected:
   template<typename PubT, typename RecvT>
   void communicate(
       PubT publish_state, RecvT receive_state, bool expect_translation = true,
-      std::function<void(const std::shared_ptr<PubT>&, const std::shared_ptr<RecvT>&)> test_function = {}
-  ) {
+      std::function<void(const std::shared_ptr<PubT>&, const std::shared_ptr<RecvT>&)> test_function = {}) {
     auto expected_type = receive_state.get_type();
     auto expected_name = expect_translation ? publish_state.get_name() : receive_state.get_name();
     bool expected_empty;
@@ -78,8 +72,7 @@ protected:
     auto pub_message = make_shared_message_pair(pub_state, this->clock_);
     auto recv_message = make_shared_message_pair(recv_state, this->clock_);
     this->add_nodes("/test_topic", pub_message, recv_message);
-    this->exec_->template spin_until_future_complete(
-        this->sub_node_->received_future, 500ms);
+    this->exec_->template spin_until_future_complete(this->sub_node_->received_future, 500ms);
     EXPECT_EQ(recv_state->get_type(), expected_type);
     EXPECT_EQ(recv_state->is_empty(), expected_empty);
     EXPECT_EQ(recv_state->get_name(), expected_name);
@@ -197,12 +190,9 @@ TEST_F(EncodedCommunicationTest, CompatibleType) {
 
 TEST_F(EncodedCommunicationTest, IncompatibleType) {
   // SpatialState is incompatible with State, JointState and Jacobian
-  this->communicate<State, SpatialState>(
-      State("this"), SpatialState("that"), false);
-  this->communicate<JointState, SpatialState>(
-      JointState::Random("this", 3), SpatialState("that"), false);
-  this->communicate<Jacobian, SpatialState>(
-      Jacobian("this", 3, "ee"), SpatialState("that"), false);
+  this->communicate<State, SpatialState>(State("this"), SpatialState("that"), false);
+  this->communicate<JointState, SpatialState>(JointState::Random("this", 3), SpatialState("that"), false);
+  this->communicate<Jacobian, SpatialState>(Jacobian("this", 3, "ee"), SpatialState("that"), false);
 
   // Jacobian is incompatible with State, SpatialState, CartesianState and JointState
   this->communicate<State, Jacobian>(
@@ -317,10 +307,8 @@ TEST_F(EncodedCommunicationTest, IncompatibleTypeJoint) {
       JointPositions("this", 2), JointAccelerations("that", 3), false);
   this->communicate<JointVelocities, JointAccelerations>(
       JointVelocities("this", 2), JointAccelerations("that", 3), false);
-  this->communicate<JointTorques, JointAccelerations>(
-      JointTorques("this", 2), JointAccelerations("that", 3), false);
+  this->communicate<JointTorques, JointAccelerations>(JointTorques("this", 2), JointAccelerations("that", 3), false);
   this->communicate<JointPositions, JointTorques>(JointPositions("this", 2), JointTorques("that", 3), false);
   this->communicate<JointVelocities, JointTorques>(JointVelocities("this", 2), JointTorques("that", 3), false);
-  this->communicate<JointAccelerations, JointTorques>(
-      JointAccelerations("this", 2), JointTorques("that", 3), false);
+  this->communicate<JointAccelerations, JointTorques>(JointAccelerations("this", 2), JointTorques("that", 3), false);
 }

@@ -13,9 +13,7 @@ public:
     this->add_trigger("test");
   }
 
-  void trigger() {
-    Component::trigger("test");
-  }
+  void trigger() { Component::trigger("test"); }
 };
 
 class ComponentCommunicationTest : public ::testing::Test {
@@ -25,9 +23,7 @@ protected:
     exec_ = std::make_shared<rclcpp::executors::SingleThreadedExecutor>();
   }
 
-  void TearDown() override {
-    rclcpp::shutdown();
-  }
+  void TearDown() override { rclcpp::shutdown(); }
 
   std::shared_ptr<rclcpp::executors::SingleThreadedExecutor> exec_;
 };

@@ -14,8 +14,7 @@ namespace modulo_core::translators {
 
 void copy_parameter_value(
     const std::shared_ptr<const ParameterInterface>& source_parameter,
-    const std::shared_ptr<ParameterInterface>& parameter
-) {
+    const std::shared_ptr<ParameterInterface>& parameter) {
   if (source_parameter->get_parameter_type() != parameter->get_parameter_type()) {
     throw exceptions::ParameterTranslationException(
         "Source parameter " + source_parameter->get_name()
@@ -84,7 +83,7 @@ void copy_parameter_value(
   }
   throw exceptions::ParameterTranslationException(
       "Could not copy the value from source parameter " + source_parameter->get_name() + " into parameter "
-          + parameter->get_name());
+      + parameter->get_name());
 }
 
 rclcpp::Parameter write_parameter(const std::shared_ptr<ParameterInterface>& parameter) {
@@ -191,12 +190,11 @@ std::shared_ptr<ParameterInterface> read_parameter(const rclcpp::Parameter& para
 }
 
 std::shared_ptr<ParameterInterface> read_parameter_const(
-    const rclcpp::Parameter& ros_parameter, const std::shared_ptr<const ParameterInterface>& parameter
-) {
+    const rclcpp::Parameter& ros_parameter, const std::shared_ptr<const ParameterInterface>& parameter) {
   if (ros_parameter.get_name() != parameter->get_name()) {
     throw exceptions::ParameterTranslationException(
         "The ROS parameter " + ros_parameter.get_name()
-            + " to be read does not have the same name as the reference parameter " + parameter->get_name());
+        + " to be read does not have the same name as the reference parameter " + parameter->get_name());
   }
   if (ros_parameter.get_type() == rclcpp::PARAMETER_NOT_SET) {
     return make_shared_parameter_interface(
@@ -227,8 +225,8 @@ std::shared_ptr<ParameterInterface> read_parameter_const(
           if (static_cast<std::size_t>(matrix.size()) != value.size()) {
             throw exceptions::ParameterTranslationException(
                 "The ROS parameter " + ros_parameter.get_name() + " with type double array has size "
-                    + std::to_string(value.size()) + " while the reference parameter matrix " + parameter->get_name()
-                    + " has size " + std::to_string(matrix.size()));
+                + std::to_string(value.size()) + " while the reference parameter matrix " + parameter->get_name()
+                + " has size " + std::to_string(matrix.size()));
           }
           matrix = Eigen::Map<Eigen::MatrixXd>(value.data(), matrix.rows(), matrix.cols());
           new_parameter = make_shared_parameter(parameter->get_name(), matrix);
@@ -251,9 +249,7 @@ std::shared_ptr<ParameterInterface> read_parameter_const(
   return new_parameter;
 }
 
-void read_parameter(
-    const rclcpp::Parameter& ros_parameter, const std::shared_ptr<ParameterInterface>& parameter
-) {
+void read_parameter(const rclcpp::Parameter& ros_parameter, const std::shared_ptr<ParameterInterface>& parameter) {
   auto new_parameter = read_parameter_const(ros_parameter, parameter);
   copy_parameter_value(new_parameter, parameter);
 }

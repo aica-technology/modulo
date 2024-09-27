@@ -86,7 +86,7 @@ public:
   MessageType get_type() const;
 
 private:
-  MessageType type_; ///< The message type of the MessagePairInterface
+  MessageType type_;///< The message type of the MessagePairInterface
 };
 
 template<typename MsgT, typename DataT>

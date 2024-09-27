@@ -120,8 +120,8 @@ private:
   template<typename MsgT>
   void publish(const MsgT& message);
 
-  PublisherType type_; ///< The type of the publisher interface
-  std::shared_ptr<MessagePairInterface> message_pair_; ///< The pointer to the stored MessagePair instance
+  PublisherType type_;                                ///< The type of the publisher interface
+  std::shared_ptr<MessagePairInterface> message_pair_;///< The pointer to the stored MessagePair instance
 };
 
 template<typename PubT, typename MsgT>

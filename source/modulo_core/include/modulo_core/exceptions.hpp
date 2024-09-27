@@ -16,7 +16,8 @@ namespace modulo_core::exceptions {
  */
 class CoreException : public std::runtime_error {
 public:
-  explicit CoreException(const std::string& msg) : CoreException("CoreException", msg) {};
+  explicit CoreException(const std::string& msg) : CoreException("CoreException", msg){};
+
 protected:
   CoreException(const std::string& prefix, const std::string& msg) : std::runtime_error(prefix + ": " + msg) {}
 };
@@ -110,7 +111,7 @@ public:
  */
 class ParameterTranslationException : public CoreException {
 public:
-  explicit ParameterTranslationException(const std::string& msg) :
-      CoreException("ParameterTranslationException", msg) {}
+  explicit ParameterTranslationException(const std::string& msg)
+      : CoreException("ParameterTranslationException", msg) {}
 };
 }// namespace modulo_core::exceptions

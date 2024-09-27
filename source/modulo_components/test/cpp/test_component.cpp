@@ -13,17 +13,11 @@ namespace modulo_components {
 
 class ComponentTest : public ::testing::Test {
 protected:
-  static void SetUpTestSuite() {
-    rclcpp::init(0, nullptr);
-  }
+  static void SetUpTestSuite() { rclcpp::init(0, nullptr); }
 
-  static void TearDownTestSuite() {
-    rclcpp::shutdown();
-  }
+  static void TearDownTestSuite() { rclcpp::shutdown(); }
 
-  void SetUp() override {
-    component_ = std::make_shared<ComponentPublicInterface>(rclcpp::NodeOptions());
-  }
+  void SetUp() override { component_ = std::make_shared<ComponentPublicInterface>(rclcpp::NodeOptions()); }
 
   std::shared_ptr<ComponentPublicInterface> component_;
 };
@@ -64,8 +58,9 @@ TEST_F(ComponentTest, AddRemoveOutput) {
 
   auto new_data = std::make_shared<bool>(false);
   component_->add_output("test_13", new_data);
-  EXPECT_EQ(component_->outputs_.at("test_13")->get_message_pair()->get_type(),
-            modulo_core::communication::MessageType::ENCODED_STATE);
+  EXPECT_EQ(
+      component_->outputs_.at("test_13")->get_message_pair()->get_type(),
+      modulo_core::communication::MessageType::ENCODED_STATE);
 
   component_->remove_output("test_13");
   EXPECT_TRUE(component_->outputs_.find("test_13") == component_->outputs_.end());
@@ -76,4 +71,4 @@ TEST_F(ComponentTest, AddRemoveOutput) {
   EXPECT_NO_THROW(component_->publish_output("test_13"));
   EXPECT_THROW(component_->publish_output(""), modulo_core::exceptions::CoreException);
 }
-} // namespace modulo_components
+}// namespace modulo_components
