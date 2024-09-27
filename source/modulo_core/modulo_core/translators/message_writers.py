@@ -75,7 +75,8 @@ def write_message(message: MsgT, state: StateT):
                 write_xyz(message.force, state.get_force())
                 write_xyz(message.torque, state.get_torque())
             else:
-                raise MessageTranslationError("The provided combination of state type and message type is not supported")
+                raise MessageTranslationError(
+                    "The provided combination of state type and message type is not supported")
         elif isinstance(message, JointState) and isinstance(state, sr.JointState):
             message.name = state.get_names()
             message.position = state.get_positions().tolist()

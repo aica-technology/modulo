@@ -27,7 +27,7 @@ def test_rate_parameter(ros_context):
     assert component_interface.get_rate() == 10.0
     assert component_interface.get_period() == 0.1
 
-    parameter_overrides=[rclpy.Parameter("rate", value=200.0)]
+    parameter_overrides = [rclpy.Parameter("rate", value=200.0)]
     component_interface = ComponentInterface('component_interface', parameter_overrides=parameter_overrides)
     assert component_interface.get_parameter_value("rate") == 200
     assert component_interface.get_rate() == 200.0
@@ -151,7 +151,14 @@ def test_create_output(component_interface):
     assert component_interface._outputs["test"]["message_type"] == Bool
     assert component_interface._periodic_outputs["test"]
 
-    component_interface._create_output("8_teEsTt_#1@3", "test", Bool, clproto.MessageType.UNKNOWN_MESSAGE, "", True, False)
+    component_interface._create_output(
+        "8_teEsTt_#1@3",
+        "test",
+        Bool,
+        clproto.MessageType.UNKNOWN_MESSAGE,
+        "",
+        True,
+        False)
     assert not component_interface._periodic_outputs["test_13"]
     component_interface.publish_output("8_teEsTt_#1@3")
     component_interface.publish_output("test_13")

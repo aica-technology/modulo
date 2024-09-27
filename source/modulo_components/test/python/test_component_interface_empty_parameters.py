@@ -154,7 +154,8 @@ def test_parameter_overrides(ros_context):
 
 
 def test_parameter_overrides_empty(ros_context):
-    # Construction with not allowing empty parameters and providing an uninitialized parameter override should not succeed
+    # Construction with not allowing empty parameters and providing an
+    # uninitialized parameter override should not succeed
     with pytest.raises(ParameterError):
         EmtpyParameterInterface("component", allow_empty=False, empty_parameter=False,
                                 parameter_overrides=[Parameter("name")])
