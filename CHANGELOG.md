@@ -42,6 +42,7 @@ Release Versions:
 - refactor(controllers): split up base class (#135)
 - release: use updated base image (#139)
 - fix(controllers): remove duplicate function (#140)
+- chore: format repository
 
 ## 4.2.2
 
