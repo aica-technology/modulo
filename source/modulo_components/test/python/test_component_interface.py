@@ -27,10 +27,8 @@ def test_rate_parameter(ros_context):
     assert component_interface.get_rate() == 10.0
     assert component_interface.get_period() == 0.1
 
-    parameter_overrides = [rclpy.Parameter("rate", value=200.0)]
-    component_interface = ComponentInterface(
-        'component_interface',
-        parameter_overrides=parameter_overrides)
+    parameter_overrides=[rclpy.Parameter("rate", value=200.0)]
+    component_interface = ComponentInterface('component_interface', parameter_overrides=parameter_overrides)
     assert component_interface.get_parameter_value("rate") == 200
     assert component_interface.get_rate() == 200.0
     assert component_interface.get_period() == 0.005
@@ -56,9 +54,7 @@ def test_get_predicate(component_interface):
     # predicate does not exist, expect false
     assert not component_interface.get_predicate('test')
     # error in callback function except false
-    component_interface.add_predicate(
-        'error', lambda: raise_(
-            RuntimeError("An error occurred")))
+    component_interface.add_predicate('error', lambda: raise_(RuntimeError("An error occurred")))
     assert not component_interface.get_predicate('error')
 
 
@@ -79,22 +75,16 @@ def test_declare_signal(component_interface):
     assert component_interface.get_parameter_value("input_topic") == "test"
     assert "input" not in component_interface._inputs.keys()
     component_interface.declare_output("output", "test_again")
-    assert component_interface.get_parameter_value(
-        "output_topic") == "test_again"
+    assert component_interface.get_parameter_value("output_topic") == "test_again"
     assert "test_again" not in component_interface._outputs.keys()
 
 
 def test_add_remove_input(component_interface):
     component_interface.add_input("8_teEsTt_#1@3", "test", Bool)
     assert "test_13" in component_interface._inputs.keys()
-    assert component_interface.get_parameter_value(
-        "test_13_topic") == "~/test_13"
+    assert component_interface.get_parameter_value("test_13_topic") == "~/test_13"
 
-    component_interface.add_input(
-        "9_tEestT_#1@5",
-        "test",
-        Bool,
-        default_topic="/topic")
+    component_interface.add_input("9_tEestT_#1@5", "test", Bool, default_topic="/topic")
     assert "test_15" in component_interface._inputs.keys()
     assert component_interface.get_parameter_value("test_15_topic") == "/topic"
 
@@ -120,8 +110,7 @@ def test_add_service(component_interface, ros_exec, make_service_client):
     assert len(component_interface._services_dict) == 2
     assert "string" in component_interface._services_dict.keys()
 
-    # adding a service under an existing name should fail for either callback
-    # type, but is exception safe
+    # adding a service under an existing name should fail for either callback type, but is exception safe
     component_interface.add_service("empty", empty_callback)
     component_interface.add_service("empty", string_callback)
     assert len(component_interface._services_dict) == 2
@@ -144,44 +133,25 @@ def test_add_service(component_interface, ros_exec, make_service_client):
         {"/component_interface/empty": EmptyTrigger, "/component_interface/string": StringTrigger})
     ros_exec.add_node(component_interface)
     ros_exec.add_node(client)
-    future = client.call_async(
-        "/component_interface/empty",
-        EmptyTrigger.Request())
+    future = client.call_async("/component_interface/empty", EmptyTrigger.Request())
     ros_exec.spin_until_future_complete(future, timeout_sec=0.5)
     assert future.done() and future.result().success
     assert future.result().message == "test"
 
-    future = client.call_async(
-        "/component_interface/string",
-        StringTrigger.Request(
-            payload="payload"))
+    future = client.call_async("/component_interface/string", StringTrigger.Request(payload="payload"))
     ros_exec.spin_until_future_complete(future, timeout_sec=0.5)
     assert future.done() and future.result().success
     assert future.result().message == "payload"
 
 
 def test_create_output(component_interface):
-    component_interface._create_output(
-        "test",
-        "test",
-        Bool,
-        clproto.MessageType.UNKNOWN_MESSAGE,
-        "/topic",
-        True,
-        True)
+    component_interface._create_output("test", "test", Bool, clproto.MessageType.UNKNOWN_MESSAGE, "/topic", True, True)
     assert "test" in component_interface._outputs.keys()
     assert component_interface.get_parameter_value("test_topic") == "/topic"
     assert component_interface._outputs["test"]["message_type"] == Bool
     assert component_interface._periodic_outputs["test"]
 
-    component_interface._create_output(
-        "8_teEsTt_#1@3",
-        "test",
-        Bool,
-        clproto.MessageType.UNKNOWN_MESSAGE,
-        "",
-        True,
-        False)
+    component_interface._create_output("8_teEsTt_#1@3", "test", Bool, clproto.MessageType.UNKNOWN_MESSAGE, "", True, False)
     assert not component_interface._periodic_outputs["test_13"]
     component_interface.publish_output("8_teEsTt_#1@3")
     component_interface.publish_output("test_13")
@@ -208,8 +178,7 @@ def test_tf(component_interface):
 
     time.sleep(1.0)
     with pytest.raises(LookupTransformError):
-        component_interface.lookup_transform(
-            "test", "world", validity_period=0.9)
+        component_interface.lookup_transform("test", "world", validity_period=0.9)
 
     lookup_tf = component_interface.lookup_transform("static_test", "world")
     identity = send_static_tf * lookup_tf.inverse()
@@ -223,23 +192,19 @@ def test_tf(component_interface):
     for i in range(10):
         rclpy.spin_once(component_interface)
     for tf in send_tfs:
-        lookup_tf = component_interface.lookup_transform(
-            tf.get_name(), tf.get_reference_frame())
+        lookup_tf = component_interface.lookup_transform(tf.get_name(), tf.get_reference_frame())
         identity = tf * lookup_tf.inverse()
         assert np.linalg.norm(identity.data()) - 1 < 1e-3
         assert abs(identity.get_orientation().w) - 1 < 1e-3
 
     send_static_tfs = []
     for idx in range(3):
-        send_static_tfs.append(
-            sr.CartesianPose().Random(
-                "test_static_" + str(idx), "world"))
+        send_static_tfs.append(sr.CartesianPose().Random("test_static_" + str(idx), "world"))
     component_interface.send_static_transforms(send_static_tfs)
     for i in range(10):
         rclpy.spin_once(component_interface)
     for tf in send_static_tfs:
-        lookup_tf = component_interface.lookup_transform(
-            tf.get_name(), tf.get_reference_frame())
+        lookup_tf = component_interface.lookup_transform(tf.get_name(), tf.get_reference_frame())
         identity = tf * lookup_tf.inverse()
         assert np.linalg.norm(identity.data()) - 1 < 1e-3
         assert abs(identity.get_orientation().w) - 1 < 1e-3

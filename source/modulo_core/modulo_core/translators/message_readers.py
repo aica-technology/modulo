@@ -75,8 +75,7 @@ def read_message(state: StateT, message: MsgT) -> StateT:
             except Exception as e:
                 raise MessageTranslationError(f"{e}")
         else:
-            raise MessageTranslationError(
-                "The provided combination of state type and message type is not supported")
+            raise MessageTranslationError("The provided combination of state type and message type is not supported")
     except MessageTranslationError:
         raise
     except Exception as e:
@@ -106,8 +105,7 @@ def read_stamped_message(state: StateT, message: MsgT) -> StateT:
         elif isinstance(message, geometry.WrenchStamped):
             read_message(state, message.wrench)
         else:
-            raise MessageTranslationError(
-                "The provided combination of state type and message type is not supported")
+            raise MessageTranslationError("The provided combination of state type and message type is not supported")
     except MessageTranslationError as e:
         raise
     state.set_reference_frame(message.header.frame_id)

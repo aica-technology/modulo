@@ -8,9 +8,7 @@ from rclpy.lifecycle import LifecycleNodeMixin, LifecycleState
 from rclpy.lifecycle.node import TransitionCallbackReturn
 
 MsgT = TypeVar('MsgT')
-LIFECYCLE_NODE_MIXIN_KWARGS = [
-    "enable_communication_interface",
-    "callback_group"]
+LIFECYCLE_NODE_MIXIN_KWARGS = ["enable_communication_interface", "callback_group"]
 
 
 class LifecycleComponent(ComponentInterface, LifecycleNodeMixin):
@@ -25,9 +23,7 @@ class LifecycleComponent(ComponentInterface, LifecycleNodeMixin):
 
         :param node_name: The name of the node to be passed to the base Node class
         """
-        lifecycle_node_kwargs = {
-            key: value for key,
-            value in kwargs.items() if key in LIFECYCLE_NODE_MIXIN_KWARGS}
+        lifecycle_node_kwargs = {key: value for key, value in kwargs.items() if key in LIFECYCLE_NODE_MIXIN_KWARGS}
         ComponentInterface.__init__(self, node_name, *args, **kwargs)
         LifecycleNodeMixin.__init__(self, *args, **lifecycle_node_kwargs)
 
@@ -37,13 +33,9 @@ class LifecycleComponent(ComponentInterface, LifecycleNodeMixin):
 
         :return: The current state
         """
-        return LifecycleState(
-            self._state_machine.current_state[1],
-            self._state_machine.current_state[0])
+        return LifecycleState(self._state_machine.current_state[1], self._state_machine.current_state[0])
 
-    def on_configure(
-            self,
-            previous_state: LifecycleState) -> TransitionCallbackReturn:
+    def on_configure(self, previous_state: LifecycleState) -> TransitionCallbackReturn:
         """
         Transition callback for state 'Configuring'.
 
@@ -55,13 +47,9 @@ class LifecycleComponent(ComponentInterface, LifecycleNodeMixin):
         TRANSITION_CALLBACK_FAILURE transitions to 'Unconfigured'
         TRANSITION_CALLBACK_ERROR or any uncaught exceptions to 'ErrorProcessing'
         """
-        self.get_logger().debug(
-            f"on_configure called from previous state {
-                previous_state.label}.")
+        self.get_logger().debug(f"on_configure called from previous state {previous_state.label}.")
         if previous_state.state_id != State.PRIMARY_STATE_UNCONFIGURED:
-            self.get_logger().warn(
-                f"Invalid transition 'configure' from state {
-                    previous_state.label}")
+            self.get_logger().warn(f"Invalid transition 'configure' from state {previous_state.label}")
             return TransitionCallbackReturn.FAILURE
         if not self.__handle_configure():
             self.get_logger().warn("Configuration failed! Reverting to the unconfigured state.")
@@ -95,9 +83,7 @@ class LifecycleComponent(ComponentInterface, LifecycleNodeMixin):
         """
         return True
 
-    def on_cleanup(
-            self,
-            previous_state: LifecycleState) -> TransitionCallbackReturn:
+    def on_cleanup(self, previous_state: LifecycleState) -> TransitionCallbackReturn:
         """
         Transition callback for state 'CleaningUp'.
 
@@ -108,16 +94,11 @@ class LifecycleComponent(ComponentInterface, LifecycleNodeMixin):
         TRANSITION_CALLBACK_SUCCESS transitions to 'Unconfigured'
         TRANSITION_CALLBACK_FAILURE, TRANSITION_CALLBACK_ERROR or any uncaught exceptions to 'ErrorProcessing'
         """
-        self.get_logger().debug(
-            f"on_cleanup called from previous state {
-                previous_state.label}.")
+        self.get_logger().debug(f"on_cleanup called from previous state {previous_state.label}.")
         if previous_state.state_id != State.PRIMARY_STATE_INACTIVE:
-            self.get_logger().warn(
-                f"Invalid transition 'cleanup' from state {
-                    previous_state.label}")
+            self.get_logger().warn(f"Invalid transition 'cleanup' from state {previous_state.label}")
         if not self.__handle_cleanup():
-            self.get_logger().warn(
-                "Cleanup failed! Entering into the error processing transition state.")
+            self.get_logger().warn("Cleanup failed! Entering into the error processing transition state.")
             return TransitionCallbackReturn.ERROR
         return TransitionCallbackReturn.SUCCESS
 
@@ -142,9 +123,7 @@ class LifecycleComponent(ComponentInterface, LifecycleNodeMixin):
         """
         return True
 
-    def on_activate(
-            self,
-            previous_state: LifecycleState) -> TransitionCallbackReturn:
+    def on_activate(self, previous_state: LifecycleState) -> TransitionCallbackReturn:
         """
         Transition callback for state 'Activating'.
 
@@ -156,13 +135,9 @@ class LifecycleComponent(ComponentInterface, LifecycleNodeMixin):
         TRANSITION_CALLBACK_FAILURE transitions to 'Inactive'
         TRANSITION_CALLBACK_ERROR or any uncaught exceptions to 'ErrorProcessing'
         """
-        self.get_logger().debug(
-            f"on_activate called from previous state {
-                previous_state.label}.")
+        self.get_logger().debug(f"on_activate called from previous state {previous_state.label}.")
         if previous_state.state_id != State.PRIMARY_STATE_INACTIVE:
-            self.get_logger().warn(
-                f"Invalid transition 'activate' from state {
-                    previous_state.label}")
+            self.get_logger().warn(f"Invalid transition 'activate' from state {previous_state.label}")
             return TransitionCallbackReturn.FAILURE
         if not self.__handle_activate():
             self.get_logger().warn("Activation failed! Reverting to the inactive state.")
@@ -197,9 +172,7 @@ class LifecycleComponent(ComponentInterface, LifecycleNodeMixin):
         """
         return True
 
-    def on_deactivate(
-            self,
-            previous_state: LifecycleState) -> TransitionCallbackReturn:
+    def on_deactivate(self, previous_state: LifecycleState) -> TransitionCallbackReturn:
         """
         Transition callback for state 'Deactivating'.
 
@@ -210,13 +183,9 @@ class LifecycleComponent(ComponentInterface, LifecycleNodeMixin):
         TRANSITION_CALLBACK_SUCCESS transitions to 'Inactive'
         TRANSITION_CALLBACK_FAILURE, TRANSITION_CALLBACK_ERROR or any uncaught exceptions to 'ErrorProcessing'
         """
-        self.get_logger().debug(
-            f"on_deactivate called from previous state {
-                previous_state.label}.")
+        self.get_logger().debug(f"on_deactivate called from previous state {previous_state.label}.")
         if previous_state.state_id != State.PRIMARY_STATE_ACTIVE:
-            self.get_logger().warn(
-                f"Invalid transition 'deactivate' from state {
-                    previous_state.label}")
+            self.get_logger().warn(f"Invalid transition 'deactivate' from state {previous_state.label}")
             return TransitionCallbackReturn.FAILURE
         if not self.__handle_deactivate():
             self.get_logger().warn("Deactivation failed! Reverting to the inactive state.")
@@ -245,9 +214,7 @@ class LifecycleComponent(ComponentInterface, LifecycleNodeMixin):
         """
         return True
 
-    def on_shutdown(
-            self,
-            previous_state: LifecycleState) -> TransitionCallbackReturn:
+    def on_shutdown(self, previous_state: LifecycleState) -> TransitionCallbackReturn:
         """
         Transition callback for state 'ShuttingDown'.
 
@@ -258,9 +225,7 @@ class LifecycleComponent(ComponentInterface, LifecycleNodeMixin):
         TRANSITION_CALLBACK_SUCCESS transitions to 'Finalized'
         TRANSITION_CALLBACK_FAILURE, TRANSITION_CALLBACK_ERROR or any uncaught exceptions to 'ErrorProcessing'
         """
-        self.get_logger().debug(
-            f"on_shutdown called from previous state {
-                previous_state.label}.")
+        self.get_logger().debug(f"on_shutdown called from previous state {previous_state.label}.")
         if previous_state.state_id == State.PRIMARY_STATE_FINALIZED:
             return TransitionCallbackReturn.SUCCESS
         if previous_state.state_id == State.PRIMARY_STATE_ACTIVE:
@@ -275,9 +240,7 @@ class LifecycleComponent(ComponentInterface, LifecycleNodeMixin):
                 return TransitionCallbackReturn.ERROR
             # TODO reset and finalize all properties
             return TransitionCallbackReturn.SUCCESS
-        self.get_logger().warn(
-            f"Invalid transition 'shutdown' from state {
-                previous_state.label}.")
+        self.get_logger().warn(f"Invalid transition 'shutdown' from state {previous_state.label}.")
         return TransitionCallbackReturn.ERROR
 
     def __handle_shutdown(self) -> bool:
@@ -301,9 +264,7 @@ class LifecycleComponent(ComponentInterface, LifecycleNodeMixin):
         """
         return True
 
-    def on_error(
-            self,
-            previous_state: LifecycleState) -> TransitionCallbackReturn:
+    def on_error(self, previous_state: LifecycleState) -> TransitionCallbackReturn:
         """
         Transition callback for state 'ErrorProcessing'.
 
@@ -315,16 +276,13 @@ class LifecycleComponent(ComponentInterface, LifecycleNodeMixin):
         TRANSITION_CALLBACK_FAILURE transitions to 'Finalized'
         TRANSITION_CALLBACK_ERROR should not be returned, and any exceptions should be caught and returned as a failure
         """
-        self.get_logger().debug(
-            f"on_error called from previous state {
-                previous_state.label}.")
+        self.get_logger().debug(f"on_error called from previous state {previous_state.label}.")
         self.set_predicate("in_error_state", True)
         error_handled = False
         try:
             error_handled = self.__handle_error()
         except Exception as e:
-            self.get_logger().debug(
-                f"Exception caught during on_error handling: {e}")
+            self.get_logger().debug(f"Exception caught during on_error handling: {e}")
             error_handled = False
         if not error_handled:
             self.get_logger().error("Error processing failed! Entering into the finalized state.")
@@ -362,9 +320,7 @@ class LifecycleComponent(ComponentInterface, LifecycleNodeMixin):
                 self._publish_outputs()
             self._publish_predicates()
         except Exception as e:
-            self.get_logger().error(
-                f"Failed to execute step function: {e}",
-                throttle_duration_sec=1.0)
+            self.get_logger().error(f"Failed to execute step function: {e}", throttle_duration_sec=1.0)
             # TODO handle error in lifecycle component
 
     def __configure_outputs(self) -> bool:
@@ -377,26 +333,18 @@ class LifecycleComponent(ComponentInterface, LifecycleNodeMixin):
         for signal_name, output_dict in self._outputs.items():
             try:
                 topic_name = self.get_parameter_value(signal_name + "_topic")
-                self.get_logger().debug(
-                    f"Configuring output '{signal_name}' with topic name '{topic_name}'.")
-                publisher = self.create_lifecycle_publisher(
-                    msg_type=output_dict["message_type"], topic=topic_name, qos_profile=self._qos)
+                self.get_logger().debug(f"Configuring output '{signal_name}' with topic name '{topic_name}'.")
+                publisher = self.create_lifecycle_publisher(msg_type=output_dict["message_type"], topic=topic_name,
+                                                            qos_profile=self._qos)
                 self._outputs[signal_name]["publisher"] = publisher
             except Exception as e:
                 success = False
-                self.get_logger().debug(
-                    f"Failed to configure output '{signal_name}': {e}")
+                self.get_logger().debug(f"Failed to configure output '{signal_name}': {e}")
         return success
 
-    def add_output(
-            self,
-            signal_name: str,
-            data: str,
-            message_type: MsgT,
-            clproto_message_type=clproto.MessageType.UNKNOWN_MESSAGE,
-            default_topic="",
-            fixed_topic=False,
-            publish_on_step=True):
+    def add_output(self, signal_name: str, data: str, message_type: MsgT,
+                   clproto_message_type=clproto.MessageType.UNKNOWN_MESSAGE, default_topic="", fixed_topic=False,
+                   publish_on_step=True):
         """
         Add an output signal of the component.
 
@@ -408,30 +356,17 @@ class LifecycleComponent(ComponentInterface, LifecycleNodeMixin):
         :param fixed_topic: If true, the topic name of the output signal is fixed
         :param publish_on_step: If true, the output is published periodically on step
         """
-        if self.get_lifecycle_state().state_id not in [
-                State.PRIMARY_STATE_UNCONFIGURED,
-                State.PRIMARY_STATE_INACTIVE]:
-            self.get_logger().warn(
-                f"Adding output in state {
-                    self.get_lifecycle_state().label} is not allowed.",
-                throttle_duration_sec=1.0)
+        if self.get_lifecycle_state().state_id not in [State.PRIMARY_STATE_UNCONFIGURED, State.PRIMARY_STATE_INACTIVE]:
+            self.get_logger().warn(f"Adding output in state {self.get_lifecycle_state().label} is not allowed.",
+                                   throttle_duration_sec=1.0)
             return
         try:
-            parsed_signal_name = self._create_output(
-                signal_name,
-                data,
-                message_type,
-                clproto_message_type,
-                default_topic,
-                fixed_topic,
-                publish_on_step)
-            topic_name = self.get_parameter_value(
-                parsed_signal_name + "_topic")
-            self.get_logger().debug(
-                f"Adding output '{parsed_signal_name}' with topic name '{topic_name}'.")
+            parsed_signal_name = self._create_output(signal_name, data, message_type, clproto_message_type,
+                                                     default_topic, fixed_topic, publish_on_step)
+            topic_name = self.get_parameter_value(parsed_signal_name + "_topic")
+            self.get_logger().debug(f"Adding output '{parsed_signal_name}' with topic name '{topic_name}'.")
         except AddSignalError as e:
-            self.get_logger().error(
-                f"Failed to add output '{signal_name}': {e}")
+            self.get_logger().error(f"Failed to add output '{signal_name}': {e}")
 
     def __activate_outputs(self):
         success = True
@@ -441,8 +376,7 @@ class LifecycleComponent(ComponentInterface, LifecycleNodeMixin):
                 output_dict["publisher"].on_activate(state)
             except Exception as e:
                 success = False
-                self.get_logger().error(
-                    f"Failed to activate output '{signal_name}': {e}")
+                self.get_logger().error(f"Failed to activate output '{signal_name}': {e}")
         self.get_logger().debug("All outputs activated.")
         return success
 
@@ -454,7 +388,6 @@ class LifecycleComponent(ComponentInterface, LifecycleNodeMixin):
                 output_dict["publisher"].on_deactivate(state)
             except Exception as e:
                 success = False
-                self.get_logger().error(
-                    f"Failed to deactivate output '{signal_name}': {e}")
+                self.get_logger().error(f"Failed to deactivate output '{signal_name}': {e}")
         self.get_logger().debug("All outputs deactivated.")
         return success

@@ -7,7 +7,7 @@ class Predicate:
     def __init__(self, predicate_function: Callable[[], bool]):
         self.__predicate = predicate_function
         value = predicate_function()
-        if not isinstance(value, bool):
+        if type(value) is not bool:
             raise CoreError("Predicate function does not return a bool")
         self.__previous_value = not value
 
@@ -16,7 +16,7 @@ class Predicate:
 
     def set_predicate(self, predicate_function: Callable[[], bool]):
         value = predicate_function()
-        if not isinstance(value, bool):
+        if type(value) is not bool:
             raise RuntimeError("Predicate function does not return a bool")
         self.__predicate = predicate_function
 

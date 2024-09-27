@@ -22,8 +22,7 @@ class PredicatesListener(Node):
         self.__predicates = {}
         for predicate in predicates:
             self.__predicates[predicate] = None
-        self.__subscription = self.create_subscription(
-            PredicateCollection, "/predicates", self.__callback, 10)
+        self.__subscription = self.create_subscription(PredicateCollection, "/predicates", self.__callback, 10)
 
     @property
     def predicates_future(self) -> Future:

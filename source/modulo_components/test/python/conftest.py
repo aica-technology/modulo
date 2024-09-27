@@ -5,11 +5,8 @@ from modulo_components.component import Component
 from modulo_core import EncodedState
 from rclpy.task import Future
 
-pytest_plugins = [
-    "modulo_utils.testutils.ros",
-    "modulo_utils.testutils.lifecycle_change_client",
-    "modulo_utils.testutils.service_client",
-    "modulo_utils.testutils.predicates_listener"]
+pytest_plugins = ["modulo_utils.testutils.ros", "modulo_utils.testutils.lifecycle_change_client",
+                  "modulo_utils.testutils.service_client", "modulo_utils.testutils.predicates_listener"]
 
 
 @pytest.fixture
@@ -30,13 +27,8 @@ def minimal_cartesian_output(request, random_pose):
 
         component = component_type("minimal_cartesian_output")
         component._output = random_pose
-        component.add_output(
-            "cartesian_pose",
-            "_output",
-            EncodedState,
-            clproto.MessageType.CARTESIAN_STATE_MESSAGE,
-            topic,
-            publish_on_step=publish_on_step)
+        component.add_output("cartesian_pose", "_output", EncodedState, clproto.MessageType.CARTESIAN_STATE_MESSAGE,
+                             topic, publish_on_step=publish_on_step)
         component.publish = publish.__get__(component)
         return component
 
@@ -51,13 +43,8 @@ def minimal_joint_output(request, random_joint):
 
         component = component_type("minimal_joint_output")
         component._output = random_joint
-        component.add_output(
-            "joint_state",
-            "_output",
-            EncodedState,
-            clproto.MessageType.JOINT_STATE_MESSAGE,
-            topic,
-            publish_on_step=publish_on_step)
+        component.add_output("joint_state", "_output", EncodedState, clproto.MessageType.JOINT_STATE_MESSAGE,
+                             topic, publish_on_step=publish_on_step)
         component.publish = publish.__get__(component)
         return component
 
@@ -67,8 +54,7 @@ def minimal_joint_output(request, random_joint):
 class MinimalInvalidEncodedStatePublisher(Component):
     def __init__(self, topic, *args, **kwargs):
         super().__init__("minimal_invalid_encoded_state_publisher", *args, **kwargs)
-        self.publisher = self.create_publisher(
-            EncodedState, topic, self.get_qos())
+        self.publisher = self.create_publisher(EncodedState, topic, self.get_qos())
         self.add_periodic_callback("publish", self.__publish)
 
     def __publish(self):
@@ -92,12 +78,8 @@ def minimal_cartesian_input(request):
         component = component_type("minimal_cartesian_input")
         component.received_future = Future()
         component.input = sr.CartesianState()
-        component.add_input(
-            "cartesian_pose",
-            "input",
-            EncodedState,
-            topic,
-            user_callback=lambda: component.received_future.set_result(True))
+        component.add_input("cartesian_pose", "input", EncodedState, topic,
+                            user_callback=lambda: component.received_future.set_result(True))
         return component
 
     yield _make_minimal_cartesian_input(request.param[0], request.param[1])

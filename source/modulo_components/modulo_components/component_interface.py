@@ -30,16 +30,9 @@ from tf2_ros import Buffer, StaticTransformBroadcaster, TransformBroadcaster, Tr
 
 MsgT = TypeVar('MsgT')
 T = TypeVar('T')
-NODE_KWARGS = [
-    "context",
-    "cli_args",
-    "namespace",
-    "use_global_arguments",
-    "enable_rosout",
-    "start_parameter_services",
-    "parameter_overrides",
-    "allow_undeclared_parameters",
-    "automatically_declare_parameters_from_overrides"]
+NODE_KWARGS = ["context", "cli_args", "namespace", "use_global_arguments", "enable_rosout",
+               "start_parameter_services", "parameter_overrides", "allow_undeclared_parameters",
+               "automatically_declare_parameters_from_overrides"]
 
 
 class ComponentInterface(Node):
@@ -49,9 +42,7 @@ class ComponentInterface(Node):
     """
 
     def __init__(self, node_name: str, *args, **kwargs):
-        node_kwargs = {
-            key: value for key,
-            value in kwargs.items() if key in NODE_KWARGS}
+        node_kwargs = {key: value for key, value in kwargs.items() if key in NODE_KWARGS}
         super().__init__(node_name, *args, **node_kwargs)
         self.__step_lock = Lock()
         self._parameter_dict: Dict[str, Union[str, sr.Parameter]] = {}
@@ -72,14 +63,12 @@ class ComponentInterface(Node):
 
         self._qos = QoSProfile(depth=10)
 
-        self.add_pre_set_parameters_callback(
-            self.__pre_set_parameters_callback)
+        self.add_pre_set_parameters_callback(self.__pre_set_parameters_callback)
         self.add_on_set_parameters_callback(self.__on_set_parameters_callback)
         self.add_parameter(sr.Parameter("rate", 10.0, sr.ParameterType.DOUBLE),
                            "The rate in Hertz for all periodic callbacks")
 
-        self._predicate_publisher = self.create_publisher(
-            PredicateCollection, "/predicates", self._qos)
+        self._predicate_publisher = self.create_publisher(PredicateCollection, "/predicates", self._qos)
         self.__predicate_message = PredicateCollection()
         self.__predicate_message.node = self.get_fully_qualified_name()
         self.__predicate_message.type = PredicateCollection.COMPONENT
@@ -125,11 +114,7 @@ class ComponentInterface(Node):
         """
         pass
 
-    def add_parameter(self,
-                      parameter: Union[str,
-                                       sr.Parameter],
-                      description: str,
-                      read_only=False) -> None:
+    def add_parameter(self, parameter: Union[str, sr.Parameter], description: str, read_only=False) -> None:
         """
         Add a parameter. This method stores either the name of the attribute corresponding to the parameter object or
         a parameter object directly in the local parameter dictionary and declares the equivalent ROS parameter on the
@@ -150,51 +135,39 @@ class ComponentInterface(Node):
                 if isinstance(attr, sr.Parameter):
                     sr_parameter = attr
                 else:
-                    raise TypeError(f"The attribute with the provided name '{
-                        parameter}' does not contain a Parameter object.")
+                    raise TypeError(
+                        f"The attribute with the provided name '{parameter}' does not contain a Parameter object.")
             else:
-                raise TypeError(
-                    "Provide either a state_representation.Parameter object or a string "
-                    "containing the name of the attribute that refers to the parameter to add.")
+                raise TypeError("Provide either a state_representation.Parameter object or a string "
+                                "containing the name of the attribute that refers to the parameter to add.")
             ros_param = write_parameter(sr_parameter)
         except (TypeError, ParameterTranslationError) as e:
             raise ParameterError(f"Failed to add parameter: {e}")
         if not self.has_parameter(sr_parameter.get_name()):
-            self.get_logger().debug(
-                f"Adding parameter '{
-                    sr_parameter.get_name()}'.")
+            self.get_logger().debug(f"Adding parameter '{sr_parameter.get_name()}'.")
             self._parameter_dict[sr_parameter.get_name()] = parameter
             self.__read_only_parameters[sr_parameter.get_name()] = False
             try:
-                descriptor = ParameterDescriptor(
-                    description=description, read_only=read_only)
-                self.__set_parameters_result = SetParametersResult(
-                    successful=True, reason="")
+                descriptor = ParameterDescriptor(description=description, read_only=read_only)
+                self.__set_parameters_result = SetParametersResult(successful=True, reason="")
                 if sr_parameter.is_empty():
                     descriptor.dynamic_typing = True
-                    descriptor.type = get_ros_parameter_type(
-                        sr_parameter.get_parameter_type()).value
-                    self.declare_parameter(
-                        ros_param.name, None, descriptor=descriptor)
+                    descriptor.type = get_ros_parameter_type(sr_parameter.get_parameter_type()).value
+                    self.declare_parameter(ros_param.name, None, descriptor=descriptor)
                 else:
-                    self.declare_parameter(
-                        ros_param.name, ros_param.value, descriptor=descriptor)
-                new_parameters = self.__pre_set_parameters_callback(
-                    [Node.get_parameter(self, ros_param.name)])
+                    self.declare_parameter(ros_param.name, ros_param.value, descriptor=descriptor)
+                new_parameters = self.__pre_set_parameters_callback([Node.get_parameter(self, ros_param.name)])
                 result = self.__on_set_parameters_callback(new_parameters)
                 if not result.successful:
                     self.undeclare_parameter(ros_param.name)
                     raise ParameterError(result.reason)
-                self.__read_only_parameters[sr_parameter.get_name(
-                )] = read_only
+                self.__read_only_parameters[sr_parameter.get_name()] = read_only
             except Exception as e:
                 del self._parameter_dict[sr_parameter.get_name()]
                 del self.__read_only_parameters[sr_parameter.get_name()]
                 raise ParameterError(f"Failed to add parameter: {e}")
         else:
-            self.get_logger().debug(
-                f"Parameter '{
-                    sr_parameter.get_name()}' already exists.")
+            self.get_logger().debug(f"Parameter '{sr_parameter.get_name()}' already exists.")
 
     def get_parameter(self, name: str) -> Union[sr.Parameter, Parameter]:
         """
@@ -225,8 +198,7 @@ class ComponentInterface(Node):
         :return: The parameter, if it exists
         """
         if name not in self._parameter_dict.keys():
-            raise ParameterError(
-                f"Parameter '{name}' is not in the dict of parameters")
+            raise ParameterError(f"Parameter '{name}' is not in the dict of parameters")
         try:
             if isinstance(self._parameter_dict[name], str):
                 return self.__getattribute__(self._parameter_dict[name])
@@ -245,11 +217,7 @@ class ComponentInterface(Node):
         """
         return self.__get_component_parameter(name).get_value()
 
-    def set_parameter_value(
-            self,
-            name: str,
-            value: T,
-            parameter_type: sr.ParameterType) -> None:
+    def set_parameter_value(self, name: str, value: T, parameter_type: sr.ParameterType) -> None:
         """
         Set the value of a parameter. The parameter must have been previously declared. If the parameter is an
         attribute, the attribute is updated.
@@ -259,23 +227,16 @@ class ComponentInterface(Node):
         :param parameter_type: The type of the parameter
         """
         try:
-            parameters = [
-                write_parameter(
-                    sr.Parameter(
-                        name,
-                        value,
-                        parameter_type))]
+            parameters = [write_parameter(sr.Parameter(name, value, parameter_type))]
             new_parameters = self.__pre_set_parameters_callback(parameters)
             self.__pre_set_parameters_callback_called = True
             result = self.set_parameters(new_parameters)[0]
             if not result.successful:
-                self.get_logger().error(
-                    f"Failed to set parameter value of parameter '{name}': {
-                        result.reason}", throttle_duration_sec=1.0)
+                self.get_logger().error(f"Failed to set parameter value of parameter '{name}': {result.reason}",
+                                        throttle_duration_sec=1.0)
         except Exception as e:
-            self.get_logger().error(
-                f"Failed to set parameter value of parameter '{name}': {e}",
-                throttle_duration_sec=1.0)
+            self.get_logger().error(f"Failed to set parameter value of parameter '{name}': {e}",
+                                    throttle_duration_sec=1.0)
 
     def __validate_parameter(self, parameter: sr.Parameter) -> bool:
         """
@@ -304,8 +265,7 @@ class ComponentInterface(Node):
         """
         return True
 
-    def __pre_set_parameters_callback(
-            self, ros_parameters: List[Parameter]) -> List[Parameter]:
+    def __pre_set_parameters_callback(self, ros_parameters: List[Parameter]) -> List[Parameter]:
         """
         Callback function to validate and update parameters on change.
 
@@ -321,20 +281,16 @@ class ComponentInterface(Node):
             try:
                 parameter = self.__get_component_parameter(ros_param.name)
                 if self.__read_only_parameters.get(ros_param.name):
-                    self.get_logger().debug(
-                        f"Parameter '{
-                            ros_param.name}' is read only")
+                    self.get_logger().debug(f"Parameter '{ros_param.name}' is read only")
                     continue
                 new_parameter = read_parameter_const(ros_param, parameter)
                 if not self.__validate_parameter(new_parameter):
                     new_parameters.append(ros_param)
                     result.successful = False
-                    result.reason = f"Validation of parameter '{
-                        ros_param.name}' returned false!"
+                    result.reason = f"Validation of parameter '{ros_param.name}' returned false!"
                 else:
                     if isinstance(self._parameter_dict[ros_param.name], str):
-                        self.__setattr__(
-                            self._parameter_dict[ros_param.name], new_parameter)
+                        self.__setattr__(self._parameter_dict[ros_param.name], new_parameter)
                     else:
                         self._parameter_dict[ros_param.name] = new_parameter
                     new_parameters.append(write_parameter(new_parameter))
@@ -344,8 +300,7 @@ class ComponentInterface(Node):
         self.__set_parameters_result = result
         return new_parameters
 
-    def __on_set_parameters_callback(
-            self, ros_parameters: List[Parameter]) -> SetParametersResult:
+    def __on_set_parameters_callback(self, ros_parameters: List[Parameter]) -> SetParametersResult:
         """
         Callback function to notify ROS about the validation result from the pre_set_parameters_callback step
 
@@ -357,8 +312,7 @@ class ComponentInterface(Node):
         self.__set_parameters_result.reason = ""
         return result
 
-    def add_predicate(
-            self, name: str, predicate: Union[bool, Callable[[], bool]]):
+    def add_predicate(self, name: str, predicate: Union[bool, Callable[[], bool]]):
         """
         Add a predicate to the map of predicates.
 
@@ -368,8 +322,7 @@ class ComponentInterface(Node):
         if not name:
             self.get_logger().error("Failed to add predicate: Provide a non empty string as a name.")
         if name in self._predicates.keys():
-            self.get_logger().warn(f"Predicate with name '{
-                name}' already exists, overwriting.")
+            self.get_logger().warn(f"Predicate with name '{name}' already exists, overwriting.")
         else:
             self.get_logger().debug(f"Adding predicate '{name}'.")
         try:
@@ -400,8 +353,7 @@ class ComponentInterface(Node):
                 name}', returning false: {e}", throttle_duration_sec=1.0)
         return False
 
-    def set_predicate(
-            self, name: str, predicate: Union[bool, Callable[[], bool]]):
+    def set_predicate(self, name: str, predicate: Union[bool, Callable[[], bool]]):
         """
         Set the value of the predicate given as parameter, if the predicate is not found does not do anything. Even
         though the predicates are published periodically, the new value of this predicate will be published once
@@ -420,9 +372,7 @@ class ComponentInterface(Node):
             else:
                 self._predicates[name].set_predicate(lambda: predicate)
         except Exception as e:
-            self.get_logger().error(
-                f"Failed to set predicate '{name}': {e}",
-                throttle_duration_sec=1.0)
+            self.get_logger().error(f"Failed to set predicate '{name}': {e}", throttle_duration_sec=1.0)
             return
         new_value = self._predicates[name].query()
         if new_value is not None:
@@ -439,12 +389,10 @@ class ComponentInterface(Node):
             self.get_logger().error("Failed to add trigger: Provide a non empty string as a name.")
             return
         if trigger_name in self._triggers:
-            self.get_logger().error(
-                f"Failed to add trigger: there is already a trigger with name '{trigger_name}'.")
+            self.get_logger().error(f"Failed to add trigger: there is already a trigger with name '{trigger_name}'.")
             return
         if trigger_name in self._predicates.keys():
-            self.get_logger().error(
-                f"Failed to add trigger: there is already a predicate with name '{trigger_name}'.")
+            self.get_logger().error(f"Failed to add trigger: there is already a predicate with name '{trigger_name}'.")
             return
         self._triggers.append(trigger_name)
         self.add_predicate(trigger_name, False)
@@ -456,8 +404,7 @@ class ComponentInterface(Node):
         :param trigger_name: The name of the trigger
         """
         if trigger_name not in self._triggers:
-            self.get_logger().error(
-                f"Failed to trigger: could not find trigger with name '{trigger_name}'.")
+            self.get_logger().error(f"Failed to trigger: could not find trigger with name '{trigger_name}'.")
             return
         self.set_predicate(trigger_name, True)
         # reset the trigger to be published on the next step
@@ -467,8 +414,7 @@ class ComponentInterface(Node):
         if signal_name not in self._outputs.keys():
             parsed_signal_name = parse_topic_name(signal_name)
             if parsed_signal_name not in self._outputs.keys():
-                self.get_logger().debug(
-                    f"Unknown output '{signal_name}' (parsed name was '{parsed_signal_name}').")
+                self.get_logger().debug(f"Unknown output '{signal_name}' (parsed name was '{parsed_signal_name}').")
                 return
             signal_name = parsed_signal_name
         if "publisher" in self._outputs[signal_name].keys():
@@ -476,15 +422,8 @@ class ComponentInterface(Node):
         self._outputs.pop(signal_name)
         self.get_logger().debug(f"Removing signal '{signal_name}'.")
 
-    def _create_output(
-            self,
-            signal_name: str,
-            data: str,
-            message_type: MsgT,
-            clproto_message_type: clproto.MessageType,
-            default_topic: str,
-            fixed_topic: bool,
-            publish_on_step: bool) -> str:
+    def _create_output(self, signal_name: str, data: str, message_type: MsgT, clproto_message_type: clproto.MessageType,
+                       default_topic: str, fixed_topic: bool, publish_on_step: bool) -> str:
         """
         Helper function to parse the signal name and add an output without Publisher to the dict of outputs.
 
@@ -500,8 +439,7 @@ class ComponentInterface(Node):
         """
         try:
             if message_type == EncodedState and clproto_message_type == clproto.MessageType.UNKNOWN_MESSAGE:
-                raise AddSignalError(
-                    f"Provide a valid clproto message type for outputs of type EncodedState.")
+                raise AddSignalError(f"Provide a valid clproto message type for outputs of type EncodedState.")
             self.declare_output(signal_name, default_topic, fixed_topic)
             parsed_signal_name = parse_topic_name(signal_name)
             if message_type == Bool or message_type == Float64 or \
@@ -511,12 +449,9 @@ class ComponentInterface(Node):
                 translator = partial(modulo_writers.write_clproto_message,
                                      clproto_message_type=clproto_message_type)
             else:
-                raise AddSignalError(
-                    "The provided message type is not supported to create a component output.")
-            self._outputs[parsed_signal_name] = {
-                "attribute": data,
-                "message_type": message_type,
-                "translator": translator}
+                raise AddSignalError("The provided message type is not supported to create a component output.")
+            self._outputs[parsed_signal_name] = {"attribute": data, "message_type": message_type,
+                                                 "translator": translator}
             self._periodic_outputs[parsed_signal_name] = publish_on_step
             return parsed_signal_name
         except AddSignalError:
@@ -527,23 +462,14 @@ class ComponentInterface(Node):
     def remove_input(self, signal_name: str):
         if not self.destroy_subscription(self._inputs.pop(signal_name, None)):
             parsed_signal_name = parse_topic_name(signal_name)
-            if not self.destroy_subscription(
-                self._inputs.pop(
-                    parsed_signal_name,
-                    None)):
-                self.get_logger().debug(
-                    f"Unknown input '{signal_name}' (parsed name was '{parsed_signal_name}').")
+            if not self.destroy_subscription(self._inputs.pop(parsed_signal_name, None)):
+                self.get_logger().debug(f"Unknown input '{signal_name}' (parsed name was '{parsed_signal_name}').")
                 return
             self.get_logger().debug(f"Removing signal '{parsed_signal_name}'.")
             return
         self.get_logger().debug(f"Removing signal '{signal_name}'.")
 
-    def __subscription_callback(
-            self,
-            message: MsgT,
-            attribute_name: str,
-            reader: Callable,
-            user_callback: Callable):
+    def __subscription_callback(self, message: MsgT, attribute_name: str, reader: Callable, user_callback: Callable):
         """
         Subscription callback for the ROS subscriptions.
 
@@ -556,8 +482,8 @@ class ComponentInterface(Node):
             decoded_message = reader(message)
             self.__setattr__(attribute_name, obj_type(decoded_message))
         except (AttributeError, MessageTranslationError, TypeError) as e:
-            self.get_logger().warn(f"Failed to read message for attribute {
-                attribute_name}: {e}", throttle_duration_sec=1.0)
+            self.get_logger().warn(f"Failed to read message for attribute {attribute_name}: {e}",
+                                   throttle_duration_sec=1.0)
             return
         try:
             user_callback()
@@ -565,12 +491,7 @@ class ComponentInterface(Node):
             self.get_logger().error(f"Failed to execute user callback in subscription for attribute"
                                     f" '{attribute_name}': {e}", throttle_duration_sec=1.0)
 
-    def declare_signal(
-            self,
-            signal_name: str,
-            signal_type: str,
-            default_topic="",
-            fixed_topic=False):
+    def declare_signal(self, signal_name: str, signal_type: str, default_topic="", fixed_topic=False):
         """
         Declare an input to create the topic parameter without adding it to the map of inputs yet.
 
@@ -582,39 +503,24 @@ class ComponentInterface(Node):
         """
         parsed_signal_name = parse_topic_name(signal_name)
         if not parsed_signal_name:
-            raise AddSignalError(
-                topic_validation_warning(
-                    signal_name, signal_type))
+            raise AddSignalError(topic_validation_warning(signal_name, signal_type))
         if signal_name != parsed_signal_name:
             self.get_logger().warn(topic_validation_warning(signal_name, signal_type))
         if parsed_signal_name in self._inputs.keys():
-            raise AddSignalError(
-                f"Signal with name '{parsed_signal_name}' already exists as input.")
+            raise AddSignalError(f"Signal with name '{parsed_signal_name}' already exists as input.")
         if parsed_signal_name in self._outputs.keys():
-            raise AddSignalError(
-                f"Signal with name '{parsed_signal_name}' already exists as output.")
+            raise AddSignalError(f"Signal with name '{parsed_signal_name}' already exists as output.")
         topic_name = default_topic if default_topic else "~/" + parsed_signal_name
         parameter_name = parsed_signal_name + "_topic"
-        if self.has_parameter(parameter_name) and self.get_parameter(
-                parameter_name).is_empty():
-            self.set_parameter_value(
-                parameter_name, topic_name, sr.ParameterType.STRING)
+        if self.has_parameter(parameter_name) and self.get_parameter(parameter_name).is_empty():
+            self.set_parameter_value(parameter_name, topic_name, sr.ParameterType.STRING)
         else:
-            self.add_parameter(
-                sr.Parameter(
-                    parameter_name,
-                    topic_name,
-                    sr.ParameterType.STRING),
-                f"Signal topic name of {signal_type} '{parsed_signal_name}'",
-                fixed_topic)
-        self.get_logger().debug(f"Declared signal '{parsed_signal_name}' and parameter '{
-            parameter_name}' with value '{topic_name}'.")
+            self.add_parameter(sr.Parameter(parameter_name, topic_name, sr.ParameterType.STRING),
+                               f"Signal topic name of {signal_type} '{parsed_signal_name}'", fixed_topic)
+        self.get_logger().debug(
+            f"Declared signal '{parsed_signal_name}' and parameter '{parameter_name}' with value '{topic_name}'.")
 
-    def declare_input(
-            self,
-            signal_name: str,
-            default_topic="",
-            fixed_topic=False):
+    def declare_input(self, signal_name: str, default_topic="", fixed_topic=False):
         """
         Declare an input to create the topic parameter without adding it to the map of inputs yet.
 
@@ -625,11 +531,7 @@ class ComponentInterface(Node):
         """
         self.declare_signal(signal_name, "input", default_topic, fixed_topic)
 
-    def declare_output(
-            self,
-            signal_name: str,
-            default_topic="",
-            fixed_topic=False):
+    def declare_output(self, signal_name: str, default_topic="", fixed_topic=False):
         """
         Declare an output to create the topic parameter without adding it to the map of outputs yet.
 
@@ -640,14 +542,8 @@ class ComponentInterface(Node):
         """
         self.declare_signal(signal_name, "output", default_topic, fixed_topic)
 
-    def add_input(self,
-                  signal_name: str,
-                  subscription: Union[str,
-                                      Callable],
-                  message_type: MsgT,
-                  default_topic="",
-                  fixed_topic=False,
-                  user_callback: Callable = None):
+    def add_input(self, signal_name: str, subscription: Union[str, Callable], message_type: MsgT, default_topic="",
+                  fixed_topic=False, user_callback: Callable = None):
         """
         Add and configure an input signal of the component.
 
@@ -662,23 +558,19 @@ class ComponentInterface(Node):
         try:
             self.declare_input(signal_name, default_topic, fixed_topic)
             parsed_signal_name = parse_topic_name(signal_name)
-            topic_name = self.get_parameter_value(
-                parsed_signal_name + "_topic")
-            self.get_logger().debug(
-                f"Adding input '{parsed_signal_name}' with topic name '{topic_name}'.")
+            topic_name = self.get_parameter_value(parsed_signal_name + "_topic")
+            self.get_logger().debug(f"Adding input '{parsed_signal_name}' with topic name '{topic_name}'.")
             if isinstance(subscription, Callable):
                 if user_callback:
-                    self.get_logger().warn(
-                        "Providing a callable for arguments 'subscription' and 'user_callback' is"
-                        "not supported. The user callback will be ignored.")
-                self._inputs[parsed_signal_name] = self.create_subscription(
-                    message_type, topic_name, subscription, self._qos)
+                    self.get_logger().warn("Providing a callable for arguments 'subscription' and 'user_callback' is"
+                                           "not supported. The user callback will be ignored.")
+                self._inputs[parsed_signal_name] = self.create_subscription(message_type, topic_name, subscription,
+                                                                            self._qos)
             elif isinstance(subscription, str):
                 if callable(user_callback):
                     signature = inspect.signature(user_callback)
                     if len(signature.parameters) != 0:
-                        raise AddSignalError(
-                            "Provide a user callback that has no input arguments.")
+                        raise AddSignalError("Provide a user callback that has no input arguments.")
                 else:
                     if user_callback:
                         self.get_logger().warn("Provided user callback is not a callable, ignoring it.")
@@ -689,37 +581,29 @@ class ComponentInterface(Node):
                     user_callback = default_callback
                 if message_type == Bool or message_type == Float64 or \
                         message_type == Float64MultiArray or message_type == Int32 or message_type == String:
-                    self._inputs[parsed_signal_name] = self.create_subscription(
-                        message_type,
-                        topic_name,
-                        partial(
-                            self.__subscription_callback,
-                            attribute_name=subscription,
-                            reader=modulo_readers.read_std_message,
-                            user_callback=user_callback),
-                        self._qos)
+                    self._inputs[parsed_signal_name] = \
+                        self.create_subscription(message_type, topic_name,
+                                                 partial(self.__subscription_callback,
+                                                         attribute_name=subscription,
+                                                         reader=modulo_readers.read_std_message,
+                                                         user_callback=user_callback),
+                                                 self._qos)
                 elif message_type == EncodedState:
-                    self._inputs[parsed_signal_name] = self.create_subscription(
-                        message_type,
-                        topic_name,
-                        partial(
-                            self.__subscription_callback,
-                            attribute_name=subscription,
-                            reader=modulo_readers.read_clproto_message,
-                            user_callback=user_callback),
-                        self._qos)
+                    self._inputs[parsed_signal_name] = \
+                        self.create_subscription(message_type, topic_name,
+                                                 partial(self.__subscription_callback,
+                                                         attribute_name=subscription,
+                                                         reader=modulo_readers.read_clproto_message,
+                                                         user_callback=user_callback),
+                                                 self._qos)
                 else:
-                    raise TypeError(
-                        "The provided message type is not supported to create a component input.")
+                    raise TypeError("The provided message type is not supported to create a component input.")
             else:
-                raise TypeError(
-                    "Provide either a string containing the name of an attribute or a callable.")
+                raise TypeError("Provide either a string containing the name of an attribute or a callable.")
         except Exception as e:
-            self.get_logger().error(
-                f"Failed to add input '{signal_name}': {e}")
+            self.get_logger().error(f"Failed to add input '{signal_name}': {e}")
 
-    def add_service(self, service_name: str,
-                    callback: Union[Callable[[], dict], Callable[[str], dict]]):
+    def add_service(self, service_name: str, callback: Union[Callable[[], dict], Callable[[str], dict]]):
         """
         Add a service to trigger a callback function.
         The callback should take either no arguments (empty service) or a single string argument (string service).
@@ -741,8 +625,7 @@ class ComponentInterface(Node):
                     ret = cb()
 
                 # if the return does not contain a success field or bool result,
-                # but the callback completes without error, assume it was
-                # successful
+                # but the callback completes without error, assume it was successful
                 response.success = True
                 if isinstance(ret, dict):
                     if "success" in ret.keys():
@@ -759,36 +642,25 @@ class ComponentInterface(Node):
         try:
             parsed_service_name = parse_topic_name(service_name)
             if not parsed_service_name:
-                raise AddServiceError(
-                    topic_validation_warning(
-                        service_name, "service"))
+                raise AddServiceError(topic_validation_warning(service_name, "service"))
             if service_name != parsed_service_name:
                 self.get_logger().warn(
                     f"The parsed name for service '{service_name}' is '{parsed_service_name}'."
                     "Use the parsed name to refer to this service.")
             if parsed_service_name in self._services_dict.keys():
-                raise AddServiceError(
-                    f"Service with name '{parsed_service_name}' already exists.")
+                raise AddServiceError(f"Service with name '{parsed_service_name}' already exists.")
             signature = inspect.signature(callback)
             if len(signature.parameters) == 0:
-                self.get_logger().debug(
-                    f"Adding empty service '{parsed_service_name}'.")
+                self.get_logger().debug(f"Adding empty service '{parsed_service_name}'.")
                 service_type = EmptyTrigger
             else:
-                self.get_logger().debug(
-                    f"Adding string service '{parsed_service_name}'.")
+                self.get_logger().debug(f"Adding string service '{parsed_service_name}'.")
                 service_type = StringTrigger
-            self._services_dict[parsed_service_name] = self.create_service(
-                service_type,
-                "~/" + parsed_service_name,
-                lambda request,
-                response: callback_wrapper(
-                    request,
-                    response,
-                    callback))
+            self._services_dict[parsed_service_name] = \
+                self.create_service(service_type, "~/" + parsed_service_name,
+                                    lambda request, response: callback_wrapper(request, response, callback))
         except Exception as e:
-            self.get_logger().error(
-                f"Failed to add service '{service_name}': {e}")
+            self.get_logger().error(f"Failed to add service '{service_name}': {e}")
 
     def add_tf_broadcaster(self):
         """
@@ -853,14 +725,8 @@ class ComponentInterface(Node):
         """
         self.send_static_transforms([transform])
 
-    def lookup_transform(
-            self,
-            frame: str,
-            reference_frame="world",
-            validity_period=-1.0,
-            time_point=Time(),
-            duration=Duration(
-            nanoseconds=1e4)) -> sr.CartesianPose:
+    def lookup_transform(self, frame: str, reference_frame="world", validity_period=-1.0, time_point=Time(),
+                         duration=Duration(nanoseconds=1e4)) -> sr.CartesianPose:
         """
         Look up a transform from TF.
 
@@ -874,17 +740,13 @@ class ComponentInterface(Node):
         or if the transform is too old
         """
         if not self.__tf_buffer or not self.__tf_listener:
-            raise LookupTransformError(
-                "Failed to lookup transform: To TF buffer / listener configured.")
+            raise LookupTransformError("Failed to lookup transform: To TF buffer / listener configured.")
         try:
-            transform = self.__tf_buffer.lookup_transform(
-                reference_frame, frame, time_point, duration)
+            transform = self.__tf_buffer.lookup_transform(reference_frame, frame, time_point, duration)
         except TransformException as e:
             raise LookupTransformError(f"Failed to lookup transform: {e}")
-        if 0.0 < validity_period < (self.get_clock().now(
-        ) - Time().from_msg(transform.header.stamp)).nanoseconds / 1e9:
-            raise LookupTransformError(
-                "Failed to lookup transform: Latest transform is too old!")
+        if 0.0 < validity_period < (self.get_clock().now() - Time().from_msg(transform.header.stamp)).nanoseconds / 1e9:
+            raise LookupTransformError("Failed to lookup transform: Latest transform is too old!")
         result = sr.CartesianPose(frame, reference_frame)
         modulo_readers.read_stamped_message(result, transform)
         return result
@@ -911,12 +773,10 @@ class ComponentInterface(Node):
         :param callback: The callback function that is evaluated periodically
         """
         if not name:
-            self.get_logger().error(
-                "Failed to add periodic function: Provide a non empty string as a name.")
+            self.get_logger().error("Failed to add periodic function: Provide a non empty string as a name.")
             return
         if name in self._periodic_callbacks.keys():
-            self.get_logger().warn(
-                f"Periodic function '{name}' already exists, overwriting.")
+            self.get_logger().warn(f"Periodic function '{name}' already exists, overwriting.")
         else:
             self.get_logger().debug(f"Adding periodic function '{name}'.")
         self._periodic_callbacks[name] = callback
@@ -952,9 +812,7 @@ class ComponentInterface(Node):
         for name in self._predicates.keys():
             new_value = self._predicates[name].query()
             if new_value is not None:
-                message.predicates.append(
-                    self.__get_predicate_message(
-                        name, new_value))
+                message.predicates.append(self.__get_predicate_message(name, new_value))
         if len(message.predicates):
             self._predicate_publisher.publish(message)
 
@@ -982,13 +840,11 @@ class ComponentInterface(Node):
         if parsed_signal_name not in self._outputs.keys():
             raise CoreError(f"Output with name '{signal_name}' doesn't exist")
         if self._periodic_outputs[parsed_signal_name]:
-            raise CoreError(
-                "An output that is published periodically cannot be triggered manually")
+            raise CoreError("An output that is published periodically cannot be triggered manually")
         try:
             self.__translate_and_publish(parsed_signal_name)
         except Exception as e:
-            self.get_logger().error(
-                f"Failed to publish output '{parsed_signal_name}': {e}")
+            self.get_logger().error(f"Failed to publish output '{parsed_signal_name}': {e}")
 
     def _publish_outputs(self):
         """
@@ -1009,13 +865,10 @@ class ComponentInterface(Node):
             try:
                 callback()
             except Exception as e:
-                self.get_logger().error(
-                    f"Failed to evaluate periodic function callback '{name}': {e}",
-                    throttle_duration_sec=1.0)
+                self.get_logger().error(f"Failed to evaluate periodic function callback '{name}': {e}",
+                                        throttle_duration_sec=1.0)
 
-    def __publish_transforms(self,
-                             transforms: Iterable[sr.CartesianPose],
-                             static=False):
+    def __publish_transforms(self, transforms: Iterable[sr.CartesianPose], static=False):
         """
         Send a list of transforms to TF using the normal or static tf broadcaster
 
@@ -1025,21 +878,18 @@ class ComponentInterface(Node):
         tf_broadcaster = self.__static_tf_broadcaster if static else self.__tf_broadcaster
         modifier = 'static ' if static else ''
         if not tf_broadcaster:
-            self.get_logger().error(f"Failed to send {modifier}transform: No {
-                modifier}TF broadcaster configured.", throttle_duration_sec=1.0)
+            self.get_logger().error(f"Failed to send {modifier}transform: No {modifier}TF broadcaster configured.",
+                                    throttle_duration_sec=1.0)
             return
         try:
             transform_messages = []
             for tf in transforms:
                 transform_message = TransformStamped()
-                modulo_writers.write_stamped_message(
-                    transform_message, tf, self.get_clock().now())
+                modulo_writers.write_stamped_message(transform_message, tf, self.get_clock().now())
                 transform_messages.append(transform_message)
             tf_broadcaster.sendTransform(transform_messages)
         except (MessageTranslationError, TransformException) as e:
-            self.get_logger().error(
-                f"Failed to send {modifier}transform: {e}",
-                throttle_duration_sec=1.0)
+            self.get_logger().error(f"Failed to send {modifier}transform: {e}", throttle_duration_sec=1.0)
 
     def raise_error(self):
         """

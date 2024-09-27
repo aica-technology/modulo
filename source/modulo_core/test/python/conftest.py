@@ -35,24 +35,12 @@ def parameters():
 
 @pytest.fixture
 def state_parameters():
-    return {
-        "cartesian_state": [
-            sr.CartesianState().Random("test"),
-            sr.StateType.CARTESIAN_STATE,
-            clproto.CARTESIAN_STATE_MESSAGE],
-        "cartesian_pose": [
-            sr.CartesianPose().Random("test"),
-            sr.StateType.CARTESIAN_POSE,
-            clproto.CARTESIAN_POSE_MESSAGE],
-        "joint_state": [
-            sr.JointState().Random(
-                "test",
-                3),
-            sr.StateType.JOINT_STATE,
-            clproto.JOINT_STATE_MESSAGE],
-        "joint_positions": [
-            sr.JointPositions().Random(
-                "test",
-                3),
-            sr.StateType.JOINT_POSITIONS,
-            clproto.JOINT_POSITIONS_MESSAGE]}
+    return {"cartesian_state": [sr.CartesianState().Random("test"), sr.StateType.CARTESIAN_STATE,
+                                clproto.CARTESIAN_STATE_MESSAGE],
+            "cartesian_pose": [sr.CartesianPose().Random("test"), sr.StateType.CARTESIAN_POSE,
+                               clproto.CARTESIAN_POSE_MESSAGE],
+            "joint_state": [sr.JointState().Random("test", 3), sr.StateType.JOINT_STATE,
+                            clproto.JOINT_STATE_MESSAGE],
+            "joint_positions": [sr.JointPositions().Random("test", 3), sr.StateType.JOINT_POSITIONS,
+                                clproto.JOINT_POSITIONS_MESSAGE]
+            }
