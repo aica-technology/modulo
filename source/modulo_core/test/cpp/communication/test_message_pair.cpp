@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include "modulo_core/communication/MessagePair.hpp"
+#include <sensor_msgs/msg/image.hpp>
 
 using namespace modulo_core::communication;
 
@@ -24,6 +25,29 @@ test_message_interface(const DataT& initial_value, const DataT& new_value, const
 
   message = MsgT();
   message.data = initial_value;
+  message_pair_interface->template read<MsgT, DataT>(message);
+  EXPECT_EQ(initial_value, *message_pair->get_data());
+}
+
+template<typename MsgT, typename DataT>
+static void test_custom_message_interface(
+    const DataT& initial_value, const DataT& new_value, const std::shared_ptr<rclcpp::Clock> clock) {
+  auto data = std::make_shared<DataT>(initial_value);
+  auto message_pair = std::make_shared<MessagePair<MsgT, DataT>>(data, clock);
+  EXPECT_EQ(initial_value, *message_pair->get_data());
+  EXPECT_EQ(initial_value, message_pair->write_message());
+
+  std::shared_ptr<MessagePairInterface> message_pair_interface(message_pair);
+  auto message = message_pair_interface->template write<MsgT, DataT>();
+  EXPECT_EQ(initial_value, message);
+
+  *data = new_value;
+  EXPECT_EQ(new_value, *message_pair->get_data());
+  EXPECT_EQ(new_value, message_pair->write_message());
+  message = message_pair_interface->template write<MsgT, DataT>();
+  EXPECT_EQ(new_value, message);
+
+  message = initial_value;
   message_pair_interface->template read<MsgT, DataT>(message);
   EXPECT_EQ(initial_value, *message_pair->get_data());
 }
@@ -72,4 +96,18 @@ TEST_F(MessagePairTest, EncodedState) {
   message_pair_interface->read<modulo_core::EncodedState, state_representation::State>(message);
   EXPECT_TRUE(initial_value.data().isApprox(
       std::dynamic_pointer_cast<state_representation::CartesianState>(message_pair->get_data())->data()));
+}
+
+TEST_F(MessagePairTest, GenericTypes) {
+  geometry_msgs::msg::Twist initial_value;
+  initial_value.linear.x = 0.1;
+  geometry_msgs::msg::Twist new_value;
+  initial_value.linear.x = 42;
+  test_custom_message_interface<geometry_msgs::msg::Twist, geometry_msgs::msg::Twist>(initial_value, new_value, clock_);
+
+  sensor_msgs::msg::Image initial_img;
+  initial_img.height = 320;
+  sensor_msgs::msg::Image new_img;
+  new_img.height = 480;
+  test_custom_message_interface<sensor_msgs::msg::Image, sensor_msgs::msg::Image>(initial_img, new_img, clock_);
 }

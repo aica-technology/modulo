@@ -47,6 +47,9 @@ void PublisherInterface::activate() {
     case MessageType::ENCODED_STATE:
       this->template get_handler<rclcpp_lifecycle::LifecyclePublisher<EncodedState>, EncodedState>()->on_activate();
       break;
+    case MessageType::CUSTOM_MESSAGE:
+      // TODO:
+      break;
   }
 }
 
@@ -80,6 +83,9 @@ void PublisherInterface::deactivate() {
     case MessageType::ENCODED_STATE:
       this->template get_handler<rclcpp_lifecycle::LifecyclePublisher<EncodedState>, EncodedState>()->on_deactivate();
       break;
+    case MessageType::CUSTOM_MESSAGE:
+      // TODO:
+      break;
   }
 }
 
@@ -110,6 +116,9 @@ void PublisherInterface::publish() {
                  ->is_empty()) {
           this->publish(this->message_pair_->write<EncodedState, state_representation::State>());
         }
+        break;
+      case MessageType::CUSTOM_MESSAGE:
+        // TODO:
         break;
     }
   } catch (const exceptions::CoreException& ex) {
