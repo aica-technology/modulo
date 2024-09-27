@@ -5,8 +5,11 @@
 #include <rclcpp/node.hpp>
 
 #include "modulo_components/ComponentInterface.hpp"
+#include "modulo_core/concepts.hpp"
 
 namespace modulo_components {
+
+using namespace modulo_core::concepts;
 
 /**
  * @class Component
@@ -107,6 +110,14 @@ inline void Component::add_output(
         this->get_logger(), "Adding output '" << parsed_signal_name << "' with topic name '" << topic_name << "'.");
     auto message_pair = this->outputs_.at(parsed_signal_name)->get_message_pair();
     switch (message_pair->get_type()) {
+      case MessageType::ENCODED_STATE: {
+        auto publisher = this->create_publisher<modulo_core::EncodedState>(topic_name, this->get_qos());
+        this->outputs_.at(parsed_signal_name) =
+            std::make_shared<PublisherHandler<rclcpp::Publisher<modulo_core::EncodedState>, modulo_core::EncodedState>>(
+                PublisherType::PUBLISHER, publisher)
+                ->create_publisher_interface(message_pair);
+        break;
+      }
       case MessageType::BOOL: {
         auto publisher = this->create_publisher<std_msgs::msg::Bool>(topic_name, this->get_qos());
         this->outputs_.at(parsed_signal_name) =
@@ -147,12 +158,13 @@ inline void Component::add_output(
                 ->create_publisher_interface(message_pair);
         break;
       }
-      case MessageType::ENCODED_STATE: {
-        auto publisher = this->create_publisher<modulo_core::EncodedState>(topic_name, this->get_qos());
-        this->outputs_.at(parsed_signal_name) =
-            std::make_shared<PublisherHandler<rclcpp::Publisher<modulo_core::EncodedState>, modulo_core::EncodedState>>(
-                PublisherType::PUBLISHER, publisher)
-                ->create_publisher_interface(message_pair);
+      case MessageType::CUSTOM_MESSAGE: {
+        if constexpr (CustomT<DataT>) {
+          auto publisher = this->create_publisher<DataT>(topic_name, this->get_qos());
+          this->outputs_.at(parsed_signal_name) =
+              std::make_shared<PublisherHandler<rclcpp::Publisher<DataT>, DataT>>(PublisherType::PUBLISHER, publisher)
+                  ->create_publisher_interface(message_pair);
+        }
         break;
       }
     }
@@ -160,4 +172,5 @@ inline void Component::add_output(
     RCLCPP_ERROR_STREAM(this->get_logger(), "Failed to add output '" << signal_name << "': " << ex.what());
   }
 }
+
 }// namespace modulo_components

@@ -2,6 +2,9 @@
 
 #include "test_modulo_core/communication_nodes.hpp"
 
+#include <sensor_msgs/msg/image.hpp>
+#include <sensor_msgs/msg/imu.hpp>
+
 using namespace modulo_core::communication;
 
 class CommunicationTest : public ::testing::Test {
@@ -60,3 +63,17 @@ TEST_F(CommunicationTest, BasicTypes) {
   this->communicate<std_msgs::msg::Int32, int>(1, 2);
   this->communicate<std_msgs::msg::String, std::string>("this", "that");
 }
+
+// TEST_F(CommunicationTest, CustomTypes) { // TODO: uncomment when Subscription handler (needed by MinimalSubscriber) supports generic types
+//   sensor_msgs::msg::Image initial_image;
+//   initial_image.height = 480;
+//   sensor_msgs::msg::Image new_image;
+//   new_image.height = 320;
+//   this->communicate<sensor_msgs::msg::Image, sensor_msgs::msg::Image>(initial_image, new_image);
+
+//   sensor_msgs::msg::Imu initial_imu;
+//   initial_imu.linear_acceleration.x = 1.0;
+//   sensor_msgs::msg::Imu new_imu;
+//   new_imu.linear_acceleration.x = 0.5;
+//   this->communicate<sensor_msgs::msg::Imu, sensor_msgs::msg::Imu>(initial_imu, new_imu);
+// }

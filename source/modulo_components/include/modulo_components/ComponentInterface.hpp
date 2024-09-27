@@ -694,6 +694,10 @@ inline void ComponentInterface::add_input(
         subscription_interface = subscription_handler->create_subscription_interface(subscription);
         break;
       }
+      case MessageType::CUSTOM_MESSAGE: {
+        // TODO:
+        break;
+      }
     }
     this->inputs_.insert_or_assign(parsed_signal_name, subscription_interface);
   } catch (const std::exception& ex) {
