@@ -49,8 +49,8 @@ concept TranslatedDataT = std::same_as<DataT, geometry_msgs::msg::Accel>
     || std::same_as<DataT, std_msgs::msg::Float64> || std::same_as<DataT, std_msgs::msg::Float64MultiArray>
     || std::same_as<DataT, std_msgs::msg::Int32> || std::same_as<DataT, std_msgs::msg::String>;
 
-// template<typename DataT>
-// concept TranslatedDataT = ROSTranslatedDataT<DataT> || std::same_as<DataT, EncodedState>;
+template<typename DataT>
+concept TranslatedOrEncodedDataT = TranslatedDataT<DataT> || std::same_as<DataT, EncodedState>;
 
 template<typename DataT>
 concept NonTranslatedDataT = !(TranslatedDataT<DataT> || std::same_as<DataT, EncodedState>);

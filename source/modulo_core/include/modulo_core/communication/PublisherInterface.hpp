@@ -65,7 +65,7 @@ public:
    * @see PublisherInterface::get_handler
    * @throws modulo_core::exceptions::NullPointerException if the message pair pointer is null
    */
-  void activate();
+  virtual void activate();
 
   /**
    * @brief Deactivate ROS publisher of a derived PublisherHandler instance through the PublisherInterface pointer.
@@ -75,7 +75,7 @@ public:
    * @see PublisherInterface::get_handler
    * @throws modulo_core::exceptions::NullPointerException if the message pair pointer is null
    */
-  void deactivate();
+  virtual void deactivate();
 
   /**
    * @brief Publish the data stored in the message pair through the ROS publisher of a derived PublisherHandler
@@ -87,7 +87,7 @@ public:
    * @throws modulo_core::exceptions::CoreException if the publishing failed for some reason
    * (translation, null pointer, pointer cast, ...)
    */
-  void publish();
+  virtual void publish();
 
   /**
    * @brief Get the pointer to the message pair of the PublisherInterface.
@@ -120,7 +120,9 @@ private:
   template<typename MsgT>
   void publish(const MsgT& message);
 
-  PublisherType type_;                                ///< The type of the publisher interface
+  PublisherType type_;///< The type of the publisher interface
+
+protected:
   std::shared_ptr<MessagePairInterface> message_pair_;///< The pointer to the stored MessagePair instance
 };
 

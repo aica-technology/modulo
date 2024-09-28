@@ -753,7 +753,6 @@ inline std::string ComponentInterface::create_output(
   } catch (const std::exception& ex) {
     throw modulo_core::exceptions::AddSignalException(ex.what());
   }
-  return "fooo";
 }
 
 template<typename T>
