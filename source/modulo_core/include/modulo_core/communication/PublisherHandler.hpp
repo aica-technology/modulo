@@ -78,7 +78,7 @@ PublisherHandler<PubT, MsgT>::~PublisherHandler() {
 
 template<typename PubT, typename MsgT>
 void PublisherHandler<PubT, MsgT>::activate() {
-  if constexpr (std::same_as<PubT, rclcpp_lifecycle::LifecyclePublisher<MsgT>>) {
+  if constexpr (std::derived_from<PubT, rclcpp_lifecycle::LifecyclePublisher<MsgT>>) {
     if (this->publisher_ == nullptr) {
       throw exceptions::NullPointerException("Publisher not set");
     }
@@ -94,7 +94,7 @@ void PublisherHandler<PubT, MsgT>::activate() {
 
 template<typename PubT, typename MsgT>
 void PublisherHandler<PubT, MsgT>::deactivate() {
-  if constexpr (std::same_as<PubT, rclcpp_lifecycle::LifecyclePublisher<MsgT>>) {
+  if constexpr (std::derived_from<PubT, rclcpp_lifecycle::LifecyclePublisher<MsgT>>) {
     if (this->publisher_ == nullptr) {
       throw exceptions::NullPointerException("Publisher not set");
     }
