@@ -118,10 +118,10 @@ template<typename MsgT>
 std::function<void(const std::shared_ptr<MsgT>)> SubscriptionHandler<MsgT>::get_raw_callback() {
   return [this](const std::shared_ptr<MsgT> message) {
     try {
-      //   this->get_message_pair()->template read<MsgT, MsgT>(*message);
-      //   this->user_callback_();
+      this->get_message_pair()->template read<MsgT, MsgT>(*message);
+      this->user_callback_();
     } catch (...) {
-      //   this->handle_callback_exceptions();
+      this->handle_callback_exceptions();
     }
   };
 }

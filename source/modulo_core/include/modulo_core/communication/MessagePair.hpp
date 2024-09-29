@@ -122,16 +122,17 @@ inline void MessagePair<MsgT, DataT>::read_message(const MsgT& message) {
     throw exceptions::NullPointerException("The message pair data is not set, nothing to read");
   }
 
-  if constexpr (TranslatedDataT<MsgT> && !CustomDataT<DataT>) {
-    read_translated_message(message);
-  } else if constexpr (std::same_as<MsgT, EncodedState>) {
+  if constexpr (std::same_as<MsgT, EncodedState>) {
     read_encoded_message(message);
-  } else if constexpr (CustomDataT<MsgT> && CustomDataT<DataT>) {
+  } else if constexpr (std::same_as<MsgT, DataT> || (CustomDataT<MsgT> && CustomDataT<DataT>) ) {
     read_raw_message(message);
+  } else if constexpr (TranslatedDataT<MsgT> || CoreDataT<MsgT>) {
+    read_translated_message(message);
   } else {
     static_assert(false, "The message types for the message pair are not supported.");
   }
 }
+
 template<typename MsgT, typename DataT>
 inline void MessagePair<MsgT, DataT>::read_translated_message(const MsgT& message) {
   translators::read_message(*this->data_, message);
