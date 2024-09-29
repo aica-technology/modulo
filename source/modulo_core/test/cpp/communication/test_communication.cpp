@@ -71,9 +71,9 @@ TEST_F(CommunicationTest, CustomTypes) {
   new_image.height = 320;
   this->communicate<sensor_msgs::msg::Image, sensor_msgs::msg::Image>(initial_image, new_image);
 
-  //   sensor_msgs::msg::Imu initial_imu;
-  //   initial_imu.linear_acceleration.x = 1.0;
-  //   sensor_msgs::msg::Imu new_imu;
-  //   new_imu.linear_acceleration.x = 0.5;
-  //   this->communicate<sensor_msgs::msg::Imu, sensor_msgs::msg::Imu>(initial_imu, new_imu);
+  sensor_msgs::msg::Imu initial_imu;
+  initial_imu.linear_acceleration.x = 1.0;
+  sensor_msgs::msg::Imu new_imu;
+  new_imu.linear_acceleration.x = 0.5;
+  this->communicate<sensor_msgs::msg::Imu, sensor_msgs::msg::Imu>(initial_imu, new_imu);
 }
