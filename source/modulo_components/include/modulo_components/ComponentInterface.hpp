@@ -695,13 +695,11 @@ inline void ComponentInterface::add_input(
         break;
       }
       case MessageType::CUSTOM_MESSAGE: {
-        if constexpr (CustomDataT<DataT>) {
-          auto subscription_handler = std::make_shared<SubscriptionHandler<DataT>>(message_pair);
-          auto subscription = rclcpp::create_subscription<DataT>(
-              this->node_parameters_, this->node_topics_, topic_name, this->qos_,
-              subscription_handler->get_callback(user_callback));
-          subscription_interface = subscription_handler->create_subscription_interface(subscription);
-        }
+        auto subscription_handler = std::make_shared<SubscriptionHandler<DataT>>(message_pair);
+        auto subscription = rclcpp::create_subscription<DataT>(
+            this->node_parameters_, this->node_topics_, topic_name, this->qos_,
+            subscription_handler->get_callback(user_callback));
+        subscription_interface = subscription_handler->create_subscription_interface(subscription);
         break;
       }
     }
