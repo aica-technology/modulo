@@ -43,7 +43,7 @@ Release Versions:
 - release: use updated base image (#139)
 - fix(controllers): remove duplicate function (#140)
 - chore: format repository (#142)
-- feat: add support for generic inputs/outputs (#133)
+- feat: add support for generic outputs (#133)
 
 ## 4.2.2
 
