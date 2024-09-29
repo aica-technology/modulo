@@ -65,12 +65,45 @@ public:
   void set_data(const std::shared_ptr<DataT>& data);
 
 protected:
+  /**
+   * @brief Write the value of the data pointer to a ROS message using modulo translators.
+   * @return The value of the data pointer as a ROS message
+   * @throws modulo_core::exceptions::MessageTranslationException if the data could not be written to message
+   */
   [[nodiscard]] MsgT write_translated_message() const;
+
+  /**
+   * @brief Write the value of the data pointer to a ROS message using modulo translators for encoded states.
+   * @return The value of the data pointer as a ROS message
+   * @throws modulo_core::exceptions::MessageTranslationException if the data could not be written to message
+   */
   [[nodiscard]] MsgT write_encoded_message() const;
+
+  /**
+   * @brief Write the value of the data pointer to a ROS message by direct assignment.
+   * @return The value of the data pointer as a ROS message
+   */
   [[nodiscard]] MsgT write_raw_message() const;
 
+  /**
+   * @brief Read a ROS message and store the value in the data pointer using modulo translators.
+   * @param message The ROS message to read
+   * @throws modulo_core::exceptions::MessageTranslationException if the message could not be read
+   */
   void read_translated_message(const MsgT& message);
+
+  /**
+   * @brief Read a ROS message and store the value in the data pointer using modulo translators for encoded states.
+   * @param message The ROS message to read
+   * @throws modulo_core::exceptions::MessageTranslationException if the message could not be read
+   */
   void read_encoded_message(const MsgT& message);
+
+  /**
+   * @brief Read a ROS message and store the value in the data pointer by direct assignment.
+   * @param message The ROS message to read
+   * @throws modulo_core::exceptions::MessageTranslationException if the message could not be read
+   */
   void read_raw_message(const MsgT& message);
 
 private:
