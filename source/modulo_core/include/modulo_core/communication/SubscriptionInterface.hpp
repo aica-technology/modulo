@@ -66,7 +66,7 @@ public:
    */
   void set_message_pair(const std::shared_ptr<MessagePairInterface>& message_pair);
 
-private:
+protected:
   std::shared_ptr<MessagePairInterface> message_pair_;///< The pointer to the stored MessagePair instance
 };
 

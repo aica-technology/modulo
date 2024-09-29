@@ -2,7 +2,11 @@
 
 #include "modulo_core/communication/SubscriptionInterface.hpp"
 
+#include "modulo_core/concepts.hpp"
+
 namespace modulo_core::communication {
+
+using namespace modulo_core::concepts;
 
 /**
  * @class SubscriptionHandler
@@ -77,6 +81,10 @@ private:
 };
 
 template<typename MsgT>
+SubscriptionHandler<MsgT>::SubscriptionHandler(std::shared_ptr<MessagePairInterface> message_pair)
+    : SubscriptionInterface(std::move(message_pair)), clock_(std::make_shared<rclcpp::Clock>()) {}
+
+template<typename MsgT>
 SubscriptionHandler<MsgT>::~SubscriptionHandler() {
   this->subscription_.reset();
 }
@@ -93,6 +101,57 @@ void SubscriptionHandler<MsgT>::set_subscription(const std::shared_ptr<rclcpp::S
   }
   this->subscription_ = subscription;
 }
+
+// template<typename MsgT>
+// inline std::function<void(const std::shared_ptr<MsgT>)> SubscriptionHandler<MsgT>::get_callback() {
+//   return [this](const std::shared_ptr<MsgT> message) {
+//     // if constexpr (CustomDataT<MsgT>) {
+//     //   try {
+//     //     this->get_message_pair()->template read<MsgT, MsgT>(*message);
+//     //     //   this->user_callback_();
+//     //   } catch (...) {
+//     //     //   this->handle_callback_exceptions();
+//     //   }
+//     // }
+//   };
+// }
+
+// template<typename T = MsgT, typename std::enable_if<CustomDataT<T>, int>::type = 0>
+// std::function<void(const std::shared_ptr<T>)> SubscriptionHandler<T>::get_callback() {
+//   return [this](const std::shared_ptr<T> message) {
+//     // try {
+//     //   this->get_message_pair()->template read<T, T>(*message);
+//     //   // this->user_callback_();
+//     // } catch (...) {
+//     //   // this->handle_callback_exceptions();
+//     // }
+//   };
+// }
+
+// template<>
+// std::function<void(const std::shared_ptr<std_msgs::msg::Bool>)>
+// SubscriptionHandler<std_msgs::msg::Bool>::get_callback() {
+//   return [this](const std::shared_ptr<std_msgs::msg::Bool> message) {
+//     try {
+//       this->get_message_pair()->template read<std_msgs::msg::Bool, bool>(*message);
+//       this->user_callback_();
+//     } catch (...) {
+//       this->handle_callback_exceptions();
+//     }
+//   };
+// }
+
+// template<CustomDataT MsgT>
+// inline std::function<void(const std::shared_ptr<MsgT>)> SubscriptionHandler<MsgT>::get_callback() {
+//   return [this](const std::shared_ptr<MsgT> message) {
+//     try {
+//       this->get_message_pair()->template read<MsgT, MsgT>(*message);
+//       this->user_callback_();
+//     } catch (...) {
+//       this->handle_callback_exceptions();
+//     }
+//   };
+// }
 
 template<typename MsgT>
 void SubscriptionHandler<MsgT>::set_user_callback(const std::function<void()>& user_callback) {
