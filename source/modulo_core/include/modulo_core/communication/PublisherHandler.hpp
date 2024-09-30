@@ -113,7 +113,7 @@ void PublisherHandler<PubT, MsgT>::publish() {
   }
   if (this->message_pair_->get_type() == MessageType::CUSTOM_MESSAGE) {
     // explicitly check for EncodedState at complile time to hide the otherwise incompatible code block for EncodedState
-    if constexpr (!std::same_as<MsgT, EncodedState> && CustomDataT<MsgT>) {
+    if constexpr (!std::same_as<MsgT, EncodedState> && CustomT<MsgT>) {
       publish(this->message_pair_->write<MsgT, MsgT>());
     }
   } else {
