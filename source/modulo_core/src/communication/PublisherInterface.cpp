@@ -19,12 +19,12 @@ PublisherInterface::PublisherInterface(PublisherType type, std::shared_ptr<Messa
 
 void PublisherInterface::activate() {
   throw exceptions::CoreException(
-      "The publisher handler used is responsible for handling publisher activation, but it doesn't do so!");
+      "The derived publisher handler is required to override this function to handle activation");
 }
 
 void PublisherInterface::deactivate() {
   throw exceptions::CoreException(
-      "The publisher handler used is responsible for handling publisher deactivation, but it doesn't do so!");
+      "The derived publisher handler is required to override this function to handle deactivation");
 }
 
 void PublisherInterface::publish() {
