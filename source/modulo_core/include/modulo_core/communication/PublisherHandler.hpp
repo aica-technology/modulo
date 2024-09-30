@@ -31,22 +31,18 @@ public:
   ~PublisherHandler() override;
 
   /**
-     * @brief Activate ROS publisher.
-     * @throws modulo_core::exceptions::NullPointerException if the publisher is null
-     */
+    * @copydoc PublisherInterface::activate
+    */
   virtual void activate() override;
 
   /**
-     * @brief Deactivate ROS publisher.
-     * @throws modulo_core::exceptions::NullPointerException if the publisher is null
-     */
+    * @copydoc PublisherInterface::deactivate
+    */
   virtual void deactivate() override;
 
   /**
-   * @brief Publish the ROS message through the ROS publisher.
-   * @param message The ROS message to publish
-   * @throws modulo_core::exceptions::NullPointerException if the publisher pointer is null
-   */
+    * @copydoc PublisherInterface::publish
+    */
   void publish() override;
 
   /**
