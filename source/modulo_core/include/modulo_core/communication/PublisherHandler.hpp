@@ -61,6 +61,8 @@ public:
 
 private:
   std::shared_ptr<PubT> publisher_;///< The ROS publisher
+
+  using PublisherInterface::message_pair_;
 };
 
 template<typename PubT, typename MsgT>
