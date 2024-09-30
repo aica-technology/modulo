@@ -33,16 +33,4 @@ concept CoreT = std::derived_from<T, state_representation::State> || CorePrimiti
 template<typename T>
 concept CustomT = !CoreT<T>;
 
-// Translation concepts
-
-template<typename T>
-concept TranslatedT = std::same_as<T, geometry_msgs::msg::Accel> || std::same_as<T, geometry_msgs::msg::AccelStamped>
-    || std::same_as<T, geometry_msgs::msg::Pose> || std::same_as<T, geometry_msgs::msg::PoseStamped>
-    || std::same_as<T, geometry_msgs::msg::Transform> || std::same_as<T, geometry_msgs::msg::TransformStamped>
-    || std::same_as<T, geometry_msgs::msg::Twist> || std::same_as<T, geometry_msgs::msg::TwistStamped>
-    || std::same_as<T, geometry_msgs::msg::Wrench> || std::same_as<T, geometry_msgs::msg::WrenchStamped>
-    || std::same_as<T, sensor_msgs::msg::JointState> || std::same_as<T, tf2_msgs::msg::TFMessage>
-    || std::same_as<T, std_msgs::msg::Bool> || std::same_as<T, std_msgs::msg::Float64>
-    || std::same_as<T, std_msgs::msg::Float64MultiArray> || std::same_as<T, std_msgs::msg::Int32>
-    || std::same_as<T, std_msgs::msg::String>;
 }// namespace modulo_core::concepts

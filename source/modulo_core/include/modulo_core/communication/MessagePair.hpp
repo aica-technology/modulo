@@ -117,14 +117,12 @@ inline MsgT MessagePair<MsgT, DataT>::write_message() const {
   }
 
   MsgT message;
-  if constexpr (TranslatedT<MsgT> && !CustomT<DataT>) {
-    message = write_translated_message();
-  } else if constexpr (std::same_as<MsgT, EncodedState>) {
+  if constexpr (std::same_as<MsgT, EncodedState>) {
     message = write_encoded_message();
-  } else if constexpr (CustomT<DataT>) {
+  } else if constexpr (CustomT<MsgT> && CustomT<DataT>) {
     message = write_raw_message();
   } else {
-    static_assert(false, "The message types for the message pair are not supported.");
+    message = write_translated_message();
   }
   return message;
 }
@@ -154,14 +152,12 @@ inline void MessagePair<MsgT, DataT>::read_message(const MsgT& message) {
     throw exceptions::NullPointerException("The message pair data is not set, nothing to read");
   }
 
-  if constexpr (TranslatedT<MsgT> && !CustomT<DataT>) {
-    read_translated_message(message);
-  } else if constexpr (std::same_as<MsgT, EncodedState>) {
+  if constexpr (std::same_as<MsgT, EncodedState>) {
     read_encoded_message(message);
   } else if constexpr (CustomT<MsgT> && CustomT<DataT>) {
     read_raw_message(message);
   } else {
-    static_assert(false, "The message types for the message pair are not supported.");
+    read_translated_message(message);
   }
 }
 template<typename MsgT, typename DataT>
