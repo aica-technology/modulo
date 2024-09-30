@@ -64,7 +64,7 @@ public:
    */
   void set_data(const std::shared_ptr<DataT>& data);
 
-protected:
+private:
   /**
    * @brief Write the value of the data pointer to a ROS message using modulo translators.
    * @return The value of the data pointer as a ROS message
@@ -106,7 +106,6 @@ protected:
    */
   void read_raw_message(const MsgT& message);
 
-private:
   std::shared_ptr<DataT> data_;         ///< Pointer referring to the data stored in the MessagePair
   std::shared_ptr<rclcpp::Clock> clock_;///< ROS clock for translating messages
 };
