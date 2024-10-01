@@ -15,72 +15,16 @@
 namespace modulo_core::communication {
 
 PublisherInterface::PublisherInterface(PublisherType type, std::shared_ptr<MessagePairInterface> message_pair)
-    : type_(type), message_pair_(std::move(message_pair)) {}
+    : message_pair_(std::move(message_pair)), type_(type) {}
 
 void PublisherInterface::activate() {
-  if (this->message_pair_ == nullptr) {
-    throw exceptions::NullPointerException("Message pair is not set, cannot deduce message type");
-  }
-  switch (this->message_pair_->get_type()) {
-    case MessageType::BOOL:
-      this->template get_handler<rclcpp_lifecycle::LifecyclePublisher<std_msgs::msg::Bool>, std_msgs::msg::Bool>()
-          ->on_activate();
-      break;
-    case MessageType::FLOAT64:
-      this->template get_handler<rclcpp_lifecycle::LifecyclePublisher<std_msgs::msg::Float64>, std_msgs::msg::Float64>()
-          ->on_activate();
-      break;
-    case MessageType::FLOAT64_MULTI_ARRAY:
-      this->template get_handler<
-              rclcpp_lifecycle::LifecyclePublisher<std_msgs::msg::Float64MultiArray>,
-              std_msgs::msg::Float64MultiArray>()
-          ->on_activate();
-      break;
-    case MessageType::INT32:
-      this->template get_handler<rclcpp_lifecycle::LifecyclePublisher<std_msgs::msg::Int32>, std_msgs::msg::Int32>()
-          ->on_activate();
-      break;
-    case MessageType::STRING:
-      this->template get_handler<rclcpp_lifecycle::LifecyclePublisher<std_msgs::msg::String>, std_msgs::msg::String>()
-          ->on_activate();
-      break;
-    case MessageType::ENCODED_STATE:
-      this->template get_handler<rclcpp_lifecycle::LifecyclePublisher<EncodedState>, EncodedState>()->on_activate();
-      break;
-  }
+  throw exceptions::CoreException(
+      "The derived publisher handler is required to override this function to handle activation");
 }
 
 void PublisherInterface::deactivate() {
-  if (this->message_pair_ == nullptr) {
-    throw exceptions::NullPointerException("Message pair is not set, cannot deduce message type");
-  }
-  switch (this->message_pair_->get_type()) {
-    case MessageType::BOOL:
-      this->template get_handler<rclcpp_lifecycle::LifecyclePublisher<std_msgs::msg::Bool>, std_msgs::msg::Bool>()
-          ->on_deactivate();
-      break;
-    case MessageType::FLOAT64:
-      this->template get_handler<rclcpp_lifecycle::LifecyclePublisher<std_msgs::msg::Float64>, std_msgs::msg::Float64>()
-          ->on_deactivate();
-      break;
-    case MessageType::FLOAT64_MULTI_ARRAY:
-      this->template get_handler<
-              rclcpp_lifecycle::LifecyclePublisher<std_msgs::msg::Float64MultiArray>,
-              std_msgs::msg::Float64MultiArray>()
-          ->on_deactivate();
-      break;
-    case MessageType::INT32:
-      this->template get_handler<rclcpp_lifecycle::LifecyclePublisher<std_msgs::msg::Int32>, std_msgs::msg::Int32>()
-          ->on_deactivate();
-      break;
-    case MessageType::STRING:
-      this->template get_handler<rclcpp_lifecycle::LifecyclePublisher<std_msgs::msg::String>, std_msgs::msg::String>()
-          ->on_deactivate();
-      break;
-    case MessageType::ENCODED_STATE:
-      this->template get_handler<rclcpp_lifecycle::LifecyclePublisher<EncodedState>, EncodedState>()->on_deactivate();
-      break;
-  }
+  throw exceptions::CoreException(
+      "The derived publisher handler is required to override this function to handle deactivation");
 }
 
 void PublisherInterface::publish() {
@@ -110,6 +54,8 @@ void PublisherInterface::publish() {
                  ->is_empty()) {
           this->publish(this->message_pair_->write<EncodedState, state_representation::State>());
         }
+        break;
+      default:
         break;
     }
   } catch (const exceptions::CoreException& ex) {
