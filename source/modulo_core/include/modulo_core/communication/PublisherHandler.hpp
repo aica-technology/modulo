@@ -111,7 +111,7 @@ inline void PublisherHandler<PubT, MsgT>::publish() {
   try {
     PublisherInterface::publish();
     if (this->message_pair_->get_type() == MessageType::CUSTOM_MESSAGE) {
-      if constexpr (!std::same_as<MsgT, EncodedState> && CustomT<MsgT>) {
+      if constexpr (CustomT<MsgT>) {
         publish(this->message_pair_->write<MsgT, MsgT>());
       }
     }
