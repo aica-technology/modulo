@@ -4,6 +4,8 @@
 
 #include "modulo_core/communication/PublisherInterface.hpp"
 
+#include <rclcpp_lifecycle/lifecycle_publisher.hpp>
+
 namespace modulo_core::communication {
 
 /**
@@ -29,16 +31,19 @@ public:
   ~PublisherHandler() override;
 
   /**
-   * @brief Activate the ROS publisher if applicable.
-   * @throws modulo_core::exceptions::NullPointerException if the publisher pointer is null
-   */
-  void on_activate();
+    * @copydoc PublisherInterface::activate
+    */
+  virtual void activate() override;
 
   /**
-   * @brief Deactivate the ROS publisher if applicable.
-   * @throws modulo_core::exceptions::NullPointerException if the publisher pointer is null
-   */
-  void on_deactivate();
+    * @copydoc PublisherInterface::deactivate
+    */
+  virtual void deactivate() override;
+
+  /**
+    * @copydoc PublisherInterface::publish
+    */
+  void publish() override;
 
   /**
    * @brief Publish the ROS message through the ROS publisher.
@@ -56,6 +61,8 @@ public:
 
 private:
   std::shared_ptr<PubT> publisher_;///< The ROS publisher
+
+  using PublisherInterface::message_pair_;
 };
 
 template<typename PubT, typename MsgT>
@@ -68,11 +75,11 @@ PublisherHandler<PubT, MsgT>::~PublisherHandler() {
 }
 
 template<typename PubT, typename MsgT>
-void PublisherHandler<PubT, MsgT>::on_activate() {
-  if (this->publisher_ == nullptr) {
-    throw exceptions::NullPointerException("Publisher not set");
-  }
-  if (this->get_type() == PublisherType::LIFECYCLE_PUBLISHER) {
+inline void PublisherHandler<PubT, MsgT>::activate() {
+  if constexpr (std::derived_from<PubT, rclcpp_lifecycle::LifecyclePublisher<MsgT>>) {
+    if (this->publisher_ == nullptr) {
+      throw exceptions::NullPointerException("Publisher not set");
+    }
     try {
       this->publisher_->on_activate();
     } catch (const std::exception& ex) {
@@ -84,11 +91,11 @@ void PublisherHandler<PubT, MsgT>::on_activate() {
 }
 
 template<typename PubT, typename MsgT>
-void PublisherHandler<PubT, MsgT>::on_deactivate() {
-  if (this->publisher_ == nullptr) {
-    throw exceptions::NullPointerException("Publisher not set");
-  }
-  if (this->get_type() == PublisherType::LIFECYCLE_PUBLISHER) {
+inline void PublisherHandler<PubT, MsgT>::deactivate() {
+  if constexpr (std::derived_from<PubT, rclcpp_lifecycle::LifecyclePublisher<MsgT>>) {
+    if (this->publisher_ == nullptr) {
+      throw exceptions::NullPointerException("Publisher not set");
+    }
     try {
       this->publisher_->on_deactivate();
     } catch (const std::exception& ex) {
@@ -96,6 +103,18 @@ void PublisherHandler<PubT, MsgT>::on_deactivate() {
     }
   } else {
     RCLCPP_DEBUG(rclcpp::get_logger("PublisherHandler"), "Only LifecyclePublishers can be deactivated");
+  }
+}
+
+template<typename PubT, typename MsgT>
+inline void PublisherHandler<PubT, MsgT>::publish() {
+  try {
+    PublisherInterface::publish();
+    if (this->message_pair_->get_type() == MessageType::CUSTOM_MESSAGE) {
+      publish(this->message_pair_->write<MsgT, MsgT>());
+    }
+  } catch (const exceptions::CoreException& ex) {
+    throw;
   }
 }
 
@@ -112,7 +131,7 @@ void PublisherHandler<PubT, MsgT>::publish(const MsgT& message) const {
 }
 
 template<typename PubT, typename MsgT>
-std::shared_ptr<PublisherInterface>
+inline std::shared_ptr<PublisherInterface>
 PublisherHandler<PubT, MsgT>::create_publisher_interface(const std::shared_ptr<MessagePairInterface>& message_pair) {
   std::shared_ptr<PublisherInterface> publisher_interface;
   try {
