@@ -6,6 +6,20 @@
     "editor.rulers": [
         120
     ],
-    "autopep8.args": ["--max-line-length", "120", "--experimental"],
-    "pylint.args": ["--generate-members", "--max-line-length", "120", "-d", "C0114", "-d",  "C0115", "-d", "C0116"]
+    "autopep8.args": [
+        "--max-line-length",
+        "120",
+        "--experimental"
+    ],
+    "pylint.args": [
+        "--generate-members",
+        "--max-line-length",
+        "120",
+        "-d",
+        "C0114",
+        "-d",
+        "C0115",
+        "-d",
+        "C0116"
+    ],
 }

@@ -3,10 +3,13 @@
 #include <rclcpp/clock.hpp>
 
 #include "modulo_core/communication/MessagePairInterface.hpp"
+#include "modulo_core/concepts.hpp"
 #include "modulo_core/translators/message_readers.hpp"
 #include "modulo_core/translators/message_writers.hpp"
 
 namespace modulo_core::communication {
+
+using namespace modulo_core::concepts;
 
 /**
  * @class MessagePair
@@ -24,6 +27,15 @@ public:
    * @param clock The ROS clock for translating messages
    */
   MessagePair(std::shared_ptr<DataT> data, std::shared_ptr<rclcpp::Clock> clock);
+
+  /**
+   * @brief Constructor of the MessagePair that requires custom message types only
+   * @param data The pointer referring to the data stored in the MessagePair
+   * @param clock The ROS clock for translating messages
+   */
+  MessagePair(std::shared_ptr<DataT> data, std::shared_ptr<rclcpp::Clock> clock)
+    requires CustomT<MsgT> && CustomT<DataT>
+      : MessagePairInterface(MessageType::CUSTOM_MESSAGE), data_(std::move(data)), clock_(std::move(clock)) {}
 
   /**
    * @brief Write the value of the data pointer to a ROS message.
@@ -53,6 +65,47 @@ public:
   void set_data(const std::shared_ptr<DataT>& data);
 
 private:
+  /**
+   * @brief Write the value of the data pointer to a ROS message using modulo translators.
+   * @return The value of the data pointer as a ROS message
+   * @throws modulo_core::exceptions::MessageTranslationException if the data could not be written to message
+   */
+  [[nodiscard]] MsgT write_translated_message() const;
+
+  /**
+   * @brief Write the value of the data pointer to a ROS message using modulo translators for encoded states.
+   * @return The value of the data pointer as a ROS message
+   * @throws modulo_core::exceptions::MessageTranslationException if the data could not be written to message
+   */
+  [[nodiscard]] MsgT write_encoded_message() const;
+
+  /**
+   * @brief Write the value of the data pointer to a ROS message by direct assignment.
+   * @return The value of the data pointer as a ROS message
+   */
+  [[nodiscard]] MsgT write_raw_message() const;
+
+  /**
+   * @brief Read a ROS message and store the value in the data pointer using modulo translators.
+   * @param message The ROS message to read
+   * @throws modulo_core::exceptions::MessageTranslationException if the message could not be read
+   */
+  void read_translated_message(const MsgT& message);
+
+  /**
+   * @brief Read a ROS message and store the value in the data pointer using modulo translators for encoded states.
+   * @param message The ROS message to read
+   * @throws modulo_core::exceptions::MessageTranslationException if the message could not be read
+   */
+  void read_encoded_message(const MsgT& message);
+
+  /**
+   * @brief Read a ROS message and store the value in the data pointer by direct assignment.
+   * @param message The ROS message to read
+   * @throws modulo_core::exceptions::MessageTranslationException if the message could not be read
+   */
+  void read_raw_message(const MsgT& message);
+
   std::shared_ptr<DataT> data_;         ///< Pointer referring to the data stored in the MessagePair
   std::shared_ptr<rclcpp::Clock> clock_;///< ROS clock for translating messages
 };
@@ -62,19 +115,35 @@ inline MsgT MessagePair<MsgT, DataT>::write_message() const {
   if (this->data_ == nullptr) {
     throw exceptions::NullPointerException("The message pair data is not set, nothing to write");
   }
+
+  MsgT message;
+  if constexpr (CustomT<MsgT> && CustomT<DataT>) {
+    message = write_raw_message();
+  } else if constexpr (std::same_as<MsgT, EncodedState>) {
+    message = write_encoded_message();
+  } else {
+    message = write_translated_message();
+  }
+  return message;
+}
+
+template<typename MsgT, typename DataT>
+inline MsgT MessagePair<MsgT, DataT>::write_translated_message() const {
   auto message = MsgT();
   translators::write_message(message, *this->data_, clock_->now());
   return message;
 }
 
 template<>
-inline EncodedState MessagePair<EncodedState, state_representation::State>::write_message() const {
-  if (this->data_ == nullptr) {
-    throw exceptions::NullPointerException("The message pair data is not set, nothing to write");
-  }
+inline EncodedState MessagePair<EncodedState, state_representation::State>::write_encoded_message() const {
   auto message = EncodedState();
   translators::write_message(message, this->data_, clock_->now());
   return message;
+}
+
+template<typename MsgT, typename DataT>
+inline MsgT MessagePair<MsgT, DataT>::write_raw_message() const {
+  return *this->data_;
 }
 
 template<typename MsgT, typename DataT>
@@ -82,15 +151,29 @@ inline void MessagePair<MsgT, DataT>::read_message(const MsgT& message) {
   if (this->data_ == nullptr) {
     throw exceptions::NullPointerException("The message pair data is not set, nothing to read");
   }
+
+  if constexpr (CustomT<MsgT> && CustomT<DataT>) {
+    read_raw_message(message);
+  } else if constexpr (std::same_as<MsgT, EncodedState>) {
+    read_encoded_message(message);
+  } else {
+    read_translated_message(message);
+  }
+}
+
+template<typename MsgT, typename DataT>
+inline void MessagePair<MsgT, DataT>::read_translated_message(const MsgT& message) {
   translators::read_message(*this->data_, message);
 }
 
 template<>
-inline void MessagePair<EncodedState, state_representation::State>::read_message(const EncodedState& message) {
-  if (this->data_ == nullptr) {
-    throw exceptions::NullPointerException("The message pair data is not set, nothing to read");
-  }
+inline void MessagePair<EncodedState, state_representation::State>::read_encoded_message(const EncodedState& message) {
   translators::read_message(this->data_, message);
+}
+
+template<typename MsgT, typename DataT>
+inline void MessagePair<MsgT, DataT>::read_raw_message(const MsgT& message) {
+  *this->data_ = message;
 }
 
 template<typename MsgT, typename DataT>
@@ -106,38 +189,44 @@ inline void MessagePair<MsgT, DataT>::set_data(const std::shared_ptr<DataT>& dat
   this->data_ = data;
 }
 
-template<typename DataT>
+template<CoreT DataT>
 inline std::shared_ptr<MessagePairInterface>
 make_shared_message_pair(const std::shared_ptr<DataT>& data, const std::shared_ptr<rclcpp::Clock>& clock) {
   return std::make_shared<MessagePair<EncodedState, state_representation::State>>(
       std::dynamic_pointer_cast<state_representation::State>(data), clock);
 }
 
-template<>
+template<CustomT DataT>
+inline std::shared_ptr<MessagePairInterface>
+make_shared_message_pair(const std::shared_ptr<DataT>& data, const std::shared_ptr<rclcpp::Clock>& clock) {
+  return std::make_shared<MessagePair<DataT, DataT>>(data, clock);
+}
+
+template<typename DataT = bool>
 inline std::shared_ptr<MessagePairInterface>
 make_shared_message_pair(const std::shared_ptr<bool>& data, const std::shared_ptr<rclcpp::Clock>& clock) {
   return std::make_shared<MessagePair<std_msgs::msg::Bool, bool>>(data, clock);
 }
 
-template<>
+template<typename DataT = double>
 inline std::shared_ptr<MessagePairInterface>
 make_shared_message_pair(const std::shared_ptr<double>& data, const std::shared_ptr<rclcpp::Clock>& clock) {
   return std::make_shared<MessagePair<std_msgs::msg::Float64, double>>(data, clock);
 }
 
-template<>
+template<typename DataT = std::vector<double>>
 inline std::shared_ptr<MessagePairInterface> make_shared_message_pair(
     const std::shared_ptr<std::vector<double>>& data, const std::shared_ptr<rclcpp::Clock>& clock) {
   return std::make_shared<MessagePair<std_msgs::msg::Float64MultiArray, std::vector<double>>>(data, clock);
 }
 
-template<>
+template<typename DataT = int>
 inline std::shared_ptr<MessagePairInterface>
 make_shared_message_pair(const std::shared_ptr<int>& data, const std::shared_ptr<rclcpp::Clock>& clock) {
   return std::make_shared<MessagePair<std_msgs::msg::Int32, int>>(data, clock);
 }
 
-template<>
+template<typename DataT = std::string>
 inline std::shared_ptr<MessagePairInterface>
 make_shared_message_pair(const std::shared_ptr<std::string>& data, const std::shared_ptr<rclcpp::Clock>& clock) {
   return std::make_shared<MessagePair<std_msgs::msg::String, std::string>>(data, clock);
