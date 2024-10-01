@@ -117,10 +117,10 @@ inline MsgT MessagePair<MsgT, DataT>::write_message() const {
   }
 
   MsgT message;
-  if constexpr (std::same_as<MsgT, EncodedState>) {
-    message = write_encoded_message();
-  } else if constexpr (CustomT<MsgT> && CustomT<DataT>) {
+  if constexpr (CustomT<MsgT> && CustomT<DataT>) {
     message = write_raw_message();
+  } else if constexpr (std::same_as<MsgT, EncodedState>) {
+    message = write_encoded_message();
   } else {
     message = write_translated_message();
   }
@@ -152,14 +152,15 @@ inline void MessagePair<MsgT, DataT>::read_message(const MsgT& message) {
     throw exceptions::NullPointerException("The message pair data is not set, nothing to read");
   }
 
-  if constexpr (std::same_as<MsgT, EncodedState>) {
-    read_encoded_message(message);
-  } else if constexpr (CustomT<MsgT> && CustomT<DataT>) {
+  if constexpr (CustomT<MsgT> && CustomT<DataT>) {
     read_raw_message(message);
+  } else if constexpr (std::same_as<MsgT, EncodedState>) {
+    read_encoded_message(message);
   } else {
     read_translated_message(message);
   }
 }
+
 template<typename MsgT, typename DataT>
 inline void MessagePair<MsgT, DataT>::read_translated_message(const MsgT& message) {
   translators::read_message(*this->data_, message);
