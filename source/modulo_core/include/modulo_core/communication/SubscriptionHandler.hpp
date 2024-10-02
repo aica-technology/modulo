@@ -6,8 +6,6 @@
 
 namespace modulo_core::communication {
 
-using namespace modulo_core::concepts;
-
 /**
  * @class SubscriptionHandler
  * @brief The SubscriptionHandler handles different types of ROS subscriptions to receive data from those subscriptions.
@@ -107,7 +105,7 @@ void SubscriptionHandler<MsgT>::set_subscription(const std::shared_ptr<rclcpp::S
 
 template<typename MsgT>
 inline std::function<void(const std::shared_ptr<MsgT>)> SubscriptionHandler<MsgT>::get_callback() {
-  if constexpr (TranslatedMsgT<MsgT>) {
+  if constexpr (concepts::TranslatedMsgT<MsgT>) {
     return get_translated_callback();
   } else {
     return get_raw_callback();

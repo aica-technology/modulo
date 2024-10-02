@@ -23,12 +23,9 @@
 #include <state_representation/space/joint/JointPositions.hpp>
 
 #include "modulo_core/EncodedState.hpp"
-#include "modulo_core/concepts.hpp"
 #include "modulo_core/exceptions.hpp"
 
 namespace modulo_core::translators {
-
-using namespace modulo_core::concepts;
 
 /**
  * @brief Convert a ROS geometry_msgs::msg::Accel to a CartesianState
