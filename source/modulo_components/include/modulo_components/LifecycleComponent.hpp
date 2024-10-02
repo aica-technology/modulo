@@ -273,12 +273,18 @@ private:
   using ComponentInterface::publish_outputs;
   using ComponentInterface::publish_predicates;
   using rclcpp_lifecycle::LifecycleNode::get_parameter;
+
+  std::map<
+      std::string,
+      std::function<std::shared_ptr<modulo_core::communication::PublisherInterface>(const std::string& topic_name)>>
+      configuration_callables_;///< Map of configuration callables
 };
 
 template<typename DataT>
 inline void LifecycleComponent::add_output(
     const std::string& signal_name, const std::shared_ptr<DataT>& data, const std::string& default_topic,
     bool fixed_topic, bool publish_on_step) {
+
   if (this->get_lifecycle_state().id() != lifecycle_msgs::msg::State::PRIMARY_STATE_UNCONFIGURED
       && this->get_lifecycle_state().id() != lifecycle_msgs::msg::State::PRIMARY_STATE_INACTIVE) {
     RCLCPP_WARN_STREAM_THROTTLE(
@@ -287,9 +293,97 @@ inline void LifecycleComponent::add_output(
     return;
   }
   try {
-    this->create_output(
+    auto parsed_signal_name = this->create_output(
         modulo_core::communication::PublisherType::LIFECYCLE_PUBLISHER, signal_name, data, default_topic, fixed_topic,
         publish_on_step);
+
+    using modulo_core::communication::MessageType;
+    using modulo_core::communication::PublisherHandler;
+    using modulo_core::communication::PublisherInterface;
+    using modulo_core::communication::PublisherType;
+
+    auto message_pair = this->outputs_.at(parsed_signal_name)->get_message_pair();
+
+    switch (this->outputs_.at(parsed_signal_name)->get_message_pair()->get_type()) {
+      case MessageType::BOOL: {
+        this->configuration_callables_.insert_or_assign(
+            parsed_signal_name, [this, message_pair](const std::string& topic_name) {
+              auto publisher = this->create_publisher<std_msgs::msg::Bool>(topic_name, this->get_qos());
+              return std::make_shared<PublisherHandler<
+                  rclcpp_lifecycle::LifecyclePublisher<std_msgs::msg::Bool>, std_msgs::msg::Bool>>(
+                         PublisherType::LIFECYCLE_PUBLISHER, publisher)
+                  ->create_publisher_interface(message_pair);
+            });
+        break;
+      }
+      case MessageType::FLOAT64: {
+        this->configuration_callables_.insert_or_assign(
+            parsed_signal_name, [this, message_pair](const std::string& topic_name) {
+              auto publisher = this->create_publisher<std_msgs::msg::Float64>(topic_name, this->get_qos());
+              return std::make_shared<PublisherHandler<
+                  rclcpp_lifecycle::LifecyclePublisher<std_msgs::msg::Float64>, std_msgs::msg::Float64>>(
+                         PublisherType::LIFECYCLE_PUBLISHER, publisher)
+                  ->create_publisher_interface(message_pair);
+            });
+        break;
+      }
+      case MessageType::FLOAT64_MULTI_ARRAY: {
+        this->configuration_callables_.insert_or_assign(
+            parsed_signal_name, [this, message_pair](const std::string& topic_name) {
+              auto publisher = this->create_publisher<std_msgs::msg::Float64MultiArray>(topic_name, this->get_qos());
+              return std::make_shared<PublisherHandler<
+                  rclcpp_lifecycle::LifecyclePublisher<std_msgs::msg::Float64MultiArray>,
+                  std_msgs::msg::Float64MultiArray>>(PublisherType::LIFECYCLE_PUBLISHER, publisher)
+                  ->create_publisher_interface(message_pair);
+            });
+        break;
+      }
+      case MessageType::INT32: {
+        this->configuration_callables_.insert_or_assign(
+            parsed_signal_name, [this, message_pair](const std::string& topic_name) {
+              auto publisher = this->create_publisher<std_msgs::msg::Int32>(topic_name, this->get_qos());
+              return std::make_shared<PublisherHandler<
+                  rclcpp_lifecycle::LifecyclePublisher<std_msgs::msg::Int32>, std_msgs::msg::Int32>>(
+                         PublisherType::LIFECYCLE_PUBLISHER, publisher)
+                  ->create_publisher_interface(message_pair);
+            });
+        break;
+      }
+      case MessageType::STRING: {
+        this->configuration_callables_.insert_or_assign(
+            parsed_signal_name, [this, message_pair](const std::string& topic_name) {
+              auto publisher = this->create_publisher<std_msgs::msg::String>(topic_name, this->get_qos());
+              return std::make_shared<PublisherHandler<
+                  rclcpp_lifecycle::LifecyclePublisher<std_msgs::msg::String>, std_msgs::msg::String>>(
+                         PublisherType::LIFECYCLE_PUBLISHER, publisher)
+                  ->create_publisher_interface(message_pair);
+            });
+        break;
+      }
+      case MessageType::ENCODED_STATE: {
+        this->configuration_callables_.insert_or_assign(
+            parsed_signal_name, [this, message_pair](const std::string& topic_name) {
+              auto publisher = this->create_publisher<modulo_core::EncodedState>(topic_name, this->get_qos());
+              return std::make_shared<PublisherHandler<
+                  rclcpp_lifecycle::LifecyclePublisher<modulo_core::EncodedState>, modulo_core::EncodedState>>(
+                         PublisherType::LIFECYCLE_PUBLISHER, publisher)
+                  ->create_publisher_interface(message_pair);
+            });
+        break;
+      }
+      case MessageType::CUSTOM_MESSAGE: {
+        if constexpr (modulo_core::concepts::CustomT<DataT>) {
+          this->configuration_callables_.insert_or_assign(
+              parsed_signal_name, [this, message_pair](const std::string& topic_name) {
+                auto publisher = this->create_publisher<DataT>(topic_name, this->get_qos());
+                return std::make_shared<PublisherHandler<rclcpp_lifecycle::LifecyclePublisher<DataT>, DataT>>(
+                           PublisherType::LIFECYCLE_PUBLISHER, publisher)
+                    ->create_publisher_interface(message_pair);
+              });
+        }
+        break;
+      }
+    }
   } catch (const modulo_core::exceptions::AddSignalException& ex) {
     RCLCPP_ERROR_STREAM(this->get_logger(), "Failed to add output '" << signal_name << "': " << ex.what());
   }
