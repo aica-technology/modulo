@@ -292,8 +292,6 @@ bool LifecycleComponent::configure_outputs() {
                           ->create_publisher_interface(message_pair);
           break;
         }
-        default:
-          break;
       }
     } catch (const modulo_core::exceptions::CoreException& ex) {
       success = false;

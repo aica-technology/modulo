@@ -694,14 +694,6 @@ inline void ComponentInterface::add_input(
         subscription_interface = subscription_handler->create_subscription_interface(subscription);
         break;
       }
-      case MessageType::CUSTOM_MESSAGE: {
-        auto subscription_handler = std::make_shared<SubscriptionHandler<DataT>>(message_pair);
-        auto subscription = rclcpp::create_subscription<DataT>(
-            this->node_parameters_, this->node_topics_, topic_name, this->qos_,
-            subscription_handler->get_callback(user_callback));
-        subscription_interface = subscription_handler->create_subscription_interface(subscription);
-        break;
-      }
     }
     this->inputs_.insert_or_assign(parsed_signal_name, subscription_interface);
   } catch (const std::exception& ex) {
