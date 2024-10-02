@@ -85,8 +85,6 @@ inline void PublisherHandler<PubT, MsgT>::activate() {
     } catch (const std::exception& ex) {
       throw exceptions::CoreException(ex.what());
     }
-  } else {
-    RCLCPP_DEBUG(rclcpp::get_logger("PublisherHandler"), "Only LifecyclePublishers can be deactivated");
   }
 }
 
@@ -101,8 +99,6 @@ inline void PublisherHandler<PubT, MsgT>::deactivate() {
     } catch (const std::exception& ex) {
       throw exceptions::CoreException(ex.what());
     }
-  } else {
-    RCLCPP_DEBUG(rclcpp::get_logger("PublisherHandler"), "Only LifecyclePublishers can be deactivated");
   }
 }
 
