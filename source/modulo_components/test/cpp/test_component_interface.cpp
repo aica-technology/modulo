@@ -110,9 +110,7 @@ TYPED_TEST(ComponentInterfaceTest, AddRemoveInput) {
   this->component_->remove_input("test_13");
   EXPECT_TRUE(this->component_->inputs_.find("test_13") == this->component_->inputs_.end());
 
-  auto sensor_msg_data = std::make_shared<sensor_msgs::msg::Image>();
-  sensor_msg_data->height = 480;
-  EXPECT_NO_THROW(this->component_->add_input("sensor_msg_data", sensor_msg_data));
+  EXPECT_NO_THROW(this->component_->add_input("sensor_msg_data", std::make_shared<sensor_msgs::msg::Image>()));
   EXPECT_FALSE(this->component_->inputs_.find("sensor_msg_data") == this->component_->inputs_.end());
 }
 

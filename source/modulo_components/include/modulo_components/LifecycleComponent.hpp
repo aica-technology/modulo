@@ -277,7 +277,7 @@ private:
   std::map<
       std::string,
       std::function<std::shared_ptr<modulo_core::communication::PublisherInterface>(const std::string& topic_name)>>
-      output_configuration_callables_;///< Map of configuration callables
+      output_configuration_callables_;///< Map of output configuration callables
 };
 
 template<typename DataT>
