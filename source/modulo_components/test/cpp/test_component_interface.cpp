@@ -8,6 +8,8 @@
 
 #include "test_modulo_components/component_public_interfaces.hpp"
 
+#include <sensor_msgs/msg/image.hpp>
+
 namespace modulo_components {
 
 using namespace std::chrono_literals;
@@ -107,6 +109,9 @@ TYPED_TEST(ComponentInterfaceTest, AddRemoveInput) {
   // remove input
   this->component_->remove_input("test_13");
   EXPECT_TRUE(this->component_->inputs_.find("test_13") == this->component_->inputs_.end());
+
+  EXPECT_NO_THROW(this->component_->add_input("sensor_msg_data", std::make_shared<sensor_msgs::msg::Image>()));
+  EXPECT_FALSE(this->component_->inputs_.find("sensor_msg_data") == this->component_->inputs_.end());
 }
 
 TYPED_TEST(ComponentInterfaceTest, AddInputWithUserCallback) {

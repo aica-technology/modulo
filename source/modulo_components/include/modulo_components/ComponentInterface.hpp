@@ -13,6 +13,7 @@
 #include <modulo_core/communication/PublisherHandler.hpp>
 #include <modulo_core/communication/PublisherType.hpp>
 #include <modulo_core/communication/SubscriptionHandler.hpp>
+#include <modulo_core/concepts.hpp>
 #include <modulo_core/exceptions.hpp>
 #include <modulo_core/translators/parameter_translators.hpp>
 
@@ -692,6 +693,16 @@ inline void ComponentInterface::add_input(
             this->node_parameters_, this->node_topics_, topic_name, this->qos_,
             subscription_handler->get_callback(user_callback));
         subscription_interface = subscription_handler->create_subscription_interface(subscription);
+        break;
+      }
+      case MessageType::CUSTOM_MESSAGE: {
+        if constexpr (modulo_core::concepts::CustomT<DataT>) {
+          auto subscription_handler = std::make_shared<SubscriptionHandler<DataT>>(message_pair);
+          auto subscription = rclcpp::create_subscription<DataT>(
+              this->node_parameters_, this->node_topics_, topic_name, this->qos_,
+              subscription_handler->get_callback(user_callback));
+          subscription_interface = subscription_handler->create_subscription_interface(subscription);
+        }
         break;
       }
     }

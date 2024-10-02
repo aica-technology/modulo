@@ -1,6 +1,8 @@
 #include <gtest/gtest.h>
 
+#include <geometry_msgs/msg/twist.hpp>
 #include <rclcpp/node_options.hpp>
+#include <sensor_msgs/msg/image.hpp>
 
 #include <modulo_core/EncodedState.hpp>
 
@@ -70,5 +72,24 @@ TEST_F(ComponentTest, AddRemoveOutput) {
   EXPECT_NO_THROW(component_->publish_output("8_teEsTt_#1@3"));
   EXPECT_NO_THROW(component_->publish_output("test_13"));
   EXPECT_THROW(component_->publish_output(""), modulo_core::exceptions::CoreException);
+
+  auto std_msg_data = std::make_shared<std_msgs::msg::String>();
+  std_msg_data->data = "foo";
+  component_->add_output("custom_msg_test", std_msg_data);
+  EXPECT_TRUE(component_->outputs_.find("custom_msg_test") != component_->outputs_.end());
+  EXPECT_NO_THROW(component_->outputs_.at("custom_msg_test")->publish());
+  EXPECT_THROW(component_->publish_output("custom_msg_test"), modulo_core::exceptions::CoreException);
+
+  auto geometry_msg_data = std::make_shared<geometry_msgs::msg::Twist>();
+  component_->add_output("geometry_msg_test", geometry_msg_data);
+  EXPECT_TRUE(component_->outputs_.find("geometry_msg_test") != component_->outputs_.end());
+  EXPECT_NO_THROW(component_->outputs_.at("geometry_msg_test")->publish());
+  EXPECT_THROW(component_->publish_output("geometry_msg_test"), modulo_core::exceptions::CoreException);
+
+  auto sensor_msg_data = std::make_shared<sensor_msgs::msg::Image>();
+  component_->add_output("sensor_msg_test", sensor_msg_data);
+  EXPECT_TRUE(component_->outputs_.find("sensor_msg_test") != component_->outputs_.end());
+  EXPECT_NO_THROW(component_->outputs_.at("sensor_msg_test")->publish());
+  EXPECT_THROW(component_->publish_output("sensor_msg_test"), modulo_core::exceptions::CoreException);
 }
 }// namespace modulo_components

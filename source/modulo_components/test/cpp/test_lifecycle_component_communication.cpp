@@ -65,6 +65,20 @@ TEST_F(LifecycleComponentCommunicationTest, InputOutputManual) {
   EXPECT_TRUE(cartesian_state.data().isApprox(input_node->input->data()));
 }
 
+TEST_F(LifecycleComponentCommunicationTest, TwistInputOutput) {
+  auto twist = std::make_shared<geometry_msgs::msg::Twist>();
+  twist->linear.x = 1.0;
+  auto input_node = std::make_shared<MinimalTwistInput<LifecycleComponent>>(rclcpp::NodeOptions(), "/topic");
+  auto output_node =
+      std::make_shared<MinimalTwistOutput<LifecycleComponent>>(rclcpp::NodeOptions(), "/topic", twist, true);
+  add_configure_activate(this->exec_, input_node);
+  add_configure_activate(this->exec_, output_node);
+  auto return_code = this->exec_->spin_until_future_complete(input_node->received_future, 500ms);
+  ASSERT_EQ(return_code, rclcpp::FutureReturnCode::SUCCESS);
+  EXPECT_EQ(twist->linear.x, input_node->input->linear.x);
+  EXPECT_THROW(output_node->publish(), modulo_core::exceptions::CoreException);
+}
+
 TEST_F(LifecycleComponentCommunicationTest, Trigger) {
   auto trigger = std::make_shared<LifecycleTrigger>(rclcpp::NodeOptions());
   auto listener =
