@@ -17,8 +17,11 @@ public:
   /**
    * @brief Constructor with the message pair.
    * @param message_pair The pointer to the message pair with the data that should be updated through the subscription
+   * @param logger An optional ROS logger to do logging from the subscription callback
    */
-  explicit SubscriptionHandler(std::shared_ptr<MessagePairInterface> message_pair = nullptr);
+  explicit SubscriptionHandler(
+      std::shared_ptr<MessagePairInterface> message_pair = nullptr,
+      const rclcpp::Logger& logger = rclcpp::get_logger("SubscriptionHandler"));
 
   /**
    * @brief Destructor to explicitly reset the subscription pointer.
@@ -89,14 +92,16 @@ private:
   std::function<void(const std::shared_ptr<MsgT>)> get_raw_callback();
 
   std::shared_ptr<rclcpp::Subscription<MsgT>> subscription_;///< The pointer referring to the ROS subscription
+  rclcpp::Logger logger_;                                   ///< ROS logger for logging warnings
   std::shared_ptr<rclcpp::Clock> clock_;                    ///< ROS clock for throttling log
   std::function<void()> user_callback_ = [] {
   };///< User callback to be executed after the subscription callback
 };
 
 template<typename MsgT>
-SubscriptionHandler<MsgT>::SubscriptionHandler(std::shared_ptr<MessagePairInterface> message_pair)
-    : SubscriptionInterface(std::move(message_pair)), clock_(std::make_shared<rclcpp::Clock>()) {}
+SubscriptionHandler<MsgT>::SubscriptionHandler(
+    std::shared_ptr<MessagePairInterface> message_pair, const rclcpp::Logger& logger)
+    : SubscriptionInterface(std::move(message_pair)), logger_(logger), clock_(std::make_shared<rclcpp::Clock>()) {}
 
 template<typename MsgT>
 SubscriptionHandler<MsgT>::~SubscriptionHandler() {
@@ -163,12 +168,10 @@ void SubscriptionHandler<MsgT>::handle_callback_exceptions() {
     throw;
   } catch (const exceptions::CoreException& ex) {
     RCLCPP_WARN_STREAM_THROTTLE(
-        rclcpp::get_logger("SubscriptionHandler"), *this->clock_, 1000,
-        "Exception in subscription callback: " << ex.what());
+        this->logger_, *this->clock_, 1000, "Exception in subscription callback: " << ex.what());
   } catch (const std::exception& ex) {
     RCLCPP_WARN_STREAM_THROTTLE(
-        rclcpp::get_logger("SubscriptionHandler"), *this->clock_, 1000,
-        "Unhandled exception in subscription user callback: " << ex.what());
+        this->logger_, *this->clock_, 1000, "Unhandled exception in subscription user callback: " << ex.what());
   }
 }
 
