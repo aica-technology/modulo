@@ -647,7 +647,8 @@ inline void ComponentInterface::add_input(
     std::shared_ptr<SubscriptionInterface> subscription_interface;
     switch (message_pair->get_type()) {
       case MessageType::BOOL: {
-        auto subscription_handler = std::make_shared<SubscriptionHandler<std_msgs::msg::Bool>>(message_pair);
+        auto subscription_handler =
+            std::make_shared<SubscriptionHandler<std_msgs::msg::Bool>>(message_pair, this->node_logging_->get_logger());
         auto subscription = rclcpp::create_subscription<std_msgs::msg::Bool>(
             this->node_parameters_, this->node_topics_, topic_name, this->qos_,
             subscription_handler->get_callback(user_callback));
@@ -655,7 +656,8 @@ inline void ComponentInterface::add_input(
         break;
       }
       case MessageType::FLOAT64: {
-        auto subscription_handler = std::make_shared<SubscriptionHandler<std_msgs::msg::Float64>>(message_pair);
+        auto subscription_handler = std::make_shared<SubscriptionHandler<std_msgs::msg::Float64>>(
+            message_pair, this->node_logging_->get_logger());
         auto subscription = rclcpp::create_subscription<std_msgs::msg::Float64>(
             this->node_parameters_, this->node_topics_, topic_name, this->qos_,
             subscription_handler->get_callback(user_callback));
@@ -663,8 +665,8 @@ inline void ComponentInterface::add_input(
         break;
       }
       case MessageType::FLOAT64_MULTI_ARRAY: {
-        auto subscription_handler =
-            std::make_shared<SubscriptionHandler<std_msgs::msg::Float64MultiArray>>(message_pair);
+        auto subscription_handler = std::make_shared<SubscriptionHandler<std_msgs::msg::Float64MultiArray>>(
+            message_pair, this->node_logging_->get_logger());
         auto subscription = rclcpp::create_subscription<std_msgs::msg::Float64MultiArray>(
             this->node_parameters_, this->node_topics_, topic_name, this->qos_,
             subscription_handler->get_callback(user_callback));
@@ -672,7 +674,8 @@ inline void ComponentInterface::add_input(
         break;
       }
       case MessageType::INT32: {
-        auto subscription_handler = std::make_shared<SubscriptionHandler<std_msgs::msg::Int32>>(message_pair);
+        auto subscription_handler = std::make_shared<SubscriptionHandler<std_msgs::msg::Int32>>(
+            message_pair, this->node_logging_->get_logger());
         auto subscription = rclcpp::create_subscription<std_msgs::msg::Int32>(
             this->node_parameters_, this->node_topics_, topic_name, this->qos_,
             subscription_handler->get_callback(user_callback));
@@ -680,7 +683,8 @@ inline void ComponentInterface::add_input(
         break;
       }
       case MessageType::STRING: {
-        auto subscription_handler = std::make_shared<SubscriptionHandler<std_msgs::msg::String>>(message_pair);
+        auto subscription_handler = std::make_shared<SubscriptionHandler<std_msgs::msg::String>>(
+            message_pair, this->node_logging_->get_logger());
         auto subscription = rclcpp::create_subscription<std_msgs::msg::String>(
             this->node_parameters_, this->node_topics_, topic_name, this->qos_,
             subscription_handler->get_callback(user_callback));
@@ -688,7 +692,8 @@ inline void ComponentInterface::add_input(
         break;
       }
       case MessageType::ENCODED_STATE: {
-        auto subscription_handler = std::make_shared<SubscriptionHandler<modulo_core::EncodedState>>(message_pair);
+        auto subscription_handler = std::make_shared<SubscriptionHandler<modulo_core::EncodedState>>(
+            message_pair, this->node_logging_->get_logger());
         auto subscription = rclcpp::create_subscription<modulo_core::EncodedState>(
             this->node_parameters_, this->node_topics_, topic_name, this->qos_,
             subscription_handler->get_callback(user_callback));
@@ -697,7 +702,8 @@ inline void ComponentInterface::add_input(
       }
       case MessageType::CUSTOM_MESSAGE: {
         if constexpr (modulo_core::concepts::CustomT<DataT>) {
-          auto subscription_handler = std::make_shared<SubscriptionHandler<DataT>>(message_pair);
+          auto subscription_handler =
+              std::make_shared<SubscriptionHandler<DataT>>(message_pair, this->node_logging_->get_logger());
           auto subscription = rclcpp::create_subscription<DataT>(
               this->node_parameters_, this->node_topics_, topic_name, this->qos_,
               subscription_handler->get_callback(user_callback));
