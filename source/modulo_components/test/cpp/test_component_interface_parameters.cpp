@@ -4,8 +4,6 @@
 
 #include "test_modulo_components/component_public_interfaces.hpp"
 
-#include <sensor_msgs/msg/image.hpp>
-
 namespace modulo_components {
 
 template<class NodeT>
