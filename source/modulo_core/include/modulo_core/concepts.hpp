@@ -14,8 +14,8 @@ namespace modulo_core::concepts {
 // Data type concepts
 
 template<typename T>
-concept PrimitiveDataT = std::same_as<T, int> || std::same_as<T, double>
-    || std::same_as<T, bool> || std::same_as<T, std::string> || std::same_as<T, std::vector<double>>;
+concept PrimitiveDataT = std::same_as<T, bool> || std::same_as<T, double> || std::same_as<T, std::vector<double>>
+    || std::same_as<T, int> std::same_as<T, std::string>;
 
 template<typename T>
 concept CoreDataT = std::derived_from<T, state_representation::State> || PrimitiveDataT<T>;
