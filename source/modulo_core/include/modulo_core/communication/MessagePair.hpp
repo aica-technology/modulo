@@ -9,8 +9,6 @@
 
 namespace modulo_core::communication {
 
-using namespace modulo_core::concepts;
-
 /**
  * @class MessagePair
  * @brief The MessagePair stores a pointer to a variable and translates the value of this pointer back and forth between
@@ -34,7 +32,7 @@ public:
    * @param clock The ROS clock for translating messages
    */
   MessagePair(std::shared_ptr<DataT> data, std::shared_ptr<rclcpp::Clock> clock)
-    requires CustomT<MsgT> && CustomT<DataT>
+    requires concepts::CustomT<MsgT> && concepts::CustomT<DataT>
       : MessagePairInterface(MessageType::CUSTOM_MESSAGE), data_(std::move(data)), clock_(std::move(clock)) {}
 
   /**
@@ -117,7 +115,7 @@ inline MsgT MessagePair<MsgT, DataT>::write_message() const {
   }
 
   MsgT message;
-  if constexpr (CustomT<MsgT> && CustomT<DataT>) {
+  if constexpr (concepts::CustomT<MsgT> && concepts::CustomT<DataT>) {
     message = write_raw_message();
   } else if constexpr (std::same_as<MsgT, EncodedState>) {
     message = write_encoded_message();
@@ -152,7 +150,7 @@ inline void MessagePair<MsgT, DataT>::read_message(const MsgT& message) {
     throw exceptions::NullPointerException("The message pair data is not set, nothing to read");
   }
 
-  if constexpr (std::same_as<MsgT, DataT> || (CustomT<MsgT> && CustomT<DataT>) ) {
+  if constexpr (concepts::CustomT<MsgT> && concepts::CustomT<DataT>) {
     read_raw_message(message);
   } else if constexpr (std::same_as<MsgT, EncodedState>) {
     read_encoded_message(message);
@@ -189,14 +187,14 @@ inline void MessagePair<MsgT, DataT>::set_data(const std::shared_ptr<DataT>& dat
   this->data_ = data;
 }
 
-template<CoreT DataT>
+template<concepts::CoreDataT DataT>
 inline std::shared_ptr<MessagePairInterface>
 make_shared_message_pair(const std::shared_ptr<DataT>& data, const std::shared_ptr<rclcpp::Clock>& clock) {
   return std::make_shared<MessagePair<EncodedState, state_representation::State>>(
       std::dynamic_pointer_cast<state_representation::State>(data), clock);
 }
 
-template<CustomT DataT>
+template<concepts::CustomT DataT>
 inline std::shared_ptr<MessagePairInterface>
 make_shared_message_pair(const std::shared_ptr<DataT>& data, const std::shared_ptr<rclcpp::Clock>& clock) {
   return std::make_shared<MessagePair<DataT, DataT>>(data, clock);
