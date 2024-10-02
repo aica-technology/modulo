@@ -5,6 +5,9 @@
 #include "modulo_core/communication/MessagePair.hpp"
 #include "modulo_core/communication/PublisherHandler.hpp"
 
+#include <sensor_msgs/msg/image.hpp>
+#include <sensor_msgs/msg/imu.hpp>
+
 using namespace modulo_core::communication;
 
 template<typename MsgT, typename DataT>
@@ -69,4 +72,9 @@ TEST_F(PublisherTest, EncodedState) {
 
   publisher_interface = publisher_handler->create_publisher_interface(message_pair);
   EXPECT_NO_THROW(publisher_interface->publish());
+}
+
+TEST_F(PublisherTest, CustomTypes) {
+  test_publisher_interface<sensor_msgs::msg::Image, sensor_msgs::msg::Image>(node, sensor_msgs::msg::Image());
+  test_publisher_interface<sensor_msgs::msg::Imu, sensor_msgs::msg::Imu>(node, sensor_msgs::msg::Imu());
 }
