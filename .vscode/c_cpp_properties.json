@@ -9,8 +9,7 @@
                 "/home/ros2/ws/src/modulo_utils/include",
                 "/home/ros2/ws/src/modulo_core/include",
                 "/home/ros2/ws/src/modulo_components/include",
-                "/home/ros2/ws/src/modulo_controllers/include",
-                "/usr/include"
+                "/home/ros2/ws/src/modulo_controllers/include"
             ],
             "compilerPath": "/usr/bin/gcc",
             "cStandard": "c17",
