@@ -155,6 +155,15 @@ inline void Component::add_output(
                 ->create_publisher_interface(message_pair);
         break;
       }
+      case MessageType::CUSTOM_MESSAGE: {
+        if constexpr (modulo_core::concepts::CustomT<DataT>) {
+          auto publisher = this->create_publisher<DataT>(topic_name, this->get_qos());
+          this->outputs_.at(parsed_signal_name) =
+              std::make_shared<PublisherHandler<rclcpp::Publisher<DataT>, DataT>>(PublisherType::PUBLISHER, publisher)
+                  ->create_publisher_interface(message_pair);
+        }
+        break;
+      }
     }
   } catch (const std::exception& ex) {
     RCLCPP_ERROR_STREAM(this->get_logger(), "Failed to add output '" << signal_name << "': " << ex.what());
