@@ -24,7 +24,7 @@ def test_add_remove_output(lifecycle_component):
     assert lifecycle_component._outputs["test_13"]["message_type"] == Bool
 
     lifecycle_component.remove_output("test_13")
-    assert "test_13" not in lifecycle_component._inputs.keys()
+    assert "test_13" not in lifecycle_component._outputs.keys()
 
     lifecycle_component.add_output("8_teEsTt_#1@3", "test", Bool, publish_on_step=False)
     assert not lifecycle_component._periodic_outputs["test_13"]

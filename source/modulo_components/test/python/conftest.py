@@ -4,6 +4,7 @@ import state_representation as sr
 from modulo_components.component import Component
 from modulo_core import EncodedState
 from rclpy.task import Future
+from sensor_msgs.msg import JointState
 
 pytest_plugins = ["modulo_utils.testutils.ros", "modulo_utils.testutils.lifecycle_change_client",
                   "modulo_utils.testutils.service_client", "modulo_utils.testutils.predicates_listener"]
@@ -17,6 +18,17 @@ def random_pose():
 @pytest.fixture
 def random_joint():
     return sr.JointState().Random("test", 3)
+
+
+@pytest.fixture
+def random_sensor():
+    random = sr.JointState().Random("test", 3)
+    msg = JointState()
+    msg.name = random.get_names()
+    msg.position = random.get_positions().tolist()
+    msg.velocity = random.get_velocities().tolist()
+    msg.effort = random.get_torques().tolist()
+    return msg
 
 
 @pytest.fixture
@@ -51,6 +63,21 @@ def minimal_joint_output(request, random_joint):
     yield _make_minimal_cartesian_output(request.param[0], request.param[1], request.param[2])
 
 
+@pytest.fixture
+def minimal_sensor_output(request, random_sensor):
+    def _make_minimal_sensor_output(component_type, topic, publish_on_step):
+        def publish(self):
+            self.publish_output("sensor_state")
+
+        component = component_type("minimal_sensor_output")
+        component._output = random_sensor
+        component.add_output("sensor_state", "_output", JointState, default_topic=topic, publish_on_step=publish_on_step)
+        component.publish = publish.__get__(component)
+        return component
+
+    yield _make_minimal_sensor_output(request.param[0], request.param[1], request.param[2])
+
+
 class MinimalInvalidEncodedStatePublisher(Component):
     def __init__(self, topic, *args, **kwargs):
         super().__init__("minimal_invalid_encoded_state_publisher", *args, **kwargs)
@@ -83,3 +110,16 @@ def minimal_cartesian_input(request):
         return component
 
     yield _make_minimal_cartesian_input(request.param[0], request.param[1])
+
+
+@pytest.fixture
+def minimal_sensor_input(request):
+    def _make_minimal_sensor_input(component_type, topic):
+        component = component_type("minimal_sensor_input")
+        component.received_future = Future()
+        component.input = JointState()
+        component.add_input("sensor_state", "input", JointState, topic,
+                            user_callback=lambda: component.received_future.set_result(True))
+        return component
+
+    yield _make_minimal_sensor_input(request.param[0], request.param[1])
