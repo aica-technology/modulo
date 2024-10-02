@@ -31,22 +31,18 @@ public:
   ~PublisherHandler() override;
 
   /**
-     * @brief Activate ROS publisher.
-     * @throws modulo_core::exceptions::NullPointerException if the publisher is null
-     */
+    * @copydoc PublisherInterface::activate
+    */
   virtual void activate() override;
 
   /**
-     * @brief Deactivate ROS publisher.
-     * @throws modulo_core::exceptions::NullPointerException if the publisher is null
-     */
+    * @copydoc PublisherInterface::deactivate
+    */
   virtual void deactivate() override;
 
   /**
-   * @brief Publish the ROS message through the ROS publisher.
-   * @param message The ROS message to publish
-   * @throws modulo_core::exceptions::NullPointerException if the publisher pointer is null
-   */
+    * @copydoc PublisherInterface::publish
+    */
   void publish() override;
 
   /**
@@ -65,6 +61,8 @@ public:
 
 private:
   std::shared_ptr<PubT> publisher_;///< The ROS publisher
+
+  using PublisherInterface::message_pair_;
 };
 
 template<typename PubT, typename MsgT>
@@ -77,7 +75,7 @@ PublisherHandler<PubT, MsgT>::~PublisherHandler() {
 }
 
 template<typename PubT, typename MsgT>
-void PublisherHandler<PubT, MsgT>::activate() {
+inline void PublisherHandler<PubT, MsgT>::activate() {
   if constexpr (std::derived_from<PubT, rclcpp_lifecycle::LifecyclePublisher<MsgT>>) {
     if (this->publisher_ == nullptr) {
       throw exceptions::NullPointerException("Publisher not set");
@@ -93,7 +91,7 @@ void PublisherHandler<PubT, MsgT>::activate() {
 }
 
 template<typename PubT, typename MsgT>
-void PublisherHandler<PubT, MsgT>::deactivate() {
+inline void PublisherHandler<PubT, MsgT>::deactivate() {
   if constexpr (std::derived_from<PubT, rclcpp_lifecycle::LifecyclePublisher<MsgT>>) {
     if (this->publisher_ == nullptr) {
       throw exceptions::NullPointerException("Publisher not set");
@@ -109,17 +107,14 @@ void PublisherHandler<PubT, MsgT>::deactivate() {
 }
 
 template<typename PubT, typename MsgT>
-void PublisherHandler<PubT, MsgT>::publish() {
-  if (this->message_pair_ == nullptr) {
-    throw exceptions::NullPointerException("Message pair is not set, cannot deduce message type");
-  }
-  if (this->message_pair_->get_type() == MessageType::CUSTOM_MESSAGE) {
-    // explicitly check for EncodedState at complile time to hide the otherwise incompatible code block for EncodedState
-    if constexpr (!std::same_as<MsgT, EncodedState> && CustomDataT<MsgT>) {
+inline void PublisherHandler<PubT, MsgT>::publish() {
+  try {
+    PublisherInterface::publish();
+    if (this->message_pair_->get_type() == MessageType::CUSTOM_MESSAGE) {
       publish(this->message_pair_->write<MsgT, MsgT>());
     }
-  } else {
-    PublisherInterface::publish();
+  } catch (const exceptions::CoreException& ex) {
+    throw;
   }
 }
 
@@ -136,7 +131,7 @@ void PublisherHandler<PubT, MsgT>::publish(const MsgT& message) const {
 }
 
 template<typename PubT, typename MsgT>
-std::shared_ptr<PublisherInterface>
+inline std::shared_ptr<PublisherInterface>
 PublisherHandler<PubT, MsgT>::create_publisher_interface(const std::shared_ptr<MessagePairInterface>& message_pair) {
   std::shared_ptr<PublisherInterface> publisher_interface;
   try {

@@ -106,6 +106,9 @@ public:
    */
   PublisherType get_type() const;
 
+protected:
+  std::shared_ptr<MessagePairInterface> message_pair_;///< The pointer to the stored MessagePair instance
+
 private:
   /**
    * @brief Publish the data stored in the message pair through the ROS publisher of a derived PublisherHandler instance
@@ -121,9 +124,6 @@ private:
   void publish(const MsgT& message);
 
   PublisherType type_;///< The type of the publisher interface
-
-protected:
-  std::shared_ptr<MessagePairInterface> message_pair_;///< The pointer to the stored MessagePair instance
 };
 
 template<typename PubT, typename MsgT>

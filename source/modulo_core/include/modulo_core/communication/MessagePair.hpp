@@ -34,7 +34,7 @@ public:
    * @param clock The ROS clock for translating messages
    */
   MessagePair(std::shared_ptr<DataT> data, std::shared_ptr<rclcpp::Clock> clock)
-    requires CustomDataT<MsgT> && CustomDataT<DataT>
+    requires CustomT<MsgT> && CustomT<DataT>
       : MessagePairInterface(MessageType::CUSTOM_MESSAGE), data_(std::move(data)), clock_(std::move(clock)) {}
 
   /**
@@ -64,16 +64,48 @@ public:
    */
   void set_data(const std::shared_ptr<DataT>& data);
 
-protected:
+private:
+  /**
+   * @brief Write the value of the data pointer to a ROS message using modulo translators.
+   * @return The value of the data pointer as a ROS message
+   * @throws modulo_core::exceptions::MessageTranslationException if the data could not be written to message
+   */
   [[nodiscard]] MsgT write_translated_message() const;
+
+  /**
+   * @brief Write the value of the data pointer to a ROS message using modulo translators for encoded states.
+   * @return The value of the data pointer as a ROS message
+   * @throws modulo_core::exceptions::MessageTranslationException if the data could not be written to message
+   */
   [[nodiscard]] MsgT write_encoded_message() const;
+
+  /**
+   * @brief Write the value of the data pointer to a ROS message by direct assignment.
+   * @return The value of the data pointer as a ROS message
+   */
   [[nodiscard]] MsgT write_raw_message() const;
 
+  /**
+   * @brief Read a ROS message and store the value in the data pointer using modulo translators.
+   * @param message The ROS message to read
+   * @throws modulo_core::exceptions::MessageTranslationException if the message could not be read
+   */
   void read_translated_message(const MsgT& message);
+
+  /**
+   * @brief Read a ROS message and store the value in the data pointer using modulo translators for encoded states.
+   * @param message The ROS message to read
+   * @throws modulo_core::exceptions::MessageTranslationException if the message could not be read
+   */
   void read_encoded_message(const MsgT& message);
+
+  /**
+   * @brief Read a ROS message and store the value in the data pointer by direct assignment.
+   * @param message The ROS message to read
+   * @throws modulo_core::exceptions::MessageTranslationException if the message could not be read
+   */
   void read_raw_message(const MsgT& message);
 
-private:
   std::shared_ptr<DataT> data_;         ///< Pointer referring to the data stored in the MessagePair
   std::shared_ptr<rclcpp::Clock> clock_;///< ROS clock for translating messages
 };
@@ -85,14 +117,12 @@ inline MsgT MessagePair<MsgT, DataT>::write_message() const {
   }
 
   MsgT message;
-  if constexpr (TranslatedDataT<MsgT> && !CustomDataT<DataT>) {
-    message = write_translated_message();
+  if constexpr (CustomT<MsgT> && CustomT<DataT>) {
+    message = write_raw_message();
   } else if constexpr (std::same_as<MsgT, EncodedState>) {
     message = write_encoded_message();
-  } else if constexpr (CustomDataT<DataT>) {
-    message = write_raw_message();
   } else {
-    static_assert(false, "The message types for the message pair are not supported.");
+    message = write_translated_message();
   }
   return message;
 }
@@ -122,14 +152,12 @@ inline void MessagePair<MsgT, DataT>::read_message(const MsgT& message) {
     throw exceptions::NullPointerException("The message pair data is not set, nothing to read");
   }
 
-  if constexpr (std::same_as<MsgT, EncodedState>) {
-    read_encoded_message(message);
-  } else if constexpr (std::same_as<MsgT, DataT> || (CustomDataT<MsgT> && CustomDataT<DataT>) ) {
+  if constexpr (std::same_as<MsgT, DataT> || (CustomT<MsgT> && CustomT<DataT>) ) {
     read_raw_message(message);
-  } else if constexpr (TranslatedDataT<MsgT> || CoreDataT<MsgT>) {
-    read_translated_message(message);
+  } else if constexpr (std::same_as<MsgT, EncodedState>) {
+    read_encoded_message(message);
   } else {
-    static_assert(false, "The message types for the message pair are not supported.");
+    read_translated_message(message);
   }
 }
 
@@ -161,14 +189,14 @@ inline void MessagePair<MsgT, DataT>::set_data(const std::shared_ptr<DataT>& dat
   this->data_ = data;
 }
 
-template<CoreDataT DataT>
+template<CoreT DataT>
 inline std::shared_ptr<MessagePairInterface>
 make_shared_message_pair(const std::shared_ptr<DataT>& data, const std::shared_ptr<rclcpp::Clock>& clock) {
   return std::make_shared<MessagePair<EncodedState, state_representation::State>>(
       std::dynamic_pointer_cast<state_representation::State>(data), clock);
 }
 
-template<CustomDataT DataT>
+template<CustomT DataT>
 inline std::shared_ptr<MessagePairInterface>
 make_shared_message_pair(const std::shared_ptr<DataT>& data, const std::shared_ptr<rclcpp::Clock>& clock) {
   return std::make_shared<MessagePair<DataT, DataT>>(data, clock);

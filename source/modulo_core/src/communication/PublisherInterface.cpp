@@ -15,16 +15,16 @@
 namespace modulo_core::communication {
 
 PublisherInterface::PublisherInterface(PublisherType type, std::shared_ptr<MessagePairInterface> message_pair)
-    : type_(type), message_pair_(std::move(message_pair)) {}
+    : message_pair_(std::move(message_pair)), type_(type) {}
 
 void PublisherInterface::activate() {
   throw exceptions::CoreException(
-      "The publisher handler used is responsible for handling publisher activation, but it doesn't do so!");
+      "The derived publisher handler is required to override this function to handle activation");
 }
 
 void PublisherInterface::deactivate() {
   throw exceptions::CoreException(
-      "The publisher handler used is responsible for handling publisher deactivation, but it doesn't do so!");
+      "The derived publisher handler is required to override this function to handle deactivation");
 }
 
 void PublisherInterface::publish() {

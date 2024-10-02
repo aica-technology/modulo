@@ -159,7 +159,7 @@ inline void Component::add_output(
         break;
       }
       case MessageType::CUSTOM_MESSAGE: {
-        if constexpr (CustomDataT<DataT>) {
+        if constexpr (CustomT<DataT>) {
           auto publisher = this->create_publisher<DataT>(topic_name, this->get_qos());
           this->outputs_.at(parsed_signal_name) =
               std::make_shared<PublisherHandler<rclcpp::Publisher<DataT>, DataT>>(PublisherType::PUBLISHER, publisher)

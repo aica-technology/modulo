@@ -107,7 +107,7 @@ void SubscriptionHandler<MsgT>::set_subscription(const std::shared_ptr<rclcpp::S
 
 template<typename MsgT>
 inline std::function<void(const std::shared_ptr<MsgT>)> SubscriptionHandler<MsgT>::get_callback() {
-  if constexpr (TranslatedOrEncodedDataT<MsgT>) {
+  if constexpr (TranslatedT<MsgT> || std::same_as<MsgT, EncodedState>) {
     return get_translated_callback();
   } else {
     return get_raw_callback();

@@ -23,36 +23,25 @@ namespace modulo_core::concepts {
 
 // Data type concepts
 
-template<typename DataT>
-concept StateRepresentationDataT = std::derived_from<DataT, state_representation::State>;
+template<typename T>
+concept CorePrimitiveT = std::same_as<T, int> || std::same_as<T, float> || std::same_as<T, double>
+    || std::same_as<T, bool> || std::same_as<T, std::string> || std::same_as<T, std::vector<double>>;
 
-template<typename DataT>
-concept CorePrimitivesT = std::same_as<DataT, int> || std::same_as<DataT, float> || std::same_as<DataT, double>
-    || std::same_as<DataT, bool> || std::same_as<DataT, std::string> || std::same_as<DataT, std::vector<double>>;
+template<typename T>
+concept CoreT = std::derived_from<T, state_representation::State> || CorePrimitiveT<T>;
 
-template<typename DataT>
-concept CoreDataT = StateRepresentationDataT<DataT> || CorePrimitivesT<DataT>;
+template<typename T>
+concept CustomT = !CoreT<T>;
 
-template<typename DataT>
-concept CustomDataT = !CoreDataT<DataT>;
-
-// Translation concepts
-
-template<typename DataT>
-concept TranslatedDataT = std::same_as<DataT, geometry_msgs::msg::Accel>
-    || std::same_as<DataT, geometry_msgs::msg::AccelStamped> || std::same_as<DataT, geometry_msgs::msg::Pose>
-    || std::same_as<DataT, geometry_msgs::msg::PoseStamped> || std::same_as<DataT, geometry_msgs::msg::Transform>
-    || std::same_as<DataT, geometry_msgs::msg::TransformStamped> || std::same_as<DataT, geometry_msgs::msg::Twist>
-    || std::same_as<DataT, geometry_msgs::msg::TwistStamped> || std::same_as<DataT, geometry_msgs::msg::Wrench>
-    || std::same_as<DataT, geometry_msgs::msg::WrenchStamped> || std::same_as<DataT, sensor_msgs::msg::JointState>
-    || std::same_as<DataT, tf2_msgs::msg::TFMessage> || std::same_as<DataT, std_msgs::msg::Bool>
-    || std::same_as<DataT, std_msgs::msg::Float64> || std::same_as<DataT, std_msgs::msg::Float64MultiArray>
-    || std::same_as<DataT, std_msgs::msg::Int32> || std::same_as<DataT, std_msgs::msg::String>;
-
-template<typename DataT>
-concept TranslatedOrEncodedDataT = TranslatedDataT<DataT> || std::same_as<DataT, EncodedState>;
-
-template<typename DataT>
-concept NonTranslatedDataT = !(TranslatedDataT<DataT> || std::same_as<DataT, EncodedState>);
+template<typename T>
+concept TranslatedT = std::same_as<T, geometry_msgs::msg::Accel> || std::same_as<T, geometry_msgs::msg::AccelStamped>
+    || std::same_as<T, geometry_msgs::msg::Pose> || std::same_as<T, geometry_msgs::msg::PoseStamped>
+    || std::same_as<T, geometry_msgs::msg::Transform> || std::same_as<T, geometry_msgs::msg::TransformStamped>
+    || std::same_as<T, geometry_msgs::msg::Twist> || std::same_as<T, geometry_msgs::msg::TwistStamped>
+    || std::same_as<T, geometry_msgs::msg::Wrench> || std::same_as<T, geometry_msgs::msg::WrenchStamped>
+    || std::same_as<T, sensor_msgs::msg::JointState> || std::same_as<T, tf2_msgs::msg::TFMessage>
+    || std::same_as<T, std_msgs::msg::Bool> || std::same_as<T, std_msgs::msg::Float64>
+    || std::same_as<T, std_msgs::msg::Float64MultiArray> || std::same_as<T, std_msgs::msg::Int32>
+    || std::same_as<T, std_msgs::msg::String>;
 
 }// namespace modulo_core::concepts
