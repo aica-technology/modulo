@@ -58,6 +58,20 @@ TEST_F(ComponentCommunicationTest, InputOutputManual) {
   EXPECT_TRUE(cartesian_state.data().isApprox(input_node->input->data()));
 }
 
+TEST_F(ComponentCommunicationTest, TwistInputOutput) {
+  auto twist = std::make_shared<geometry_msgs::msg::Twist>();
+  twist->linear.x = 1.0;
+  auto input_node = std::make_shared<MinimalTwistInput<Component>>(rclcpp::NodeOptions(), "/topic");
+  auto output_node =
+      std::make_shared<MinimalTwistOutput<Component>>(rclcpp::NodeOptions(), "/topic", twist, true);
+  this->exec_->add_node(input_node);
+  this->exec_->add_node(output_node);
+  auto return_code = this->exec_->spin_until_future_complete(input_node->received_future, 500ms);
+  ASSERT_EQ(return_code, rclcpp::FutureReturnCode::SUCCESS);
+  EXPECT_EQ(twist->linear.x, input_node->input->linear.x);
+  EXPECT_THROW(output_node->publish(), modulo_core::exceptions::CoreException);
+}
+
 TEST_F(ComponentCommunicationTest, Trigger) {
   auto trigger = std::make_shared<Trigger>(rclcpp::NodeOptions());
   auto listener =
