@@ -23,9 +23,9 @@ concept CoreDataT = std::derived_from<T, state_representation::State> || Primiti
 // Message type concepts
 
 template<typename T>
-concept PrimitiveMsgT = std::same_as<T, std_msgs::msg::Bool> || std::same_as<T, std_msgs::msg::Float64>
+concept TranslatedMsgT = std::same_as<T, std_msgs::msg::Bool> || std::same_as<T, std_msgs::msg::Float64>
     || std::same_as<T, std_msgs::msg::Float64MultiArray> || std::same_as<T, std_msgs::msg::Int32>
-    || std::same_as<T, std_msgs::msg::String>;
+    || std::same_as<T, std_msgs::msg::String> || std::same_as<T, modulo_core::EncodedState>;
 
 template<typename T>
 concept CustomT = !CoreDataT<T> && !std::same_as<T, modulo_core::EncodedState>;

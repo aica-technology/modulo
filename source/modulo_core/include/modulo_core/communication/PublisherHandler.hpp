@@ -109,7 +109,7 @@ inline void PublisherHandler<PubT, MsgT>::deactivate() {
 template<typename PubT, typename MsgT>
 inline void PublisherHandler<PubT, MsgT>::publish() {
   try {
-    if constexpr (concepts::CustomT<MsgT> && !concepts::PrimitiveMsgT<MsgT>) {
+    if constexpr (concepts::CustomT<MsgT> && !concepts::TranslatedMsgT<MsgT>) {
       if (this->message_pair_ == nullptr) {
         throw exceptions::NullPointerException("Message pair is not set, nothing to publish");
       }
