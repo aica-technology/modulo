@@ -99,6 +99,10 @@ TEST_F(MessagePairTest, EncodedState) {
 }
 
 TEST_F(MessagePairTest, GenericTypes) {
+  float initial_float = 0.1;
+  float new_float = 0.2;
+  test_custom_message_interface<float, float>(initial_float, new_float, clock_);
+
   geometry_msgs::msg::Twist initial_value;
   initial_value.linear.x = 0.1;
   geometry_msgs::msg::Twist new_value;
