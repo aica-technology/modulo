@@ -6,8 +6,6 @@
 
 namespace modulo_core::communication {
 
-using namespace modulo_core::concepts;
-
 /**
  * @class SubscriptionHandler
  * @brief The SubscriptionHandler handles different types of ROS subscriptions to receive data from those subscriptions.

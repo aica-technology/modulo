@@ -9,8 +9,6 @@
 
 namespace modulo_components {
 
-using namespace modulo_core::concepts;
-
 /**
  * @class Component
  * @brief A wrapper for rclcpp::Node to simplify application composition through unified component interfaces.
@@ -159,7 +157,7 @@ inline void Component::add_output(
         break;
       }
       case MessageType::CUSTOM_MESSAGE: {
-        if constexpr (CustomT<DataT>) {
+        if constexpr (modulo_core::concepts::CustomT<DataT>) {
           auto publisher = this->create_publisher<DataT>(topic_name, this->get_qos());
           this->outputs_.at(parsed_signal_name) =
               std::make_shared<PublisherHandler<rclcpp::Publisher<DataT>, DataT>>(PublisherType::PUBLISHER, publisher)
@@ -172,5 +170,4 @@ inline void Component::add_output(
     RCLCPP_ERROR_STREAM(this->get_logger(), "Failed to add output '" << signal_name << "': " << ex.what());
   }
 }
-
 }// namespace modulo_components
