@@ -4,6 +4,9 @@
 
 #include "modulo_core/communication/SubscriptionHandler.hpp"
 
+#include <sensor_msgs/msg/image.hpp>
+#include <sensor_msgs/msg/imu.hpp>
+
 using namespace modulo_core::communication;
 
 template<typename MsgT, typename DataT>
@@ -54,4 +57,14 @@ TEST_F(SubscriptionTest, EncodedState) {
 
   // use in subscription interface
   auto subscription_interface = subscription_handler->create_subscription_interface(subscription);
+}
+
+TEST_F(SubscriptionTest, CustomTypes) {
+  sensor_msgs::msg::Image image;
+  image.height = 480;
+  test_subscription_interface<sensor_msgs::msg::Image, sensor_msgs::msg::Image>(node, image);
+
+  sensor_msgs::msg::Imu imu;
+  imu.linear_acceleration.x = 1.0;
+  test_subscription_interface<sensor_msgs::msg::Imu, sensor_msgs::msg::Imu>(node, imu);
 }
