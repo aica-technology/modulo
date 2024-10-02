@@ -277,14 +277,13 @@ private:
   std::map<
       std::string,
       std::function<std::shared_ptr<modulo_core::communication::PublisherInterface>(const std::string& topic_name)>>
-      configuration_callables_;///< Map of configuration callables
+      output_configuration_callables_;///< Map of configuration callables
 };
 
 template<typename DataT>
 inline void LifecycleComponent::add_output(
     const std::string& signal_name, const std::shared_ptr<DataT>& data, const std::string& default_topic,
     bool fixed_topic, bool publish_on_step) {
-
   if (this->get_lifecycle_state().id() != lifecycle_msgs::msg::State::PRIMARY_STATE_UNCONFIGURED
       && this->get_lifecycle_state().id() != lifecycle_msgs::msg::State::PRIMARY_STATE_INACTIVE) {
     RCLCPP_WARN_STREAM_THROTTLE(
@@ -305,7 +304,7 @@ inline void LifecycleComponent::add_output(
     auto message_pair = this->outputs_.at(parsed_signal_name)->get_message_pair();
     switch (message_pair->get_type()) {
       case MessageType::BOOL: {
-        this->configuration_callables_.insert_or_assign(
+        this->output_configuration_callables_.insert_or_assign(
             parsed_signal_name, [this, message_pair](const std::string& topic_name) {
               auto publisher = this->create_publisher<std_msgs::msg::Bool>(topic_name, this->get_qos());
               return std::make_shared<PublisherHandler<
@@ -316,7 +315,7 @@ inline void LifecycleComponent::add_output(
         break;
       }
       case MessageType::FLOAT64: {
-        this->configuration_callables_.insert_or_assign(
+        this->output_configuration_callables_.insert_or_assign(
             parsed_signal_name, [this, message_pair](const std::string& topic_name) {
               auto publisher = this->create_publisher<std_msgs::msg::Float64>(topic_name, this->get_qos());
               return std::make_shared<PublisherHandler<
@@ -327,7 +326,7 @@ inline void LifecycleComponent::add_output(
         break;
       }
       case MessageType::FLOAT64_MULTI_ARRAY: {
-        this->configuration_callables_.insert_or_assign(
+        this->output_configuration_callables_.insert_or_assign(
             parsed_signal_name, [this, message_pair](const std::string& topic_name) {
               auto publisher = this->create_publisher<std_msgs::msg::Float64MultiArray>(topic_name, this->get_qos());
               return std::make_shared<PublisherHandler<
@@ -338,7 +337,7 @@ inline void LifecycleComponent::add_output(
         break;
       }
       case MessageType::INT32: {
-        this->configuration_callables_.insert_or_assign(
+        this->output_configuration_callables_.insert_or_assign(
             parsed_signal_name, [this, message_pair](const std::string& topic_name) {
               auto publisher = this->create_publisher<std_msgs::msg::Int32>(topic_name, this->get_qos());
               return std::make_shared<PublisherHandler<
@@ -349,7 +348,7 @@ inline void LifecycleComponent::add_output(
         break;
       }
       case MessageType::STRING: {
-        this->configuration_callables_.insert_or_assign(
+        this->output_configuration_callables_.insert_or_assign(
             parsed_signal_name, [this, message_pair](const std::string& topic_name) {
               auto publisher = this->create_publisher<std_msgs::msg::String>(topic_name, this->get_qos());
               return std::make_shared<PublisherHandler<
@@ -360,7 +359,7 @@ inline void LifecycleComponent::add_output(
         break;
       }
       case MessageType::ENCODED_STATE: {
-        this->configuration_callables_.insert_or_assign(
+        this->output_configuration_callables_.insert_or_assign(
             parsed_signal_name, [this, message_pair](const std::string& topic_name) {
               auto publisher = this->create_publisher<modulo_core::EncodedState>(topic_name, this->get_qos());
               return std::make_shared<PublisherHandler<
@@ -372,7 +371,7 @@ inline void LifecycleComponent::add_output(
       }
       case MessageType::CUSTOM_MESSAGE: {
         if constexpr (modulo_core::concepts::CustomT<DataT>) {
-          this->configuration_callables_.insert_or_assign(
+          this->output_configuration_callables_.insert_or_assign(
               parsed_signal_name, [this, message_pair](const std::string& topic_name) {
                 auto publisher = this->create_publisher<DataT>(topic_name, this->get_qos());
                 return std::make_shared<PublisherHandler<rclcpp_lifecycle::LifecyclePublisher<DataT>, DataT>>(
