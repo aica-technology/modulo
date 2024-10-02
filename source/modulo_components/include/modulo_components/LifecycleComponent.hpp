@@ -303,8 +303,7 @@ inline void LifecycleComponent::add_output(
     using modulo_core::communication::PublisherType;
 
     auto message_pair = this->outputs_.at(parsed_signal_name)->get_message_pair();
-
-    switch (this->outputs_.at(parsed_signal_name)->get_message_pair()->get_type()) {
+    switch (message_pair->get_type()) {
       case MessageType::BOOL: {
         this->configuration_callables_.insert_or_assign(
             parsed_signal_name, [this, message_pair](const std::string& topic_name) {

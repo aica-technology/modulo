@@ -5,7 +5,6 @@
 #include <rclcpp/node.hpp>
 
 #include "modulo_components/ComponentInterface.hpp"
-#include "modulo_core/concepts.hpp"
 
 namespace modulo_components {
 
