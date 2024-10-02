@@ -2,6 +2,8 @@
 
 #include "modulo_core/communication/SubscriptionInterface.hpp"
 
+#include "modulo_core/concepts.hpp"
+
 namespace modulo_core::communication {
 
 /**
@@ -54,7 +56,7 @@ public:
   std::function<void(const std::shared_ptr<MsgT>)> get_callback(const std::function<void()>& user_callback);
 
   /**
-   * @brief Create a SubscriptionInterface pointer through an instance of a SubscriptionHandler by providing a ROS
+   * @brief Create a SubscriptionInterface pointer through an instance of a SubscriptionHandler by providing a ROS 
    * subscription.
    * @details This throws a NullPointerException if the ROS subscription is null.
    * @see SubscriptionHandler::set_subscription
@@ -70,11 +72,31 @@ private:
    */
   void handle_callback_exceptions();
 
+  /**
+   * @brief Get a callback function that will be associated with the ROS subscription to receive and translate 
+   * internally supported messages. 
+   * @details This variant also takes a user callback function to execute after the message is received and translated.
+   * @param user_callback Void callback function for additional logic after the message is received and translated.
+   */
+  std::function<void(const std::shared_ptr<MsgT>)> get_translated_callback();
+
+  /**
+   * @brief Get a callback function that will be associated with the ROS subscription to receive and translate generic 
+   * messages.
+   * @details This variant also takes a user callback function to execute after the message is received and translated.
+   * @param user_callback Void callback function for additional logic after the message is received and translated.
+   */
+  std::function<void(const std::shared_ptr<MsgT>)> get_raw_callback();
+
   std::shared_ptr<rclcpp::Subscription<MsgT>> subscription_;///< The pointer referring to the ROS subscription
   std::shared_ptr<rclcpp::Clock> clock_;                    ///< ROS clock for throttling log
   std::function<void()> user_callback_ = [] {
   };///< User callback to be executed after the subscription callback
 };
+
+template<typename MsgT>
+SubscriptionHandler<MsgT>::SubscriptionHandler(std::shared_ptr<MessagePairInterface> message_pair)
+    : SubscriptionInterface(std::move(message_pair)), clock_(std::make_shared<rclcpp::Clock>()) {}
 
 template<typename MsgT>
 SubscriptionHandler<MsgT>::~SubscriptionHandler() {
@@ -92,6 +114,27 @@ void SubscriptionHandler<MsgT>::set_subscription(const std::shared_ptr<rclcpp::S
     throw exceptions::NullPointerException("Provide a valid pointer");
   }
   this->subscription_ = subscription;
+}
+
+template<typename MsgT>
+inline std::function<void(const std::shared_ptr<MsgT>)> SubscriptionHandler<MsgT>::get_callback() {
+  if constexpr (concepts::TranslatedMsgT<MsgT>) {
+    return get_translated_callback();
+  } else {
+    return get_raw_callback();
+  }
+}
+
+template<typename MsgT>
+std::function<void(const std::shared_ptr<MsgT>)> SubscriptionHandler<MsgT>::get_raw_callback() {
+  return [this](const std::shared_ptr<MsgT> message) {
+    try {
+      this->get_message_pair()->template read<MsgT, MsgT>(*message);
+      this->user_callback_();
+    } catch (...) {
+      this->handle_callback_exceptions();
+    }
+  };
 }
 
 template<typename MsgT>
