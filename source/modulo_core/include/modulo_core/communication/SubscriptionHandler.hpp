@@ -58,7 +58,7 @@ public:
   std::function<void(const std::shared_ptr<MsgT>)> get_callback(const std::function<void()>& user_callback);
 
   /**
-   * @brief Create a SubscriptionInterface pointer through an instance of a SubscriptionHandler by providing a ROS
+   * @brief Create a SubscriptionInterface pointer through an instance of a SubscriptionHandler by providing a ROS 
    * subscription.
    * @details This throws a NullPointerException if the ROS subscription is null.
    * @see SubscriptionHandler::set_subscription
@@ -74,7 +74,20 @@ private:
    */
   void handle_callback_exceptions();
 
+  /**
+   * @brief Get a callback function that will be associated with the ROS subscription to receive and translate 
+   * internally supported messages. 
+   * @details This variant also takes a user callback function to execute after the message is received and translated.
+   * @param user_callback Void callback function for additional logic after the message is received and translated.
+   */
   std::function<void(const std::shared_ptr<MsgT>)> get_translated_callback();
+
+  /**
+   * @brief Get a callback function that will be associated with the ROS subscription to receive and translate generic 
+   * messages.
+   * @details This variant also takes a user callback function to execute after the message is received and translated.
+   * @param user_callback Void callback function for additional logic after the message is received and translated.
+   */
   std::function<void(const std::shared_ptr<MsgT>)> get_raw_callback();
 
   std::shared_ptr<rclcpp::Subscription<MsgT>> subscription_;///< The pointer referring to the ROS subscription
@@ -107,7 +120,7 @@ void SubscriptionHandler<MsgT>::set_subscription(const std::shared_ptr<rclcpp::S
 
 template<typename MsgT>
 inline std::function<void(const std::shared_ptr<MsgT>)> SubscriptionHandler<MsgT>::get_callback() {
-  if constexpr (TranslatedT<MsgT> || std::same_as<MsgT, EncodedState>) {
+  if constexpr (concepts::TranslatedMsgT<MsgT>) {
     return get_translated_callback();
   } else {
     return get_raw_callback();

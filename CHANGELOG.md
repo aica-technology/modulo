@@ -44,7 +44,6 @@ Release Versions:
 - fix(controllers): remove duplicate function (#140)
 - chore: format repository (#142)
 - feat: add support for generic inputs/outputs (#133)
-- feat: expose generic IO to components
 
 ## 4.2.2
 
