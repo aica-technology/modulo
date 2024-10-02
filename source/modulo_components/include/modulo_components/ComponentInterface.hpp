@@ -702,8 +702,8 @@ inline void ComponentInterface::add_input(
               this->node_parameters_, this->node_topics_, topic_name, this->qos_,
               subscription_handler->get_callback(user_callback));
           subscription_interface = subscription_handler->create_subscription_interface(subscription);
-          break;
         }
+        break;
       }
     }
     this->inputs_.insert_or_assign(parsed_signal_name, subscription_interface);
