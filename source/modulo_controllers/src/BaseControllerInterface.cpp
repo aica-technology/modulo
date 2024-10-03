@@ -408,8 +408,10 @@ void BaseControllerInterface::add_outputs() {
                 custom_output_configuration_callables_.at(name)(pub, name);
               }},
           publishers);
+    } catch (const std::bad_any_cast& ex) {
+      RCLCPP_ERROR(get_node()->get_logger(), "Failed to add custom output '%s': %s", name.c_str(), ex.what());
     } catch (const std::exception& ex) {
-      RCLCPP_ERROR(get_node()->get_logger(), "Failed to add input '%s': %s", name.c_str(), ex.what());
+      RCLCPP_ERROR(get_node()->get_logger(), "Failed to add output '%s': %s", name.c_str(), ex.what());
     }
   }
 }

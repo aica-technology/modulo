@@ -28,9 +28,6 @@ concept TranslatedMsgT = std::same_as<T, std_msgs::msg::Bool> || std::same_as<T,
     || std::same_as<T, std_msgs::msg::String> || std::same_as<T, modulo_core::EncodedState>;
 
 template<typename T>
-concept EncodedT = std::same_as<T, modulo_core::EncodedState>;
-
-template<typename T>
-concept CustomT = !CoreDataT<T> && !EncodedT<T>;
+concept CustomT = !CoreDataT<T> && !std::same_as<T, modulo_core::EncodedState>;
 
 }// namespace modulo_core::concepts

@@ -584,12 +584,14 @@ inline void BaseControllerInterface::add_output(const std::string& name, const s
       outputs_.insert_or_assign(name, PublisherT());
       custom_output_configuration_callables_.insert_or_assign(
           name, [this](CustomPublishers& pub, const std::string& name) {
-            auto publishers = std::any_cast<PublisherT>(pub);
-            publishers.first = get_node()->create_publisher<T>(name, qos_);
-            publishers.second = std::make_shared<realtime_tools::RealtimePublisher<T>>(publishers.first);
+            std::shared_ptr<rclcpp::Publisher<T>> publisher =
+                std::any_cast<std::shared_ptr<rclcpp::Publisher<T>>>(pub.first);
+            publisher = get_node()->create_publisher<T>(name, qos_);
+            realtime_tools::RealtimePublisherSharedPtr<T> realtime_publisher =
+                std::any_cast<realtime_tools::RealtimePublisherSharedPtr<T>>(pub.second);
+            realtime_publisher = std::make_shared<realtime_tools::RealtimePublisher<T>>(publisher);
           });
     }
-
   } else {
     std::shared_ptr<state_representation::State> state_ptr = std::make_shared<T>();
     create_output(EncodedStatePublishers(state_ptr, {}, {}), name, topic_name);
