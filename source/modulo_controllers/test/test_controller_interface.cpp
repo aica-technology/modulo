@@ -9,6 +9,8 @@
 #include "modulo_controllers/ControllerInterface.hpp"
 #include "test_modulo_controllers/communication_nodes.hpp"
 
+#include <sensor_msgs/msg/image.hpp>
+
 using namespace modulo_controllers;
 using namespace state_representation;
 using namespace std::chrono_literals;
@@ -186,7 +188,15 @@ TYPED_TEST_P(ControllerInterfaceTest, OutputTest) {
   }
 }
 
-REGISTER_TYPED_TEST_CASE_P(ControllerInterfaceTest, ConfigureErrorTest, InputTest, OutputTest);
+TYPED_TEST_P(ControllerInterfaceTest, CustomOutputTest) {
+  auto interface = std::make_unique<FriendControllerInterface>();
+  interface->init("controller_interface", "", 0, "", interface->define_custom_node_options());
+
+  interface->add_output<sensor_msgs::msg::Image>("output", "/output");
+  EXPECT_TRUE(true);
+}
+
+REGISTER_TYPED_TEST_CASE_P(ControllerInterfaceTest, ConfigureErrorTest, InputTest, OutputTest, CustomOutputTest);
 
 typedef ::testing::Types<BoolT, DoubleT, DoubleVecT, IntT, StringT, CartesianStateT, JointStateT> SignalTypes;
 INSTANTIATE_TYPED_TEST_CASE_P(TestPrefix, ControllerInterfaceTest, SignalTypes);

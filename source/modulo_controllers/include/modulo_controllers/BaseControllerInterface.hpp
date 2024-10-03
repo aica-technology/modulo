@@ -1,5 +1,6 @@
 #pragma once
 
+#include <any>
 #include <mutex>
 
 #include <controller_interface/controller_interface.hpp>
@@ -21,6 +22,8 @@
 #include <modulo_interfaces/srv/string_trigger.hpp>
 
 #include <modulo_utils/parsing.hpp>
+
+#include <modulo_core/concepts.hpp>
 
 namespace modulo_controllers {
 
@@ -66,9 +69,11 @@ typedef std::pair<
     std::shared_ptr<rclcpp::Publisher<std_msgs::msg::String>>,
     realtime_tools::RealtimePublisherSharedPtr<std_msgs::msg::String>>
     StringPublishers;
+typedef std::pair<std::any, std::any> CustomPublishers;
 
 typedef std::variant<
-    EncodedStatePublishers, BoolPublishers, DoublePublishers, DoubleVecPublishers, IntPublishers, StringPublishers>
+    EncodedStatePublishers, BoolPublishers, DoublePublishers, DoubleVecPublishers, IntPublishers, StringPublishers,
+    CustomPublishers>
     PublisherVariant;
 
 /**
@@ -471,6 +476,9 @@ private:
   std::shared_ptr<rclcpp::TimerBase> predicate_timer_;
 
   std::timed_mutex command_mutex_;
+
+  std::map<std::string, std::function<void(CustomPublishers&, const std::string&)>>
+      custom_output_configuration_callables_;
 };
 
 template<typename T>
@@ -569,8 +577,23 @@ BaseControllerInterface::create_subscription(const std::string& name, const std:
 
 template<typename T>
 inline void BaseControllerInterface::add_output(const std::string& name, const std::string& topic_name) {
-  std::shared_ptr<state_representation::State> state_ptr = std::make_shared<T>();
-  create_output(EncodedStatePublishers(state_ptr, {}, {}), name, topic_name);
+  if constexpr (modulo_core::concepts::CustomT<T>) {
+    typedef std::pair<std::shared_ptr<rclcpp::Publisher<T>>, realtime_tools::RealtimePublisherSharedPtr<T>> PublisherT;
+    auto parsed_name = validate_and_declare_signal(name, "output", topic_name);
+    if (!parsed_name.empty()) {
+      outputs_.insert_or_assign(name, PublisherT());
+      custom_output_configuration_callables_.insert_or_assign(
+          name, [this](CustomPublishers& pub, const std::string& name) {
+            auto publishers = std::any_cast<PublisherT>(pub);
+            publishers.first = get_node()->create_publisher<T>(name, qos_);
+            publishers.second = std::make_shared<realtime_tools::RealtimePublisher<T>>(publishers.first);
+          });
+    }
+
+  } else {
+    std::shared_ptr<state_representation::State> state_ptr = std::make_shared<T>();
+    create_output(EncodedStatePublishers(state_ptr, {}, {}), name, topic_name);
+  }
 }
 
 template<>

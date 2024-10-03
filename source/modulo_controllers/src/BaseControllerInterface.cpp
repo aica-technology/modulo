@@ -403,6 +403,9 @@ void BaseControllerInterface::add_outputs() {
               [&](StringPublishers& pub) {
                 pub.first = get_node()->create_publisher<std_msgs::msg::String>(topic, qos_);
                 pub.second = std::make_shared<realtime_tools::RealtimePublisher<std_msgs::msg::String>>(pub.first);
+              },
+              [&](CustomPublishers& pub) {
+                custom_output_configuration_callables_.at(name)(pub, name);
               }},
           publishers);
     } catch (const std::exception& ex) {
