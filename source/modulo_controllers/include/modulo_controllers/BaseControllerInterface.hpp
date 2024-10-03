@@ -581,7 +581,7 @@ inline void BaseControllerInterface::add_output(const std::string& name, const s
     typedef std::pair<std::shared_ptr<rclcpp::Publisher<T>>, realtime_tools::RealtimePublisherSharedPtr<T>> PublisherT;
     auto parsed_name = validate_and_declare_signal(name, "output", topic_name);
     if (!parsed_name.empty()) {
-      outputs_.insert_or_assign(name, PublisherT());
+      outputs_.insert_or_assign(parsed_name, PublisherT());
       custom_output_configuration_callables_.insert_or_assign(
           name, [this](CustomPublishers& pub, const std::string& name) {
             std::shared_ptr<rclcpp::Publisher<T>> publisher =
@@ -714,13 +714,13 @@ inline std::optional<std::string> BaseControllerInterface::read_input<std::strin
 
 template<typename T>
 inline void BaseControllerInterface::write_output(const std::string& name, const T& data) {
-  if constexpr (modulo_core::concepts::CustomT<T>) {
-    if (outputs_.find(name) == outputs_.end()) {
-      RCLCPP_WARN_THROTTLE(
-          get_node()->get_logger(), *get_node()->get_clock(), 1000, "Could not find output '%s'", name.c_str());
-      return;
-    }
+  if (outputs_.find(name) == outputs_.end()) {
+    RCLCPP_WARN_THROTTLE(
+        get_node()->get_logger(), *get_node()->get_clock(), 1000, "Could not find output '%s'", name.c_str());
+    return;
+  }
 
+  if constexpr (modulo_core::concepts::CustomT<T>) {
     CustomPublishers publishers;
     try {
       publishers = std::get<CustomPublishers>(outputs_.at(name));
@@ -741,15 +741,8 @@ inline void BaseControllerInterface::write_output(const std::string& name, const
           get_node()->get_logger(), *get_node()->get_clock(), 1000,
           "Skipping publication of output '%s' due to wrong data type: %s", name.c_str(), ex.what());
     }
-
     if (rt_pub && rt_pub->trylock()) {
-      try {
-        rt_pub->msg_ = data;
-      } catch (const modulo_core::exceptions::MessageTranslationException& ex) {
-        RCLCPP_ERROR_THROTTLE(
-            get_node()->get_logger(), *get_node()->get_clock(), 1000, "Failed to publish output '%s': %s", name.c_str(),
-            ex.what());
-      }
+      rt_pub->msg_ = data;
       rt_pub->unlockAndPublish();
     }
   } else {
@@ -757,11 +750,6 @@ inline void BaseControllerInterface::write_output(const std::string& name, const
       RCLCPP_DEBUG_THROTTLE(
           get_node()->get_logger(), *get_node()->get_clock(), 1000,
           "Skipping publication of output '%s' due to emptiness of state", name.c_str());
-      return;
-    }
-    if (outputs_.find(name) == outputs_.end()) {
-      RCLCPP_WARN_THROTTLE(
-          get_node()->get_logger(), *get_node()->get_clock(), 1000, "Could not find output '%s'", name.c_str());
       return;
     }
     EncodedStatePublishers publishers;
