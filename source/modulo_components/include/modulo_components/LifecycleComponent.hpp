@@ -277,7 +277,7 @@ private:
   std::map<
       std::string,
       std::function<std::shared_ptr<modulo_core::communication::PublisherInterface>(const std::string& topic_name)>>
-      output_configuration_callables_;///< Map of output configuration callables
+      custom_output_configuration_callables_;///< Map of custom output configuration callables
 };
 
 template<typename DataT>
@@ -301,7 +301,7 @@ inline void LifecycleComponent::add_output(
     auto message_pair = this->outputs_.at(parsed_signal_name)->get_message_pair();
     if (message_pair->get_type() == modulo_core::communication::MessageType::CUSTOM_MESSAGE) {
       if constexpr (modulo_core::concepts::CustomT<DataT>) {
-        this->output_configuration_callables_.insert_or_assign(
+        this->custom_output_configuration_callables_.insert_or_assign(
             parsed_signal_name, [this, message_pair](const std::string& topic_name) {
               auto publisher = this->create_publisher<DataT>(topic_name, this->get_qos());
               return std::make_shared<PublisherHandler<rclcpp_lifecycle::LifecyclePublisher<DataT>, DataT>>(

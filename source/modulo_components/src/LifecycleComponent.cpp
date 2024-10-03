@@ -293,7 +293,7 @@ bool LifecycleComponent::configure_outputs() {
           break;
         }
         case MessageType::CUSTOM_MESSAGE: {
-          interface = this->output_configuration_callables_.at(name)(topic_name);
+          interface = this->custom_output_configuration_callables_.at(name)(topic_name);
           break;
         }
       }
