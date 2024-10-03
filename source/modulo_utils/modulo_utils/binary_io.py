@@ -20,7 +20,7 @@ class BinaryRecoder():
         self._filepath = filepath
         if not self._filepath.endswith(".bin"):
             self._filepath += ".bin"
-        os.makedirs(os.path.dirname(self._filepath))
+        os.makedirs(os.path.dirname(self._filepath), exist_ok=True)
         self._file: BufferedWriter
 
     def open(self):
