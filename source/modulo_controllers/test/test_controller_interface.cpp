@@ -204,7 +204,24 @@ TYPED_TEST_P(ControllerInterfaceTest, CustomOutputTest) {
   interface->write_output<sensor_msgs::msg::Image>("output", sensor_msgs::msg::Image());
 }
 
-REGISTER_TYPED_TEST_CASE_P(ControllerInterfaceTest, ConfigureErrorTest, InputTest, OutputTest, CustomOutputTest);
+TYPED_TEST_P(ControllerInterfaceTest, CustomInputTest) {
+  auto interface = std::make_unique<FriendControllerInterface>();
+  interface->init("controller_interface", "", 0, "", interface->define_custom_node_options());
+  interface->get_node()->set_parameter({"hardware_name", "test"});
+  interface->get_node()->set_parameter({"input_validity_period", 0.1});
+
+  interface->add_input<sensor_msgs::msg::Image>("input", "/input");
+  auto node_state = interface->get_node()->configure();
+  ASSERT_EQ(node_state.id(), lifecycle_msgs::msg::State::PRIMARY_STATE_INACTIVE);
+
+  node_state = interface->get_node()->activate();
+  ASSERT_EQ(node_state.id(), lifecycle_msgs::msg::State::PRIMARY_STATE_ACTIVE);
+
+  auto msg = interface->read_input<sensor_msgs::msg::Image>("input");
+}
+
+REGISTER_TYPED_TEST_CASE_P(
+    ControllerInterfaceTest, ConfigureErrorTest, InputTest, OutputTest, CustomOutputTest, CustomInputTest);
 
 typedef ::testing::Types<BoolT, DoubleT, DoubleVecT, IntT, StringT, CartesianStateT, JointStateT> SignalTypes;
 INSTANTIATE_TYPED_TEST_CASE_P(TestPrefix, ControllerInterfaceTest, SignalTypes);
