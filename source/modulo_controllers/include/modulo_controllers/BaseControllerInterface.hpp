@@ -536,7 +536,6 @@ inline void BaseControllerInterface::add_input(const std::string& name, const st
           name, [this](const std::string& name, const std::string& topic) {
             auto subscription =
                 get_node()->create_subscription<T>(topic, qos_, [this, name](const std::shared_ptr<T> message) {
-                  // TODO: should we try catch bad_any_cast in here?
                   auto buffer =
                       std::any_cast<realtime_tools::RealtimeBuffer<std::shared_ptr<T>>>(inputs_.at(name).buffer);
                   buffer.writeFromNonRT(message);
@@ -548,9 +547,12 @@ inline void BaseControllerInterface::add_input(const std::string& name, const st
   } else {
     auto buffer = realtime_tools::RealtimeBuffer<std::shared_ptr<modulo_core::EncodedState>>();
     auto input = ControllerInput(buffer);
-    create_input(input, name, topic_name);
-    input_message_pairs_.insert_or_assign(
-        name, modulo_core::communication::make_shared_message_pair(std::make_shared<T>(), get_node()->get_clock()));
+    auto parsed_name = validate_and_declare_signal(name, "input", topic_name);
+    if (!parsed_name.empty()) {
+      inputs_.insert_or_assign(parsed_name, input);
+      input_message_pairs_.insert_or_assign(
+          name, modulo_core::communication::make_shared_message_pair(std::make_shared<T>(), get_node()->get_clock()));
+    }
   }
 }
 
@@ -650,10 +652,11 @@ inline void BaseControllerInterface::add_output<std::string>(const std::string& 
 
 template<typename T>
 inline std::optional<T> BaseControllerInterface::read_input(const std::string& name) {
+  if (!check_input_valid(name)) {
+    return {};
+  }
+
   if constexpr (modulo_core::concepts::CustomT<T>) {
-    if (!check_input_valid(name)) {
-      return {};
-    }
     try {
       auto buffer = std::any_cast<realtime_tools::RealtimeBuffer<std::shared_ptr<T>>>(inputs_.at(name).buffer);
       return **(buffer.readFromNonRT());
@@ -662,9 +665,6 @@ inline std::optional<T> BaseControllerInterface::read_input(const std::string& n
     }
     return {};
   } else {
-    if (!check_input_valid(name)) {
-      return {};
-    }
     auto message =
         **std::get<realtime_tools::RealtimeBuffer<std::shared_ptr<modulo_core::EncodedState>>>(inputs_.at(name).buffer)
               .readFromNonRT();
