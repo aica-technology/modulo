@@ -3,7 +3,7 @@ import time
 import clproto
 import state_representation as sr
 from modulo_interfaces.msg import EncodedState
-from modulo_utils.binary_io import BinaryReader, BinaryRecorder
+from modulo_utils.binary_io import BinaryRecorder, read_binary_file
 
 
 def test_binary_io():
@@ -16,8 +16,7 @@ def test_binary_io():
     recorder.write(msg)
     recorder.close()
 
-    reader = BinaryReader(f"/tmp/{current_time}")
-    data = reader.read()
+    data = read_binary_file(f"/tmp/{current_time}")
     assert data
     assert len(data) == 1
     assert data[0]["state"].get_name() == random_state.get_name()

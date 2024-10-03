@@ -42,47 +42,39 @@ class BinaryRecorder():
         self._file.close()
 
 
-class BinaryReader():
-    def __init__(self, filepath: str):
-        """
-        Construct the BinaryReader. By calling read(), the BinaryReader will decode the binary data of a file created
-        by a BinaryRecorder and return its content. 
+def read_binary_file(filepath: str):
+    """
+    Decode the binary data of a file created by a BinaryRecorder and return its content.
 
-        :param filepath: The full path of the recorded file
-        """
-        self._filepath = filepath
-        if not self._filepath.endswith(".bin"):
-            self._filepath += ".bin"
-
-    def read(self) -> List[dict]:
-        """
-        Read the content of a file created by a BinaryRecorder.
-        """
-        data = []
-        block_size = 4
-        with open(self._filepath, 'rb') as f:
+    :param filepath: The full path of the recorded file
+    """
+    if not filepath.endswith(".bin"):
+        filepath += ".bin"
+    data = []
+    block_size = 4
+    with open(filepath, 'rb') as f:
+        field_bytes = f.read(block_size)
+        while field_bytes:
+            package = field_bytes
+            # read the size of the timestamp
+            timestamp_size_bytes = f.read(block_size)
+            package += timestamp_size_bytes
+            timestamp_size = int.from_bytes(timestamp_size_bytes, byteorder='little', signed=False)
+            # read the size of the state
+            state_size_bytes = f.read(block_size)
+            package += state_size_bytes
+            state_size = int.from_bytes(state_size_bytes, byteorder='little', signed=False)
+            # read the whole package
+            package += f.read(timestamp_size)
+            package += f.read(state_size)
+            # decode the package with clproto
+            fields = clproto.unpack_fields(package)
+            timestamp = datetime.fromtimestamp(struct.unpack('d', fields[0])[0])
+            state = clproto.decode(fields[1])
+            data.append({'timestamp': timestamp, 'state': state})
+            # read again the first 4 bytes
             field_bytes = f.read(block_size)
-            while field_bytes:
-                package = field_bytes
-                # read the size of the timestamp
-                timestamp_size_bytes = f.read(block_size)
-                package += timestamp_size_bytes
-                timestamp_size = int.from_bytes(timestamp_size_bytes, byteorder='little', signed=False)
-                # read the size of the state
-                state_size_bytes = f.read(block_size)
-                package += state_size_bytes
-                state_size = int.from_bytes(state_size_bytes, byteorder='little', signed=False)
-                # read the whole package
-                package += f.read(timestamp_size)
-                package += f.read(state_size)
-                # decode the package with clproto
-                fields = clproto.unpack_fields(package)
-                timestamp = datetime.fromtimestamp(struct.unpack('d', fields[0])[0])
-                state = clproto.decode(fields[1])
-                data.append({'timestamp': timestamp, 'state': state})
-                # read again the first 4 bytes
-                field_bytes = f.read(block_size)
-        return data
+    return data
 
 
 def read_directory(directory, filenames: List[str] = None) -> dict:
