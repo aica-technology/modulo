@@ -1,5 +1,5 @@
 {
-  "$schema": "https://raw.githubusercontent.com/aica-technology/api/main/docs/static/schemas/1-1-1/component.schema.json",
+  "$schema": "https://docs.aica.tech/schemas/1-1-1/component.schema.json",
   "name": "Component",
   "description": {
     "brief": "A wrapper for rclcpp::Node to simplify application composition through unified component interfaces.",
