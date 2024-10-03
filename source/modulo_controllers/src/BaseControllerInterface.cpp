@@ -372,7 +372,7 @@ void BaseControllerInterface::create_output(
     const PublisherVariant& publishers, const std::string& name, const std::string& topic_name) {
   auto parsed_name = validate_and_declare_signal(name, "output", topic_name);
   if (!parsed_name.empty()) {
-    outputs_.insert_or_assign(name, publishers);
+    outputs_.insert_or_assign(parsed_name, publishers);
   }
 }
 
