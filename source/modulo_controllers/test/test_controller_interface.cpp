@@ -198,22 +198,10 @@ TYPED_TEST_P(ControllerInterfaceTest, CustomOutputTest) {
   auto node_state = interface->get_node()->configure();
   ASSERT_EQ(node_state.id(), lifecycle_msgs::msg::State::PRIMARY_STATE_INACTIVE);
 
-  //   rclcpp::Node test_node("test_node");
-  //   auto publisher = test_node.create_publisher<MsgT>("/input", rclcpp::SystemDefaultsQoS());
+  node_state = interface->get_node()->activate();
+  ASSERT_EQ(node_state.id(), lifecycle_msgs::msg::State::PRIMARY_STATE_ACTIVE);
 
-  //   for (auto [message_data, write_func, read_func, validation_func] : this->test_cases_) {
-  //     message_data = write_func(message_data);
-  //     auto message = std::get<1>(message_data);
-  //     publisher->publish(message);
-  //     rclcpp::spin_some(this->interface_->get_node()->get_node_base_interface());
-  //     auto input = this->interface_->template read_input<DataT>("input");
-  //     ASSERT_TRUE(input);
-  //     EXPECT_TRUE(validation_func(message_data, std::make_tuple(*input, message)));
-  //     std::this_thread::sleep_for(100ms);
-  //     ASSERT_FALSE(this->interface_->template read_input<DataT>("input"));
-  //   }
-
-  EXPECT_TRUE(true);
+  interface->write_output<sensor_msgs::msg::Image>("output", sensor_msgs::msg::Image());
 }
 
 REGISTER_TYPED_TEST_CASE_P(ControllerInterfaceTest, ConfigureErrorTest, InputTest, OutputTest, CustomOutputTest);

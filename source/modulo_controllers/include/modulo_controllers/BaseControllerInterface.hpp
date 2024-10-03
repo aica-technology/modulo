@@ -714,44 +714,84 @@ inline std::optional<std::string> BaseControllerInterface::read_input<std::strin
 
 template<typename T>
 inline void BaseControllerInterface::write_output(const std::string& name, const T& data) {
-  if (data.is_empty()) {
-    RCLCPP_DEBUG_THROTTLE(
-        get_node()->get_logger(), *get_node()->get_clock(), 1000,
-        "Skipping publication of output '%s' due to emptiness of state", name.c_str());
-    return;
-  }
-  if (outputs_.find(name) == outputs_.end()) {
-    RCLCPP_WARN_THROTTLE(
-        get_node()->get_logger(), *get_node()->get_clock(), 1000, "Could not find output '%s'", name.c_str());
-    return;
-  }
-  EncodedStatePublishers publishers;
-  try {
-    publishers = std::get<EncodedStatePublishers>(outputs_.at(name));
-  } catch (const std::bad_variant_access&) {
-    RCLCPP_WARN_THROTTLE(
-        get_node()->get_logger(), *get_node()->get_clock(), 1000,
-        "Could not retrieve publisher for output '%s': Invalid output type", name.c_str());
-    return;
-  }
-  if (const auto output_type = std::get<0>(publishers)->get_type(); output_type != data.get_type()) {
-    RCLCPP_WARN_THROTTLE(
-        get_node()->get_logger(), *get_node()->get_clock(), 1000,
-        "Skipping publication of output '%s' due to wrong data type (expected '%s', got '%s')",
-        state_representation::get_state_type_name(output_type).c_str(),
-        state_representation::get_state_type_name(data.get_type()).c_str(), name.c_str());
-    return;
-  }
-  auto rt_pub = std::get<2>(publishers);
-  if (rt_pub && rt_pub->trylock()) {
-    try {
-      modulo_core::translators::write_message<T>(rt_pub->msg_, data, get_node()->get_clock()->now());
-    } catch (const modulo_core::exceptions::MessageTranslationException& ex) {
-      RCLCPP_ERROR_THROTTLE(
-          get_node()->get_logger(), *get_node()->get_clock(), 1000, "Failed to publish output '%s': %s", name.c_str(),
-          ex.what());
+  if constexpr (modulo_core::concepts::CustomT<T>) {
+    if (outputs_.find(name) == outputs_.end()) {
+      RCLCPP_WARN_THROTTLE(
+          get_node()->get_logger(), *get_node()->get_clock(), 1000, "Could not find output '%s'", name.c_str());
+      return;
     }
-    rt_pub->unlockAndPublish();
+
+    CustomPublishers publishers;
+    try {
+      publishers = std::get<CustomPublishers>(outputs_.at(name));
+    } catch (const std::bad_variant_access&) {
+      RCLCPP_WARN_THROTTLE(
+          get_node()->get_logger(), *get_node()->get_clock(), 1000,
+          "Could not retrieve publisher for output '%s': Invalid output type", name.c_str());
+      return;
+    }
+
+    std::shared_ptr<rclcpp::Publisher<T>> pub;
+    realtime_tools::RealtimePublisherSharedPtr<T> rt_pub;
+    try {
+      pub = std::any_cast<std::shared_ptr<rclcpp::Publisher<T>>>(publishers.first);
+      rt_pub = std::any_cast<realtime_tools::RealtimePublisherSharedPtr<T>>(publishers.second);
+    } catch (const std::bad_any_cast& ex) {
+      RCLCPP_ERROR_THROTTLE(
+          get_node()->get_logger(), *get_node()->get_clock(), 1000,
+          "Skipping publication of output '%s' due to wrong data type: %s", name.c_str(), ex.what());
+    }
+
+    if (rt_pub && rt_pub->trylock()) {
+      try {
+        rt_pub->msg_ = data;
+      } catch (const modulo_core::exceptions::MessageTranslationException& ex) {
+        RCLCPP_ERROR_THROTTLE(
+            get_node()->get_logger(), *get_node()->get_clock(), 1000, "Failed to publish output '%s': %s", name.c_str(),
+            ex.what());
+      }
+      rt_pub->unlockAndPublish();
+    }
+  } else {
+    if (data.is_empty()) {
+      RCLCPP_DEBUG_THROTTLE(
+          get_node()->get_logger(), *get_node()->get_clock(), 1000,
+          "Skipping publication of output '%s' due to emptiness of state", name.c_str());
+      return;
+    }
+    if (outputs_.find(name) == outputs_.end()) {
+      RCLCPP_WARN_THROTTLE(
+          get_node()->get_logger(), *get_node()->get_clock(), 1000, "Could not find output '%s'", name.c_str());
+      return;
+    }
+    EncodedStatePublishers publishers;
+    try {
+      publishers = std::get<EncodedStatePublishers>(outputs_.at(name));
+    } catch (const std::bad_variant_access&) {
+      RCLCPP_WARN_THROTTLE(
+          get_node()->get_logger(), *get_node()->get_clock(), 1000,
+          "Could not retrieve publisher for output '%s': Invalid output type", name.c_str());
+      return;
+    }
+    if (const auto output_type = std::get<0>(publishers)->get_type(); output_type != data.get_type()) {
+      RCLCPP_WARN_THROTTLE(
+          get_node()->get_logger(), *get_node()->get_clock(), 1000,
+          "Skipping publication of output '%s' due to wrong data type (expected '%s', got '%s')",
+          state_representation::get_state_type_name(output_type).c_str(),
+          state_representation::get_state_type_name(data.get_type()).c_str(), name.c_str());
+      return;
+    }
+    auto rt_pub = std::get<2>(publishers);
+    if (rt_pub && rt_pub->trylock()) {
+      try {
+        modulo_core::translators::write_message<T>(rt_pub->msg_, data, get_node()->get_clock()->now());
+      } catch (const modulo_core::exceptions::MessageTranslationException& ex) {
+        RCLCPP_ERROR_THROTTLE(
+            get_node()->get_logger(), *get_node()->get_clock(), 1000, "Failed to publish output '%s': %s", name.c_str(),
+            ex.what());
+      }
+      rt_pub->unlockAndPublish();
+    }
   }
 }
 
