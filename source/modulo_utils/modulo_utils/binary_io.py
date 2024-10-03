@@ -9,7 +9,7 @@ import clproto
 from modulo_interfaces.msg import EncodedState
 
 
-class BinaryRecoder():
+class BinaryRecorder():
     def __init__(self, filepath: str):
         """
         Construct the BinaryRecorder. By calling first open() and then write(msg) successively, the BinaryRecorder will

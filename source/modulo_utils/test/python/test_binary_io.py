@@ -3,13 +3,13 @@ import time
 import clproto
 import state_representation as sr
 from modulo_interfaces.msg import EncodedState
-from modulo_utils.binary_io import BinaryReader, BinaryRecoder
+from modulo_utils.binary_io import BinaryReader, BinaryRecorder
 
 
 def test_binary_io():
     current_time = time.time()
     random_state = sr.CartesianState().Random("test")
-    recorder = BinaryRecoder(f"/tmp/{current_time}")
+    recorder = BinaryRecorder(f"/tmp/{current_time}")
     recorder.open()
     msg = EncodedState()
     msg.data = clproto.encode(random_state, clproto.MessageType.CARTESIAN_STATE_MESSAGE)
