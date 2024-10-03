@@ -10,6 +10,7 @@ from modulo_components.component_interface import ComponentInterface
 from modulo_core.exceptions import CoreError, LookupTransformError
 from rclpy.qos import QoSProfile
 from std_msgs.msg import Bool, String
+from sensor_msgs.msg import JointState
 
 
 def raise_(ex):
@@ -152,18 +153,24 @@ def test_create_output(component_interface):
     assert component_interface._periodic_outputs["test"]
 
     component_interface._create_output(
-        "8_teEsTt_#1@3",
-        "test",
-        Bool,
-        clproto.MessageType.UNKNOWN_MESSAGE,
-        "",
-        True,
-        False)
+        "8_teEsTt_#1@3", "test", Bool, clproto.MessageType.UNKNOWN_MESSAGE, "", True, False)
     assert not component_interface._periodic_outputs["test_13"]
     component_interface.publish_output("8_teEsTt_#1@3")
     component_interface.publish_output("test_13")
     with pytest.raises(CoreError):
         component_interface.publish_output("")
+
+    component_interface._create_output("test_custom", "test", JointState,
+                                       clproto.MessageType.UNKNOWN_MESSAGE, "/topic", True, True)
+    assert "test_custom" in component_interface._outputs.keys()
+    assert component_interface.get_parameter_value("test_custom_topic") == "/topic"
+    assert component_interface._outputs["test_custom"]["message_type"] == JointState
+    data = JointState()
+    data.name = ["joint_1", "joint_2"]
+    msg = JointState()
+    component_interface._outputs["test_custom"]["translator"](msg, data)
+    assert msg.name == data.name
+    assert component_interface._periodic_outputs["test_custom"]
 
 
 def test_tf(component_interface):

@@ -448,6 +448,11 @@ class ComponentInterface(Node):
             elif message_type == EncodedState:
                 translator = partial(modulo_writers.write_clproto_message,
                                      clproto_message_type=clproto_message_type)
+            elif hasattr(message_type, 'get_fields_and_field_types'):
+                def write_ros_msg(message, data):
+                    for field in message.get_fields_and_field_types().keys():
+                        setattr(message, field, getattr(data, field))
+                translator = write_ros_msg
             else:
                 raise AddSignalError("The provided message type is not supported to create a component output.")
             self._outputs[parsed_signal_name] = {"attribute": data, "message_type": message_type,
@@ -469,7 +474,17 @@ class ComponentInterface(Node):
             return
         self.get_logger().debug(f"Removing signal '{signal_name}'.")
 
-    def __subscription_callback(self, message: MsgT, attribute_name: str, reader: Callable, user_callback: Callable):
+    def __read_translated_message(self, message: MsgT, attribute_name: str, reader: Callable):
+        obj_type = type(self.__getattribute__(attribute_name))
+        decoded_message = reader(message)
+        self.__setattr__(attribute_name, obj_type(decoded_message))
+
+    def __read_custom_message(self, message: MsgT, attribute_name: str):
+        for field in message.get_fields_and_field_types().keys():
+            setattr(self.__getattribute__(attribute_name), field, getattr(message, field))
+
+    def __subscription_callback(
+            self, message: MsgT, attribute_name: str, read_message: Callable, user_callback: Callable):
         """
         Subscription callback for the ROS subscriptions.
 
@@ -478,9 +493,7 @@ class ComponentInterface(Node):
         :param reader: A callable that can read the ROS message and translate to the desired type
         """
         try:
-            obj_type = type(self.__getattribute__(attribute_name))
-            decoded_message = reader(message)
-            self.__setattr__(attribute_name, obj_type(decoded_message))
+            read_message(message, attribute_name)
         except (AttributeError, MessageTranslationError, TypeError) as e:
             self.get_logger().warn(f"Failed to read message for attribute {attribute_name}: {e}",
                                    throttle_duration_sec=1.0)
@@ -491,7 +504,7 @@ class ComponentInterface(Node):
             self.get_logger().error(f"Failed to execute user callback in subscription for attribute"
                                     f" '{attribute_name}': {e}", throttle_duration_sec=1.0)
 
-    def declare_signal(self, signal_name: str, signal_type: str, default_topic="", fixed_topic=False):
+    def __declare_signal(self, signal_name: str, signal_type: str, default_topic="", fixed_topic=False):
         """
         Declare an input to create the topic parameter without adding it to the map of inputs yet.
 
@@ -505,7 +518,9 @@ class ComponentInterface(Node):
         if not parsed_signal_name:
             raise AddSignalError(topic_validation_warning(signal_name, signal_type))
         if signal_name != parsed_signal_name:
-            self.get_logger().warn(topic_validation_warning(signal_name, signal_type))
+            self.get_logger().warn(
+                f"The parsed name for {signal_type} '{signal_name}' is '{parsed_signal_name}'."
+                "Use the parsed name to refer to this {signal_type}.")
         if parsed_signal_name in self._inputs.keys():
             raise AddSignalError(f"Signal with name '{parsed_signal_name}' already exists as input.")
         if parsed_signal_name in self._outputs.keys():
@@ -529,7 +544,7 @@ class ComponentInterface(Node):
         :param fixed_topic: If true, the topic name of the signal is fixed
         :raises AddSignalError: if the input could not be declared (empty name or already created)
         """
-        self.declare_signal(signal_name, "input", default_topic, fixed_topic)
+        self.__declare_signal(signal_name, "input", default_topic, fixed_topic)
 
     def declare_output(self, signal_name: str, default_topic="", fixed_topic=False):
         """
@@ -540,7 +555,7 @@ class ComponentInterface(Node):
         :param fixed_topic: If true, the topic name of the signal is fixed
         :raises AddSignalError: if the output could not be declared (empty name or already created)
         """
-        self.declare_signal(signal_name, "output", default_topic, fixed_topic)
+        self.__declare_signal(signal_name, "output", default_topic, fixed_topic)
 
     def add_input(self, signal_name: str, subscription: Union[str, Callable], message_type: MsgT, default_topic="",
                   fixed_topic=False, user_callback: Callable = None):
@@ -581,19 +596,31 @@ class ComponentInterface(Node):
                     user_callback = default_callback
                 if message_type == Bool or message_type == Float64 or \
                         message_type == Float64MultiArray or message_type == Int32 or message_type == String:
+                    read_message = partial(self.__read_translated_message,
+                                           reader=modulo_readers.read_std_message)
                     self._inputs[parsed_signal_name] = \
                         self.create_subscription(message_type, topic_name,
                                                  partial(self.__subscription_callback,
                                                          attribute_name=subscription,
-                                                         reader=modulo_readers.read_std_message,
+                                                         read_message=read_message,
                                                          user_callback=user_callback),
                                                  self._qos)
                 elif message_type == EncodedState:
+                    read_message = partial(self.__read_translated_message,
+                                           reader=modulo_readers.read_clproto_message)
                     self._inputs[parsed_signal_name] = \
                         self.create_subscription(message_type, topic_name,
                                                  partial(self.__subscription_callback,
                                                          attribute_name=subscription,
-                                                         reader=modulo_readers.read_clproto_message,
+                                                         read_message=read_message,
+                                                         user_callback=user_callback),
+                                                 self._qos)
+                elif hasattr(message_type, 'get_fields_and_field_types'):
+                    self._inputs[parsed_signal_name] = \
+                        self.create_subscription(message_type, topic_name,
+                                                 partial(self.__subscription_callback,
+                                                         attribute_name=subscription,
+                                                         read_message=self.__read_custom_message,
                                                          user_callback=user_callback),
                                                  self._qos)
                 else:

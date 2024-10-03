@@ -303,7 +303,9 @@ void ComponentInterface::declare_signal(
   }
   if (signal_name != parsed_signal_name) {
     RCLCPP_WARN_STREAM(
-        this->node_logging_->get_logger(), modulo_utils::parsing::topic_validation_warning(signal_name, type));
+        this->node_logging_->get_logger(),
+        "The parsed name for " + type + " '" + signal_name + "' is '" + parsed_signal_name
+            + "'. Use the parsed name to refer to this " + type);
   }
   if (this->inputs_.find(parsed_signal_name) != this->inputs_.cend()) {
     throw exceptions::AddSignalException("Signal with name '" + parsed_signal_name + "' already exists as input.");
