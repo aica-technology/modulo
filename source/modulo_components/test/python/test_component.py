@@ -24,7 +24,7 @@ def test_add_remove_output(component):
     assert component._outputs["test_13"]["message_type"] == Bool
 
     component.remove_output("test_13")
-    assert "test_13" not in component._inputs.keys()
+    assert "test_13" not in component._outputs.keys()
 
     component.add_output("8_teEsTt_#1@3", "test", Bool, publish_on_step=False)
     assert not component._periodic_outputs["test_13"]
