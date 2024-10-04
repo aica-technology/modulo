@@ -46,6 +46,7 @@ Release Versions:
 - docs: update schema path in component descriptions (#154)
 - feat(utils): add binary reader and recorder for encoded states (#152)
 - feat!: add support for custom inputs and outputs (#133)
+- release: version v5.0.0-rc0009 (#155)
 
 ## 4.2.2
 
