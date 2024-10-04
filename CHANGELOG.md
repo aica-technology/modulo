@@ -44,6 +44,7 @@ Release Versions:
 - fix(controllers): remove duplicate function (#140)
 - chore: format repository (#142)
 - docs: update schema path in component descriptions (#154)
+- feat(utils): add binary reader and recorder for encoded states (#152)
 
 ## 4.2.2
 
