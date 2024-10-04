@@ -75,6 +75,7 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pro-attribs">Protected Attributes</a> &#124;
 <a href="classmodulo__core_1_1communication_1_1_publisher_interface-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">modulo_core::communication::PublisherInterface Class Reference</div></div>
 </div><!--header-->
@@ -111,13 +112,13 @@ virtual&#160;</td><td class="memItemRight" valign="bottom"><b>~PublisherInterfac
 <tr class="memitem:a725e0facd73564ae7ab9c75396e401b0"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classmodulo__core_1_1communication_1_1_publisher_handler.html">PublisherHandler</a>&lt; PubT, MsgT &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmodulo__core_1_1communication_1_1_publisher_interface.html#a725e0facd73564ae7ab9c75396e401b0">get_handler</a> (bool validate_pointer=true)</td></tr>
 <tr class="memdesc:a725e0facd73564ae7ab9c75396e401b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a pointer to a derived <a class="el" href="classmodulo__core_1_1communication_1_1_publisher_handler.html" title="The PublisherHandler handles different types of ROS publishers to activate, deactivate and publish da...">PublisherHandler</a> instance from a <a class="el" href="classmodulo__core_1_1communication_1_1_publisher_interface.html" title="Interface class to enable non-templated activating/deactivating/publishing of ROS publishers from der...">PublisherInterface</a> pointer.  <br /></td></tr>
 <tr class="separator:a725e0facd73564ae7ab9c75396e401b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad3cb237464da96e1dd2780b696bce139" id="r_ad3cb237464da96e1dd2780b696bce139"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmodulo__core_1_1communication_1_1_publisher_interface.html#ad3cb237464da96e1dd2780b696bce139">activate</a> ()</td></tr>
+<tr class="memitem:ad3cb237464da96e1dd2780b696bce139" id="r_ad3cb237464da96e1dd2780b696bce139"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmodulo__core_1_1communication_1_1_publisher_interface.html#ad3cb237464da96e1dd2780b696bce139">activate</a> ()</td></tr>
 <tr class="memdesc:ad3cb237464da96e1dd2780b696bce139"><td class="mdescLeft">&#160;</td><td class="mdescRight">Activate ROS publisher of a derived <a class="el" href="classmodulo__core_1_1communication_1_1_publisher_handler.html" title="The PublisherHandler handles different types of ROS publishers to activate, deactivate and publish da...">PublisherHandler</a> instance through the <a class="el" href="classmodulo__core_1_1communication_1_1_publisher_interface.html" title="Interface class to enable non-templated activating/deactivating/publishing of ROS publishers from der...">PublisherInterface</a> pointer.  <br /></td></tr>
 <tr class="separator:ad3cb237464da96e1dd2780b696bce139"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2570447d8280ab4f1bc47e8c020082f3" id="r_a2570447d8280ab4f1bc47e8c020082f3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmodulo__core_1_1communication_1_1_publisher_interface.html#a2570447d8280ab4f1bc47e8c020082f3">deactivate</a> ()</td></tr>
+<tr class="memitem:a2570447d8280ab4f1bc47e8c020082f3" id="r_a2570447d8280ab4f1bc47e8c020082f3"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmodulo__core_1_1communication_1_1_publisher_interface.html#a2570447d8280ab4f1bc47e8c020082f3">deactivate</a> ()</td></tr>
 <tr class="memdesc:a2570447d8280ab4f1bc47e8c020082f3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deactivate ROS publisher of a derived <a class="el" href="classmodulo__core_1_1communication_1_1_publisher_handler.html" title="The PublisherHandler handles different types of ROS publishers to activate, deactivate and publish da...">PublisherHandler</a> instance through the <a class="el" href="classmodulo__core_1_1communication_1_1_publisher_interface.html" title="Interface class to enable non-templated activating/deactivating/publishing of ROS publishers from der...">PublisherInterface</a> pointer.  <br /></td></tr>
 <tr class="separator:a2570447d8280ab4f1bc47e8c020082f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3e4d5682dc38835d7e1f02a2e71503ed" id="r_a3e4d5682dc38835d7e1f02a2e71503ed"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmodulo__core_1_1communication_1_1_publisher_interface.html#a3e4d5682dc38835d7e1f02a2e71503ed">publish</a> ()</td></tr>
+<tr class="memitem:a3e4d5682dc38835d7e1f02a2e71503ed" id="r_a3e4d5682dc38835d7e1f02a2e71503ed"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmodulo__core_1_1communication_1_1_publisher_interface.html#a3e4d5682dc38835d7e1f02a2e71503ed">publish</a> ()</td></tr>
 <tr class="memdesc:a3e4d5682dc38835d7e1f02a2e71503ed"><td class="mdescLeft">&#160;</td><td class="mdescRight">Publish the data stored in the message pair through the ROS publisher of a derived <a class="el" href="classmodulo__core_1_1communication_1_1_publisher_handler.html" title="The PublisherHandler handles different types of ROS publishers to activate, deactivate and publish da...">PublisherHandler</a> instance through the <a class="el" href="classmodulo__core_1_1communication_1_1_publisher_interface.html" title="Interface class to enable non-templated activating/deactivating/publishing of ROS publishers from der...">PublisherInterface</a> pointer.  <br /></td></tr>
 <tr class="separator:a3e4d5682dc38835d7e1f02a2e71503ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5c38ad0774ca2a51218fc473320c5b71" id="r_a5c38ad0774ca2a51218fc473320c5b71"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classmodulo__core_1_1communication_1_1_message_pair_interface.html">MessagePairInterface</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmodulo__core_1_1communication_1_1_publisher_interface.html#a5c38ad0774ca2a51218fc473320c5b71">get_message_pair</a> () const</td></tr>
@@ -129,6 +130,12 @@ virtual&#160;</td><td class="memItemRight" valign="bottom"><b>~PublisherInterfac
 <tr class="memitem:a2f878eb3cd08e69b685b39c6c79c5ed0" id="r_a2f878eb3cd08e69b685b39c6c79c5ed0"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacemodulo__core_1_1communication.html#a11c26e7082f80b74fb35da3f901f9366">PublisherType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmodulo__core_1_1communication_1_1_publisher_interface.html#a2f878eb3cd08e69b685b39c6c79c5ed0">get_type</a> () const</td></tr>
 <tr class="memdesc:a2f878eb3cd08e69b685b39c6c79c5ed0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the type of the publisher interface.  <br /></td></tr>
 <tr class="separator:a2f878eb3cd08e69b685b39c6c79c5ed0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-attribs" name="pro-attribs"></a>
+Protected Attributes</h2></td></tr>
+<tr class="memitem:a68191a20fdb29396066eb453c3e32cac" id="r_a68191a20fdb29396066eb453c3e32cac"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classmodulo__core_1_1communication_1_1_message_pair_interface.html">MessagePairInterface</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmodulo__core_1_1communication_1_1_publisher_interface.html#a68191a20fdb29396066eb453c3e32cac">message_pair_</a></td></tr>
+<tr class="memdesc:a68191a20fdb29396066eb453c3e32cac"><td class="mdescLeft">&#160;</td><td class="mdescRight">The pointer to the stored <a class="el" href="classmodulo__core_1_1communication_1_1_message_pair.html" title="The MessagePair stores a pointer to a variable and translates the value of this pointer back and fort...">MessagePair</a> instance.  <br /></td></tr>
+<tr class="separator:a68191a20fdb29396066eb453c3e32cac"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Interface class to enable non-templated activating/deactivating/publishing of ROS publishers from derived <a class="el" href="classmodulo__core_1_1communication_1_1_publisher_handler.html" title="The PublisherHandler handles different types of ROS publishers to activate, deactivate and publish da...">PublisherHandler</a> instances through dynamic down-casting. </p>
@@ -188,6 +195,9 @@ virtual&#160;</td><td class="memItemRight" valign="bottom"><b>~PublisherInterfac
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">void modulo_core::communication::PublisherInterface::activate </td>
@@ -196,6 +206,11 @@ virtual&#160;</td><td class="memItemRight" valign="bottom"><b>~PublisherInterfac
           <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 <p>Activate ROS publisher of a derived <a class="el" href="classmodulo__core_1_1communication_1_1_publisher_handler.html" title="The PublisherHandler handles different types of ROS publishers to activate, deactivate and publish da...">PublisherHandler</a> instance through the <a class="el" href="classmodulo__core_1_1communication_1_1_publisher_interface.html" title="Interface class to enable non-templated activating/deactivating/publishing of ROS publishers from der...">PublisherInterface</a> pointer. </p>
@@ -207,6 +222,8 @@ virtual&#160;</td><td class="memItemRight" valign="bottom"><b>~PublisherInterfac
   </dd>
 </dl>
 
+<p>Reimplemented in <a class="el" href="classmodulo__core_1_1communication_1_1_publisher_handler.html#a151eaad5e41650a21aca947982d959da">modulo_core::communication::PublisherHandler&lt; PubT, MsgT &gt;</a>.</p>
+
 <p class="definition">Definition at line <a class="el" href="_publisher_interface_8cpp_source.html#l00020">20</a> of file <a class="el" href="_publisher_interface_8cpp_source.html">PublisherInterface.cpp</a>.</p>
 
 </div>
@@ -216,6 +233,9 @@ virtual&#160;</td><td class="memItemRight" valign="bottom"><b>~PublisherInterfac
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">void modulo_core::communication::PublisherInterface::deactivate </td>
@@ -224,6 +244,11 @@ virtual&#160;</td><td class="memItemRight" valign="bottom"><b>~PublisherInterfac
           <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 <p>Deactivate ROS publisher of a derived <a class="el" href="classmodulo__core_1_1communication_1_1_publisher_handler.html" title="The PublisherHandler handles different types of ROS publishers to activate, deactivate and publish da...">PublisherHandler</a> instance through the <a class="el" href="classmodulo__core_1_1communication_1_1_publisher_interface.html" title="Interface class to enable non-templated activating/deactivating/publishing of ROS publishers from der...">PublisherInterface</a> pointer. </p>
@@ -235,7 +260,9 @@ virtual&#160;</td><td class="memItemRight" valign="bottom"><b>~PublisherInterfac
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_publisher_interface_8cpp_source.html#l00053">53</a> of file <a class="el" href="_publisher_interface_8cpp_source.html">PublisherInterface.cpp</a>.</p>
+<p>Reimplemented in <a class="el" href="classmodulo__core_1_1communication_1_1_publisher_handler.html#ae7add9b1f9bbce45d348551b9bc729fe">modulo_core::communication::PublisherHandler&lt; PubT, MsgT &gt;</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="_publisher_interface_8cpp_source.html#l00025">25</a> of file <a class="el" href="_publisher_interface_8cpp_source.html">PublisherInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -288,7 +315,7 @@ template&lt;typename PubT , typename MsgT &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>A pointer to a derived <a class="el" href="classmodulo__core_1_1communication_1_1_publisher_handler.html" title="The PublisherHandler handles different types of ROS publishers to activate, deactivate and publish da...">PublisherHandler</a> instance of the desired type, or a null pointer if down-casting failed and validate_pointer was set to false. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_publisher_interface_8hpp_source.html#l00128">128</a> of file <a class="el" href="_publisher_interface_8hpp_source.html">PublisherInterface.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_publisher_interface_8hpp_source.html#l00130">130</a> of file <a class="el" href="_publisher_interface_8hpp_source.html">PublisherInterface.hpp</a>.</p>
 
 </div>
 </div>
@@ -309,7 +336,7 @@ template&lt;typename PubT , typename MsgT &gt; </div>
 
 <p>Get the pointer to the message pair of the <a class="el" href="classmodulo__core_1_1communication_1_1_publisher_interface.html" title="Interface class to enable non-templated activating/deactivating/publishing of ROS publishers from der...">PublisherInterface</a>. </p>
 
-<p class="definition">Definition at line <a class="el" href="_publisher_interface_8cpp_source.html#l00132">132</a> of file <a class="el" href="_publisher_interface_8cpp_source.html">PublisherInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_publisher_interface_8cpp_source.html#l00078">78</a> of file <a class="el" href="_publisher_interface_8cpp_source.html">PublisherInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -331,7 +358,7 @@ template&lt;typename PubT , typename MsgT &gt; </div>
 <p>Get the type of the publisher interface. </p>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="namespacemodulo__core_1_1communication.html#a11c26e7082f80b74fb35da3f901f9366" title="Enum of supported ROS publisher types for the PublisherInterface.">PublisherType</a> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_publisher_interface_8cpp_source.html#l00143">143</a> of file <a class="el" href="_publisher_interface_8cpp_source.html">PublisherInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_publisher_interface_8cpp_source.html#l00089">89</a> of file <a class="el" href="_publisher_interface_8cpp_source.html">PublisherInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -340,6 +367,9 @@ template&lt;typename PubT , typename MsgT &gt; </div>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">void modulo_core::communication::PublisherInterface::publish </td>
@@ -348,6 +378,11 @@ template&lt;typename PubT , typename MsgT &gt; </div>
           <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 <p>Publish the data stored in the message pair through the ROS publisher of a derived <a class="el" href="classmodulo__core_1_1communication_1_1_publisher_handler.html" title="The PublisherHandler handles different types of ROS publishers to activate, deactivate and publish da...">PublisherHandler</a> instance through the <a class="el" href="classmodulo__core_1_1communication_1_1_publisher_interface.html" title="Interface class to enable non-templated activating/deactivating/publishing of ROS publishers from der...">PublisherInterface</a> pointer. </p>
@@ -359,7 +394,9 @@ template&lt;typename PubT , typename MsgT &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_publisher_interface_8cpp_source.html#l00086">86</a> of file <a class="el" href="_publisher_interface_8cpp_source.html">PublisherInterface.cpp</a>.</p>
+<p>Reimplemented in <a class="el" href="classmodulo__core_1_1communication_1_1_publisher_handler.html#a2368473d358309e26088db203c301c81">modulo_core::communication::PublisherHandler&lt; PubT, MsgT &gt;</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="_publisher_interface_8cpp_source.html#l00030">30</a> of file <a class="el" href="_publisher_interface_8cpp_source.html">PublisherInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -387,7 +424,34 @@ template&lt;typename PubT , typename MsgT &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_publisher_interface_8cpp_source.html#l00136">136</a> of file <a class="el" href="_publisher_interface_8cpp_source.html">PublisherInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_publisher_interface_8cpp_source.html#l00082">82</a> of file <a class="el" href="_publisher_interface_8cpp_source.html">PublisherInterface.cpp</a>.</p>
+
+</div>
+</div>
+<h2 class="groupheader">Member Data Documentation</h2>
+<a id="a68191a20fdb29396066eb453c3e32cac" name="a68191a20fdb29396066eb453c3e32cac"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a68191a20fdb29396066eb453c3e32cac">&#9670;&#160;</a></span>message_pair_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::shared_ptr&lt;<a class="el" href="classmodulo__core_1_1communication_1_1_message_pair_interface.html">MessagePairInterface</a>&gt; modulo_core::communication::PublisherInterface::message_pair_</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>The pointer to the stored <a class="el" href="classmodulo__core_1_1communication_1_1_message_pair.html" title="The MessagePair stores a pointer to a variable and translates the value of this pointer back and fort...">MessagePair</a> instance. </p>
+
+<p class="definition">Definition at line <a class="el" href="_publisher_interface_8hpp_source.html#l00110">110</a> of file <a class="el" href="_publisher_interface_8hpp_source.html">PublisherInterface.hpp</a>.</p>
 
 </div>
 </div>

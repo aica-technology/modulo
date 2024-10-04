@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['robot_5f_0',['robot_',['../classmodulo__controllers_1_1_robot_controller_interface.html#a89d589f78643efc950e195ba92c4267d',1,'modulo_controllers::RobotControllerInterface']]]
+  ['periodic_5foutputs_5f_0',['periodic_outputs_',['../classmodulo__components_1_1_component_interface.html#af132dad4fbddd625ef36d4a8f61538f0',1,'modulo_components::ComponentInterface']]]
 ];

@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['publish_0',['publish',['../classmodulo__core_1_1communication_1_1_publisher_handler.html#a864c43153af83707343920e33700043d',1,'modulo_core::communication::PublisherHandler::publish()'],['../classmodulo__core_1_1communication_1_1_publisher_interface.html#a3e4d5682dc38835d7e1f02a2e71503ed',1,'modulo_core::communication::PublisherInterface::publish()']]],
+  ['publish_0',['publish',['../classmodulo__core_1_1communication_1_1_publisher_handler.html#a2368473d358309e26088db203c301c81',1,'modulo_core::communication::PublisherHandler::publish() override'],['../classmodulo__core_1_1communication_1_1_publisher_handler.html#a864c43153af83707343920e33700043d',1,'modulo_core::communication::PublisherHandler::publish(const MsgT &amp;message) const'],['../classmodulo__core_1_1communication_1_1_publisher_interface.html#a3e4d5682dc38835d7e1f02a2e71503ed',1,'modulo_core::communication::PublisherInterface::publish()']]],
   ['publish_5foutput_1',['publish_output',['../classmodulo__components_1_1_component_interface.html#a98d4767b141939df0c7077c10d5b3aa7',1,'modulo_components::ComponentInterface']]],
   ['publish_5foutputs_2',['publish_outputs',['../classmodulo__components_1_1_component_interface.html#a0bdfeacb7b0b13c2adeecb51a80a0fa0',1,'modulo_components::ComponentInterface']]],
   ['publish_5fpredicates_3',['publish_predicates',['../classmodulo__components_1_1_component_interface.html#a9f7ba119ecceb0862634ed403306ddf8',1,'modulo_components::ComponentInterface']]],

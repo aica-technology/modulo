@@ -4,9 +4,10 @@ var indexSectionsWithContent =
   1: "abcilmnprs",
   2: "m",
   3: "abcdegilmoprstuw~",
-  4: "fhioprt",
+  4: "fhimoprt",
   5: "mp",
-  6: "cimu"
+  6: "cimu",
+  7: "m"
 };
 
 var indexSectionNames =
@@ -17,7 +18,8 @@ var indexSectionNames =
   3: "functions",
   4: "variables",
   5: "enums",
-  6: "pages"
+  6: "pages",
+  7: "concepts"
 };
 
 var indexSectionLabels =
@@ -28,6 +30,7 @@ var indexSectionLabels =
   3: "Functions",
   4: "Variables",
   5: "Enumerations",
-  6: "Pages"
+  6: "Pages",
+  7: "Concepts"
 };
 

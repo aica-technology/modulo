@@ -96,9 +96,9 @@ Inheritance diagram for modulo_core::communication::SubscriptionHandler&lt; MsgT
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a1e8e5d41669f1c0f952b93a2b86dadae" id="r_a1e8e5d41669f1c0f952b93a2b86dadae"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmodulo__core_1_1communication_1_1_subscription_handler.html#a1e8e5d41669f1c0f952b93a2b86dadae">SubscriptionHandler</a> (std::shared_ptr&lt; <a class="el" href="classmodulo__core_1_1communication_1_1_message_pair_interface.html">MessagePairInterface</a> &gt; message_pair=nullptr)</td></tr>
-<tr class="memdesc:a1e8e5d41669f1c0f952b93a2b86dadae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor with the message pair.  <br /></td></tr>
-<tr class="separator:a1e8e5d41669f1c0f952b93a2b86dadae"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0891ac7a050e1ed49e7e1097487652e1" id="r_a0891ac7a050e1ed49e7e1097487652e1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmodulo__core_1_1communication_1_1_subscription_handler.html#a0891ac7a050e1ed49e7e1097487652e1">SubscriptionHandler</a> (std::shared_ptr&lt; <a class="el" href="classmodulo__core_1_1communication_1_1_message_pair_interface.html">MessagePairInterface</a> &gt; message_pair=nullptr, const rclcpp::Logger &amp;logger=rclcpp::get_logger(&quot;SubscriptionHandler&quot;))</td></tr>
+<tr class="memdesc:a0891ac7a050e1ed49e7e1097487652e1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor with the message pair.  <br /></td></tr>
+<tr class="separator:a0891ac7a050e1ed49e7e1097487652e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3de45dc5da0ca5ae1de4a819851f4979" id="r_a3de45dc5da0ca5ae1de4a819851f4979"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmodulo__core_1_1communication_1_1_subscription_handler.html#a3de45dc5da0ca5ae1de4a819851f4979">~SubscriptionHandler</a> () override</td></tr>
 <tr class="memdesc:a3de45dc5da0ca5ae1de4a819851f4979"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor to explicitly reset the subscription pointer.  <br /></td></tr>
 <tr class="separator:a3de45dc5da0ca5ae1de4a819851f4979"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -111,9 +111,8 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ae5ce0270138b061c709ce4f1c2f76f14" id="r_ae5ce0270138b061c709ce4f1c2f76f14"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmodulo__core_1_1communication_1_1_subscription_handler.html#ae5ce0270138b061c709ce4f1c2f76f14">set_user_callback</a> (const std::function&lt; void()&gt; &amp;user_callback)</td></tr>
 <tr class="memdesc:ae5ce0270138b061c709ce4f1c2f76f14"><td class="mdescLeft">&#160;</td><td class="mdescRight">Setter of a user callback function to be executed after the subscription callback.  <br /></td></tr>
 <tr class="separator:ae5ce0270138b061c709ce4f1c2f76f14"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a01f697561ba64f5d98ae0522f8c57cc6" id="r_a01f697561ba64f5d98ae0522f8c57cc6"><td class="memItemLeft" align="right" valign="top"><a id="a01f697561ba64f5d98ae0522f8c57cc6" name="a01f697561ba64f5d98ae0522f8c57cc6"></a>
-std::function&lt; void(const std::shared_ptr&lt; MsgT &gt;)&gt;&#160;</td><td class="memItemRight" valign="bottom"><b>get_callback</b> ()</td></tr>
-<tr class="memdesc:a01f697561ba64f5d98ae0522f8c57cc6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a callback function that will be associated with the ROS subscription to receive and translate messages. <br /></td></tr>
+<tr class="memitem:a01f697561ba64f5d98ae0522f8c57cc6" id="r_a01f697561ba64f5d98ae0522f8c57cc6"><td class="memItemLeft" align="right" valign="top">std::function&lt; void(const std::shared_ptr&lt; MsgT &gt;)&gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmodulo__core_1_1communication_1_1_subscription_handler.html#a01f697561ba64f5d98ae0522f8c57cc6">get_callback</a> ()</td></tr>
+<tr class="memdesc:a01f697561ba64f5d98ae0522f8c57cc6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a callback function that will be associated with the ROS subscription to receive and translate messages.  <br /></td></tr>
 <tr class="separator:a01f697561ba64f5d98ae0522f8c57cc6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a60039333a4c81ea81c66ab2e88b6eaff" id="r_a60039333a4c81ea81c66ab2e88b6eaff"><td class="memItemLeft" align="right" valign="top">std::function&lt; void(const std::shared_ptr&lt; MsgT &gt;)&gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmodulo__core_1_1communication_1_1_subscription_handler.html#a60039333a4c81ea81c66ab2e88b6eaff">get_callback</a> (const std::function&lt; void()&gt; &amp;user_callback)</td></tr>
 <tr class="memdesc:a60039333a4c81ea81c66ab2e88b6eaff"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a callback function that will be associated with the ROS subscription to receive and translate messages.  <br /></td></tr>
@@ -121,30 +120,6 @@ std::function&lt; void(const std::shared_ptr&lt; MsgT &gt;)&gt;&#160;</td><td cl
 <tr class="memitem:a9adbe98500d927e5e76fb18c9f62e04b" id="r_a9adbe98500d927e5e76fb18c9f62e04b"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classmodulo__core_1_1communication_1_1_subscription_interface.html">SubscriptionInterface</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmodulo__core_1_1communication_1_1_subscription_handler.html#a9adbe98500d927e5e76fb18c9f62e04b">create_subscription_interface</a> (const std::shared_ptr&lt; rclcpp::Subscription&lt; MsgT &gt; &gt; &amp;subscription)</td></tr>
 <tr class="memdesc:a9adbe98500d927e5e76fb18c9f62e04b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a <a class="el" href="classmodulo__core_1_1communication_1_1_subscription_interface.html" title="Interface class to enable non-templated subscriptions with ROS subscriptions from derived Subscriptio...">SubscriptionInterface</a> pointer through an instance of a <a class="el" href="classmodulo__core_1_1communication_1_1_subscription_handler.html" title="The SubscriptionHandler handles different types of ROS subscriptions to receive data from those subsc...">SubscriptionHandler</a> by providing a ROS subscription.  <br /></td></tr>
 <tr class="separator:a9adbe98500d927e5e76fb18c9f62e04b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af597521473b4f68c86a114aca506192e" id="r_af597521473b4f68c86a114aca506192e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmodulo__core_1_1communication_1_1_subscription_handler.html#af597521473b4f68c86a114aca506192e">SubscriptionHandler</a> (std::shared_ptr&lt; <a class="el" href="classmodulo__core_1_1communication_1_1_message_pair_interface.html">MessagePairInterface</a> &gt; message_pair)</td></tr>
-<tr class="separator:af597521473b4f68c86a114aca506192e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af0126fb5595aad6991501374ea7cb3d0" id="r_af0126fb5595aad6991501374ea7cb3d0"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmodulo__core_1_1communication_1_1_subscription_handler.html#af0126fb5595aad6991501374ea7cb3d0">SubscriptionHandler</a> (std::shared_ptr&lt; <a class="el" href="classmodulo__core_1_1communication_1_1_message_pair_interface.html">MessagePairInterface</a> &gt; message_pair)</td></tr>
-<tr class="separator:af0126fb5595aad6991501374ea7cb3d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae53f045c67f5a56e0608d3a20d1efa4f" id="r_ae53f045c67f5a56e0608d3a20d1efa4f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmodulo__core_1_1communication_1_1_subscription_handler.html#ae53f045c67f5a56e0608d3a20d1efa4f">SubscriptionHandler</a> (std::shared_ptr&lt; <a class="el" href="classmodulo__core_1_1communication_1_1_message_pair_interface.html">MessagePairInterface</a> &gt; message_pair)</td></tr>
-<tr class="separator:ae53f045c67f5a56e0608d3a20d1efa4f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adc3a7ceb6702d4320030acdf3d66a794" id="r_adc3a7ceb6702d4320030acdf3d66a794"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmodulo__core_1_1communication_1_1_subscription_handler.html#adc3a7ceb6702d4320030acdf3d66a794">SubscriptionHandler</a> (std::shared_ptr&lt; <a class="el" href="classmodulo__core_1_1communication_1_1_message_pair_interface.html">MessagePairInterface</a> &gt; message_pair)</td></tr>
-<tr class="separator:adc3a7ceb6702d4320030acdf3d66a794"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9f2f44577f3432698a823894dc79868e" id="r_a9f2f44577f3432698a823894dc79868e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmodulo__core_1_1communication_1_1_subscription_handler.html#a9f2f44577f3432698a823894dc79868e">SubscriptionHandler</a> (std::shared_ptr&lt; <a class="el" href="classmodulo__core_1_1communication_1_1_message_pair_interface.html">MessagePairInterface</a> &gt; message_pair)</td></tr>
-<tr class="separator:a9f2f44577f3432698a823894dc79868e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a19beeeddd04756554b7bd21cc1c14349" id="r_a19beeeddd04756554b7bd21cc1c14349"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmodulo__core_1_1communication_1_1_subscription_handler.html#a19beeeddd04756554b7bd21cc1c14349">SubscriptionHandler</a> (std::shared_ptr&lt; <a class="el" href="classmodulo__core_1_1communication_1_1_message_pair_interface.html">MessagePairInterface</a> &gt; message_pair)</td></tr>
-<tr class="separator:a19beeeddd04756554b7bd21cc1c14349"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af3ba8093be2af9e8120af0fa76bc90d0" id="r_af3ba8093be2af9e8120af0fa76bc90d0"><td class="memItemLeft" align="right" valign="top">std::function&lt; void(const std::shared_ptr&lt; std_msgs::msg::Bool &gt;)&gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmodulo__core_1_1communication_1_1_subscription_handler.html#af3ba8093be2af9e8120af0fa76bc90d0">get_callback</a> ()</td></tr>
-<tr class="separator:af3ba8093be2af9e8120af0fa76bc90d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8b9af66342f3ef4483428e084608c8f1" id="r_a8b9af66342f3ef4483428e084608c8f1"><td class="memItemLeft" align="right" valign="top">std::function&lt; void(const std::shared_ptr&lt; std_msgs::msg::Float64 &gt;)&gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmodulo__core_1_1communication_1_1_subscription_handler.html#a8b9af66342f3ef4483428e084608c8f1">get_callback</a> ()</td></tr>
-<tr class="separator:a8b9af66342f3ef4483428e084608c8f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af12c769cad65527f9bb8e12eea547b39" id="r_af12c769cad65527f9bb8e12eea547b39"><td class="memItemLeft" align="right" valign="top">std::function&lt; void(const std::shared_ptr&lt; std_msgs::msg::Float64MultiArray &gt;)&gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmodulo__core_1_1communication_1_1_subscription_handler.html#af12c769cad65527f9bb8e12eea547b39">get_callback</a> ()</td></tr>
-<tr class="separator:af12c769cad65527f9bb8e12eea547b39"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab142bc6b2607809d99e484654770991b" id="r_ab142bc6b2607809d99e484654770991b"><td class="memItemLeft" align="right" valign="top">std::function&lt; void(const std::shared_ptr&lt; std_msgs::msg::Int32 &gt;)&gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmodulo__core_1_1communication_1_1_subscription_handler.html#ab142bc6b2607809d99e484654770991b">get_callback</a> ()</td></tr>
-<tr class="separator:ab142bc6b2607809d99e484654770991b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7173d6fcbb0988cad1f633f7bdc99eb9" id="r_a7173d6fcbb0988cad1f633f7bdc99eb9"><td class="memItemLeft" align="right" valign="top">std::function&lt; void(const std::shared_ptr&lt; std_msgs::msg::String &gt;)&gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmodulo__core_1_1communication_1_1_subscription_handler.html#a7173d6fcbb0988cad1f633f7bdc99eb9">get_callback</a> ()</td></tr>
-<tr class="separator:a7173d6fcbb0988cad1f633f7bdc99eb9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6d443764b2b720252c3660fa31eeebbc" id="r_a6d443764b2b720252c3660fa31eeebbc"><td class="memItemLeft" align="right" valign="top">std::function&lt; void(const std::shared_ptr&lt; EncodedState &gt;)&gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmodulo__core_1_1communication_1_1_subscription_handler.html#a6d443764b2b720252c3660fa31eeebbc">get_callback</a> ()</td></tr>
-<tr class="separator:a6d443764b2b720252c3660fa31eeebbc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classmodulo__core_1_1communication_1_1_subscription_interface"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classmodulo__core_1_1communication_1_1_subscription_interface')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classmodulo__core_1_1communication_1_1_subscription_interface.html">modulo_core::communication::SubscriptionInterface</a></td></tr>
 <tr class="memitem:a1d65d122da01edfcd28bdd049d2ad8e8 inherit pub_methods_classmodulo__core_1_1communication_1_1_subscription_interface" id="r_a1d65d122da01edfcd28bdd049d2ad8e8"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmodulo__core_1_1communication_1_1_subscription_interface.html#a1d65d122da01edfcd28bdd049d2ad8e8">SubscriptionInterface</a> (std::shared_ptr&lt; <a class="el" href="classmodulo__core_1_1communication_1_1_message_pair_interface.html">MessagePairInterface</a> &gt; message_pair=nullptr)</td></tr>
 <tr class="memdesc:a1d65d122da01edfcd28bdd049d2ad8e8 inherit pub_methods_classmodulo__core_1_1communication_1_1_subscription_interface"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor with the message pair.  <br /></td></tr>
@@ -167,6 +142,13 @@ virtual&#160;</td><td class="memItemRight" valign="bottom"><b>~SubscriptionInter
 <tr class="memitem:a817997523c09e4c1d912d9a18427f3ef inherit pub_methods_classmodulo__core_1_1communication_1_1_subscription_interface" id="r_a817997523c09e4c1d912d9a18427f3ef"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmodulo__core_1_1communication_1_1_subscription_interface.html#a817997523c09e4c1d912d9a18427f3ef">set_message_pair</a> (const std::shared_ptr&lt; <a class="el" href="classmodulo__core_1_1communication_1_1_message_pair_interface.html">MessagePairInterface</a> &gt; &amp;message_pair)</td></tr>
 <tr class="memdesc:a817997523c09e4c1d912d9a18427f3ef inherit pub_methods_classmodulo__core_1_1communication_1_1_subscription_interface"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the pointer to the message pair of the <a class="el" href="classmodulo__core_1_1communication_1_1_subscription_interface.html" title="Interface class to enable non-templated subscriptions with ROS subscriptions from derived Subscriptio...">SubscriptionInterface</a>.  <br /></td></tr>
 <tr class="separator:a817997523c09e4c1d912d9a18427f3ef inherit pub_methods_classmodulo__core_1_1communication_1_1_subscription_interface"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="inherited" name="inherited"></a>
+Additional Inherited Members</h2></td></tr>
+<tr class="inherit_header pro_attribs_classmodulo__core_1_1communication_1_1_subscription_interface"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_classmodulo__core_1_1communication_1_1_subscription_interface')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="classmodulo__core_1_1communication_1_1_subscription_interface.html">modulo_core::communication::SubscriptionInterface</a></td></tr>
+<tr class="memitem:ac6821d03d5979ff849796694a5d802cb inherit pro_attribs_classmodulo__core_1_1communication_1_1_subscription_interface" id="r_ac6821d03d5979ff849796694a5d802cb"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classmodulo__core_1_1communication_1_1_message_pair_interface.html">MessagePairInterface</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmodulo__core_1_1communication_1_1_subscription_interface.html#ac6821d03d5979ff849796694a5d802cb">message_pair_</a></td></tr>
+<tr class="memdesc:ac6821d03d5979ff849796694a5d802cb inherit pro_attribs_classmodulo__core_1_1communication_1_1_subscription_interface"><td class="mdescLeft">&#160;</td><td class="mdescRight">The pointer to the stored <a class="el" href="classmodulo__core_1_1communication_1_1_message_pair.html" title="The MessagePair stores a pointer to a variable and translates the value of this pointer back and fort...">MessagePair</a> instance.  <br /></td></tr>
+<tr class="separator:ac6821d03d5979ff849796694a5d802cb inherit pro_attribs_classmodulo__core_1_1communication_1_1_subscription_interface"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;typename MsgT&gt;<br />
@@ -178,10 +160,10 @@ class modulo_core::communication::SubscriptionHandler&lt; MsgT &gt;</div><p>The 
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_subscription_handler_8hpp_source.html#l00013">13</a> of file <a class="el" href="_subscription_handler_8hpp_source.html">SubscriptionHandler.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_subscription_handler_8hpp_source.html#l00015">15</a> of file <a class="el" href="_subscription_handler_8hpp_source.html">SubscriptionHandler.hpp</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a1e8e5d41669f1c0f952b93a2b86dadae" name="a1e8e5d41669f1c0f952b93a2b86dadae"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1e8e5d41669f1c0f952b93a2b86dadae">&#9670;&#160;</a></span>SubscriptionHandler() <span class="overload">[1/7]</span></h2>
+<a id="a0891ac7a050e1ed49e7e1097487652e1" name="a0891ac7a050e1ed49e7e1097487652e1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0891ac7a050e1ed49e7e1097487652e1">&#9670;&#160;</a></span>SubscriptionHandler()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -195,8 +177,18 @@ template&lt;typename MsgT &gt; </div>
           <td class="memname"><a class="el" href="classmodulo__core_1_1communication_1_1_subscription_handler.html">modulo_core::communication::SubscriptionHandler</a>&lt; MsgT &gt;::SubscriptionHandler </td>
           <td>(</td>
           <td class="paramtype">std::shared_ptr&lt; <a class="el" href="classmodulo__core_1_1communication_1_1_message_pair_interface.html">MessagePairInterface</a> &gt;&#160;</td>
-          <td class="paramname"><em>message_pair</em> = <code>nullptr</code></td><td>)</td>
+          <td class="paramname"><em>message_pair</em> = <code>nullptr</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">const rclcpp::Logger &amp;&#160;</td>
+          <td class="paramname"><em>logger</em> = <code>rclcpp::get_logger(&quot;SubscriptionHandler&lt;&#160;MsgT&#160;&gt;&quot;)</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
   </td>
@@ -210,9 +202,12 @@ template&lt;typename MsgT &gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">message_pair</td><td>The pointer to the message pair with the data that should be updated through the subscription </td></tr>
+    <tr><td class="paramname">logger</td><td>An optional ROS logger to do logging from the subscription callback </td></tr>
   </table>
   </dd>
 </dl>
+
+<p class="definition">Definition at line <a class="el" href="_subscription_handler_8hpp_source.html#l00102">102</a> of file <a class="el" href="_subscription_handler_8hpp_source.html">SubscriptionHandler.hpp</a>.</p>
 
 </div>
 </div>
@@ -243,127 +238,7 @@ template&lt;typename MsgT &gt; </div>
 
 <p>Destructor to explicitly reset the subscription pointer. </p>
 
-<p class="definition">Definition at line <a class="el" href="_subscription_handler_8hpp_source.html#l00080">80</a> of file <a class="el" href="_subscription_handler_8hpp_source.html">SubscriptionHandler.hpp</a>.</p>
-
-</div>
-</div>
-<a id="af597521473b4f68c86a114aca506192e" name="af597521473b4f68c86a114aca506192e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af597521473b4f68c86a114aca506192e">&#9670;&#160;</a></span>SubscriptionHandler() <span class="overload">[2/7]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classmodulo__core_1_1communication_1_1_subscription_handler.html">modulo_core::communication::SubscriptionHandler</a>&lt; std_msgs::msg::Bool &gt;::SubscriptionHandler </td>
-          <td>(</td>
-          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="classmodulo__core_1_1communication_1_1_message_pair_interface.html">MessagePairInterface</a> &gt;&#160;</td>
-          <td class="paramname"><em>message_pair</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="_subscription_handler_8cpp_source.html#l00008">8</a> of file <a class="el" href="_subscription_handler_8cpp_source.html">SubscriptionHandler.cpp</a>.</p>
-
-</div>
-</div>
-<a id="af0126fb5595aad6991501374ea7cb3d0" name="af0126fb5595aad6991501374ea7cb3d0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af0126fb5595aad6991501374ea7cb3d0">&#9670;&#160;</a></span>SubscriptionHandler() <span class="overload">[3/7]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classmodulo__core_1_1communication_1_1_subscription_handler.html">modulo_core::communication::SubscriptionHandler</a>&lt; std_msgs::msg::Float64 &gt;::SubscriptionHandler </td>
-          <td>(</td>
-          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="classmodulo__core_1_1communication_1_1_message_pair_interface.html">MessagePairInterface</a> &gt;&#160;</td>
-          <td class="paramname"><em>message_pair</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="_subscription_handler_8cpp_source.html#l00012">12</a> of file <a class="el" href="_subscription_handler_8cpp_source.html">SubscriptionHandler.cpp</a>.</p>
-
-</div>
-</div>
-<a id="ae53f045c67f5a56e0608d3a20d1efa4f" name="ae53f045c67f5a56e0608d3a20d1efa4f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae53f045c67f5a56e0608d3a20d1efa4f">&#9670;&#160;</a></span>SubscriptionHandler() <span class="overload">[4/7]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classmodulo__core_1_1communication_1_1_subscription_handler.html">modulo_core::communication::SubscriptionHandler</a>&lt; std_msgs::msg::Float64MultiArray &gt;::SubscriptionHandler </td>
-          <td>(</td>
-          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="classmodulo__core_1_1communication_1_1_message_pair_interface.html">MessagePairInterface</a> &gt;&#160;</td>
-          <td class="paramname"><em>message_pair</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="_subscription_handler_8cpp_source.html#l00015">15</a> of file <a class="el" href="_subscription_handler_8cpp_source.html">SubscriptionHandler.cpp</a>.</p>
-
-</div>
-</div>
-<a id="adc3a7ceb6702d4320030acdf3d66a794" name="adc3a7ceb6702d4320030acdf3d66a794"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adc3a7ceb6702d4320030acdf3d66a794">&#9670;&#160;</a></span>SubscriptionHandler() <span class="overload">[5/7]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classmodulo__core_1_1communication_1_1_subscription_handler.html">modulo_core::communication::SubscriptionHandler</a>&lt; std_msgs::msg::Int32 &gt;::SubscriptionHandler </td>
-          <td>(</td>
-          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="classmodulo__core_1_1communication_1_1_message_pair_interface.html">MessagePairInterface</a> &gt;&#160;</td>
-          <td class="paramname"><em>message_pair</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="_subscription_handler_8cpp_source.html#l00020">20</a> of file <a class="el" href="_subscription_handler_8cpp_source.html">SubscriptionHandler.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a9f2f44577f3432698a823894dc79868e" name="a9f2f44577f3432698a823894dc79868e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9f2f44577f3432698a823894dc79868e">&#9670;&#160;</a></span>SubscriptionHandler() <span class="overload">[6/7]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classmodulo__core_1_1communication_1_1_subscription_handler.html">modulo_core::communication::SubscriptionHandler</a>&lt; std_msgs::msg::String &gt;::SubscriptionHandler </td>
-          <td>(</td>
-          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="classmodulo__core_1_1communication_1_1_message_pair_interface.html">MessagePairInterface</a> &gt;&#160;</td>
-          <td class="paramname"><em>message_pair</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="_subscription_handler_8cpp_source.html#l00024">24</a> of file <a class="el" href="_subscription_handler_8cpp_source.html">SubscriptionHandler.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a19beeeddd04756554b7bd21cc1c14349" name="a19beeeddd04756554b7bd21cc1c14349"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a19beeeddd04756554b7bd21cc1c14349">&#9670;&#160;</a></span>SubscriptionHandler() <span class="overload">[7/7]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classmodulo__core_1_1communication_1_1_subscription_handler.html">modulo_core::communication::SubscriptionHandler</a>&lt; EncodedState &gt;::SubscriptionHandler </td>
-          <td>(</td>
-          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="classmodulo__core_1_1communication_1_1_message_pair_interface.html">MessagePairInterface</a> &gt;&#160;</td>
-          <td class="paramname"><em>message_pair</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="_subscription_handler_8cpp_source.html#l00028">28</a> of file <a class="el" href="_subscription_handler_8cpp_source.html">SubscriptionHandler.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_subscription_handler_8hpp_source.html#l00107">107</a> of file <a class="el" href="_subscription_handler_8hpp_source.html">SubscriptionHandler.hpp</a>.</p>
 
 </div>
 </div>
@@ -396,126 +271,43 @@ template&lt;typename MsgT &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The resulting <a class="el" href="classmodulo__core_1_1communication_1_1_subscription_interface.html" title="Interface class to enable non-templated subscriptions with ROS subscriptions from derived Subscriptio...">SubscriptionInterface</a> pointer </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_subscription_handler_8hpp_source.html#l00110">110</a> of file <a class="el" href="_subscription_handler_8hpp_source.html">SubscriptionHandler.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_subscription_handler_8hpp_source.html#l00158">158</a> of file <a class="el" href="_subscription_handler_8hpp_source.html">SubscriptionHandler.hpp</a>.</p>
 
 </div>
 </div>
-<a id="af3ba8093be2af9e8120af0fa76bc90d0" name="af3ba8093be2af9e8120af0fa76bc90d0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af3ba8093be2af9e8120af0fa76bc90d0">&#9670;&#160;</a></span>get_callback() <span class="overload">[1/7]</span></h2>
+<a id="a01f697561ba64f5d98ae0522f8c57cc6" name="a01f697561ba64f5d98ae0522f8c57cc6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a01f697561ba64f5d98ae0522f8c57cc6">&#9670;&#160;</a></span>get_callback() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
+<div class="memtemplate">
+template&lt;typename MsgT &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::function&lt; void(const std::shared_ptr&lt; std_msgs::msg::Bool &gt;)&gt; <a class="el" href="classmodulo__core_1_1communication_1_1_subscription_handler.html">modulo_core::communication::SubscriptionHandler</a>&lt; std_msgs::msg::Bool &gt;::get_callback </td>
+          <td class="memname">std::function&lt; void(const std::shared_ptr&lt; MsgT &gt;)&gt; <a class="el" href="classmodulo__core_1_1communication_1_1_subscription_handler.html">modulo_core::communication::SubscriptionHandler</a>&lt; MsgT &gt;::get_callback </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_subscription_handler_8cpp_source.html#l00033">33</a> of file <a class="el" href="_subscription_handler_8cpp_source.html">SubscriptionHandler.cpp</a>.</p>
+<p>Get a callback function that will be associated with the ROS subscription to receive and translate messages. </p>
 
-</div>
-</div>
-<a id="a8b9af66342f3ef4483428e084608c8f1" name="a8b9af66342f3ef4483428e084608c8f1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8b9af66342f3ef4483428e084608c8f1">&#9670;&#160;</a></span>get_callback() <span class="overload">[2/7]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::function&lt; void(const std::shared_ptr&lt; std_msgs::msg::Float64 &gt;)&gt; <a class="el" href="classmodulo__core_1_1communication_1_1_subscription_handler.html">modulo_core::communication::SubscriptionHandler</a>&lt; std_msgs::msg::Float64 &gt;::get_callback </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="_subscription_handler_8cpp_source.html#l00046">46</a> of file <a class="el" href="_subscription_handler_8cpp_source.html">SubscriptionHandler.cpp</a>.</p>
-
-</div>
-</div>
-<a id="af12c769cad65527f9bb8e12eea547b39" name="af12c769cad65527f9bb8e12eea547b39"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af12c769cad65527f9bb8e12eea547b39">&#9670;&#160;</a></span>get_callback() <span class="overload">[3/7]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::function&lt; void(const std::shared_ptr&lt; std_msgs::msg::Float64MultiArray &gt;)&gt; <a class="el" href="classmodulo__core_1_1communication_1_1_subscription_handler.html">modulo_core::communication::SubscriptionHandler</a>&lt; std_msgs::msg::Float64MultiArray &gt;::get_callback </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="_subscription_handler_8cpp_source.html#l00059">59</a> of file <a class="el" href="_subscription_handler_8cpp_source.html">SubscriptionHandler.cpp</a>.</p>
-
-</div>
-</div>
-<a id="ab142bc6b2607809d99e484654770991b" name="ab142bc6b2607809d99e484654770991b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab142bc6b2607809d99e484654770991b">&#9670;&#160;</a></span>get_callback() <span class="overload">[4/7]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::function&lt; void(const std::shared_ptr&lt; std_msgs::msg::Int32 &gt;)&gt; <a class="el" href="classmodulo__core_1_1communication_1_1_subscription_handler.html">modulo_core::communication::SubscriptionHandler</a>&lt; std_msgs::msg::Int32 &gt;::get_callback </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="_subscription_handler_8cpp_source.html#l00072">72</a> of file <a class="el" href="_subscription_handler_8cpp_source.html">SubscriptionHandler.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a7173d6fcbb0988cad1f633f7bdc99eb9" name="a7173d6fcbb0988cad1f633f7bdc99eb9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7173d6fcbb0988cad1f633f7bdc99eb9">&#9670;&#160;</a></span>get_callback() <span class="overload">[5/7]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::function&lt; void(const std::shared_ptr&lt; std_msgs::msg::String &gt;)&gt; <a class="el" href="classmodulo__core_1_1communication_1_1_subscription_handler.html">modulo_core::communication::SubscriptionHandler</a>&lt; std_msgs::msg::String &gt;::get_callback </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="_subscription_handler_8cpp_source.html#l00085">85</a> of file <a class="el" href="_subscription_handler_8cpp_source.html">SubscriptionHandler.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a6d443764b2b720252c3660fa31eeebbc" name="a6d443764b2b720252c3660fa31eeebbc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6d443764b2b720252c3660fa31eeebbc">&#9670;&#160;</a></span>get_callback() <span class="overload">[6/7]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::function&lt; void(const std::shared_ptr&lt; EncodedState &gt;)&gt; <a class="el" href="classmodulo__core_1_1communication_1_1_subscription_handler.html">modulo_core::communication::SubscriptionHandler</a>&lt; EncodedState &gt;::get_callback </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="_subscription_handler_8cpp_source.html#l00097">97</a> of file <a class="el" href="_subscription_handler_8cpp_source.html">SubscriptionHandler.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_subscription_handler_8hpp_source.html#l00125">125</a> of file <a class="el" href="_subscription_handler_8hpp_source.html">SubscriptionHandler.hpp</a>.</p>
 
 </div>
 </div>
 <a id="a60039333a4c81ea81c66ab2e88b6eaff" name="a60039333a4c81ea81c66ab2e88b6eaff"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a60039333a4c81ea81c66ab2e88b6eaff">&#9670;&#160;</a></span>get_callback() <span class="overload">[7/7]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a60039333a4c81ea81c66ab2e88b6eaff">&#9670;&#160;</a></span>get_callback() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -540,7 +332,7 @@ template&lt;typename MsgT &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_subscription_handler_8hpp_source.html#l00104">104</a> of file <a class="el" href="_subscription_handler_8hpp_source.html">SubscriptionHandler.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_subscription_handler_8hpp_source.html#l00152">152</a> of file <a class="el" href="_subscription_handler_8hpp_source.html">SubscriptionHandler.hpp</a>.</p>
 
 </div>
 </div>
@@ -563,7 +355,7 @@ template&lt;typename MsgT &gt; </div>
 
 <p>Getter of the ROS subscription. </p>
 
-<p class="definition">Definition at line <a class="el" href="_subscription_handler_8hpp_source.html#l00085">85</a> of file <a class="el" href="_subscription_handler_8hpp_source.html">SubscriptionHandler.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_subscription_handler_8hpp_source.html#l00112">112</a> of file <a class="el" href="_subscription_handler_8hpp_source.html">SubscriptionHandler.hpp</a>.</p>
 
 </div>
 </div>
@@ -599,7 +391,7 @@ template&lt;typename MsgT &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_subscription_handler_8hpp_source.html#l00090">90</a> of file <a class="el" href="_subscription_handler_8hpp_source.html">SubscriptionHandler.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_subscription_handler_8hpp_source.html#l00117">117</a> of file <a class="el" href="_subscription_handler_8hpp_source.html">SubscriptionHandler.hpp</a>.</p>
 
 </div>
 </div>
@@ -629,7 +421,7 @@ template&lt;typename MsgT &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_subscription_handler_8hpp_source.html#l00098">98</a> of file <a class="el" href="_subscription_handler_8hpp_source.html">SubscriptionHandler.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_subscription_handler_8hpp_source.html#l00146">146</a> of file <a class="el" href="_subscription_handler_8hpp_source.html">SubscriptionHandler.hpp</a>.</p>
 
 </div>
 </div>
