@@ -3,24 +3,24 @@ import time
 import clproto
 import state_representation as sr
 from modulo_interfaces.msg import EncodedState
-from modulo_utils.binary_io import BinaryRecorder, read_binary_file, read_directory
+from modulo_utils.encoded_state_recorder import (EncodedStateRecorder,
+                                                 read_encoded_state_recording,
+                                                 read_recording_directory)
 
 
-def test_binary_io():
+def test_encoded_state_recorder():
     current_time = time.time()
     random_state = sr.CartesianState().Random("test")
-    recorder = BinaryRecorder(f"/tmp/{current_time}")
-    recorder.open()
     msg = EncodedState()
     msg.data = clproto.encode(random_state, clproto.MessageType.CARTESIAN_STATE_MESSAGE)
-    recorder.write(msg)
-    recorder.close()
+    with EncodedStateRecorder(f"/tmp/{current_time}") as rec:
+        rec.write(msg)
 
-    data = read_binary_file(f"/tmp/{current_time}")
+    data = read_encoded_state_recording(f"/tmp/{current_time}")
     assert data
     assert len(data) == 1
     assert data[0]["state"].get_name() == random_state.get_name()
 
-    full_data = read_directory("/tmp")
+    full_data = read_recording_directory("/tmp")
     assert len(full_data) == 1
     assert full_data[f"{current_time}"]

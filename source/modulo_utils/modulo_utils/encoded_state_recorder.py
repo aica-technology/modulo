@@ -9,11 +9,11 @@ import clproto
 from modulo_interfaces.msg import EncodedState
 
 
-class BinaryRecorder():
+class EncodedStateRecorder():
     def __init__(self, filepath: str):
         """
-        Construct the BinaryRecorder. By calling first open() and then write(msg) successively, the BinaryRecorder will
-        write the provided message as binary data to a file under the desired path. 
+        Construct the EncodedStateRecorder. By calling first open() and then write(msg) successively, the
+        EncodedStateRecorder will write the provided message as binary data to a file under the desired path. 
 
         :param filepath: The full path of the recording file
         """
@@ -21,6 +21,13 @@ class BinaryRecorder():
         if not self._filepath.endswith(".bin"):
             self._filepath += ".bin"
         self._file: BufferedWriter
+
+    def __enter__(self):
+        self.open()
+        return self
+    
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.close()
 
     def open(self):
         """
@@ -42,7 +49,7 @@ class BinaryRecorder():
         self._file.close()
 
 
-def read_binary_file(filepath: str):
+def read_encoded_state_recording(filepath: str):
     """
     Decode the binary data of a file created by a BinaryRecorder and return its content.
 
@@ -77,7 +84,7 @@ def read_binary_file(filepath: str):
     return data
 
 
-def read_directory(directory, filenames: List[str] = None) -> dict:
+def read_recording_directory(directory, filenames: List[str] = None) -> dict:
     """
     Read a directory of recorded files.
 
@@ -93,11 +100,11 @@ def read_directory(directory, filenames: List[str] = None) -> dict:
     for file in filenames:
         if file.endswith(".bin"):
             file = file[:-4]
-        data[file] = read_binary_file(os.path.join(directory, file))
+        data[file] = read_encoded_state_recording(os.path.join(directory, file))
     return data
 
 
-def read_directories(directory: str, recording_directories: List[str] = None, filenames: List[str] = None) -> dict:
+def read_recording_directories(directory: str, recording_directories: List[str] = None, filenames: List[str] = None) -> dict:
     """
     Read a directory tree of recorded files.
 
@@ -112,7 +119,7 @@ def read_directories(directory: str, recording_directories: List[str] = None, fi
     if recording_directories is None:
         recording_directories = next(os.walk(directory))[1]
     for recording_dir in recording_directories:
-        recording_data = read_directory(os.path.join(directory, recording_dir), filenames)
+        recording_data = read_recording_directory(os.path.join(directory, recording_dir), filenames)
         if not recording_data:
             continue
         data[recording_dir] = recording_data
