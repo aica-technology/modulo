@@ -51,7 +51,7 @@ class EncodedStateRecorder():
 
 def read_encoded_state_recording(filepath: str):
     """
-    Decode the binary data of a file created by a BinaryRecorder and return its content.
+    Decode the binary data of a file created by an EncodedStateRecorder and return its content.
 
     :param filepath: The full path of the recorded file
     """
