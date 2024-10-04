@@ -43,6 +43,7 @@ Release Versions:
 - release: use updated base image (#139)
 - fix(controllers): remove duplicate function (#140)
 - chore: format repository (#142)
+- docs: update schema path in component descriptions (#154)
 
 ## 4.2.2
 
