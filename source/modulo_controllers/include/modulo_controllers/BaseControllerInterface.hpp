@@ -551,7 +551,8 @@ inline void BaseControllerInterface::add_input(const std::string& name, const st
     if (!parsed_name.empty()) {
       inputs_.insert_or_assign(parsed_name, input);
       input_message_pairs_.insert_or_assign(
-          name, modulo_core::communication::make_shared_message_pair(std::make_shared<T>(), get_node()->get_clock()));
+          parsed_name,
+          modulo_core::communication::make_shared_message_pair(std::make_shared<T>(), get_node()->get_clock()));
     }
   }
 }
