@@ -330,7 +330,7 @@ void BaseControllerInterface::create_input(
     const ControllerInput& input, const std::string& name, const std::string& topic_name) {
   auto parsed_name = validate_and_declare_signal(name, "input", topic_name);
   if (!parsed_name.empty()) {
-    inputs_.insert_or_assign(name, input);
+    inputs_.insert_or_assign(parsed_name, input);
   }
 }
 
@@ -357,6 +357,9 @@ void BaseControllerInterface::add_inputs() {
               },
               [&](const realtime_tools::RealtimeBuffer<std::shared_ptr<std_msgs::msg::String>>&) {
                 subscriptions_.push_back(create_subscription<std_msgs::msg::String>(name, topic));
+              },
+              [&](const std::any&) {
+                custom_input_configuration_callables_.at(name)(name, topic);
               }},
           input.buffer);
     } catch (const std::exception& ex) {
@@ -369,7 +372,7 @@ void BaseControllerInterface::create_output(
     const PublisherVariant& publishers, const std::string& name, const std::string& topic_name) {
   auto parsed_name = validate_and_declare_signal(name, "output", topic_name);
   if (!parsed_name.empty()) {
-    outputs_.insert_or_assign(name, publishers);
+    outputs_.insert_or_assign(parsed_name, publishers);
   }
 }
 
@@ -403,10 +406,15 @@ void BaseControllerInterface::add_outputs() {
               [&](StringPublishers& pub) {
                 pub.first = get_node()->create_publisher<std_msgs::msg::String>(topic, qos_);
                 pub.second = std::make_shared<realtime_tools::RealtimePublisher<std_msgs::msg::String>>(pub.first);
+              },
+              [&](CustomPublishers& pub) {
+                custom_output_configuration_callables_.at(name)(pub, name);
               }},
           publishers);
+    } catch (const std::bad_any_cast& ex) {
+      RCLCPP_ERROR(get_node()->get_logger(), "Failed to add custom output '%s': %s", name.c_str(), ex.what());
     } catch (const std::exception& ex) {
-      RCLCPP_ERROR(get_node()->get_logger(), "Failed to add input '%s': %s", name.c_str(), ex.what());
+      RCLCPP_ERROR(get_node()->get_logger(), "Failed to add output '%s': %s", name.c_str(), ex.what());
     }
   }
 }

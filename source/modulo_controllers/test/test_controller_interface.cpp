@@ -3,6 +3,7 @@
 #include <chrono>
 
 #include <lifecycle_msgs/msg/state.hpp>
+#include <sensor_msgs/msg/image.hpp>
 #include <state_representation/space/cartesian/CartesianState.hpp>
 #include <state_representation/space/joint/JointState.hpp>
 
@@ -26,6 +27,12 @@ private:
   }
 };
 
+sensor_msgs::msg::Image make_image_msg(double width) {
+  auto msg = sensor_msgs::msg::Image();
+  msg.width = width;
+  return msg;
+}
+
 using BoolT = std::tuple<bool, std_msgs::msg::Bool>;
 using DoubleT = std::tuple<double, std_msgs::msg::Float64>;
 using DoubleVecT = std::tuple<std::vector<double>, std_msgs::msg::Float64MultiArray>;
@@ -33,6 +40,7 @@ using IntT = std::tuple<int, std_msgs::msg::Int32>;
 using StringT = std::tuple<std::string, std_msgs::msg::String>;
 using CartesianStateT = std::tuple<CartesianState, modulo_core::EncodedState>;
 using JointStateT = std::tuple<JointState, modulo_core::EncodedState>;
+using ImageT = std::tuple<sensor_msgs::msg::Image, sensor_msgs::msg::Image>;
 
 template<typename T>
 T write_std_msg(const T& message_data) {
@@ -46,6 +54,12 @@ T write_state_msg(const T& message_data) {
   auto copy = message_data;
   modulo_core::translators::write_message(
       std::get<1>(copy), make_shared_state(std::get<0>(message_data)), rclcpp::Clock().now());
+  return copy;
+}
+
+ImageT write_image_msg(const ImageT& message_data) {
+  auto copy = message_data;
+  std::get<1>(copy) = std::get<0>(message_data);
   return copy;
 }
 
@@ -63,6 +77,12 @@ T read_state_msg(const T& message_data) {
   return copy;
 }
 
+ImageT read_image_msg(const ImageT& message_data) {
+  auto copy = message_data;
+  std::get<0>(copy) = std::get<1>(message_data);
+  return copy;
+}
+
 template<typename T>
 bool std_msg_equal(const T& sent, const T& received) {
   return std::get<0>(sent) == std::get<0>(received);
@@ -74,12 +94,16 @@ bool encoded_state_equal(const T& sent, const T& received) {
   return equal && std::get<0>(sent).data().isApprox(std::get<0>(received).data());
 }
 
+bool sensor_msg_equal(const ImageT& sent, const ImageT& received) {
+  return std::get<0>(sent).width == std::get<0>(received).width;
+}
+
 template<typename T>
 using SignalT = std::vector<std::tuple<T, std::function<T(T)>, std::function<T(T)>, std::function<bool(T, T)>>>;
 
 static std::tuple<
     SignalT<BoolT>, SignalT<DoubleT>, SignalT<DoubleVecT>, SignalT<IntT>, SignalT<StringT>, SignalT<CartesianStateT>,
-    SignalT<JointStateT>>
+    SignalT<JointStateT>, SignalT<ImageT>>
     signal_test_cases{
         {std::make_tuple(
             std::make_tuple(true, std_msgs::msg::Bool()), write_std_msg<BoolT>, read_std_msg<BoolT>,
@@ -100,7 +124,9 @@ static std::tuple<
             write_state_msg<CartesianStateT>, read_state_msg<CartesianStateT>, encoded_state_equal<CartesianStateT>)},
         {std::make_tuple(
             std::make_tuple(JointState::Random("test", 3), modulo_core::EncodedState()), write_state_msg<JointStateT>,
-            read_state_msg<JointStateT>, encoded_state_equal<JointStateT>)}};
+            read_state_msg<JointStateT>, encoded_state_equal<JointStateT>)},
+        {std::make_tuple(
+            std::make_tuple(make_image_msg(1), make_image_msg(2)), write_image_msg, read_image_msg, sensor_msg_equal)}};
 
 template<typename T>
 class ControllerInterfaceTest : public ::testing::Test {
@@ -177,7 +203,6 @@ TYPED_TEST_P(ControllerInterfaceTest, OutputTest) {
   for (auto [message_data, write_func, read_func, validation_func] : this->test_cases_) {
     auto data = std::get<0>(message_data);
     this->interface_->template write_output<DataT>("output", data);
-    // rclcpp::spin_some(this->interface_->get_node()->get_node_base_interface());
     auto return_code =
         rclcpp::spin_until_future_complete(test_node.get_node_base_interface(), test_node.get_sub_future(), 200ms);
     ASSERT_EQ(return_code, rclcpp::FutureReturnCode::SUCCESS);
@@ -188,5 +213,5 @@ TYPED_TEST_P(ControllerInterfaceTest, OutputTest) {
 
 REGISTER_TYPED_TEST_CASE_P(ControllerInterfaceTest, ConfigureErrorTest, InputTest, OutputTest);
 
-typedef ::testing::Types<BoolT, DoubleT, DoubleVecT, IntT, StringT, CartesianStateT, JointStateT> SignalTypes;
+typedef ::testing::Types<BoolT, DoubleT, DoubleVecT, IntT, StringT, CartesianStateT, JointStateT, ImageT> SignalTypes;
 INSTANTIATE_TYPED_TEST_CASE_P(TestPrefix, ControllerInterfaceTest, SignalTypes);
