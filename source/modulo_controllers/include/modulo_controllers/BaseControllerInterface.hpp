@@ -527,7 +527,7 @@ inline void BaseControllerInterface::set_parameter_value(const std::string& name
 template<typename T>
 inline void BaseControllerInterface::add_input(const std::string& name, const std::string& topic_name) {
   if constexpr (modulo_core::concepts::CustomT<T>) {
-    auto buffer = realtime_tools::RealtimeBuffer<T>();
+    auto buffer = std::make_shared<realtime_tools::RealtimeBuffer<std::shared_ptr<T>>>();
     auto input = ControllerInput(buffer);
     auto parsed_name = validate_and_declare_signal(name, "input", topic_name);
     if (!parsed_name.empty()) {
@@ -536,9 +536,10 @@ inline void BaseControllerInterface::add_input(const std::string& name, const st
           name, [this](const std::string& name, const std::string& topic) {
             auto subscription =
                 get_node()->create_subscription<T>(topic, qos_, [this, name](const std::shared_ptr<T> message) {
-                  auto buffer =
-                      std::any_cast<realtime_tools::RealtimeBuffer<std::shared_ptr<T>>>(inputs_.at(name).buffer);
-                  buffer.writeFromNonRT(message);
+                  auto buffer_variant = std::get<std::any>(inputs_.at(name).buffer);
+                  auto buffer = std::any_cast<std::shared_ptr<realtime_tools::RealtimeBuffer<std::shared_ptr<T>>>>(
+                      buffer_variant);
+                  buffer->writeFromNonRT(message);
                   inputs_.at(name).timestamp = std::chrono::steady_clock::now();
                 });
             subscriptions_.push_back(subscription);
@@ -656,8 +657,9 @@ inline std::optional<T> BaseControllerInterface::read_input(const std::string& n
 
   if constexpr (modulo_core::concepts::CustomT<T>) {
     try {
-      auto buffer = std::any_cast<realtime_tools::RealtimeBuffer<std::shared_ptr<T>>>(inputs_.at(name).buffer);
-      return **(buffer.readFromNonRT());
+      auto buffer_variant = std::get<std::any>(inputs_.at(name).buffer);
+      auto buffer = std::any_cast<std::shared_ptr<realtime_tools::RealtimeBuffer<std::shared_ptr<T>>>>(buffer_variant);
+      return **(buffer->readFromNonRT());
     } catch (const std::bad_any_cast& ex) {
       RCLCPP_ERROR(get_node()->get_logger(), "Failed to read custom input: %s", ex.what());
     }
