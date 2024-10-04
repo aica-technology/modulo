@@ -547,7 +547,6 @@ private:
   double rate_; ///< The component rate in Hz
   double period_; ///< The componet period in s
   std::mutex step_mutex_; ///< Mutex for step callback
-  bool has_error_; ///< Flag to indicate if error was raised
 
   std::map<std::string, modulo_core::Predicate> predicates_;///< Map of predicates
   std::shared_ptr<rclcpp::Publisher<modulo_interfaces::msg::PredicateCollection>>

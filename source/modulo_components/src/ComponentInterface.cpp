@@ -12,8 +12,7 @@ namespace modulo_components {
 
 ComponentInterface::ComponentInterface(
     const std::shared_ptr<rclcpp::node_interfaces::NodeInterfaces<ALL_RCLCPP_NODE_INTERFACES>>& interfaces)
-    : has_error_(false),
-      node_base_(interfaces->get_node_base_interface()),
+    : node_base_(interfaces->get_node_base_interface()),
       node_clock_(interfaces->get_node_clock_interface()),
       node_logging_(interfaces->get_node_logging_interface()),
       node_parameters_(interfaces->get_node_parameters_interface()),
