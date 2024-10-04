@@ -93,8 +93,7 @@ def read_directory(directory, filenames: List[str] = None) -> dict:
     for file in filenames:
         if file.endswith(".bin"):
             file = file[:-4]
-        reader = BinaryReader(os.path.join(directory, file))
-        data[file] = reader.read()
+        data[file] = read_binary_file(os.path.join(directory, file))
     return data
 
 
