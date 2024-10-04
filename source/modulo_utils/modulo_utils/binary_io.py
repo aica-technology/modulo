@@ -20,13 +20,13 @@ class BinaryRecorder():
         self._filepath = filepath
         if not self._filepath.endswith(".bin"):
             self._filepath += ".bin"
-        os.makedirs(os.path.dirname(self._filepath), exist_ok=True)
         self._file: BufferedWriter
 
     def open(self):
         """
         Open the file for writing.
         """
+        os.makedirs(os.path.dirname(self._filepath), exist_ok=True)
         self._file = open(self._filepath, 'wb')
 
     def write(self, msg: EncodedState):
