@@ -94,6 +94,8 @@ because they can already be inferred from automatically published topics on the 
 - feat: try catch lifecycle transitions in components and controllers (#120)
 - feat(components): use component description schema 1-1-1 to mark lifecycle property (#136)
 - docs(components): update schema path in component descriptions (#154)
+- refactor(components): improve component error handling (#138)
+- fix(components): correctly go through shutdown sequence (#157)
 
 #### Build
 
@@ -102,8 +104,6 @@ because they can already be inferred from automatically published topics on the 
 - release: use updated base image (#139)
 - chore: format repository (#142)
 - release: version v5.0.0-rc0009 (#155)
-- refactor(components): improve component error handling (#138)
-- fix(components): correctly go through shutdown sequence (#157)
 
 ### Dependencies
 
