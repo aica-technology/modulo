@@ -247,7 +247,7 @@ Protected Member Functions</h2></td></tr>
 <tr class="memdesc:aa21a3ebb9bdce8d012558a46b4642fb4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the Quality of Service for ROS publishers and subscribers.  <br /></td></tr>
 <tr class="separator:aa21a3ebb9bdce8d012558a46b4642fb4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8a1c3bac0aa2141b33682059b3b8f18b" id="r_a8a1c3bac0aa2141b33682059b3b8f18b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmodulo__components_1_1_component_interface.html#a418d23ed978018d9d465b9036db3eb8d">virtual</a> <a class="el" href="classmodulo__components_1_1_component_interface.html#a418d23ed978018d9d465b9036db3eb8d">void</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmodulo__components_1_1_component_interface.html#a8a1c3bac0aa2141b33682059b3b8f18b">raise_error</a> ()</td></tr>
-<tr class="memdesc:a8a1c3bac0aa2141b33682059b3b8f18b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Put the component in error state by setting the 'in_error_state' predicate to true.  <br /></td></tr>
+<tr class="memdesc:a8a1c3bac0aa2141b33682059b3b8f18b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Notify an error in the component.  <br /></td></tr>
 <tr class="separator:a8a1c3bac0aa2141b33682059b3b8f18b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9f7ba119ecceb0862634ed403306ddf8" id="r_a9f7ba119ecceb0862634ed403306ddf8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmodulo__components_1_1_component_interface.html#a418d23ed978018d9d465b9036db3eb8d">void</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmodulo__components_1_1_component_interface.html#a9f7ba119ecceb0862634ed403306ddf8">publish_predicates</a> ()</td></tr>
 <tr class="memdesc:a9f7ba119ecceb0862634ed403306ddf8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper function to publish all predicates.  <br /></td></tr>
@@ -258,6 +258,9 @@ Protected Member Functions</h2></td></tr>
 <tr class="memitem:ae3356bb3938d2df54a5bd43b07c049df" id="r_ae3356bb3938d2df54a5bd43b07c049df"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmodulo__components_1_1_component_interface.html#a418d23ed978018d9d465b9036db3eb8d">void</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmodulo__components_1_1_component_interface.html#ae3356bb3938d2df54a5bd43b07c049df">evaluate_periodic_callbacks</a> ()</td></tr>
 <tr class="memdesc:ae3356bb3938d2df54a5bd43b07c049df"><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper function to evaluate all periodic function callbacks.  <br /></td></tr>
 <tr class="separator:ae3356bb3938d2df54a5bd43b07c049df"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a405eb37f9691fd567c8854b0a2bfd79e" id="r_a405eb37f9691fd567c8854b0a2bfd79e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmodulo__components_1_1_component_interface.html#a418d23ed978018d9d465b9036db3eb8d">void</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmodulo__components_1_1_component_interface.html#a405eb37f9691fd567c8854b0a2bfd79e">finalize_interfaces</a> ()</td></tr>
+<tr class="memdesc:a405eb37f9691fd567c8854b0a2bfd79e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finalize all interfaces.  <br /></td></tr>
+<tr class="separator:a405eb37f9691fd567c8854b0a2bfd79e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-attribs" name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
@@ -307,7 +310,7 @@ Friends</h2></td></tr>
 
 <p>Virtual destructor. </p>
 
-<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00051">51</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00049">49</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -413,7 +416,7 @@ template&lt;<a class="el" href="classmodulo__components_1_1_component_interface.
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_component_interface_8hpp_source.html#l00723">723</a> of file <a class="el" href="_component_interface_8hpp_source.html">ComponentInterface.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_component_interface_8hpp_source.html#l00728">728</a> of file <a class="el" href="_component_interface_8hpp_source.html">ComponentInterface.hpp</a>.</p>
 
 </div>
 </div>
@@ -489,7 +492,7 @@ template&lt;<a class="el" href="classmodulo__components_1_1_component_interface.
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_component_interface_8hpp_source.html#l00632">632</a> of file <a class="el" href="_component_interface_8hpp_source.html">ComponentInterface.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_component_interface_8hpp_source.html#l00637">637</a> of file <a class="el" href="_component_interface_8hpp_source.html">ComponentInterface.hpp</a>.</p>
 
 </div>
 </div>
@@ -558,7 +561,7 @@ template&lt;<a class="el" href="classmodulo__components_1_1_component_interface.
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_component_interface_8hpp_source.html#l00625">625</a> of file <a class="el" href="_component_interface_8hpp_source.html">ComponentInterface.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_component_interface_8hpp_source.html#l00630">630</a> of file <a class="el" href="_component_interface_8hpp_source.html">ComponentInterface.hpp</a>.</p>
 
 </div>
 </div>
@@ -618,7 +621,7 @@ template&lt;<a class="el" href="classmodulo__components_1_1_component_interface.
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00078">78</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00076">76</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -693,7 +696,7 @@ template&lt;<a class="el" href="classmodulo__components_1_1_component_interface.
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_component_interface_8hpp_source.html#l00585">585</a> of file <a class="el" href="_component_interface_8hpp_source.html">ComponentInterface.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_component_interface_8hpp_source.html#l00590">590</a> of file <a class="el" href="_component_interface_8hpp_source.html">ComponentInterface.hpp</a>.</p>
 
 </div>
 </div>
@@ -740,7 +743,7 @@ template&lt;<a class="el" href="classmodulo__components_1_1_component_interface.
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00449">449</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00447">447</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -787,7 +790,7 @@ template&lt;<a class="el" href="classmodulo__components_1_1_component_interface.
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00192">192</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00190">190</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -834,7 +837,7 @@ template&lt;<a class="el" href="classmodulo__components_1_1_component_interface.
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00196">196</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00194">194</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -881,7 +884,7 @@ template&lt;<a class="el" href="classmodulo__components_1_1_component_interface.
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00396">396</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00394">394</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -928,7 +931,7 @@ template&lt;<a class="el" href="classmodulo__components_1_1_component_interface.
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00369">369</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00367">367</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -957,7 +960,7 @@ template&lt;<a class="el" href="classmodulo__components_1_1_component_interface.
 
 <p>Configure a static transform broadcaster. </p>
 
-<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00475">475</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00473">473</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -986,7 +989,7 @@ template&lt;<a class="el" href="classmodulo__components_1_1_component_interface.
 
 <p>Configure a transform broadcaster. </p>
 
-<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00464">464</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00462">462</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -1015,7 +1018,7 @@ template&lt;<a class="el" href="classmodulo__components_1_1_component_interface.
 
 <p>Configure a transform buffer and listener. </p>
 
-<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00488">488</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00486">486</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -1051,7 +1054,7 @@ template&lt;<a class="el" href="classmodulo__components_1_1_component_interface.
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00255">255</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00253">253</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -1140,7 +1143,7 @@ template&lt;<a class="el" href="classmodulo__components_1_1_component_interface.
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The parsed signal name </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_component_interface_8hpp_source.html#l00746">746</a> of file <a class="el" href="_component_interface_8hpp_source.html">ComponentInterface.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_component_interface_8hpp_source.html#l00751">751</a> of file <a class="el" href="_component_interface_8hpp_source.html">ComponentInterface.hpp</a>.</p>
 
 </div>
 </div>
@@ -1200,7 +1203,7 @@ template&lt;<a class="el" href="classmodulo__components_1_1_component_interface.
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00288">288</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00286">286</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -1260,7 +1263,7 @@ template&lt;<a class="el" href="classmodulo__components_1_1_component_interface.
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00293">293</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00291">291</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -1289,7 +1292,36 @@ template&lt;<a class="el" href="classmodulo__components_1_1_component_interface.
 
 <p>Helper function to evaluate all periodic function callbacks. </p>
 
-<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00603">603</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00600">600</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a405eb37f9691fd567c8854b0a2bfd79e" name="a405eb37f9691fd567c8854b0a2bfd79e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a405eb37f9691fd567c8854b0a2bfd79e">&#9670;&#160;</a></span>finalize_interfaces()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classmodulo__components_1_1_component_interface.html#a418d23ed978018d9d465b9036db3eb8d">void</a> modulo_components::ComponentInterface::finalize_interfaces </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Finalize all interfaces. </p>
+
+<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00612">612</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -1332,7 +1364,7 @@ template&lt;<a class="el" href="classmodulo__components_1_1_component_interface.
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The ParameterInterface pointer to a Parameter instance </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00125">125</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00123">123</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -1383,7 +1415,7 @@ template&lt;typename T &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The value of the parameter </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_component_interface_8hpp_source.html#l00595">595</a> of file <a class="el" href="_component_interface_8hpp_source.html">ComponentInterface.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_component_interface_8hpp_source.html#l00600">600</a> of file <a class="el" href="_component_interface_8hpp_source.html">ComponentInterface.hpp</a>.</p>
 
 </div>
 </div>
@@ -1434,7 +1466,7 @@ template&lt;&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00060">60</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00058">58</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -1455,7 +1487,7 @@ template&lt;&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00065">65</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00063">63</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -1476,7 +1508,7 @@ template&lt;&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00070">70</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00068">68</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -1513,7 +1545,7 @@ template&lt;&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>the value of the predicate as a boolean </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00218">218</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00216">216</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -1543,7 +1575,7 @@ template&lt;&gt; </div>
 <p>Getter of the Quality of Service attribute. </p>
 <dl class="section return"><dt>Returns</dt><dd>The Quality of Service attribute </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00551">551</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00549">549</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -1573,7 +1605,7 @@ template&lt;&gt; </div>
 <p>Get the component rate in Hertz. </p>
 <dl class="section return"><dt>Returns</dt><dd>The component rate </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00055">55</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00053">53</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -1641,7 +1673,7 @@ template&lt;&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>If it exists, the requested transform </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00515">515</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00513">513</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -1709,7 +1741,7 @@ template&lt;&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>If it exists and is still valid, the requested transform </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00524">524</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00522">522</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -1738,7 +1770,7 @@ template&lt;&gt; </div>
 
 <p>Steps to execute periodically. To be redefined by derived <a class="el" href="classmodulo__components_1_1_component.html" title="A wrapper for rclcpp::Node to simplify application composition through unified component interfaces.">Component</a> classes. </p>
 
-<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00076">76</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00074">74</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -1775,7 +1807,7 @@ template&lt;&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The validation result </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00187">187</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00185">185</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -1817,7 +1849,7 @@ template&lt;&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00330">330</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00328">328</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -1846,7 +1878,7 @@ template&lt;&gt; </div>
 
 <p>Helper function to publish all output signals. </p>
 
-<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00589">589</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00586">586</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -1875,7 +1907,7 @@ template&lt;&gt; </div>
 
 <p>Helper function to publish all predicates. </p>
 
-<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00577">577</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00574">574</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -1902,9 +1934,11 @@ template&lt;&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Put the component in error state by setting the 'in_error_state' predicate to true. </p>
+<p>Notify an error in the component. </p>
 
-<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00559">559</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
+<p>Reimplemented in <a class="el" href="classmodulo__components_1_1_component.html#acf7ee62988ef80d58294ed5514885f7e">modulo_components::Component</a>, and <a class="el" href="classmodulo__components_1_1_lifecycle_component.html#a04b2a80b2611e17027bb390b8845bcab">modulo_components::LifecycleComponent</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00557">557</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -1940,7 +1974,7 @@ template&lt;&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00347">347</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00345">345</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -1976,7 +2010,7 @@ template&lt;&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00358">358</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00356">356</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -2012,7 +2046,7 @@ template&lt;&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00507">507</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00505">505</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -2048,7 +2082,7 @@ template&lt;&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00511">511</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00509">509</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -2084,7 +2118,7 @@ template&lt;&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00499">499</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00497">497</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -2120,7 +2154,7 @@ template&lt;&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00503">503</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00501">501</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -2175,7 +2209,7 @@ template&lt;<a class="el" href="classmodulo__components_1_1_component_interface.
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The value of the parameter </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_component_interface_8hpp_source.html#l00605">605</a> of file <a class="el" href="_component_interface_8hpp_source.html">ComponentInterface.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_component_interface_8hpp_source.html#l00610">610</a> of file <a class="el" href="_component_interface_8hpp_source.html">ComponentInterface.hpp</a>.</p>
 
 </div>
 </div>
@@ -2222,7 +2256,7 @@ template&lt;<a class="el" href="classmodulo__components_1_1_component_interface.
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00236">236</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00234">234</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -2269,7 +2303,7 @@ template&lt;<a class="el" href="classmodulo__components_1_1_component_interface.
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00240">240</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00238">238</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -2305,7 +2339,7 @@ template&lt;<a class="el" href="classmodulo__components_1_1_component_interface.
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00555">555</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00553">553</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -2334,7 +2368,7 @@ template&lt;<a class="el" href="classmodulo__components_1_1_component_interface.
 
 <p>Step function that is called periodically. </p>
 
-<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00074">74</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00072">72</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -2370,7 +2404,7 @@ template&lt;<a class="el" href="classmodulo__components_1_1_component_interface.
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00276">276</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_component_interface_8cpp_source.html#l00274">274</a> of file <a class="el" href="_component_interface_8cpp_source.html">ComponentInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -2422,7 +2456,7 @@ template&lt;<a class="el" href="classmodulo__components_1_1_component_interface.
 
 <p>Map of inputs. </p>
 
-<p class="definition">Definition at line <a class="el" href="_component_interface_8hpp_source.html#l00440">440</a> of file <a class="el" href="_component_interface_8hpp_source.html">ComponentInterface.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_component_interface_8hpp_source.html#l00445">445</a> of file <a class="el" href="_component_interface_8hpp_source.html">ComponentInterface.hpp</a>.</p>
 
 </div>
 </div>
@@ -2448,7 +2482,7 @@ template&lt;<a class="el" href="classmodulo__components_1_1_component_interface.
 
 <p>Map of outputs. </p>
 
-<p class="definition">Definition at line <a class="el" href="_component_interface_8hpp_source.html#l00441">441</a> of file <a class="el" href="_component_interface_8hpp_source.html">ComponentInterface.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_component_interface_8hpp_source.html#l00446">446</a> of file <a class="el" href="_component_interface_8hpp_source.html">ComponentInterface.hpp</a>.</p>
 
 </div>
 </div>
@@ -2474,7 +2508,7 @@ template&lt;<a class="el" href="classmodulo__components_1_1_component_interface.
 
 <p>Map of outputs with periodic publishing flag. </p>
 
-<p class="definition">Definition at line <a class="el" href="_component_interface_8hpp_source.html#l00442">442</a> of file <a class="el" href="_component_interface_8hpp_source.html">ComponentInterface.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_component_interface_8hpp_source.html#l00447">447</a> of file <a class="el" href="_component_interface_8hpp_source.html">ComponentInterface.hpp</a>.</p>
 
 </div>
 </div>

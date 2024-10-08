@@ -134,6 +134,8 @@ Protected Member Functions</h2></td></tr>
 <tr class="memitem:ab475ee0e8ea1b1f52c6f0720a0546e90"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classmodulo__components_1_1_component_interface.html#a418d23ed978018d9d465b9036db3eb8d">void</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmodulo__components_1_1_component.html#ab475ee0e8ea1b1f52c6f0720a0546e90">add_output</a> (<a class="el" href="classmodulo__components_1_1_component_interface.html#a418d23ed978018d9d465b9036db3eb8d">const</a> std::string &amp;<a class="el" href="classmodulo__components_1_1_component_interface.html#a418d23ed978018d9d465b9036db3eb8d">signal_name</a>, <a class="el" href="classmodulo__components_1_1_component_interface.html#a418d23ed978018d9d465b9036db3eb8d">const</a> std::shared_ptr&lt; <a class="el" href="classmodulo__components_1_1_component_interface.html#a418d23ed978018d9d465b9036db3eb8d">DataT</a> &gt; &amp;<a class="el" href="classmodulo__components_1_1_component_interface.html#a418d23ed978018d9d465b9036db3eb8d">data</a>, <a class="el" href="classmodulo__components_1_1_component_interface.html#a418d23ed978018d9d465b9036db3eb8d">const</a> std::string &amp;<a class="el" href="classmodulo__components_1_1_component_interface.html#a418d23ed978018d9d465b9036db3eb8d">default_topic</a>=&quot;&quot;, <a class="el" href="classmodulo__components_1_1_component_interface.html#a418d23ed978018d9d465b9036db3eb8d">bool</a> <a class="el" href="classmodulo__components_1_1_component_interface.html#a418d23ed978018d9d465b9036db3eb8d">fixed_topic</a>=<a class="el" href="classmodulo__components_1_1_component_interface.html#a418d23ed978018d9d465b9036db3eb8d">false</a>, <a class="el" href="classmodulo__components_1_1_component_interface.html#a418d23ed978018d9d465b9036db3eb8d">bool</a> <a class="el" href="classmodulo__components_1_1_component_interface.html#a418d23ed978018d9d465b9036db3eb8d">publish_on_step</a>=<a class="el" href="classmodulo__components_1_1_component_interface.html#a418d23ed978018d9d465b9036db3eb8d">true</a>)</td></tr>
 <tr class="memdesc:ab475ee0e8ea1b1f52c6f0720a0546e90"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add and configure an output signal of the component.  <br /></td></tr>
 <tr class="separator:ab475ee0e8ea1b1f52c6f0720a0546e90"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acf7ee62988ef80d58294ed5514885f7e" id="r_acf7ee62988ef80d58294ed5514885f7e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmodulo__components_1_1_component_interface.html#a418d23ed978018d9d465b9036db3eb8d">void</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmodulo__components_1_1_component.html#acf7ee62988ef80d58294ed5514885f7e">raise_error</a> () <a class="el" href="classmodulo__components_1_1_component_interface.html#a418d23ed978018d9d465b9036db3eb8d">override</a></td></tr>
+<tr class="separator:acf7ee62988ef80d58294ed5514885f7e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_methods_classmodulo__components_1_1_component_interface"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_classmodulo__components_1_1_component_interface')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="classmodulo__components_1_1_component_interface.html">modulo_components::ComponentInterface</a></td></tr>
 <tr class="memitem:a8ce3d7ecf6ff18041c0ec2829de40e22 inherit pro_methods_classmodulo__components_1_1_component_interface" id="r_a8ce3d7ecf6ff18041c0ec2829de40e22"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmodulo__components_1_1_component_interface.html#a8ce3d7ecf6ff18041c0ec2829de40e22">ComponentInterface</a> (<a class="el" href="classmodulo__components_1_1_component_interface.html#a418d23ed978018d9d465b9036db3eb8d">const</a> std::shared_ptr&lt; rclcpp::node_interfaces::NodeInterfaces&lt; <a class="el" href="classmodulo__components_1_1_component_interface.html#a418d23ed978018d9d465b9036db3eb8d">ALL_RCLCPP_NODE_INTERFACES</a> &gt; &gt; &amp;<a class="el" href="classmodulo__components_1_1_component_interface.html#a418d23ed978018d9d465b9036db3eb8d">interfaces</a>)</td></tr>
 <tr class="memdesc:a8ce3d7ecf6ff18041c0ec2829de40e22 inherit pro_methods_classmodulo__components_1_1_component_interface"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor with all node interfaces.  <br /></td></tr>
@@ -263,9 +265,6 @@ Protected Member Functions</h2></td></tr>
 <tr class="memitem:aa21a3ebb9bdce8d012558a46b4642fb4 inherit pro_methods_classmodulo__components_1_1_component_interface" id="r_aa21a3ebb9bdce8d012558a46b4642fb4"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmodulo__components_1_1_component_interface.html#a418d23ed978018d9d465b9036db3eb8d">void</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmodulo__components_1_1_component_interface.html#aa21a3ebb9bdce8d012558a46b4642fb4">set_qos</a> (<a class="el" href="classmodulo__components_1_1_component_interface.html#a418d23ed978018d9d465b9036db3eb8d">const</a> rclcpp::QoS &amp;<a class="el" href="classmodulo__components_1_1_component_interface.html#a418d23ed978018d9d465b9036db3eb8d">qos</a>)</td></tr>
 <tr class="memdesc:aa21a3ebb9bdce8d012558a46b4642fb4 inherit pro_methods_classmodulo__components_1_1_component_interface"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the Quality of Service for ROS publishers and subscribers.  <br /></td></tr>
 <tr class="separator:aa21a3ebb9bdce8d012558a46b4642fb4 inherit pro_methods_classmodulo__components_1_1_component_interface"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8a1c3bac0aa2141b33682059b3b8f18b inherit pro_methods_classmodulo__components_1_1_component_interface" id="r_a8a1c3bac0aa2141b33682059b3b8f18b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmodulo__components_1_1_component_interface.html#a418d23ed978018d9d465b9036db3eb8d">virtual</a> <a class="el" href="classmodulo__components_1_1_component_interface.html#a418d23ed978018d9d465b9036db3eb8d">void</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmodulo__components_1_1_component_interface.html#a8a1c3bac0aa2141b33682059b3b8f18b">raise_error</a> ()</td></tr>
-<tr class="memdesc:a8a1c3bac0aa2141b33682059b3b8f18b inherit pro_methods_classmodulo__components_1_1_component_interface"><td class="mdescLeft">&#160;</td><td class="mdescRight">Put the component in error state by setting the 'in_error_state' predicate to true.  <br /></td></tr>
-<tr class="separator:a8a1c3bac0aa2141b33682059b3b8f18b inherit pro_methods_classmodulo__components_1_1_component_interface"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9f7ba119ecceb0862634ed403306ddf8 inherit pro_methods_classmodulo__components_1_1_component_interface" id="r_a9f7ba119ecceb0862634ed403306ddf8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmodulo__components_1_1_component_interface.html#a418d23ed978018d9d465b9036db3eb8d">void</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmodulo__components_1_1_component_interface.html#a9f7ba119ecceb0862634ed403306ddf8">publish_predicates</a> ()</td></tr>
 <tr class="memdesc:a9f7ba119ecceb0862634ed403306ddf8 inherit pro_methods_classmodulo__components_1_1_component_interface"><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper function to publish all predicates.  <br /></td></tr>
 <tr class="separator:a9f7ba119ecceb0862634ed403306ddf8 inherit pro_methods_classmodulo__components_1_1_component_interface"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -275,6 +274,9 @@ Protected Member Functions</h2></td></tr>
 <tr class="memitem:ae3356bb3938d2df54a5bd43b07c049df inherit pro_methods_classmodulo__components_1_1_component_interface" id="r_ae3356bb3938d2df54a5bd43b07c049df"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmodulo__components_1_1_component_interface.html#a418d23ed978018d9d465b9036db3eb8d">void</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmodulo__components_1_1_component_interface.html#ae3356bb3938d2df54a5bd43b07c049df">evaluate_periodic_callbacks</a> ()</td></tr>
 <tr class="memdesc:ae3356bb3938d2df54a5bd43b07c049df inherit pro_methods_classmodulo__components_1_1_component_interface"><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper function to evaluate all periodic function callbacks.  <br /></td></tr>
 <tr class="separator:ae3356bb3938d2df54a5bd43b07c049df inherit pro_methods_classmodulo__components_1_1_component_interface"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a405eb37f9691fd567c8854b0a2bfd79e inherit pro_methods_classmodulo__components_1_1_component_interface" id="r_a405eb37f9691fd567c8854b0a2bfd79e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmodulo__components_1_1_component_interface.html#a418d23ed978018d9d465b9036db3eb8d">void</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmodulo__components_1_1_component_interface.html#a405eb37f9691fd567c8854b0a2bfd79e">finalize_interfaces</a> ()</td></tr>
+<tr class="memdesc:a405eb37f9691fd567c8854b0a2bfd79e inherit pro_methods_classmodulo__components_1_1_component_interface"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finalize all interfaces.  <br /></td></tr>
+<tr class="separator:a405eb37f9691fd567c8854b0a2bfd79e inherit pro_methods_classmodulo__components_1_1_component_interface"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="friends" name="friends"></a>
 Friends</h2></td></tr>
@@ -420,7 +422,7 @@ template&lt;<a class="el" href="classmodulo__components_1_1_component_interface.
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_component_8hpp_source.html#l00098">98</a> of file <a class="el" href="_component_8hpp_source.html">Component.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_component_8hpp_source.html#l00104">104</a> of file <a class="el" href="_component_8hpp_source.html">Component.hpp</a>.</p>
 
 </div>
 </div>
@@ -449,7 +451,7 @@ template&lt;<a class="el" href="classmodulo__components_1_1_component_interface.
 
 <p>Start the execution thread. </p>
 
-<p class="definition">Definition at line <a class="el" href="_component_8cpp_source.html#l00032">32</a> of file <a class="el" href="_component_8cpp_source.html">Component.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_component_8cpp_source.html#l00033">33</a> of file <a class="el" href="_component_8cpp_source.html">Component.cpp</a>.</p>
 
 </div>
 </div>
@@ -492,7 +494,7 @@ template&lt;<a class="el" href="classmodulo__components_1_1_component_interface.
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The ParameterInterface pointer to a Parameter instance   </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_component_8cpp_source.html#l00060">60</a> of file <a class="el" href="_component_8cpp_source.html">Component.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_component_8cpp_source.html#l00061">61</a> of file <a class="el" href="_component_8cpp_source.html">Component.cpp</a>.</p>
 
 </div>
 </div>
@@ -522,7 +524,37 @@ template&lt;<a class="el" href="classmodulo__components_1_1_component_interface.
 <p>Execute the component logic. To be redefined in derived classes. </p>
 <dl class="section return"><dt>Returns</dt><dd>True, if the execution was successful, false otherwise </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_component_8cpp_source.html#l00056">56</a> of file <a class="el" href="_component_8cpp_source.html">Component.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_component_8cpp_source.html#l00057">57</a> of file <a class="el" href="_component_8cpp_source.html">Component.cpp</a>.</p>
+
+</div>
+</div>
+<a id="acf7ee62988ef80d58294ed5514885f7e" name="acf7ee62988ef80d58294ed5514885f7e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acf7ee62988ef80d58294ed5514885f7e">&#9670;&#160;</a></span>raise_error()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classmodulo__components_1_1_component_interface.html#a418d23ed978018d9d465b9036db3eb8d">void</a> modulo_components::Component::raise_error </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">protected</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Set the in_error_state predicate to true and cancel the step timer. </p>
+
+<p>Reimplemented from <a class="el" href="classmodulo__components_1_1_component_interface.html#a8a1c3bac0aa2141b33682059b3b8f18b">modulo_components::ComponentInterface</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="_component_8cpp_source.html#l00065">65</a> of file <a class="el" href="_component_8cpp_source.html">Component.cpp</a>.</p>
 
 </div>
 </div>
