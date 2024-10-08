@@ -88,6 +88,7 @@ private:
   using ComponentInterface::cancel_step;
   using ComponentInterface::create_output;
   using ComponentInterface::evaluate_periodic_callbacks;
+  using ComponentInterface::finalize_interfaces;
   using ComponentInterface::get_parameter;
   using ComponentInterface::inputs_;
   using ComponentInterface::outputs_;

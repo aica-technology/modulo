@@ -442,6 +442,11 @@ protected:
    */
   void evaluate_periodic_callbacks();
 
+  /**
+   * @brief Finalize all interfaces.
+   */
+  void finalize_interfaces();
+
   std::map<std::string, std::shared_ptr<modulo_core::communication::SubscriptionInterface>> inputs_;///< Map of inputs
   std::map<std::string, std::shared_ptr<modulo_core::communication::PublisherInterface>> outputs_;  ///< Map of outputs
   std::map<std::string, bool> periodic_outputs_;///< Map of outputs with periodic publishing flag

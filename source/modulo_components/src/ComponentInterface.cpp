@@ -614,4 +614,18 @@ void ComponentInterface::evaluate_periodic_callbacks() {
     }
   }
 }
+
+void ComponentInterface::finalize_interfaces() {
+  RCLCPP_DEBUG(this->node_logging_->get_logger(), "Finalizing all interfaces.");
+  this->inputs_.clear();
+  this->outputs_.clear();
+  this->predicate_publiser.reset();
+  this->empty_services_.clear();
+  this->string_services_.clear();
+  this->step_timer_.reset();
+  this->tf_buffer_.reset();
+  this->tf_listener_.reset();
+  this->tf_broadcaster_.reset();
+  this->static_tf_broadcaster_.reset();
+}
 }// namespace modulo_components

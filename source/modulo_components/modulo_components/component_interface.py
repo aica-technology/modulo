@@ -929,3 +929,17 @@ class ComponentInterface(Node):
         Notify an error in the component.
         """
         self.get_logger().error("An error was raised in the component.")
+
+    def _finalize_interfaces(self):
+        """
+        Finalize all interfaces.
+        """
+        self._inputs = {}
+        self._outputs = {}
+        self._services_dict = {}
+        self.__tf_buffer = None
+        self.__tf_listener = None
+        self.__tf_broadcaster = None
+        self.__static_tf_broadcaster = None
+        self._predicate_publisher = None
+        self.__step_timer = None

@@ -14,7 +14,7 @@ LifecycleComponent::LifecycleComponent(const rclcpp::NodeOptions& node_options, 
           LifecycleNode::get_node_time_source_interface(), LifecycleNode::get_node_timers_interface(),
           LifecycleNode::get_node_topics_interface(), LifecycleNode::get_node_type_descriptions_interface(),
           LifecycleNode::get_node_waitables_interface())),
-      has_error_(true) {}
+      has_error_(false) {}
 
 std::shared_ptr<state_representation::ParameterInterface>
 LifecycleComponent::get_parameter(const std::string& name) const {
@@ -181,11 +181,7 @@ node_interfaces::LifecycleNodeInterface::CallbackReturn LifecycleComponent::on_s
         if (!this->handle_shutdown()) {
           break;
         }
-        //  TODO: reset and finalize all needed properties
-        //  this->handlers_.clear();
-        //  this->daemons_.clear();
-        //  this->parameters_.clear();
-        //  this->shutdown_ = true;
+        this->finalize_interfaces();
         return node_interfaces::LifecycleNodeInterface::CallbackReturn::SUCCESS;
       default:
         RCLCPP_WARN(get_logger(), "Invalid transition 'shutdown' from state %s.", previous_state.label().c_str());
@@ -204,7 +200,7 @@ bool LifecycleComponent::handle_shutdown() {
     RCLCPP_ERROR_STREAM(get_logger(), ex.what());
     return false;
   }
-  return result && this->clear_signals();
+  return result;
 }
 
 bool LifecycleComponent::on_shutdown_callback() {
@@ -222,9 +218,10 @@ node_interfaces::LifecycleNodeInterface::CallbackReturn LifecycleComponent::on_e
   }
   if (!error_handled) {
     RCLCPP_ERROR(get_logger(), "Error processing failed! Entering into the finalized state.");
-    // TODO: reset and finalize all needed properties
+    this->finalize_interfaces();
     return node_interfaces::LifecycleNodeInterface::CallbackReturn::ERROR;
   }
+  this->has_error_ = false;
   return node_interfaces::LifecycleNodeInterface::CallbackReturn::SUCCESS;
 }
 
@@ -303,13 +300,6 @@ bool LifecycleComponent::configure_outputs() {
     }
   }
   return success;
-}
-
-bool LifecycleComponent::clear_signals() {
-  RCLCPP_DEBUG(this->get_logger(), "Clearing all inputs and outputs.");
-  this->inputs_.clear();
-  this->outputs_.clear();
-  return true;
 }
 
 bool LifecycleComponent::activate_outputs() {

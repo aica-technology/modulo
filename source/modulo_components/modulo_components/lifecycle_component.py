@@ -240,7 +240,7 @@ class LifecycleComponent(ComponentInterface, LifecycleNodeMixin):
                 if not self.__handle_shutdown():
                     self.get_logger().error("Entering into the error processing transition state.")
                     return TransitionCallbackReturn.ERROR
-                # TODO reset and finalize all properties
+                self._finalize_interfaces()
                 return TransitionCallbackReturn.SUCCESS
             self.get_logger().warn(f"Invalid transition 'shutdown' from state {previous_state.label}.")
         self.get_logger().error("Entering into the error processing transition state.")
@@ -288,8 +288,9 @@ class LifecycleComponent(ComponentInterface, LifecycleNodeMixin):
             error_handled = False
         if not error_handled:
             self.get_logger().error("Error processing failed! Entering into the finalized state.")
-            # TODO reset and finalize all needed properties
+            self._finalize_interfaces()
             return TransitionCallbackReturn.ERROR
+        self._has_error = False
         return TransitionCallbackReturn.SUCCESS
 
     def __handle_error(self) -> bool:
