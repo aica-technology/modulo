@@ -2,6 +2,7 @@
 
 Release Versions:
 
+- [5.0.0](#500)
 - [4.2.2](#422)
 - [4.2.1](#421)
 - [4.2.0](#420)
@@ -15,40 +16,100 @@ Release Versions:
 - [2.1.1](#211)
 - [2.1.0](#210)
 
-## Upcoming changes
+## 5.0.0
 
-- refactor: rename function in modulo translators (#77)
-- feat(components): add mutex around step callback (#67)
-- refactor: move utilities to modulo_utils package (#89)
-- refactor: move exceptions to modulo_utils (#90)
-- refactor: remove modulo_component_interfaces (#88)
+### Oktober 9th, 2024
+
+Version 5.0.0 is a major update to modulo developed for ROS 2 Jazzy Jalisco and ROS 2 control 4.17.0. If features even
+more flexibility and performance in the component and controller base classes in `modulo_components` and
+`modulo_controllers` and improved divison of responsability across `modulo_core`, `modulo_interfaces` (formerly
+`modulo_component_interfaces`) and `modulo_utils`.
+
+### Breaking changes
+
+Due to the size and importance of this version update, the list of breaking changes is quite long.
+
+#### modulo_component_interfaces
+
+The package `modulo_component_interfaces` has been removed in favor of the recently added `modulo_interfaces`. All
+common service and message definitions are now to be found in `modulo_interfaces`.
+
+- refactor!: remove modulo_component_interfaces (#88)
+
+#### modulo_utils
+
+In order to minimize code duplication between `modulo_components` and `modulo_controllers`, which define classes with
+very similar interfaces, shared dependencies have been moved to `modulo_utils`:
+
+- Custom defined exceptions used across all modulo packages (#90, #117)
+- Parsing utilities and the `PredicateVariant` (#89, #101)
+
+#### modulo_core
+
+Apart from a minor renaming in #77, `modulo_core` comes with an important features that breaks the ABI. Using heavy
+templating and [`concepts`](https://en.cppreference.com/w/cpp/language/constraints)) introduced in C++20, it was
+possible to extend the communication classes (`MessagePair`, `PublisherHandler` and `SubscriptionHandler`) to any ROS
+message type.
+
+- refactor(core)!: rename function in modulo translators (#77)
+- feat!: add support for custom inputs and outputs (#133)
+
+#### modulo_controllers
+
+There is a new intermediate base class `BaseControllerInterface` that adds typical modulo interfaces (`add_parameter`,
+`add_input`, `add_service`, etc.) to the `controller_interface::ControllerInterface` class from ROS 2 control. This
+should allow simpler migration of pure ROS 2 control controller implementations to the modulo controller interface.
+Additionally, the constructor of the `RobotControllerInterface` has an additional argument that allows to specify if
+collision features should be enabled in the robot model.
+
+- refactor(controllers)!: split up base class (#135)
+- feat(controllers)!: add flag for collision features to robot controller interface (#114)
+
+#### modulo_components
+
+In the component classes, the `period` parameter has been removed for good and replaced by the `rate` parameter which
+is not an integer type anymore but a floating type number. Manually published lifecycle predicates have been removed
+because they can already be inferred from automatically published topics on the ROS network.
+
+- feat(components)!: add mutex around step callback (#67)
+- refactor(components)!: remove period parameter and make rate double (#108)
+- refactor!: remove lifecycle predicates and add lifecycle state getter (#130)
+
+### Features and Fixes
+
+#### Core
+
+- feat(interfaces): add message definition for encoded state (#132)
+- feat(utils): add binary reader and recorder for encoded states (#152)
+
+#### Components and Controllers
+
 - feat(controllers): add add_interfaces function for derived controllers (#102)
-- refactor(components): remove period parameter and make rate double (#108)
-- feat(controllers): use exceptions from modulo utils and update to CL v8.1.0 (#106)
-- feat: define topic validation warning in utilities (#101)
+- refactor(controllers): change predicate topic of controllers (#121)
 - fix(components): keep parameter values in sync with ros (#111)
-- feat: update to jazzy and CL v9.0.0 (#116)
-- refactor: move all exceptions into one place (#117)
-- feat(controllers): add flag for collision features to robot controller interface (#114)
-- feat: try catch lifecycle transitions in components and controllers (#120)
-- refactor: change predicate topic of controllers (#121)
+- fix(controllers): keep parameter values in sync with ros (#125)
 - feat(components): only publish predicates on value change (#123)
 - feat(controllers): only publish predicates on value change (#124)
-- fix(controllers): keep parameter values in sync with ros (#125)
-- feat: use v2.0.0-rc1-jazzy image (#126)
-- feat: add message definition for encoded state (#132)
-- refactor: remove lifecycle predicates and add lifecycle state getter (#130)
-- feat(components): use component description schema 1-1-1 to mark lifecycle property (#136)
-- refactor(controllers): split up base class (#135)
-- release: use updated base image (#139)
 - fix(controllers): remove duplicate function (#140)
+- feat: try catch lifecycle transitions in components and controllers (#120)
+- feat(components): use component description schema 1-1-1 to mark lifecycle property (#136)
+- docs(components): update schema path in component descriptions (#154)
+
+#### Build
+
+- feat: update to jazzy and CL v9.0.0 (#116)
+- feat: use v2.0.0-rc1-jazzy image (#126)
+- release: use updated base image (#139)
 - chore: format repository (#142)
-- docs: update schema path in component descriptions (#154)
-- feat(utils): add binary reader and recorder for encoded states (#152)
-- feat!: add support for custom inputs and outputs (#133)
 - release: version v5.0.0-rc0009 (#155)
 - refactor(components): improve component error handling (#138)
 - fix(components): correctly go through shutdown sequence (#157)
+
+### Dependencies
+
+- package-builder: v1.1.1
+- ros2-ws: v2.0.0-jazzy
+- control-libraries: v9.0.0
 
 ## 4.2.2
 
