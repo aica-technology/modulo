@@ -619,7 +619,7 @@ void ComponentInterface::finalize_interfaces() {
   RCLCPP_DEBUG(this->node_logging_->get_logger(), "Finalizing all interfaces.");
   this->inputs_.clear();
   this->outputs_.clear();
-  this->predicate_publiser.reset();
+  this->predicate_publisher_.reset();
   this->empty_services_.clear();
   this->string_services_.clear();
   this->step_timer_.reset();
