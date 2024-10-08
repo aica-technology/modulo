@@ -73,12 +73,6 @@ void ComponentInterface::step() {}
 
 void ComponentInterface::on_step_callback() {}
 
-void ComponentInterface::cancel_step() {
-  if (this->step_timer_ != nullptr) {
-    this->step_timer_->cancel();
-  }
-}
-
 void ComponentInterface::add_parameter(
     const std::shared_ptr<state_representation::ParameterInterface>& parameter, const std::string& description,
     bool read_only) {
@@ -622,6 +616,9 @@ void ComponentInterface::finalize_interfaces() {
   this->predicate_publisher_.reset();
   this->empty_services_.clear();
   this->string_services_.clear();
+  if (this->step_timer_ != nullptr) {
+    this->step_timer_->cancel();
+  }
   this->step_timer_.reset();
   this->tf_buffer_.reset();
   this->tf_listener_.reset();

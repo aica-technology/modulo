@@ -85,7 +85,6 @@ private:
   void on_execute();
 
   // TODO hide ROS methods
-  using ComponentInterface::cancel_step;
   using ComponentInterface::create_output;
   using ComponentInterface::evaluate_periodic_callbacks;
   using ComponentInterface::finalize_interfaces;

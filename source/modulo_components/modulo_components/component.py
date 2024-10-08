@@ -103,4 +103,4 @@ class Component(ComponentInterface):
         """
         super().raise_error()
         self.set_predicate("in_error_state", True)
-        self._cancel_step()
+        self._finalize_interfaces()

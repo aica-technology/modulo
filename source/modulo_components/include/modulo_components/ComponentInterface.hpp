@@ -94,11 +94,6 @@ protected:
   virtual void on_step_callback();
 
   /**
-   * @brief Cancel the step timer.
-   */
-  void cancel_step();
-
-  /**
    * @brief Add a parameter.
    * @details This method stores a pointer reference to an existing Parameter object in the local parameter map and
    * declares the equivalent ROS parameter on the ROS interface.

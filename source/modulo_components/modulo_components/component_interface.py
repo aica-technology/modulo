@@ -113,13 +113,6 @@ class ComponentInterface(Node):
         """
         pass
 
-    def _cancel_step(self):
-        """
-        Cancel the step timer.
-        """
-        if self.__step_timer:
-            self.__step_timer.cancel()
-
     def add_parameter(self, parameter: Union[str, sr.Parameter], description: str, read_only=False) -> None:
         """
         Add a parameter. This method stores either the name of the attribute corresponding to the parameter object or
@@ -942,4 +935,6 @@ class ComponentInterface(Node):
         self.__tf_broadcaster = None
         self.__static_tf_broadcaster = None
         self._predicate_publisher = None
+        if self.__step_timer:
+            self.__step_timer.cancel()
         self.__step_timer = None

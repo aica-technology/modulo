@@ -65,6 +65,6 @@ std::shared_ptr<state_representation::ParameterInterface> Component::get_paramet
 void Component::raise_error() {
   ComponentInterface::raise_error();
   this->set_predicate("in_error_state", true);
-  this->cancel_step();
+  this->finalize_interfaces();
 }
 }// namespace modulo_components
