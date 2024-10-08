@@ -72,11 +72,10 @@ class ComponentInterface(Node):
         self.__predicate_message = PredicateCollection()
         self.__predicate_message.node = self.get_fully_qualified_name()
         self.__predicate_message.type = PredicateCollection.COMPONENT
-        self.add_predicate("in_error_state", False)
 
         self._rate = self.get_parameter_value("rate")
         self._period = 1.0 / self._rate
-        self.create_timer(self._period, self.__step_with_mutex)
+        self.__step_timer = self.create_timer(self._period, self.__step_with_mutex)
 
     def __del__(self):
         self.__step_lock.acquire()
@@ -920,6 +919,22 @@ class ComponentInterface(Node):
 
     def raise_error(self):
         """
-        Put the component in error state by setting the 'in_error_state' predicate to true.
+        Notify an error in the component.
         """
-        self.set_predicate("in_error_state", True)
+        self.get_logger().error("An error was raised in the component.")
+
+    def _finalize_interfaces(self):
+        """
+        Finalize all interfaces.
+        """
+        self._inputs = {}
+        self._outputs = {}
+        self._services_dict = {}
+        self.__tf_buffer = None
+        self.__tf_listener = None
+        self.__tf_broadcaster = None
+        self.__static_tf_broadcaster = None
+        self._predicate_publisher = None
+        if self.__step_timer:
+            self.__step_timer.cancel()
+        self.__step_timer = None

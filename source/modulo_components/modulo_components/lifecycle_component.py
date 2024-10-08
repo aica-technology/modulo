@@ -26,6 +26,7 @@ class LifecycleComponent(ComponentInterface, LifecycleNodeMixin):
         lifecycle_node_kwargs = {key: value for key, value in kwargs.items() if key in LIFECYCLE_NODE_MIXIN_KWARGS}
         ComponentInterface.__init__(self, node_name, *args, **kwargs)
         LifecycleNodeMixin.__init__(self, *args, **lifecycle_node_kwargs)
+        self._has_error = False
 
     def get_lifecycle_state(self) -> LifecycleState:
         """
@@ -226,21 +227,23 @@ class LifecycleComponent(ComponentInterface, LifecycleNodeMixin):
         TRANSITION_CALLBACK_FAILURE, TRANSITION_CALLBACK_ERROR or any uncaught exceptions to 'ErrorProcessing'
         """
         self.get_logger().debug(f"on_shutdown called from previous state {previous_state.label}.")
-        if previous_state.state_id == State.PRIMARY_STATE_FINALIZED:
-            return TransitionCallbackReturn.SUCCESS
-        if previous_state.state_id == State.PRIMARY_STATE_ACTIVE:
-            if not self.__handle_deactivate():
-                self.get_logger().debug("Shutdown failed during intermediate deactivation!")
-        if previous_state.state_id == State.PRIMARY_STATE_INACTIVE:
-            if not self.__handle_cleanup():
-                self.get_logger().debug("Shutdown failed during intermediate cleanup!")
-        if previous_state.state_id == State.PRIMARY_STATE_UNCONFIGURED:
-            if not self.__handle_shutdown():
-                self.get_logger().error("Entering into the error processing transition state.")
-                return TransitionCallbackReturn.ERROR
-            # TODO reset and finalize all properties
-            return TransitionCallbackReturn.SUCCESS
-        self.get_logger().warn(f"Invalid transition 'shutdown' from state {previous_state.label}.")
+        if not self._has_error:
+            if previous_state.state_id == State.PRIMARY_STATE_FINALIZED:
+                return TransitionCallbackReturn.SUCCESS
+            if previous_state.state_id == State.PRIMARY_STATE_ACTIVE:
+                if not self.__handle_deactivate():
+                    self.get_logger().debug("Shutdown failed during intermediate deactivation!")
+            if previous_state.state_id == State.PRIMARY_STATE_INACTIVE:
+                if not self.__handle_cleanup():
+                    self.get_logger().debug("Shutdown failed during intermediate cleanup!")
+            if previous_state.state_id == State.PRIMARY_STATE_UNCONFIGURED:
+                if not self.__handle_shutdown():
+                    self.get_logger().error("Entering into the error processing transition state.")
+                    return TransitionCallbackReturn.ERROR
+                self._finalize_interfaces()
+                return TransitionCallbackReturn.SUCCESS
+            self.get_logger().warn(f"Invalid transition 'shutdown' from state {previous_state.label}.")
+        self.get_logger().error("Entering into the error processing transition state.")
         return TransitionCallbackReturn.ERROR
 
     def __handle_shutdown(self) -> bool:
@@ -277,7 +280,6 @@ class LifecycleComponent(ComponentInterface, LifecycleNodeMixin):
         TRANSITION_CALLBACK_ERROR should not be returned, and any exceptions should be caught and returned as a failure
         """
         self.get_logger().debug(f"on_error called from previous state {previous_state.label}.")
-        self.set_predicate("in_error_state", True)
         error_handled = False
         try:
             error_handled = self.__handle_error()
@@ -286,9 +288,9 @@ class LifecycleComponent(ComponentInterface, LifecycleNodeMixin):
             error_handled = False
         if not error_handled:
             self.get_logger().error("Error processing failed! Entering into the finalized state.")
-            # TODO reset and finalize all needed properties
+            self._finalize_interfaces()
             return TransitionCallbackReturn.ERROR
-        self.set_predicate("in_error_state", False)
+        self._has_error = False
         return TransitionCallbackReturn.SUCCESS
 
     def __handle_error(self) -> bool:
@@ -306,7 +308,7 @@ class LifecycleComponent(ComponentInterface, LifecycleNodeMixin):
 
         :return: True if error handling is successful, false otherwise
         """
-        return True
+        return False
 
     def _step(self):
         """
@@ -320,8 +322,8 @@ class LifecycleComponent(ComponentInterface, LifecycleNodeMixin):
                 self._publish_outputs()
             self._publish_predicates()
         except Exception as e:
-            self.get_logger().error(f"Failed to execute step function: {e}", throttle_duration_sec=1.0)
-            # TODO handle error in lifecycle component
+            self.get_logger().error(f"Failed to execute step function: {e}")
+            self.raise_error()
 
     def __configure_outputs(self) -> bool:
         """
@@ -391,3 +393,11 @@ class LifecycleComponent(ComponentInterface, LifecycleNodeMixin):
                 self.get_logger().error(f"Failed to deactivate output '{signal_name}': {e}")
         self.get_logger().debug("All outputs deactivated.")
         return success
+    
+    def raise_error(self):
+        """
+        Trigger the shutdown and error transitions.
+        """
+        super().raise_error()
+        self._has_error = True
+        self.trigger_shutdown()

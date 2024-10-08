@@ -116,6 +116,11 @@ protected:
    */
   rclcpp_lifecycle::State get_lifecycle_state() const;
 
+  /**
+   * @brief Trigger the shutdown and error transitions.
+   */
+  void raise_error() override;
+
 private:
   /**
    * @brief Transition callback for state 'Configuring'.
@@ -258,14 +263,12 @@ private:
    */
   bool deactivate_outputs();
 
-  /**
-   * @brief Cleanup all inputs and outputs.
-   */
-  bool clear_signals();
+  bool has_error_;
 
   // TODO hide ROS methods
   using ComponentInterface::create_output;
   using ComponentInterface::evaluate_periodic_callbacks;
+  using ComponentInterface::finalize_interfaces;
   using ComponentInterface::get_parameter;
   using ComponentInterface::inputs_;
   using ComponentInterface::outputs_;
@@ -314,7 +317,4 @@ inline void LifecycleComponent::add_output(
     RCLCPP_ERROR_STREAM(this->get_logger(), "Failed to add output '" << signal_name << "': " << ex.what());
   }
 }
-
-// TODO, if we raise error we need to manually call the lifecycle change state callback,
-// call callback function that this service calls
 }// namespace modulo_components

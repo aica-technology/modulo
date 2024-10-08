@@ -67,6 +67,11 @@ protected:
       const std::string& signal_name, const std::shared_ptr<DataT>& data, const std::string& default_topic = "",
       bool fixed_topic = false, bool publish_on_step = true);
 
+  /**
+   * Set the in_error_state predicate to true and cancel the step timer.
+   */
+  void raise_error() override;
+
 private:
   /**
    * @brief Step function that is called periodically and publishes predicates, outputs, and evaluates daemon callbacks.
@@ -82,6 +87,7 @@ private:
   // TODO hide ROS methods
   using ComponentInterface::create_output;
   using ComponentInterface::evaluate_periodic_callbacks;
+  using ComponentInterface::finalize_interfaces;
   using ComponentInterface::get_parameter;
   using ComponentInterface::inputs_;
   using ComponentInterface::outputs_;

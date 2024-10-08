@@ -418,7 +418,7 @@ protected:
   void set_qos(const rclcpp::QoS& qos);
 
   /**
-   * @brief Put the component in error state by setting the 'in_error_state' predicate to true.
+   * @brief Notify an error in the component.
    */
   virtual void raise_error();
 
@@ -436,6 +436,11 @@ protected:
    * @brief Helper function to evaluate all periodic function callbacks.
    */
   void evaluate_periodic_callbacks();
+
+  /**
+   * @brief Finalize all interfaces.
+   */
+  void finalize_interfaces();
 
   std::map<std::string, std::shared_ptr<modulo_core::communication::SubscriptionInterface>> inputs_;///< Map of inputs
   std::map<std::string, std::shared_ptr<modulo_core::communication::PublisherInterface>> outputs_;  ///< Map of outputs
@@ -539,9 +544,9 @@ private:
       const std::string& frame, const std::string& reference_frame, const tf2::TimePoint& time_point,
       const tf2::Duration& duration);
 
-  double rate_;          ///< The component rate in Hz
-  double period_;        ///< The componet period in s
-  std::mutex step_mutex_;///< Mutex for step callback
+  double rate_; ///< The component rate in Hz
+  double period_; ///< The componet period in s
+  std::mutex step_mutex_; ///< Mutex for step callback
 
   std::map<std::string, modulo_core::Predicate> predicates_;///< Map of predicates
   std::shared_ptr<rclcpp::Publisher<modulo_interfaces::msg::PredicateCollection>>

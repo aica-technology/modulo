@@ -15,6 +15,7 @@ Component::Component(const NodeOptions& node_options, const std::string& fallbac
           Node::get_node_type_descriptions_interface(), Node::get_node_waitables_interface())),
       started_(false) {
   this->add_predicate("is_finished", false);
+  this->add_predicate("in_error_state", false);
 }
 
 void Component::step() {
@@ -59,5 +60,11 @@ bool Component::on_execute_callback() {
 
 std::shared_ptr<state_representation::ParameterInterface> Component::get_parameter(const std::string& name) const {
   return ComponentInterface::get_parameter(name);
+}
+
+void Component::raise_error() {
+  ComponentInterface::raise_error();
+  this->set_predicate("in_error_state", true);
+  this->finalize_interfaces();
 }
 }// namespace modulo_components

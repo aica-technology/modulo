@@ -17,12 +17,5 @@
       "parameter_type": "double",
       "default_value": "10.0"
     }
-  ],
-  "predicates": [
-    {
-      "display_name": "In error state",
-      "description": "True if the component is in error state",
-      "predicate_name": "in_error_state"
-    }
   ]
 }

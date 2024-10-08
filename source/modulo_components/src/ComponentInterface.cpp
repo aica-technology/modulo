@@ -33,8 +33,6 @@ ComponentInterface::ComponentInterface(
   this->predicate_message_.node = this->node_base_->get_fully_qualified_name();
   this->predicate_message_.type = modulo_interfaces::msg::PredicateCollection::COMPONENT;
 
-  this->add_predicate("in_error_state", false);
-
   this->rate_ = this->get_parameter_value<double>("rate");
   this->period_ = 1.0 / this->rate_;
   this->step_timer_ = rclcpp::create_wall_timer(
@@ -557,8 +555,7 @@ void ComponentInterface::set_qos(const rclcpp::QoS& qos) {
 }
 
 void ComponentInterface::raise_error() {
-  RCLCPP_DEBUG(this->node_logging_->get_logger(), "raise_error called: Setting predicate 'in_error_state' to true.");
-  this->set_predicate("in_error_state", true);
+  RCLCPP_ERROR(this->node_logging_->get_logger(), "An error was raised in the component.");
 }
 
 modulo_interfaces::msg::Predicate ComponentInterface::get_predicate_message(const std::string& name, bool value) const {
@@ -610,5 +607,22 @@ void ComponentInterface::evaluate_periodic_callbacks() {
           "Failed to evaluate periodic function callback '" << name << "': " << ex.what());
     }
   }
+}
+
+void ComponentInterface::finalize_interfaces() {
+  RCLCPP_DEBUG(this->node_logging_->get_logger(), "Finalizing all interfaces.");
+  this->inputs_.clear();
+  this->outputs_.clear();
+  this->predicate_publisher_.reset();
+  this->empty_services_.clear();
+  this->string_services_.clear();
+  if (this->step_timer_ != nullptr) {
+    this->step_timer_->cancel();
+  }
+  this->step_timer_.reset();
+  this->tf_buffer_.reset();
+  this->tf_listener_.reset();
+  this->tf_broadcaster_.reset();
+  this->static_tf_broadcaster_.reset();
 }
 }// namespace modulo_components
