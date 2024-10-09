@@ -48,6 +48,7 @@ Release Versions:
 - feat!: add support for custom inputs and outputs (#133)
 - release: version v5.0.0-rc0009 (#155)
 - refactor(components): improve component error handling (#138)
+- fix(components): correctly go through shutdown sequence (#157)
 
 ## 4.2.2
 
