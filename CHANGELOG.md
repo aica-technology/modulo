@@ -18,7 +18,7 @@ Release Versions:
 
 ## 5.0.0
 
-### Oktober 9th, 2024
+### October 9th, 2024
 
 Version 5.0.0 is a major update to modulo developed for ROS 2 Jazzy Jalisco and ROS 2 control 4.17.0. If features even
 more flexibility and performance in the component and controller base classes in `modulo_components` and
