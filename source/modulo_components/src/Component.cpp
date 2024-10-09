@@ -18,6 +18,12 @@ Component::Component(const NodeOptions& node_options, const std::string& fallbac
   this->add_predicate("in_error_state", false);
 }
 
+Component::~Component() {
+  if (this->execute_thread_.joinable()) {
+    this->execute_thread_.join();
+  }
+}
+
 void Component::step() {
   try {
     this->evaluate_periodic_callbacks();
