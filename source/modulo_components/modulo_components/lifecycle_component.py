@@ -226,6 +226,10 @@ class LifecycleComponent(ComponentInterface, LifecycleNodeMixin):
         TRANSITION_CALLBACK_SUCCESS transitions to 'Finalized'
         TRANSITION_CALLBACK_FAILURE, TRANSITION_CALLBACK_ERROR or any uncaught exceptions to 'ErrorProcessing'
         """
+        def error_processing(self):
+            self.get_logger().error("Entering into the error processing transition state.")
+            return TransitionCallbackReturn.ERROR
+
         self.get_logger().debug(f"on_shutdown called from previous state {previous_state.label}.")
         if not self._has_error:
             if previous_state.state_id == State.PRIMARY_STATE_FINALIZED:
@@ -233,18 +237,29 @@ class LifecycleComponent(ComponentInterface, LifecycleNodeMixin):
             if previous_state.state_id == State.PRIMARY_STATE_ACTIVE:
                 if not self.__handle_deactivate():
                     self.get_logger().debug("Shutdown failed during intermediate deactivation!")
+                    return error_processing(self)
+                if not self.__handle_cleanup():
+                    self.get_logger().debug("Shutdown failed during intermediate cleanup!")
+                    return error_processing(self)
+                if not self.__handle_shutdown():
+                    return error_processing(self)
+                self._finalize_interfaces()
+                return TransitionCallbackReturn.SUCCESS
             if previous_state.state_id == State.PRIMARY_STATE_INACTIVE:
                 if not self.__handle_cleanup():
                     self.get_logger().debug("Shutdown failed during intermediate cleanup!")
+                    return error_processing(self)
+                if not self.__handle_shutdown():
+                    return error_processing(self)
+                self._finalize_interfaces()
+                return TransitionCallbackReturn.SUCCESS
             if previous_state.state_id == State.PRIMARY_STATE_UNCONFIGURED:
                 if not self.__handle_shutdown():
-                    self.get_logger().error("Entering into the error processing transition state.")
-                    return TransitionCallbackReturn.ERROR
+                    return error_processing(self)
                 self._finalize_interfaces()
                 return TransitionCallbackReturn.SUCCESS
             self.get_logger().warn(f"Invalid transition 'shutdown' from state {previous_state.label}.")
-        self.get_logger().error("Entering into the error processing transition state.")
-        return TransitionCallbackReturn.ERROR
+        return error_processing(self)
 
     def __handle_shutdown(self) -> bool:
         """
