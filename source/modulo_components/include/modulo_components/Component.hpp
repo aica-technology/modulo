@@ -32,9 +32,9 @@ public:
   explicit Component(const rclcpp::NodeOptions& node_options, const std::string& fallback_name = "Component");
 
   /**
-   * @brief Virtual default destructor.
+   * @brief Destructor that joins the thread if necessary.
    */
-  virtual ~Component() = default;
+  virtual ~Component();
 
 protected:
   /**
