@@ -83,4 +83,14 @@ public:
 private:
   std::promise<void> received_;
 };
+
+template<class ComponentT>
+class MinimalTrigger : public ComponentT {
+public:
+  MinimalTrigger(const rclcpp::NodeOptions& node_options) : ComponentT(node_options, "trigger") {
+    this->add_trigger("test");
+  }
+
+  void trigger() { ComponentT::trigger("test"); }
+};
 }// namespace modulo_components
