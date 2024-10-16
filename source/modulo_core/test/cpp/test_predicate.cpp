@@ -25,3 +25,12 @@ TEST(PredicateTest, SimplePredicate) {
   value = predicate.query();
   EXPECT_FALSE(value);
 }
+
+TEST(PredicateTest, ChangeBeforeQuery) {
+  auto predicate = Predicate([]() { return true; });
+  predicate.set_predicate([]() { return false; });
+  EXPECT_FALSE(predicate.get_value());
+  auto value = predicate.query();
+  EXPECT_TRUE(value);
+  EXPECT_FALSE(*value);
+}
