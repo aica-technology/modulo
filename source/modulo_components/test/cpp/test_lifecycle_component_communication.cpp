@@ -7,22 +7,6 @@
 
 using namespace modulo_components;
 
-class LifecycleTrigger : public LifecycleComponentPublicInterface {
-public:
-  explicit LifecycleTrigger(const rclcpp::NodeOptions& node_options)
-      : LifecycleComponentPublicInterface(node_options, "trigger") {}
-
-  bool on_configure_callback() final {
-    this->add_trigger("test");
-    return true;
-  }
-
-  bool on_activate_callback() final {
-    this->trigger("test");
-    return true;
-  }
-};
-
 class LifecycleComponentCommunicationTest : public ::testing::Test {
 protected:
   void SetUp() override {
@@ -80,16 +64,17 @@ TEST_F(LifecycleComponentCommunicationTest, TwistInputOutput) {
 }
 
 TEST_F(LifecycleComponentCommunicationTest, Trigger) {
-  auto trigger = std::make_shared<LifecycleTrigger>(rclcpp::NodeOptions());
+  auto trigger = std::make_shared<MinimalTrigger<LifecycleComponentPublicInterface>>(rclcpp::NodeOptions());
   auto listener =
       std::make_shared<modulo_utils::testutils::PredicatesListener>("/trigger", std::vector<std::string>{"test"});
   this->exec_->add_node(trigger->get_node_base_interface());
   trigger->configure();
+  trigger->activate();
   this->exec_->add_node(listener);
   auto result_code = this->exec_->spin_until_future_complete(listener->get_predicate_future(), 500ms);
   ASSERT_EQ(result_code, rclcpp::FutureReturnCode::TIMEOUT);
   EXPECT_FALSE(listener->get_predicate_values().at("test"));
-  trigger->activate();
+  trigger->trigger();
   result_code = this->exec_->spin_until_future_complete(listener->get_predicate_future(), 500ms);
   ASSERT_EQ(result_code, rclcpp::FutureReturnCode::SUCCESS);
   EXPECT_TRUE(listener->get_predicate_values().at("test"));

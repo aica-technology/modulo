@@ -32,6 +32,16 @@ def random_sensor():
 
 
 @pytest.fixture
+def make_minimal_trigger():
+    def _make_minimal_trigger(component_type):
+        component = component_type("trigger")
+        component.add_trigger("test")
+        return component
+
+    yield _make_minimal_trigger
+
+
+@pytest.fixture
 def minimal_cartesian_output(request, random_pose):
     def _make_minimal_cartesian_output(component_type, topic, publish_on_step):
         def publish(self):

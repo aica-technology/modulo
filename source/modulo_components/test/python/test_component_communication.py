@@ -3,15 +3,6 @@ from modulo_components.component import Component
 from modulo_core.exceptions import CoreError
 
 
-class Trigger(Component):
-    def __init__(self):
-        super().__init__("trigger")
-        self.add_trigger("test")
-
-    def trigger(self):
-        super().trigger("test")
-
-
 @pytest.mark.parametrize("minimal_cartesian_input", [[Component, "/topic"]], indirect=True)
 @pytest.mark.parametrize("minimal_cartesian_output", [[Component, "/topic", True]], indirect=True)
 def test_input_output(ros_exec, random_pose, minimal_cartesian_output, minimal_cartesian_input):
@@ -71,15 +62,15 @@ def test_input_output_invalid_msg(ros_exec, make_minimal_invalid_encoded_state_p
     assert not minimal_cartesian_input.received_future.result()
 
 
-def test_trigger(ros_exec, make_predicates_listener):
-    trigger = Trigger()
+def test_trigger(ros_exec, make_predicates_listener, make_minimal_trigger):
+    trigger = make_minimal_trigger(Component)
     listener = make_predicates_listener("/trigger", ["test"])
     ros_exec.add_node(listener)
     ros_exec.add_node(trigger)
     ros_exec.spin_until_future_complete(listener.predicates_future, timeout_sec=0.5)
     assert not listener.predicates_future.done()
     assert not listener.predicate_values["test"]
-    trigger.trigger()
+    trigger.trigger("test")
     ros_exec.spin_until_future_complete(listener.predicates_future, timeout_sec=0.5)
     assert listener.predicates_future.done()
     assert listener.predicate_values["test"]

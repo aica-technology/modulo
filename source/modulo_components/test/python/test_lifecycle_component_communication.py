@@ -84,18 +84,19 @@ def test_input_output_invalid_msg(ros_exec, make_lifecycle_change_client, make_m
     assert not minimal_cartesian_input.received_future.result()
 
 
-def test_trigger(ros_exec, make_lifecycle_change_client, make_predicates_listener):
-    trigger = Trigger()
+def test_trigger(ros_exec, make_lifecycle_change_client, make_predicates_listener, make_minimal_trigger):
+    trigger = make_minimal_trigger(LifecycleComponent)
     listener = make_predicates_listener("/trigger", ["test"])
     client = make_lifecycle_change_client("trigger")
     ros_exec.add_node(trigger)
     ros_exec.add_node(listener)
     ros_exec.add_node(client)
     client.configure(ros_exec)
+    client.activate(ros_exec)
     ros_exec.spin_until_future_complete(listener.predicates_future, timeout_sec=0.5)
     assert not listener.predicates_future.done()
     assert not listener.predicate_values["test"]
-    client.activate(ros_exec)
+    trigger.trigger("test")
     ros_exec.spin_until_future_complete(listener.predicates_future, timeout_sec=0.5)
     assert listener.predicates_future.done()
     assert listener.predicate_values["test"]

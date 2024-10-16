@@ -9,7 +9,7 @@ class Predicate:
         value = predicate_function()
         if not isinstance(value, bool):
             raise CoreError("Predicate function does not return a bool")
-        self.__previous_value = not value
+        self.__previous_value: Optional[bool] = None
 
     def get_value(self) -> bool:
         return self.__predicate()

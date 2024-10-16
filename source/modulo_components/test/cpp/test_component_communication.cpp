@@ -7,15 +7,6 @@
 
 using namespace modulo_components;
 
-class Trigger : public ComponentPublicInterface {
-public:
-  explicit Trigger(const rclcpp::NodeOptions& node_options) : ComponentPublicInterface(node_options, "trigger") {
-    this->add_trigger("test");
-  }
-
-  void trigger() { Component::trigger("test"); }
-};
-
 class ComponentCommunicationTest : public ::testing::Test {
 protected:
   void SetUp() override {
@@ -73,7 +64,7 @@ TEST_F(ComponentCommunicationTest, TwistInputOutput) {
 }
 
 TEST_F(ComponentCommunicationTest, Trigger) {
-  auto trigger = std::make_shared<Trigger>(rclcpp::NodeOptions());
+  auto trigger = std::make_shared<MinimalTrigger<ComponentPublicInterface>>(rclcpp::NodeOptions());
   auto listener =
       std::make_shared<modulo_utils::testutils::PredicatesListener>("/trigger", std::vector<std::string>{"test"});
   this->exec_->add_node(listener);

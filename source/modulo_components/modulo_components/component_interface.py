@@ -834,7 +834,7 @@ class ComponentInterface(Node):
         """
         Helper function to publish all predicates.
         """
-        message = copy.copy(self.__predicate_message)
+        message = copy.deepcopy(self.__predicate_message)
         for name in self._predicates.keys():
             new_value = self._predicates[name].query()
             if new_value is not None:
