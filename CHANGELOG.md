@@ -2,6 +2,7 @@
 
 Release Versions:
 
+- [5.0.0](#501)
 - [5.0.0](#500)
 - [4.2.2](#422)
 - [4.2.1](#421)
@@ -19,7 +20,8 @@ Release Versions:
 ## Upcoming changes
 
 - fix: default predicate value on construction (#158)
-
+- fix(modulo_controllers): typo in modulo controller descriptions
+  
 ## 5.0.0
 
 ### October 9th, 2024
