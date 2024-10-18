@@ -28,7 +28,7 @@ Version 5.0.1 includes a patch fix for `modulo_controllers`.
 The patch fix that renames `input_validity_period_` to `input_validity_period` in `controller_descriptions`. 
 This minor typo is incompatible with the schema.
 
-- fix(modulo_controllers): typo in modulo controller descriptions
+- fix(modulo_controllers): typo in modulo controller descriptions (#160)
 
 ## 5.0.0
 
