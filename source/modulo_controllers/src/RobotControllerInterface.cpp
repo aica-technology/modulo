@@ -292,7 +292,6 @@ const JointState& RobotControllerInterface::get_joint_state() {
 const CartesianState& RobotControllerInterface::get_cartesian_state() {
   // TODO check if recompute is necessary?
   compute_cartesian_state();
-RCLCPP_WARN(get_node()->get_logger(), "ok11");
   return cartesian_state_;
 }
 
@@ -302,13 +301,10 @@ const CartesianWrench& RobotControllerInterface::get_ft_sensor() {
 
 void RobotControllerInterface::compute_cartesian_state() {
   if (robot_ != nullptr) {
-RCLCPP_WARN_STREAM(get_node()->get_logger(), "ok8 " << std::boolalpha << joint_state_.is_empty());
     cartesian_state_ = robot_->forward_kinematics(joint_state_, task_space_frame_);
     cartesian_state_.set_twist(robot_->forward_velocity(joint_state_, task_space_frame_).get_twist());
-RCLCPP_WARN(get_node()->get_logger(), "ok9");
 
     if (!ft_sensor_.is_empty() && (ft_sensor_.get_reference_frame() == cartesian_state_.get_name())) {
-RCLCPP_WARN(get_node()->get_logger(), "ok10");
       auto ft_sensor_in_robot_frame = cartesian_state_ * ft_sensor_;
       cartesian_state_.set_wrench(ft_sensor_in_robot_frame.get_wrench());
     }
