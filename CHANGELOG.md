@@ -2,6 +2,7 @@
 
 Release Versions:
 
+- [5.0.0](#501)
 - [5.0.0](#500)
 - [4.2.2](#422)
 - [4.2.1](#421)
@@ -15,6 +16,19 @@ Release Versions:
 - [2.2.0](#220)
 - [2.1.1](#211)
 - [2.1.0](#210)
+
+## 5.0.1
+
+### October 18th, 2024
+
+Version 5.0.1 includes a patch fix for `modulo_controllers`.
+
+#### modulo_controllers
+
+The patch fix that renames `input_validity_period_` to `input_validity_period` in `controller_descriptions`. 
+This minor typo is incompatible with the schema.
+
+- fix(modulo_controllers): typo in modulo controller descriptions
 
 ## 5.0.0
 
