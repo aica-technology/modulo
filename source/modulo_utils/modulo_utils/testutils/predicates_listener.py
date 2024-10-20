@@ -37,6 +37,12 @@ class PredicatesListener(Node):
         The values of the predicates
         """
         return self.__predicates
+    
+    def reset_future(self):
+        """
+        Reset the future
+        """
+        self.__future.set_result(False)
 
     def __callback(self, message):
         if message.node == self.__component:
