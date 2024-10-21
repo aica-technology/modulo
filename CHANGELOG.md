@@ -2,6 +2,7 @@
 
 Release Versions:
 
+- [5.0.1](#501)
 - [5.0.0](#500)
 - [4.2.2](#422)
 - [4.2.1](#421)
@@ -16,7 +17,13 @@ Release Versions:
 - [2.1.1](#211)
 - [2.1.0](#210)
 
-## Upcoming changes (in development)
+## 5.0.1
+
+### October 21st, 2024
+
+Version 5.0.1 patches a couple of issues around predicates. It prevents Python components from publishing their
+predicates on every step and ensures that predciates always publish their new value on change, even if the initial value
+is changed before the first `step` callback triggers.
 
 - fix: default predicate value on construction (#158)
 - fix(modulo_controllers): typo in modulo controller descriptions (#160)
