@@ -19,7 +19,7 @@ Release Versions:
 ## Upcoming changes (in development)
 
 - fix: default predicate value on construction (#158)
-- fix(modulo_controllers): typo in modulo controller descriptions
+- fix(modulo_controllers): typo in modulo controller descriptions (#160)
   
 ## 5.0.0
 
