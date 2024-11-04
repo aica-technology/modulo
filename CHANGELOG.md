@@ -17,6 +17,10 @@ Release Versions:
 - [2.1.1](#211)
 - [2.1.0](#210)
 
+## Upcoming changes (in development)
+
+- fix(controllers): change predicate rate to double type (#163)
+
 ## 5.0.1
 
 ### October 21st, 2024

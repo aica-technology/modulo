@@ -36,7 +36,7 @@
     },
     {
       "display_name": "Activation timeout",
-      "description": "The seconds to wait for valid data on the state interfaces before activating",
+      "description": "The seconds to wait for valid data on the state interfaces before activating (in seconds)",
       "parameter_name": "activation_timeout",
       "parameter_type": "double",
       "default_value": "1.0",
@@ -44,17 +44,17 @@
     },
     {
       "display_name": "Input validity period",
-      "description": "The maximum age of an input state before discarding it as expired",
+      "description": "The maximum age of an input state before discarding it as expired (in seconds)",
       "parameter_name": "input_validity_period",
       "parameter_type": "double",
       "default_value": "1.0"
     },
     {
       "display_name": "Predicate publishing rate",
-      "description": "The rate at which to publish controller predicates",
+      "description": "The rate at which to publish controller predicates (in Hertz)",
       "parameter_name": "predicate_publishing_rate",
-      "parameter_type": "int",
-      "default_value": "10",
+      "parameter_type": "double",
+      "default_value": "10.0",
       "internal": true
     }
   ]
