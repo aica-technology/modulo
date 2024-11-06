@@ -37,14 +37,14 @@ def test_rate_parameter(ros_context):
 
 def test_add_bool_predicate(component_interface):
     component_interface.add_predicate('foo', True)
-    assert 'foo' in component_interface._predicates.keys()
-    assert component_interface._predicates['foo'].get_value()
+    assert 'foo' in component_interface._ComponentInterface__predicates.keys()
+    assert component_interface._ComponentInterface__predicates['foo'].get_value()
 
 
 def test_add_function_predicate(component_interface):
     component_interface.add_predicate('foo', lambda: False)
-    assert 'foo' in component_interface._predicates.keys()
-    assert not component_interface._predicates['foo'].get_value()
+    assert 'foo' in component_interface._ComponentInterface__predicates.keys()
+    assert not component_interface._ComponentInterface__predicates['foo'].get_value()
 
 
 def test_get_predicate(component_interface):
@@ -74,26 +74,26 @@ def test_set_predicate(component_interface):
 def test_declare_signal(component_interface):
     component_interface.declare_input("input", "test")
     assert component_interface.get_parameter_value("input_topic") == "test"
-    assert "input" not in component_interface._inputs.keys()
+    assert "input" not in component_interface._ComponentInterface__inputs.keys()
     component_interface.declare_output("output", "test_again")
     assert component_interface.get_parameter_value("output_topic") == "test_again"
-    assert "test_again" not in component_interface._outputs.keys()
+    assert "test_again" not in component_interface._ComponentInterface__outputs.keys()
 
 
 def test_add_remove_input(component_interface):
     component_interface.add_input("8_teEsTt_#1@3", "test", Bool)
-    assert "test_13" in component_interface._inputs.keys()
+    assert "test_13" in component_interface._ComponentInterface__inputs.keys()
     assert component_interface.get_parameter_value("test_13_topic") == "~/test_13"
 
     component_interface.add_input("9_tEestT_#1@5", "test", Bool, default_topic="/topic")
-    assert "test_15" in component_interface._inputs.keys()
+    assert "test_15" in component_interface._ComponentInterface__inputs.keys()
     assert component_interface.get_parameter_value("test_15_topic") == "/topic"
 
     component_interface.add_input("test_13", "test", String)
-    assert component_interface._inputs["test_13"].msg_type == Bool
+    assert component_interface._ComponentInterface__inputs["test_13"].msg_type == Bool
 
     component_interface.remove_input("test_13")
-    assert "test_13" not in component_interface._inputs.keys()
+    assert "test_13" not in component_interface._ComponentInterface__inputs.keys()
 
 
 def test_add_service(component_interface, ros_exec, make_service_client):
@@ -101,34 +101,34 @@ def test_add_service(component_interface, ros_exec, make_service_client):
         return {"success": True, "message": "test"}
 
     component_interface.add_service("empty", empty_callback)
-    assert len(component_interface._services_dict) == 1
-    assert "empty" in component_interface._services_dict.keys()
+    assert len(component_interface._ComponentInterface__services_dict) == 1
+    assert "empty" in component_interface._ComponentInterface__services_dict.keys()
 
     def string_callback(payload: str):
         return {"success": True, "message": payload}
 
     component_interface.add_service("string", string_callback)
-    assert len(component_interface._services_dict) == 2
-    assert "string" in component_interface._services_dict.keys()
+    assert len(component_interface._ComponentInterface__services_dict) == 2
+    assert "string" in component_interface._ComponentInterface__services_dict.keys()
 
     # adding a service under an existing name should fail for either callback type, but is exception safe
     component_interface.add_service("empty", empty_callback)
     component_interface.add_service("empty", string_callback)
-    assert len(component_interface._services_dict) == 2
+    assert len(component_interface._ComponentInterface__services_dict) == 2
 
     component_interface.add_service("string", empty_callback)
     component_interface.add_service("string", string_callback)
-    assert len(component_interface._services_dict) == 2
+    assert len(component_interface._ComponentInterface__services_dict) == 2
 
     # adding an empty service name should fail
     component_interface.add_service("", empty_callback)
     component_interface.add_service("", string_callback)
-    assert len(component_interface._services_dict) == 2
+    assert len(component_interface._ComponentInterface__services_dict) == 2
 
     # adding a mangled service name should succeed under a sanitized name
     component_interface.add_service("8_teEsTt_#1@3", empty_callback)
-    assert len(component_interface._services_dict) == 3
-    assert "test_13" in component_interface._services_dict.keys()
+    assert len(component_interface._ComponentInterface__services_dict) == 3
+    assert "test_13" in component_interface._ComponentInterface__services_dict.keys()
 
     client = make_service_client(
         {"/component_interface/empty": EmptyTrigger, "/component_interface/string": StringTrigger})
@@ -146,31 +146,32 @@ def test_add_service(component_interface, ros_exec, make_service_client):
 
 
 def test_create_output(component_interface):
-    component_interface._create_output("test", "test", Bool, clproto.MessageType.UNKNOWN_MESSAGE, "/topic", True, True)
-    assert "test" in component_interface._outputs.keys()
+    component_interface._ComponentInterface__create_output(
+        "test", "test", Bool, clproto.MessageType.UNKNOWN_MESSAGE, "/topic", True, True)
+    assert "test" in component_interface._ComponentInterface__outputs.keys()
     assert component_interface.get_parameter_value("test_topic") == "/topic"
-    assert component_interface._outputs["test"]["message_type"] == Bool
-    assert component_interface._periodic_outputs["test"]
+    assert component_interface._ComponentInterface__outputs["test"]["message_type"] == Bool
+    assert component_interface._ComponentInterface__periodic_outputs["test"]
 
-    component_interface._create_output(
+    component_interface._ComponentInterface__create_output(
         "8_teEsTt_#1@3", "test", Bool, clproto.MessageType.UNKNOWN_MESSAGE, "", True, False)
-    assert not component_interface._periodic_outputs["test_13"]
+    assert not component_interface._ComponentInterface__periodic_outputs["test_13"]
     component_interface.publish_output("8_teEsTt_#1@3")
     component_interface.publish_output("test_13")
     with pytest.raises(CoreError):
         component_interface.publish_output("")
 
-    component_interface._create_output("test_custom", "test", JointState,
-                                       clproto.MessageType.UNKNOWN_MESSAGE, "/topic", True, True)
-    assert "test_custom" in component_interface._outputs.keys()
+    component_interface._ComponentInterface__create_output("test_custom", "test", JointState,
+                                                           clproto.MessageType.UNKNOWN_MESSAGE, "/topic", True, True)
+    assert "test_custom" in component_interface._ComponentInterface__outputs.keys()
     assert component_interface.get_parameter_value("test_custom_topic") == "/topic"
-    assert component_interface._outputs["test_custom"]["message_type"] == JointState
+    assert component_interface._ComponentInterface__outputs["test_custom"]["message_type"] == JointState
     data = JointState()
     data.name = ["joint_1", "joint_2"]
     msg = JointState()
-    component_interface._outputs["test_custom"]["translator"](msg, data)
+    component_interface._ComponentInterface__outputs["test_custom"]["translator"](msg, data)
     assert msg.name == data.name
-    assert component_interface._periodic_outputs["test_custom"]
+    assert component_interface._ComponentInterface__periodic_outputs["test_custom"]
 
 
 def test_tf(component_interface):
@@ -232,6 +233,6 @@ def test_get_set_qos(component_interface):
 
 def test_add_trigger(component_interface):
     component_interface.add_trigger("trigger")
-    assert "trigger" in component_interface._triggers
+    assert "trigger" in component_interface._ComponentInterface__triggers
     assert not component_interface.get_predicate("trigger")
     component_interface.trigger("trigger")

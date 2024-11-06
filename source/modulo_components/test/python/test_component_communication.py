@@ -32,7 +32,7 @@ def test_input_output_manual(ros_exec, random_pose, minimal_cartesian_output, mi
 
 @pytest.mark.parametrize("minimal_sensor_input", [[Component, "/topic"]], indirect=True)
 @pytest.mark.parametrize("minimal_sensor_output", [[Component, "/topic", False]], indirect=True)
-def test_input_output_manual(ros_exec, random_sensor, minimal_sensor_output, minimal_sensor_input):
+def test_input_output_manual_sensor(ros_exec, random_sensor, minimal_sensor_output, minimal_sensor_input):
     ros_exec.add_node(minimal_sensor_input)
     ros_exec.add_node(minimal_sensor_output)
     ros_exec.spin_until_future_complete(minimal_sensor_input.received_future, timeout_sec=0.5)

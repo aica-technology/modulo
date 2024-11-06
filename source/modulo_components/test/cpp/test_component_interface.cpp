@@ -251,6 +251,7 @@ TYPED_TEST(ComponentInterfaceTest, TF) {
   this->component_->add_tf_listener();
   auto send_tf = state_representation::CartesianPose::Random("test", "world");
   EXPECT_NO_THROW(this->component_->send_transform(send_tf));
+  sleep(1);
   state_representation::CartesianPose lookup_tf;
   EXPECT_NO_THROW(lookup_tf = this->component_->lookup_transform("test", "world"));
   auto identity = send_tf * lookup_tf.inverse();
