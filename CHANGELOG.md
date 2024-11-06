@@ -20,6 +20,7 @@ Release Versions:
 ## Upcoming changes (in development)
 
 - fix(controllers): change predicate rate to double type (#163)
+- fix(controllers): trigger check (#164)
 
 ## 5.0.1
 

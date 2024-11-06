@@ -179,7 +179,7 @@ void BaseControllerInterface::add_predicate(
     RCLCPP_WARN(
         get_node()->get_logger(), "Predicate with name '%s' already exists, overwriting.", predicate_name.c_str());
   } else {
-    RCLCPP_ERROR(get_node()->get_logger(), "Adding predicate '%s'.", predicate_name.c_str());
+    RCLCPP_DEBUG(get_node()->get_logger(), "Adding predicate '%s'.", predicate_name.c_str());
   }
   try {
     this->predicates_.insert_or_assign(predicate_name, Predicate(predicate_function));
