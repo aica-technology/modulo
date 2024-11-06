@@ -179,7 +179,7 @@ void BaseControllerInterface::add_predicate(
     RCLCPP_WARN(
         get_node()->get_logger(), "Predicate with name '%s' already exists, overwriting.", predicate_name.c_str());
   } else {
-    RCLCPP_DEBUG(get_node()->get_logger(), "Adding predicate '%s'.", predicate_name.c_str());
+    RCLCPP_ERROR(get_node()->get_logger(), "Adding predicate '%s'.", predicate_name.c_str());
   }
   try {
     this->predicates_.insert_or_assign(predicate_name, Predicate(predicate_function));
@@ -249,7 +249,7 @@ void BaseControllerInterface::add_trigger(const std::string& trigger_name) {
 }
 
 void BaseControllerInterface::trigger(const std::string& trigger_name) {
-  if (std::find(triggers_.cbegin(), triggers_.cend(), trigger_name) != triggers_.cend()) {
+  if (std::find(triggers_.cbegin(), triggers_.cend(), trigger_name) == triggers_.cend()) {
     RCLCPP_ERROR(
         get_node()->get_logger(), "Failed to trigger: could not find trigger with name  '%s'.", trigger_name.c_str());
     return;
