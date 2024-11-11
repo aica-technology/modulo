@@ -2,6 +2,7 @@
 
 Release Versions:
 
+- [5.0.2](#502)
 - [5.0.1](#501)
 - [5.0.0](#500)
 - [4.2.2](#422)
@@ -17,11 +18,20 @@ Release Versions:
 - [2.1.1](#211)
 - [2.1.0](#210)
 
-## Upcoming changes (in development)
+## 5.0.2
+
+### November 11th, 2024
+
+Version 5.0.2 fixes an incorrect condition in the controller triggers and changes the parameter type of the predicate
+rate parameter in the controller base class from an integer type to a double type.
 
 - fix(controllers): change predicate rate to double type (#163)
 - fix(controllers): trigger check (#164)
 - fix(components): make all possible attributes private (#162)
+
+### Dependencies
+
+- package-builder: v1.1.1 -> 1.3.0 (#)
 
 ## 5.0.1
 
