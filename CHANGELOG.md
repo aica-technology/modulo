@@ -23,7 +23,8 @@ Release Versions:
 ### November 11th, 2024
 
 Version 5.0.2 fixes an incorrect condition in the controller triggers and changes the parameter type of the predicate
-rate parameter in the controller base class from an integer type to a double type.
+rate parameter in the controller base class from an integer type to a double type. Additionally, the component interface
+class for Python was revised to hide private attributes better from derived classes.
 
 - fix(controllers): change predicate rate to double type (#163)
 - fix(controllers): trigger check (#164)
