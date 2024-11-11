@@ -31,7 +31,7 @@ rate parameter in the controller base class from an integer type to a double typ
 
 ### Dependencies
 
-- package-builder: v1.1.1 -> 1.3.0 (#)
+- package-builder: v1.1.1 -> 1.3.0 (#165)
 
 ## 5.0.1
 
