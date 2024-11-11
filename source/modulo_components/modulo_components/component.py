@@ -30,10 +30,10 @@ class Component(ComponentInterface):
         Step function that is called periodically.
         """
         try:
-            self._evaluate_periodic_callbacks()
+            self._ComponentInterface__evaluate_periodic_callbacks()
             self.on_step_callback()
-            self._publish_outputs()
-            self._publish_predicates()
+            self._ComponentInterface__publish_outputs()
+            self._ComponentInterface__publish_predicates()
         except Exception as e:
             self.get_logger().error(f"Failed to execute step function: {e}", throttle_duration_sec=1.0)
             self.raise_error()
@@ -88,12 +88,12 @@ class Component(ComponentInterface):
         :param publish_on_step: If true, the output is published periodically on step
         """
         try:
-            parsed_signal_name = self._create_output(signal_name, data, message_type, clproto_message_type,
-                                                     default_topic, fixed_topic, publish_on_step)
+            parsed_signal_name = self._ComponentInterface__create_output(
+                signal_name, data, message_type, clproto_message_type, default_topic, fixed_topic, publish_on_step)
             topic_name = self.get_parameter_value(parsed_signal_name + "_topic")
             self.get_logger().debug(f"Adding output '{parsed_signal_name}' with topic name '{topic_name}'.")
-            publisher = self.create_publisher(message_type, topic_name, self._qos)
-            self._outputs[parsed_signal_name]["publisher"] = publisher
+            publisher = self.create_publisher(message_type, topic_name, self.get_qos())
+            self._ComponentInterface__outputs[parsed_signal_name]["publisher"] = publisher
         except Exception as e:
             self.get_logger().error(f"Failed to add output '{signal_name}': {e}")
 
@@ -103,4 +103,4 @@ class Component(ComponentInterface):
         """
         super().raise_error()
         self.set_predicate("in_error_state", True)
-        self._finalize_interfaces()
+        self._ComponentInterface__finalize_interfaces()

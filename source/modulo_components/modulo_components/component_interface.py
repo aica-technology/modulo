@@ -45,37 +45,37 @@ class ComponentInterface(Node):
         node_kwargs = {key: value for key, value in kwargs.items() if key in NODE_KWARGS}
         super().__init__(node_name, *args, **node_kwargs)
         self.__step_lock = Lock()
-        self._parameter_dict: Dict[str, Union[str, sr.Parameter]] = {}
+        self.__parameter_dict: Dict[str, Union[str, sr.Parameter]] = {}
         self.__read_only_parameters: Dict[str, bool] = {}
         self.__pre_set_parameters_callback_called = False
         self.__set_parameters_result = SetParametersResult()
-        self._predicates: Dict[str, Predicate] = {}
-        self._triggers: List[str] = []
-        self._periodic_callbacks: Dict[str, Callable[[], None]] = {}
-        self._inputs = {}
-        self._outputs = {}
-        self._periodic_outputs: Dict[str, bool] = {}
-        self._services_dict: Dict[str, Service] = {}
+        self.__predicates: Dict[str, Predicate] = {}
+        self.__triggers: List[str] = []
+        self.__periodic_callbacks: Dict[str, Callable[[], None]] = {}
+        self.__inputs = {}
+        self.__outputs = {}
+        self.__periodic_outputs: Dict[str, bool] = {}
+        self.__services_dict: Dict[str, Service] = {}
         self.__tf_buffer: Optional[Buffer] = None
         self.__tf_listener: Optional[TransformListener] = None
         self.__tf_broadcaster: Optional[TransformBroadcaster] = None
         self.__static_tf_broadcaster: Optional[StaticTransformBroadcaster] = None
 
-        self._qos = QoSProfile(depth=10)
+        self.__qos = QoSProfile(depth=10)
 
         self.add_pre_set_parameters_callback(self.__pre_set_parameters_callback)
         self.add_on_set_parameters_callback(self.__on_set_parameters_callback)
         self.add_parameter(sr.Parameter("rate", 10.0, sr.ParameterType.DOUBLE),
                            "The rate in Hertz for all periodic callbacks")
 
-        self._predicate_publisher = self.create_publisher(PredicateCollection, "/predicates", self._qos)
+        self.__predicate_publisher = self.create_publisher(PredicateCollection, "/predicates", self.__qos)
         self.__predicate_message = PredicateCollection()
         self.__predicate_message.node = self.get_fully_qualified_name()
         self.__predicate_message.type = PredicateCollection.COMPONENT
 
-        self._rate = self.get_parameter_value("rate")
-        self._period = 1.0 / self._rate
-        self.__step_timer = self.create_timer(self._period, self.__step_with_mutex)
+        self.__rate = self.get_parameter_value("rate")
+        self.__period = 1.0 / self.__rate
+        self.__step_timer = self.create_timer(self.__period, self.__step_with_mutex)
 
     def __del__(self):
         self.__step_lock.acquire()
@@ -86,7 +86,7 @@ class ComponentInterface(Node):
 
         :return: The component rate
         """
-        return self._rate
+        return self.__rate
 
     def get_period(self):
         """
@@ -94,7 +94,7 @@ class ComponentInterface(Node):
 
         :return: The component period
         """
-        return self._period
+        return self.__period
 
     def __step_with_mutex(self):
         if self.__step_lock.acquire(blocking=False):
@@ -144,7 +144,7 @@ class ComponentInterface(Node):
             raise ParameterError(f"Failed to add parameter: {e}")
         if not self.has_parameter(sr_parameter.get_name()):
             self.get_logger().debug(f"Adding parameter '{sr_parameter.get_name()}'.")
-            self._parameter_dict[sr_parameter.get_name()] = parameter
+            self.__parameter_dict[sr_parameter.get_name()] = parameter
             self.__read_only_parameters[sr_parameter.get_name()] = False
             try:
                 descriptor = ParameterDescriptor(description=description, read_only=read_only)
@@ -162,7 +162,7 @@ class ComponentInterface(Node):
                     raise ParameterError(result.reason)
                 self.__read_only_parameters[sr_parameter.get_name()] = read_only
             except Exception as e:
-                del self._parameter_dict[sr_parameter.get_name()]
+                del self.__parameter_dict[sr_parameter.get_name()]
                 del self.__read_only_parameters[sr_parameter.get_name()]
                 raise ParameterError(f"Failed to add parameter: {e}")
         else:
@@ -196,13 +196,13 @@ class ComponentInterface(Node):
         :raises ParameterError: if the parameter does not exist
         :return: The parameter, if it exists
         """
-        if name not in self._parameter_dict.keys():
+        if name not in self.__parameter_dict.keys():
             raise ParameterError(f"Parameter '{name}' is not in the dict of parameters")
         try:
-            if isinstance(self._parameter_dict[name], str):
-                return self.__getattribute__(self._parameter_dict[name])
+            if isinstance(self.__parameter_dict[name], str):
+                return self.__getattribute__(self.__parameter_dict[name])
             else:
-                return self._parameter_dict[name]
+                return self.__parameter_dict[name]
         except AttributeError as e:
             raise ParameterError(f"{e}")
 
@@ -288,10 +288,10 @@ class ComponentInterface(Node):
                     result.successful = False
                     result.reason = f"Validation of parameter '{ros_param.name}' returned false!"
                 else:
-                    if isinstance(self._parameter_dict[ros_param.name], str):
-                        self.__setattr__(self._parameter_dict[ros_param.name], new_parameter)
+                    if isinstance(self.__parameter_dict[ros_param.name], str):
+                        self.__setattr__(self.__parameter_dict[ros_param.name], new_parameter)
                     else:
-                        self._parameter_dict[ros_param.name] = new_parameter
+                        self.__parameter_dict[ros_param.name] = new_parameter
                     new_parameters.append(write_parameter(new_parameter))
             except Exception as e:
                 result.successful = False
@@ -320,15 +320,15 @@ class ComponentInterface(Node):
         """
         if not name:
             self.get_logger().error("Failed to add predicate: Provide a non empty string as a name.")
-        if name in self._predicates.keys():
+        if name in self.__predicates.keys():
             self.get_logger().warn(f"Predicate with name '{name}' already exists, overwriting.")
         else:
             self.get_logger().debug(f"Adding predicate '{name}'.")
         try:
             if callable(predicate):
-                self._predicates[name] = Predicate(predicate)
+                self.__predicates[name] = Predicate(predicate)
             else:
-                self._predicates[name] = Predicate(lambda: predicate)
+                self.__predicates[name] = Predicate(lambda: predicate)
         except Exception as e:
             self.get_logger().error(f"Failed to add predicate '{name}': {e}")
 
@@ -340,13 +340,13 @@ class ComponentInterface(Node):
         :param name: The name of the predicate to retrieve from the map of predicates
         :return: The value of the predicate as a boolean
         """
-        if name not in self._predicates.keys():
+        if name not in self.__predicates.keys():
             self.get_logger().error(
                 f"Failed to get predicate '{name} ': Predicate does not exist, returning false.",
                 throttle_duration_sec=1.0)
             return False
         try:
-            return self._predicates[name].get_value()
+            return self.__predicates[name].get_value()
         except Exception as e:
             self.get_logger().error(f"Failed to evaluate callback of predicate '{
                 name}', returning false: {e}", throttle_duration_sec=1.0)
@@ -361,21 +361,21 @@ class ComponentInterface(Node):
         :param name: The name of the predicate to retrieve from the map of predicates
         :param predicate: The new value of the predicate as a bool or a callable function
         """
-        if name not in self._predicates.keys():
+        if name not in self.__predicates.keys():
             self.get_logger().error(f"Failed to set predicate '{
                 name}': Predicate does not exist.", throttle_duration_sec=1.0)
             return
         try:
             if callable(predicate):
-                self._predicates[name].set_predicate(predicate)
+                self.__predicates[name].set_predicate(predicate)
             else:
-                self._predicates[name].set_predicate(lambda: predicate)
+                self.__predicates[name].set_predicate(lambda: predicate)
         except Exception as e:
             self.get_logger().error(f"Failed to set predicate '{name}': {e}", throttle_duration_sec=1.0)
             return
-        new_value = self._predicates[name].query()
+        new_value = self.__predicates[name].query()
         if new_value is not None:
-            self._publish_predicate(name, new_value)
+            self.__publish_predicate(name, new_value)
 
     def add_trigger(self, trigger_name: str):
         """
@@ -387,13 +387,13 @@ class ComponentInterface(Node):
         if not trigger_name:
             self.get_logger().error("Failed to add trigger: Provide a non empty string as a name.")
             return
-        if trigger_name in self._triggers:
+        if trigger_name in self.__triggers:
             self.get_logger().error(f"Failed to add trigger: there is already a trigger with name '{trigger_name}'.")
             return
-        if trigger_name in self._predicates.keys():
+        if trigger_name in self.__predicates.keys():
             self.get_logger().error(f"Failed to add trigger: there is already a predicate with name '{trigger_name}'.")
             return
-        self._triggers.append(trigger_name)
+        self.__triggers.append(trigger_name)
         self.add_predicate(trigger_name, False)
 
     def trigger(self, trigger_name: str):
@@ -402,27 +402,28 @@ class ComponentInterface(Node):
 
         :param trigger_name: The name of the trigger
         """
-        if trigger_name not in self._triggers:
+        if trigger_name not in self.__triggers:
             self.get_logger().error(f"Failed to trigger: could not find trigger with name '{trigger_name}'.")
             return
         self.set_predicate(trigger_name, True)
         # reset the trigger to be published on the next step
-        self._predicates[trigger_name].set_predicate(lambda: False)
+        self.__predicates[trigger_name].set_predicate(lambda: False)
 
     def remove_output(self, signal_name):
-        if signal_name not in self._outputs.keys():
+        if signal_name not in self.__outputs.keys():
             parsed_signal_name = parse_topic_name(signal_name)
-            if parsed_signal_name not in self._outputs.keys():
+            if parsed_signal_name not in self.__outputs.keys():
                 self.get_logger().debug(f"Unknown output '{signal_name}' (parsed name was '{parsed_signal_name}').")
                 return
             signal_name = parsed_signal_name
-        if "publisher" in self._outputs[signal_name].keys():
-            self.destroy_publisher(self._outputs[signal_name]["publisher"])
-        self._outputs.pop(signal_name)
+        if "publisher" in self.__outputs[signal_name].keys():
+            self.destroy_publisher(self.__outputs[signal_name]["publisher"])
+        self.__outputs.pop(signal_name)
         self.get_logger().debug(f"Removing signal '{signal_name}'.")
 
-    def _create_output(self, signal_name: str, data: str, message_type: MsgT, clproto_message_type: clproto.MessageType,
-                       default_topic: str, fixed_topic: bool, publish_on_step: bool) -> str:
+    def __create_output(self, signal_name: str, data: str, message_type: MsgT,
+                        clproto_message_type: clproto.MessageType, default_topic: str, fixed_topic: bool,
+                        publish_on_step: bool) -> str:
         """
         Helper function to parse the signal name and add an output without Publisher to the dict of outputs.
 
@@ -454,19 +455,31 @@ class ComponentInterface(Node):
                 translator = write_ros_msg
             else:
                 raise AddSignalError("The provided message type is not supported to create a component output.")
-            self._outputs[parsed_signal_name] = {"attribute": data, "message_type": message_type,
-                                                 "translator": translator}
-            self._periodic_outputs[parsed_signal_name] = publish_on_step
+            self.__outputs[parsed_signal_name] = {"attribute": data, "message_type": message_type,
+                                                  "translator": translator}
+            self.__periodic_outputs[parsed_signal_name] = publish_on_step
             return parsed_signal_name
         except AddSignalError:
             raise
         except Exception as e:
             raise AddSignalError(f"{e}")
 
+    def __set_output_publisher(self, output_name: str, publisher):
+        """
+        Set the publisher object for a component output.
+
+        :param output_name: The name of the output
+        :param publisher: The publisher object for the output
+        """
+        try:
+            self.__outputs[output_name]["publisher"] = publisher
+        except Exception as e:
+            self.get_logger().warn(f"Failed to set output publisher: {e}")
+
     def remove_input(self, signal_name: str):
-        if not self.destroy_subscription(self._inputs.pop(signal_name, None)):
+        if not self.destroy_subscription(self.__inputs.pop(signal_name, None)):
             parsed_signal_name = parse_topic_name(signal_name)
-            if not self.destroy_subscription(self._inputs.pop(parsed_signal_name, None)):
+            if not self.destroy_subscription(self.__inputs.pop(parsed_signal_name, None)):
                 self.get_logger().debug(f"Unknown input '{signal_name}' (parsed name was '{parsed_signal_name}').")
                 return
             self.get_logger().debug(f"Removing signal '{parsed_signal_name}'.")
@@ -520,9 +533,9 @@ class ComponentInterface(Node):
             self.get_logger().warn(
                 f"The parsed name for {signal_type} '{signal_name}' is '{parsed_signal_name}'."
                 "Use the parsed name to refer to this {signal_type}.")
-        if parsed_signal_name in self._inputs.keys():
+        if parsed_signal_name in self.__inputs.keys():
             raise AddSignalError(f"Signal with name '{parsed_signal_name}' already exists as input.")
-        if parsed_signal_name in self._outputs.keys():
+        if parsed_signal_name in self.__outputs.keys():
             raise AddSignalError(f"Signal with name '{parsed_signal_name}' already exists as output.")
         topic_name = default_topic if default_topic else "~/" + parsed_signal_name
         parameter_name = parsed_signal_name + "_topic"
@@ -578,8 +591,8 @@ class ComponentInterface(Node):
                 if user_callback:
                     self.get_logger().warn("Providing a callable for arguments 'subscription' and 'user_callback' is"
                                            "not supported. The user callback will be ignored.")
-                self._inputs[parsed_signal_name] = self.create_subscription(message_type, topic_name, subscription,
-                                                                            self._qos)
+                self.__inputs[parsed_signal_name] = self.create_subscription(message_type, topic_name, subscription,
+                                                                             self.__qos)
             elif isinstance(subscription, str):
                 if callable(user_callback):
                     signature = inspect.signature(user_callback)
@@ -597,31 +610,31 @@ class ComponentInterface(Node):
                         message_type == Float64MultiArray or message_type == Int32 or message_type == String:
                     read_message = partial(self.__read_translated_message,
                                            reader=modulo_readers.read_std_message)
-                    self._inputs[parsed_signal_name] = \
+                    self.__inputs[parsed_signal_name] = \
                         self.create_subscription(message_type, topic_name,
                                                  partial(self.__subscription_callback,
                                                          attribute_name=subscription,
                                                          read_message=read_message,
                                                          user_callback=user_callback),
-                                                 self._qos)
+                                                 self.__qos)
                 elif message_type == EncodedState:
                     read_message = partial(self.__read_translated_message,
                                            reader=modulo_readers.read_clproto_message)
-                    self._inputs[parsed_signal_name] = \
+                    self.__inputs[parsed_signal_name] = \
                         self.create_subscription(message_type, topic_name,
                                                  partial(self.__subscription_callback,
                                                          attribute_name=subscription,
                                                          read_message=read_message,
                                                          user_callback=user_callback),
-                                                 self._qos)
+                                                 self.__qos)
                 elif hasattr(message_type, 'get_fields_and_field_types'):
-                    self._inputs[parsed_signal_name] = \
+                    self.__inputs[parsed_signal_name] = \
                         self.create_subscription(message_type, topic_name,
                                                  partial(self.__subscription_callback,
                                                          attribute_name=subscription,
                                                          read_message=self.__read_custom_message,
                                                          user_callback=user_callback),
-                                                 self._qos)
+                                                 self.__qos)
                 else:
                     raise TypeError("The provided message type is not supported to create a component input.")
             else:
@@ -673,7 +686,7 @@ class ComponentInterface(Node):
                 self.get_logger().warn(
                     f"The parsed name for service '{service_name}' is '{parsed_service_name}'."
                     "Use the parsed name to refer to this service.")
-            if parsed_service_name in self._services_dict.keys():
+            if parsed_service_name in self.__services_dict.keys():
                 raise AddServiceError(f"Service with name '{parsed_service_name}' already exists.")
             signature = inspect.signature(callback)
             if len(signature.parameters) == 0:
@@ -682,7 +695,7 @@ class ComponentInterface(Node):
             else:
                 self.get_logger().debug(f"Adding string service '{parsed_service_name}'.")
                 service_type = StringTrigger
-            self._services_dict[parsed_service_name] = \
+            self.__services_dict[parsed_service_name] = \
                 self.create_service(service_type, "~/" + parsed_service_name,
                                     lambda request, response: callback_wrapper(request, response, callback))
         except Exception as e:
@@ -781,7 +794,7 @@ class ComponentInterface(Node):
         """
         Getter of the Quality of Service attribute.
         """
-        return self._qos
+        return self.__qos
 
     def set_qos(self, qos: QoSProfile):
         """
@@ -789,7 +802,7 @@ class ComponentInterface(Node):
 
         :param qos: The desired Quality of Service
         """
-        self._qos = qos
+        self.__qos = qos
 
     def add_periodic_callback(self, name: str, callback: Callable[[], None]):
         """
@@ -801,11 +814,11 @@ class ComponentInterface(Node):
         if not name:
             self.get_logger().error("Failed to add periodic function: Provide a non empty string as a name.")
             return
-        if name in self._periodic_callbacks.keys():
+        if name in self.__periodic_callbacks.keys():
             self.get_logger().warn(f"Periodic function '{name}' already exists, overwriting.")
         else:
             self.get_logger().debug(f"Adding periodic function '{name}'.")
-        self._periodic_callbacks[name] = callback
+        self.__periodic_callbacks[name] = callback
 
     def __get_predicate_message(self, name: str, value: bool) -> Predicate:
         """
@@ -819,7 +832,7 @@ class ComponentInterface(Node):
         message.value = value
         return message
 
-    def _publish_predicate(self, name: str, value: bool):
+    def __publish_predicate(self, name: str, value: bool):
         """
         Helper function to publish a predicate.
 
@@ -828,19 +841,19 @@ class ComponentInterface(Node):
         """
         message = copy.copy(self.__predicate_message)
         message.predicates = [self.__get_predicate_message(name, value)]
-        self._predicate_publisher.publish(message)
+        self.__predicate_publisher.publish(message)
 
-    def _publish_predicates(self):
+    def __publish_predicates(self):
         """
         Helper function to publish all predicates.
         """
         message = copy.deepcopy(self.__predicate_message)
-        for name in self._predicates.keys():
-            new_value = self._predicates[name].query()
+        for name in self.__predicates.keys():
+            new_value = self.__predicates[name].query()
             if new_value is not None:
                 message.predicates.append(self.__get_predicate_message(name, new_value))
         if len(message.predicates):
-            self._predicate_publisher.publish(message)
+            self.__predicate_publisher.publish(message)
 
     def __translate_and_publish(self, output_name: str):
         """
@@ -848,12 +861,12 @@ class ComponentInterface(Node):
 
         :param output_name: The name of the output
         """
-        message = self._outputs[output_name]["message_type"]()
-        data = self.__getattribute__(self._outputs[output_name]["attribute"])
+        message = self.__outputs[output_name]["message_type"]()
+        data = self.__getattribute__(self.__outputs[output_name]["attribute"])
         # only publish if the data is not empty
         if not getattr(data, "is_empty", lambda: False)():
-            self._outputs[output_name]["translator"](message, data)
-            self._outputs[output_name]["publisher"].publish(message)
+            self.__outputs[output_name]["translator"](message, data)
+            self.__outputs[output_name]["publisher"].publish(message)
 
     def publish_output(self, signal_name: str):
         """
@@ -863,31 +876,31 @@ class ComponentInterface(Node):
         :raises CoreError: if the output is being published periodically or if the signal name could not be found
         """
         parsed_signal_name = parse_topic_name(signal_name)
-        if parsed_signal_name not in self._outputs.keys():
+        if parsed_signal_name not in self.__outputs.keys():
             raise CoreError(f"Output with name '{signal_name}' doesn't exist")
-        if self._periodic_outputs[parsed_signal_name]:
+        if self.__periodic_outputs[parsed_signal_name]:
             raise CoreError("An output that is published periodically cannot be triggered manually")
         try:
             self.__translate_and_publish(parsed_signal_name)
         except Exception as e:
             self.get_logger().error(f"Failed to publish output '{parsed_signal_name}': {e}")
 
-    def _publish_outputs(self):
+    def __publish_outputs(self):
         """
         Helper function to publish all outputs.
         """
-        for output in self._outputs.keys():
+        for output in self.__outputs.keys():
             try:
-                if self._periodic_outputs[output]:
+                if self.__periodic_outputs[output]:
                     self.__translate_and_publish(output)
             except Exception as e:
                 self.get_logger().error(f"{e}")
 
-    def _evaluate_periodic_callbacks(self):
+    def __evaluate_periodic_callbacks(self):
         """
         Helper function to evaluate all periodic function callbacks.
         """
-        for name, callback in self._periodic_callbacks.items():
+        for name, callback in self.__periodic_callbacks.items():
             try:
                 callback()
             except Exception as e:
@@ -923,18 +936,18 @@ class ComponentInterface(Node):
         """
         self.get_logger().error("An error was raised in the component.")
 
-    def _finalize_interfaces(self):
+    def __finalize_interfaces(self):
         """
         Finalize all interfaces.
         """
-        self._inputs = {}
-        self._outputs = {}
-        self._services_dict = {}
+        self.__inputs = {}
+        self.__outputs = {}
+        self.__services_dict = {}
         self.__tf_buffer = None
         self.__tf_listener = None
         self.__tf_broadcaster = None
         self.__static_tf_broadcaster = None
-        self._predicate_publisher = None
+        self.__predicate_publisher = None
         if self.__step_timer:
             self.__step_timer.cancel()
         self.__step_timer = None

@@ -3,19 +3,6 @@ from modulo_components.lifecycle_component import LifecycleComponent
 from modulo_core.exceptions import CoreError
 
 
-class Trigger(LifecycleComponent):
-    def __init__(self):
-        super().__init__("trigger")
-
-    def on_configure_callback(self) -> bool:
-        self.add_trigger("test")
-        return True
-
-    def on_activate_callback(self) -> bool:
-        self.trigger("test")
-        return True
-
-
 @pytest.mark.parametrize("minimal_cartesian_input", [[LifecycleComponent, "/topic"]], indirect=True)
 @pytest.mark.parametrize("minimal_cartesian_output", [[LifecycleComponent, "/topic", True]], indirect=True)
 def test_input_output(ros_exec, make_lifecycle_change_client, random_pose, minimal_cartesian_output,

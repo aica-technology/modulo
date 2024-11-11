@@ -21,6 +21,7 @@ Release Versions:
 
 - fix(controllers): change predicate rate to double type (#163)
 - fix(controllers): trigger check (#164)
+- fix(components): make all possible attributes private (#162)
 
 ## 5.0.1
 
