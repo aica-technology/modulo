@@ -18,6 +18,10 @@ Release Versions:
 - [2.1.1](#211)
 - [2.1.0](#210)
 
+## Upcoming changes
+
+ - fix(components): remove incorrect log line (#166)
+
 ## 5.0.2
 
 ### November 11th, 2024
