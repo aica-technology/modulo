@@ -1,6 +1,7 @@
 import clproto
 import pytest
 import state_representation as sr
+from types import MethodType
 from modulo_components.component import Component
 from modulo_core import EncodedState
 from rclpy.task import Future
@@ -119,6 +120,26 @@ def minimal_cartesian_input(request):
         return component
 
     yield _make_minimal_cartesian_input(request.param[0], request.param[1])
+
+
+@pytest.fixture
+def exception_cartesian_input(request):
+    def _make_exception_cartesian_input(component_type, topic):
+        def callback(self):
+            if not self.thrown:
+                self.thrown = True
+                raise RuntimeError()
+            else:
+                self.received_future.set_result(True)
+
+        component = component_type("exception_cartesian_input")
+        component.received_future = Future()
+        component.thrown = False
+        component.callback = MethodType(callback, component)
+        component.add_input("cartesian_pose", lambda msg: component.callback(), EncodedState, topic)
+        return component
+
+    yield _make_exception_cartesian_input(request.param[0], request.param[1])
 
 
 @pytest.fixture

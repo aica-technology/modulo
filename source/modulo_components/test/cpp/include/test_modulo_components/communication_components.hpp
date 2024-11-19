@@ -53,6 +53,32 @@ private:
 };
 
 template<class ComponentT>
+class ExceptionCartesianInput : public ComponentT {
+public:
+  ExceptionCartesianInput(const rclcpp::NodeOptions& node_options, const std::string& topic)
+      : ComponentT(node_options, "exception_cartesian_input"), thrown_(false) {
+    this->received_future = this->received_.get_future();
+    this->template add_input<modulo_core::EncodedState>(
+        "cartesian_state",
+        [this](const std::shared_ptr<modulo_core::EncodedState>) {
+          if (!this->thrown_) {
+            this->thrown_ = true;
+            throw std::runtime_error("Error");
+          } else {
+            this->received_.set_value();
+          }
+        },
+        topic);
+  }
+
+  std::shared_future<void> received_future;
+
+private:
+  bool thrown_;
+  std::promise<void> received_;
+};
+
+template<class ComponentT>
 class MinimalTwistOutput : public ComponentT {
 public:
   MinimalTwistOutput(
