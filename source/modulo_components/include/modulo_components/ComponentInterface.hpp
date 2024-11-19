@@ -736,8 +736,17 @@ inline void ComponentInterface::add_input(
     RCLCPP_DEBUG_STREAM(
         this->node_logging_->get_logger(),
         "Adding input '" << parsed_signal_name << "' with topic name '" << topic_name << "'.");
-    auto subscription =
-        rclcpp::create_subscription<MsgT>(this->node_parameters_, this->node_topics_, topic_name, this->qos_, callback);
+    auto subscription = rclcpp::create_subscription<MsgT>(
+        this->node_parameters_, this->node_topics_, topic_name, this->qos_,
+        [this, signal_name, callback](const std::shared_ptr<MsgT> message) {
+          try {
+            callback(message);
+          } catch (const std::exception& ex) {
+            RCLCPP_WARN_STREAM_THROTTLE(
+                this->node_logging_->get_logger(), *this->node_clock_->get_clock(), 1000,
+                "Unhandled exception in callback of input '" << signal_name << "': " << ex.what());
+          }
+        });
     auto subscription_interface =
         std::make_shared<SubscriptionHandler<MsgT>>()->create_subscription_interface(subscription);
     this->inputs_.insert_or_assign(parsed_signal_name, subscription_interface);
