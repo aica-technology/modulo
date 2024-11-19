@@ -519,6 +519,13 @@ class ComponentInterface(Node):
             self.get_logger().error(f"Failed to execute user callback in subscription for attribute"
                                     f" '{attribute_name}': {e}", throttle_duration_sec=1.0)
 
+    def __safe_callback(self, message: MsgT, signal_name: str, callback: Callable):
+        try:
+            callback(message)
+        except Exception as e:
+            self.get_logger().warn(f"Unhandled exception in callback of input '{
+                signal_name}': {e}", throttle_duration_sec=1.0)
+
     def __declare_signal(self, signal_name: str, signal_type: str, default_topic="", fixed_topic=False):
         """
         Declare an input to create the topic parameter without adding it to the map of inputs yet.
@@ -594,8 +601,8 @@ class ComponentInterface(Node):
                 if user_callback:
                     self.get_logger().warn("Providing a callable for arguments 'subscription' and 'user_callback' is"
                                            "not supported. The user callback will be ignored.")
-                self.__inputs[parsed_signal_name] = self.create_subscription(message_type, topic_name, subscription,
-                                                                             self.__qos)
+                self.__inputs[parsed_signal_name] = self.create_subscription(message_type, topic_name, partial(
+                    self.__safe_callback, signal_name=parsed_signal_name, callback=subscription), self.__qos)
             elif isinstance(subscription, str):
                 if callable(user_callback):
                     signature = inspect.signature(user_callback)
