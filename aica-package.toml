@@ -28,3 +28,6 @@ source = "./source/modulo_utils"
 
 [build.packages.modulo_controllers]
 source = "./source/modulo_controllers"
+
+[build.packages.trac_ik]
+source = "git://github.com/aprotyas/trac_ik#b7b432529a2f43a57dbcebec4b2d5923781668a7:trac_ik_lib"

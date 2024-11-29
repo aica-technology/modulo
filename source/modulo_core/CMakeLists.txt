@@ -26,6 +26,7 @@ find_package(rclcpp REQUIRED)
 find_package(rclcpp_lifecycle REQUIRED)
 find_package(tf2_msgs REQUIRED)
 find_package(modulo_interfaces REQUIRED)
+find_package(trac_ik_lib REQUIRED)
 
 find_package(control_libraries 9.0.0 REQUIRED COMPONENTS state_representation)
 find_package(clproto 9.0.0 REQUIRED)
@@ -55,6 +56,7 @@ ament_target_dependencies(
   std_msgs
   tf2_msgs
   modulo_interfaces
+  trac_ik_lib
 )
 
 install(DIRECTORY include/
@@ -85,6 +87,7 @@ if(BUILD_TESTING)
 
   # prevent pluginlib from using boost
   target_compile_definitions(test_modulo_core PUBLIC "PLUGINLIB__DISABLE_BOOST_FUNCTIONS")
+  target_compile_definitions(test_modulo_core PRIVATE TEST_FIXTURES="${CMAKE_CURRENT_SOURCE_DIR}/test/cpp/fixtures/")
 
   # run python tests
   file(GLOB_RECURSE TEST_PYTHON_SOURCES ${PROJECT_SOURCE_DIR}/test/test_*.py)
@@ -104,6 +107,7 @@ ament_export_dependencies(
   rclcpp_lifecycle
   tf2_msgs
   modulo_interfaces
+  trac_ik_lib
 )
 
 ament_export_include_directories(
