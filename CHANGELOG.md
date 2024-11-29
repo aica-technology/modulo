@@ -2,6 +2,7 @@
 
 Release Versions:
 
+- [5.0.3](#503)
 - [5.0.2](#502)
 - [5.0.1](#501)
 - [5.0.0](#500)
@@ -18,7 +19,12 @@ Release Versions:
 - [2.1.1](#211)
 - [2.1.0](#210)
 
-## Upcoming changes
+## 5.0.3
+
+### to be updated
+
+Version 5.0.3 fixes an incorrect debug log line appearing as error. It also moves a parameter from the ControllerInterface
+to the BaseControllerInterface for both code and semantic correctness.
 
  - fix(components): remove incorrect log line (#166)
  - fix(controllers): move predicate publishing rate parameter to BaseControllerInterface (#168)
