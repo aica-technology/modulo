@@ -31,7 +31,7 @@ rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn BaseCo
       [this](const std::vector<rclcpp::Parameter>& parameters) -> rcl_interfaces::msg::SetParametersResult {
         return this->on_set_parameters_callback(parameters);
       });
-
+  add_parameter<double>("predicate_publishing_rate", 10.0, "The rate at which to publish controller predicates");
   return CallbackReturn::SUCCESS;
 }
 

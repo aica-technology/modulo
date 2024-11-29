@@ -28,7 +28,6 @@ rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn Contro
         "activation_timeout", 1.0, "The seconds to wait for valid data on the state interfaces before activating");
     add_parameter<double>(
         "input_validity_period", 1.0, "The maximum age of an input state before discarding it as expired");
-    add_parameter<double>("predicate_publishing_rate", 10.0, "The rate at which to publish controller predicates");
 
     return add_interfaces();
   } catch (const std::exception& e) {
