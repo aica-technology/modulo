@@ -1,0 +1,19 @@
+{
+  "$schema": "https://docs.aica.tech/schemas/1-3-0/controller.schema.json",
+  "name": "Base Controller Interface",
+  "description": {
+    "brief": "Base controller class to combine ros2_control, control libraries and modulo"
+  },
+  "plugin": "modulo_controllers/BaseControllerInterface",
+  "virtual": true,
+  "parameters": [
+    {
+      "display_name": "Predicate publishing rate",
+      "description": "The rate at which to publish controller predicates (in Hertz)",
+      "parameter_name": "predicate_publishing_rate",
+      "parameter_type": "double",
+      "default_value": "10.0",
+      "internal": true
+    }
+  ]
+}
