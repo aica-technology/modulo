@@ -25,6 +25,24 @@ def test_input_output(ros_exec, make_lifecycle_change_client, random_pose, minim
         minimal_cartesian_output.publish()
 
 
+@pytest.mark.parametrize("exception_cartesian_input", [[LifecycleComponent, "/topic"]], indirect=True)
+@pytest.mark.parametrize("minimal_cartesian_output", [[LifecycleComponent, "/topic", True]], indirect=True)
+def test_exception_input_output(
+        ros_exec, make_lifecycle_change_client, minimal_cartesian_output, exception_cartesian_input):
+    input_change_client = make_lifecycle_change_client("exception_cartesian_input")
+    output_change_client = make_lifecycle_change_client("minimal_cartesian_output")
+    ros_exec.add_node(input_change_client)
+    ros_exec.add_node(output_change_client)
+    ros_exec.add_node(exception_cartesian_input)
+    ros_exec.add_node(minimal_cartesian_output)
+    input_change_client.configure(ros_exec)
+    output_change_client.configure(ros_exec)
+    input_change_client.activate(ros_exec)
+    output_change_client.activate(ros_exec)
+    ros_exec.spin_until_future_complete(exception_cartesian_input.received_future, timeout_sec=0.5)
+    assert exception_cartesian_input.received_future.done() and exception_cartesian_input.received_future.result()
+
+
 @pytest.mark.parametrize("minimal_cartesian_input", [[LifecycleComponent, "/topic"]], indirect=True)
 @pytest.mark.parametrize("minimal_cartesian_output", [[LifecycleComponent, "/topic", False]], indirect=True)
 def test_input_output_manual(ros_exec, make_lifecycle_change_client, random_pose, minimal_cartesian_output,

@@ -20,8 +20,9 @@ Release Versions:
 
 ## Upcoming changes
 
- - fix(components): remove incorrect log line (#166)
- - fix(controllers): move predicate publishing rate parameter to BaseControllerInterface (#168)
+- fix(components): remove incorrect log line (#166)
+- fix(controllers): move predicate publishing rate parameter to BaseControllerInterface (#168)
+- fix(components): try catch subscription callbacks (#167)
 
 ## 5.0.2
 
