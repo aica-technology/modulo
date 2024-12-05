@@ -43,6 +43,9 @@ BaseControllerInterface::on_configure(const rclcpp_lifecycle::State&) {
   add_inputs();
   add_outputs();
 
+  this->node_parameters_ = get_node()->get_node_parameters_interface();
+  this->node_topics_ = get_node()->get_node_topics_interface();
+
   if (predicates_.size()) {
     predicate_publisher_ =
         get_node()->create_publisher<modulo_interfaces::msg::PredicateCollection>("/predicates", qos_);
@@ -593,6 +596,47 @@ geometry_msgs::msg::TransformStamped BaseControllerInterface::lookup_ros_transfo
     throw modulo_core::exceptions::LookupTransformException(
         std::string("Failed to lookup transform: ").append(ex.what()));
   }
+}
+
+void BaseControllerInterface::add_tf_broadcaster() {
+  if (this->tf_broadcaster_ == nullptr) {
+    RCLCPP_DEBUG(this->get_node()->get_logger(), "Adding TF broadcaster.");
+    console_bridge::setLogLevel(console_bridge::CONSOLE_BRIDGE_LOG_NONE);
+    this->tf_broadcaster_ = std::make_shared<tf2_ros::TransformBroadcaster>(
+        this->node_parameters_, this->node_topics_, tf2_ros::DynamicBroadcasterQoS());
+  } else {
+    RCLCPP_DEBUG(this->get_node()->get_logger(), "TF broadcaster already exists.");
+  }
+}
+
+void BaseControllerInterface::add_static_tf_broadcaster() {
+  if (this->static_tf_broadcaster_ == nullptr) {
+    RCLCPP_DEBUG(this->get_node()->get_logger(), "Adding static TF broadcaster.");
+    console_bridge::setLogLevel(console_bridge::CONSOLE_BRIDGE_LOG_NONE);
+    tf2_ros::StaticBroadcasterQoS qos;
+    rclcpp::PublisherOptionsWithAllocator<std::allocator<void>> options;
+    this->static_tf_broadcaster_ =
+        std::make_shared<tf2_ros::StaticTransformBroadcaster>(this->node_parameters_, this->node_topics_, qos, options);
+  } else {
+    RCLCPP_DEBUG(this->get_node()->get_logger(), "Static TF broadcaster already exists.");
+  }
+}
+
+void BaseControllerInterface::send_transform(const state_representation::CartesianPose& transform) {
+  this->send_transforms(std::vector<state_representation::CartesianPose>{transform});
+}
+
+void BaseControllerInterface::send_transforms(const std::vector<state_representation::CartesianPose>& transforms) {
+  this->publish_transforms(transforms, this->tf_broadcaster_);
+}
+
+void BaseControllerInterface::send_static_transform(const state_representation::CartesianPose& transform) {
+  this->send_static_transforms(std::vector<state_representation::CartesianPose>{transform});
+}
+
+void BaseControllerInterface::send_static_transforms(
+    const std::vector<state_representation::CartesianPose>& transforms) {
+  this->publish_transforms(transforms, this->static_tf_broadcaster_, true);
 }
 
 rclcpp::QoS BaseControllerInterface::get_qos() const {
