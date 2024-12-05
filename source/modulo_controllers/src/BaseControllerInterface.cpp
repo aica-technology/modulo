@@ -6,6 +6,7 @@
 
 #include <lifecycle_msgs/msg/state.hpp>
 
+#include <modulo_core/exceptions.hpp>
 #include <modulo_core/translators/message_readers.hpp>
 
 template<class... Ts>
@@ -542,6 +543,10 @@ void BaseControllerInterface::add_service(
 }
 
 void BaseControllerInterface::add_tf_listener() {
+  if (this->get_node() == nullptr) {
+    throw modulo_core::exceptions::CoreException("Failed to add TF buffer and listener: Node is not initialized yet.");
+  }
+
   if (this->tf_buffer_ == nullptr || this->tf_listener_ == nullptr) {
     RCLCPP_DEBUG(this->get_node()->get_logger(), "Adding TF buffer and listener.");
     console_bridge::setLogLevel(console_bridge::CONSOLE_BRIDGE_LOG_NONE);
