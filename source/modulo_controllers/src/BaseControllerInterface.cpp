@@ -544,9 +544,16 @@ void BaseControllerInterface::add_service(
 }
 
 void BaseControllerInterface::add_tf_listener() {
+<<<<<<< HEAD
   if (!is_node_initialized()) {
     throw modulo_core::exceptions::CoreException("Failed to add TF buffer and listener: Node is not initialized yet.");
   }
+=======
+  if (this->get_node() == nullptr) {
+    throw modulo_core::exceptions::CoreException("Failed to add TF buffer and listener: Node is not initialized yet.");
+  }
+
+>>>>>>> ed20342 (feat(controllers): add TF listener and lookup TF helpers in BaseControllerInterface (#169))
   if (this->tf_buffer_ == nullptr || this->tf_listener_ == nullptr) {
     RCLCPP_DEBUG(this->get_node()->get_logger(), "Adding TF buffer and listener.");
     console_bridge::setLogLevel(console_bridge::CONSOLE_BRIDGE_LOG_NONE);

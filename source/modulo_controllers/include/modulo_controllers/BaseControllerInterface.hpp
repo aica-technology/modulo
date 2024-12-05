@@ -534,6 +534,7 @@ private:
    * if the lookupTransform call failed
    * @return If it exists, the requested transform
    */
+
   [[nodiscard]] geometry_msgs::msg::TransformStamped lookup_ros_transform(
       const std::string& frame, const std::string& reference_frame, const tf2::TimePoint& time_point,
       const tf2::Duration& duration);
