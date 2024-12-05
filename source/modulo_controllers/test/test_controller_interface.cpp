@@ -18,8 +18,15 @@ class FriendControllerInterface : public ControllerInterface {
 public:
   using ControllerInterface::add_input;
   using ControllerInterface::add_output;
+  using ControllerInterface::add_static_tf_broadcaster;
+  using ControllerInterface::add_tf_broadcaster;
   using ControllerInterface::add_tf_listener;
+  using ControllerInterface::lookup_transform;
   using ControllerInterface::read_input;
+  using ControllerInterface::send_static_transform;
+  using ControllerInterface::send_static_transforms;
+  using ControllerInterface::send_transform;
+  using ControllerInterface::send_transforms;
   using ControllerInterface::write_output;
 
 private:
@@ -213,6 +220,7 @@ TYPED_TEST_P(ControllerInterfaceTest, OutputTest) {
 }
 
 TYPED_TEST_P(ControllerInterfaceTest, TF) {
+  this->init();
   this->interface_->add_tf_broadcaster();
   this->interface_->add_static_tf_broadcaster();
   this->interface_->add_tf_listener();
