@@ -599,7 +599,7 @@ geometry_msgs::msg::TransformStamped BaseControllerInterface::lookup_ros_transfo
 
 void BaseControllerInterface::add_tf_broadcaster() {
   if (this->get_node() == nullptr) {
-    throw modulo_core::exceptions::CoreException("Failed to add TF buffer and listener: Node is not initialized yet.");
+    throw modulo_core::exceptions::CoreException("Failed to add TF broadcaster: Node is not initialized yet.");
   }
   if (this->tf_broadcaster_ == nullptr) {
     RCLCPP_DEBUG(this->get_node()->get_logger(), "Adding TF broadcaster.");
@@ -613,7 +613,7 @@ void BaseControllerInterface::add_tf_broadcaster() {
 
 void BaseControllerInterface::add_static_tf_broadcaster() {
   if (this->get_node() == nullptr) {
-    throw modulo_core::exceptions::CoreException("Failed to add TF buffer and listener: Node is not initialized yet.");
+    throw modulo_core::exceptions::CoreException("Failed to add static TF broadcaster: Node is not initialized yet.");
   }
   if (this->static_tf_broadcaster_ == nullptr) {
     RCLCPP_DEBUG(this->get_node()->get_logger(), "Adding static TF broadcaster.");
