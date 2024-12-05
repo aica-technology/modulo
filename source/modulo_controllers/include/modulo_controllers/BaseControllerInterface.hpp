@@ -583,9 +583,6 @@ private:
   std::shared_ptr<tf2_ros::TransformListener> tf_listener_;                   ///< TF listener
   std::shared_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;             ///< TF broadcaster
   std::shared_ptr<tf2_ros::StaticTransformBroadcaster> static_tf_broadcaster_;///< TF static broadcaster
-
-  std::shared_ptr<rclcpp::node_interfaces::NodeParametersInterface> node_parameters_;
-  std::shared_ptr<rclcpp::node_interfaces::NodeTopicsInterface> node_topics_;
 };
 
 template<typename T>

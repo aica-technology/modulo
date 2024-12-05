@@ -34,8 +34,6 @@ rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn BaseCo
       [this](const std::vector<rclcpp::Parameter>& parameters) -> rcl_interfaces::msg::SetParametersResult {
         return this->on_set_parameters_callback(parameters);
       });
-  this->node_parameters_ = get_node()->get_node_parameters_interface();
-  this->node_topics_ = get_node()->get_node_topics_interface();
   add_parameter<double>("predicate_publishing_rate", 10.0, "The rate at which to publish controller predicates");
   return CallbackReturn::SUCCESS;
 }
@@ -604,8 +602,7 @@ void BaseControllerInterface::add_tf_broadcaster() {
   if (this->tf_broadcaster_ == nullptr) {
     RCLCPP_DEBUG(this->get_node()->get_logger(), "Adding TF broadcaster.");
     console_bridge::setLogLevel(console_bridge::CONSOLE_BRIDGE_LOG_NONE);
-    this->tf_broadcaster_ = std::make_shared<tf2_ros::TransformBroadcaster>(
-        this->node_parameters_, this->node_topics_, tf2_ros::DynamicBroadcasterQoS());
+    this->tf_broadcaster_ = std::make_shared<tf2_ros::TransformBroadcaster>(get_node());
   } else {
     RCLCPP_DEBUG(this->get_node()->get_logger(), "TF broadcaster already exists.");
   }
@@ -618,10 +615,7 @@ void BaseControllerInterface::add_static_tf_broadcaster() {
   if (this->static_tf_broadcaster_ == nullptr) {
     RCLCPP_DEBUG(this->get_node()->get_logger(), "Adding static TF broadcaster.");
     console_bridge::setLogLevel(console_bridge::CONSOLE_BRIDGE_LOG_NONE);
-    tf2_ros::StaticBroadcasterQoS qos;
-    rclcpp::PublisherOptionsWithAllocator<std::allocator<void>> options;
-    this->static_tf_broadcaster_ =
-        std::make_shared<tf2_ros::StaticTransformBroadcaster>(this->node_parameters_, this->node_topics_, qos, options);
+    this->static_tf_broadcaster_ = std::make_shared<tf2_ros::StaticTransformBroadcaster>(get_node());
   } else {
     RCLCPP_DEBUG(this->get_node()->get_logger(), "Static TF broadcaster already exists.");
   }
