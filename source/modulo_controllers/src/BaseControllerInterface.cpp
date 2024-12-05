@@ -585,7 +585,7 @@ geometry_msgs::msg::TransformStamped BaseControllerInterface::lookup_ros_transfo
     const tf2::Duration& duration) {
   if (this->tf_buffer_ == nullptr || this->tf_listener_ == nullptr) {
     throw modulo_core::exceptions::LookupTransformException(
-        "Failed to lookup transform: To TF buffer / listener configured.");
+        "Failed to lookup transform: No TF buffer / listener configured.");
   }
   try {
     return this->tf_buffer_->lookupTransform(reference_frame, frame, time_point, duration);
