@@ -405,6 +405,12 @@ protected:
    */
   std::timed_mutex& get_command_mutex();
 
+  /**
+   * @brief Check if the node has been initialized or not.
+   * @return True if the node is initialized, false otherwise
+   */
+  bool is_node_initialized() const;
+
 private:
   /**
    * @brief Parameter validation function

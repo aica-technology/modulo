@@ -8,6 +8,7 @@
 
 #include <modulo_core/exceptions.hpp>
 #include <modulo_core/translators/message_readers.hpp>
+#include <stdexcept>
 
 template<class... Ts>
 struct overloaded : Ts... {
@@ -543,10 +544,9 @@ void BaseControllerInterface::add_service(
 }
 
 void BaseControllerInterface::add_tf_listener() {
-  if (this->get_node() == nullptr) {
+  if (!is_node_initialized()) {
     throw modulo_core::exceptions::CoreException("Failed to add TF buffer and listener: Node is not initialized yet.");
   }
-
   if (this->tf_buffer_ == nullptr || this->tf_listener_ == nullptr) {
     RCLCPP_DEBUG(this->get_node()->get_logger(), "Adding TF buffer and listener.");
     console_bridge::setLogLevel(console_bridge::CONSOLE_BRIDGE_LOG_NONE);
@@ -652,6 +652,15 @@ bool BaseControllerInterface::is_active() const {
 
 std::timed_mutex& BaseControllerInterface::get_command_mutex() {
   return command_mutex_;
+}
+
+bool BaseControllerInterface::is_node_initialized() const {
+  try {
+    get_node();
+    return true;
+  } catch (const std::runtime_error&) {
+    return false;
+  }
 }
 
 }// namespace modulo_controllers
