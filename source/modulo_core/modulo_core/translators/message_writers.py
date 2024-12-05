@@ -14,6 +14,46 @@ MsgT = TypeVar('MsgT')
 StateT = TypeVar('StateT')
 
 
+def get_clproto_msg_type(state: StateT) -> clproto.MessageType:
+    if isinstance(state, sr.CartesianPose):
+        return clproto.MessageType.CARTESIAN_POSE_MESSAGE
+    elif isinstance(state, sr.CartesianTwist):
+        return clproto.MessageType.CARTESIAN_TWIST_MESSAGE
+    elif isinstance(state, sr.CartesianAcceleration):
+        return clproto.MessageType.CARTESIAN_ACCELERATION_MESSAGE
+    elif isinstance(state, sr.CartesianWrench):
+        return clproto.MessageType.CARTESIAN_WRENCH_MESSAGE
+    elif isinstance(state, sr.CartesianState):
+        return clproto.MessageType.CARTESIAN_STATE_MESSAGE
+    elif isinstance(state, sr.SpatialState):
+        return clproto.MessageType.SPATIAL_STATE_MESSAGE
+    elif isinstance(state, sr.JointPositions):
+        return clproto.MessageType.JOINT_POSITIONS_MESSAGE
+    elif isinstance(state, sr.JointVelocities):
+        return clproto.MessageType.JOINT_VELOCITIES_MESSAGE
+    elif isinstance(state, sr.JointAccelerations):
+        return clproto.MessageType.JOINT_VELOCITIES_MESSAGE
+    elif isinstance(state, sr.JointTorques):
+        return clproto.MessageType.JOINT_TORQUES_MESSAGE
+    elif isinstance(state, sr.JointState):
+        return clproto.MessageType.JOINT_STATE_MESSAGE
+    elif isinstance(state, sr.Parameter):
+        return clproto.MessageType.PARAMETER_MESSAGE
+    elif isinstance(state, sr.DigitalIOState):
+        return clproto.MessageType.DIGITAL_IO_STATE_MESSAGE
+    elif isinstance(state, sr.AnalogIOState):
+        return clproto.MessageType.ANALOG_IO_STATE_MESSAGE
+    elif isinstance(state, sr.Jacobian):
+        return clproto.MessageType.JACOBIAN_MESSAGE
+    elif isinstance(state, sr.Ellipsoid):
+        return clproto.MessageType.ELLIPSOID_MESSAGE
+    elif isinstance(state, sr.Shape):
+        return clproto.MessageType.SHAPE_MESSAGE
+    elif isinstance(state, sr.State):
+        return clproto.MessageType.STATE_MESSAGE
+    return clproto.MessageType.UNKNOWN_MESSAGE
+
+
 def write_xyz(message: Union[geometry.Point, geometry.Vector3], vector: np.array):
     """
     Helper function to write a vector to a Point or Vector3 message.

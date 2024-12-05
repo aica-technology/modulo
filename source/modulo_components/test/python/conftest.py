@@ -49,8 +49,7 @@ def minimal_cartesian_output(request, random_pose):
 
         component = component_type("minimal_cartesian_output")
         component._output = random_pose
-        component.add_output("cartesian_pose", "_output", EncodedState, clproto.MessageType.CARTESIAN_STATE_MESSAGE,
-                             topic, publish_on_step=publish_on_step)
+        component.add_output("cartesian_pose", "_output", EncodedState, default_topic=topic, publish_on_step=publish_on_step)
         component.publish = publish.__get__(component)
         return component
 
@@ -65,8 +64,7 @@ def minimal_joint_output(request, random_joint):
 
         component = component_type("minimal_joint_output")
         component._output = random_joint
-        component.add_output("joint_state", "_output", EncodedState, clproto.MessageType.JOINT_STATE_MESSAGE,
-                             topic, publish_on_step=publish_on_step)
+        component.add_output("joint_state", "_output", EncodedState, default_topic=topic, publish_on_step=publish_on_step)
         component.publish = publish.__get__(component)
         return component
 
