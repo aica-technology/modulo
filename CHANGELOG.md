@@ -22,6 +22,7 @@ Release Versions:
 
  - fix(components): remove incorrect log line (#166)
  - fix(controllers): move predicate publishing rate parameter to BaseControllerInterface (#168)
+ - feat(controllers): add TF listener interface in BaseControllerInterface (#169)
 
 ## 5.0.2
 

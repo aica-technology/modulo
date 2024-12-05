@@ -7,6 +7,8 @@
 #include <controller_interface/helpers.hpp>
 #include <realtime_tools/realtime_buffer.h>
 #include <realtime_tools/realtime_publisher.h>
+#include <tf2_ros/buffer.h>
+#include <tf2_ros/transform_listener.h>
 
 #include <state_representation/parameters/ParameterMap.hpp>
 
@@ -311,6 +313,39 @@ protected:
       const std::function<ControllerServiceResponse(const std::string& string)>& callback);
 
   /**
+   * @brief Configure a transform buffer and listener.
+   */
+  void add_tf_listener();
+
+  /**
+   * @brief Look up a transform from TF.
+   * @param frame The desired frame of the transform
+   * @param reference_frame The desired reference frame of the transform
+   * @param time_point The time at which the value of the transform is desired
+   * @param duration How long to block the lookup call before failing
+   * @throws modulo_core::exceptions::LookupTransformException if TF buffer/listener are unconfigured or
+   * if the lookupTransform call failed
+   * @return If it exists, the requested transform
+   */
+  [[nodiscard]] state_representation::CartesianPose lookup_transform(
+      const std::string& frame, const std::string& reference_frame, const tf2::TimePoint& time_point,
+      const tf2::Duration& duration);
+
+  /**
+   * @brief Look up a transform from TF.
+   * @param frame The desired frame of the transform
+   * @param reference_frame The desired reference frame of the transform
+   * @param validity_period The validity period of the latest transform from the time of lookup in seconds
+   * @param duration How long to block the lookup call before failing
+   * @throws modulo_core::exceptions::LookupTransformException if TF buffer/listener are unconfigured,
+   * if the lookupTransform call failed, or if the transform is too old
+   * @return If it exists and is still valid, the requested transform
+   */
+  [[nodiscard]] state_representation::CartesianPose lookup_transform(
+      const std::string& frame, const std::string& reference_frame = "world", double validity_period = -1.0,
+      const tf2::Duration& duration = tf2::Duration(std::chrono::microseconds(10)));
+
+  /**
    * @brief Getter of the Quality of Service attribute.
    * @return The Quality of Service attribute
    */
@@ -333,6 +368,12 @@ protected:
    * @return The reference to the command mutex
    */
   std::timed_mutex& get_command_mutex();
+
+  /**
+   * @brief Check if the node has been initialized or not.
+   * @return True if the node is initialized, false otherwise
+   */
+  bool is_node_initialized() const;
 
 private:
   /**
@@ -447,6 +488,20 @@ private:
    */
   std::string validate_service_name(const std::string& service_name, const std::string& type) const;
 
+  /**
+   * @brief Helper method to look up a transform from TF.
+   * @param frame The desired frame of the transform
+   * @param reference_frame The desired reference frame of the transform
+   * @param time_point The time at which the value of the transform is desired
+   * @param duration How long to block the lookup call before failing
+   * @throws modulo_core::exceptions::LookupTransformException if TF buffer/listener are unconfigured or
+   * if the lookupTransform call failed
+   * @return If it exists, the requested transform
+   */
+  [[nodiscard]] geometry_msgs::msg::TransformStamped lookup_ros_transform(
+      const std::string& frame, const std::string& reference_frame, const tf2::TimePoint& time_point,
+      const tf2::Duration& duration);
+
   state_representation::ParameterMap parameter_map_;///< ParameterMap for handling parameters
   std::unordered_map<std::string, bool> read_only_parameters_;
   std::shared_ptr<rclcpp::node_interfaces::PreSetParametersCallbackHandle>
@@ -482,6 +537,9 @@ private:
       custom_output_configuration_callables_;
   std::map<std::string, std::function<void(const std::string&, const std::string&)>>
       custom_input_configuration_callables_;
+
+  std::shared_ptr<tf2_ros::Buffer> tf_buffer_;             ///< TF buffer
+  std::shared_ptr<tf2_ros::TransformListener> tf_listener_;///< TF listener
 };
 
 template<typename T>
