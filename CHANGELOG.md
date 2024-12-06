@@ -25,6 +25,7 @@ Release Versions:
  - feat(controllers): add TF listener in BaseControllerInterface (#169)
  - feat(controllers): add TF broadcaster in BaseControllerInterface (#170)
  - test(controllers): add TF listener and broadcaster tests (#172)
+ - fix(components): clean up lifecycle nodes properly (#178)
 
 ## 5.0.2
 
