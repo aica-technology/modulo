@@ -25,6 +25,7 @@ Release Versions:
  - feat(controllers): add TF listener in BaseControllerInterface (#169)
  - feat(controllers): add TF broadcaster in BaseControllerInterface (#170)
  - test(controllers): add TF listener and broadcaster tests (#172)
+ - feat(components): get clproto message type from attribute (#175)
 
 ## 5.0.2
 

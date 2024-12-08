@@ -15,42 +15,46 @@ StateT = TypeVar('StateT')
 
 
 def get_clproto_msg_type(state: StateT) -> clproto.MessageType:
-    if isinstance(state, sr.CartesianPose):
-        return clproto.MessageType.CARTESIAN_POSE_MESSAGE
-    elif isinstance(state, sr.CartesianTwist):
-        return clproto.MessageType.CARTESIAN_TWIST_MESSAGE
-    elif isinstance(state, sr.CartesianAcceleration):
-        return clproto.MessageType.CARTESIAN_ACCELERATION_MESSAGE
-    elif isinstance(state, sr.CartesianWrench):
-        return clproto.MessageType.CARTESIAN_WRENCH_MESSAGE
-    elif isinstance(state, sr.CartesianState):
-        return clproto.MessageType.CARTESIAN_STATE_MESSAGE
-    elif isinstance(state, sr.SpatialState):
-        return clproto.MessageType.SPATIAL_STATE_MESSAGE
-    elif isinstance(state, sr.JointPositions):
-        return clproto.MessageType.JOINT_POSITIONS_MESSAGE
-    elif isinstance(state, sr.JointVelocities):
-        return clproto.MessageType.JOINT_VELOCITIES_MESSAGE
-    elif isinstance(state, sr.JointAccelerations):
-        return clproto.MessageType.JOINT_VELOCITIES_MESSAGE
-    elif isinstance(state, sr.JointTorques):
-        return clproto.MessageType.JOINT_TORQUES_MESSAGE
-    elif isinstance(state, sr.JointState):
-        return clproto.MessageType.JOINT_STATE_MESSAGE
-    elif isinstance(state, sr.Parameter):
-        return clproto.MessageType.PARAMETER_MESSAGE
-    elif isinstance(state, sr.DigitalIOState):
-        return clproto.MessageType.DIGITAL_IO_STATE_MESSAGE
-    elif isinstance(state, sr.AnalogIOState):
-        return clproto.MessageType.ANALOG_IO_STATE_MESSAGE
-    elif isinstance(state, sr.Jacobian):
-        return clproto.MessageType.JACOBIAN_MESSAGE
-    elif isinstance(state, sr.Ellipsoid):
-        return clproto.MessageType.ELLIPSOID_MESSAGE
-    elif isinstance(state, sr.Shape):
-        return clproto.MessageType.SHAPE_MESSAGE
-    elif isinstance(state, sr.State):
+    if not isinstance(state, sr.State) or not hasattr(state, 'get_type') or not callable(state.get_type):
+        return clproto.MessageType.UNKNOWN_MESSAGE
+
+    state_type = state.get_type()
+    if state_type == sr.StateType.STATE:
         return clproto.MessageType.STATE_MESSAGE
+    elif state_type == sr.StateType.SPATIAL_STATE:
+        return clproto.MessageType.SPATIAL_STATE_MESSAGE
+    elif state_type == sr.StateType.CARTESIAN_STATE:
+        return clproto.MessageType.CARTESIAN_STATE_MESSAGE
+    elif state_type == sr.StateType.CARTESIAN_POSE:
+        return clproto.MessageType.CARTESIAN_POSE_MESSAGE
+    elif state_type == sr.StateType.CARTESIAN_TWIST:
+        return clproto.MessageType.CARTESIAN_TWIST_MESSAGE
+    elif state_type == sr.StateType.CARTESIAN_ACCELERATION:
+        return clproto.MessageType.CARTESIAN_ACCELERATION_MESSAGE
+    elif state_type == sr.StateType.CARTESIAN_WRENCH:
+        return clproto.MessageType.CARTESIAN_WRENCH_MESSAGE
+    elif state_type == sr.StateType.JACOBIAN:
+        return clproto.MessageType.JACOBIAN_MESSAGE
+    elif state_type == sr.StateType.JOINT_STATE:
+        return clproto.MessageType.JOINT_STATE_MESSAGE
+    elif state_type == sr.StateType.JOINT_POSITIONS:
+        return clproto.MessageType.JOINT_POSITIONS_MESSAGE
+    elif state_type == sr.StateType.JOINT_VELOCITIES:
+        return clproto.MessageType.JOINT_VELOCITIES_MESSAGE
+    elif state_type == sr.StateType.JOINT_ACCELERATIONS:
+        return clproto.MessageType.JOINT_ACCELERATIONS_MESSAGE
+    elif state_type == sr.StateType.JOINT_TORQUES:
+        return clproto.MessageType.JOINT_TORQUES_MESSAGE
+    elif state_type == sr.StateType.GEOMETRY_SHAPE:
+        return clproto.MessageType.SHAPE_MESSAGE
+    elif state_type == sr.StateType.GEOMETRY_ELLIPSOID:
+        return clproto.MessageType.ELLIPSOID_MESSAGE
+    elif state_type == sr.StateType.PARAMETER:
+        return clproto.MessageType.PARAMETER_MESSAGE
+    elif state_type == sr.StateType.DIGITAL_IO_STATE:
+        return clproto.MessageType.DIGITAL_IO_STATE_MESSAGE
+    elif state_type == sr.StateType.ANALOG_IO_STATE:
+        return clproto.MessageType.ANALOG_IO_STATE_MESSAGE
     return clproto.MessageType.UNKNOWN_MESSAGE
 
 
