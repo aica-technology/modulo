@@ -1,4 +1,4 @@
-from typing import TypeVar
+from typing import Optional, TypeVar
 
 import clproto
 from lifecycle_msgs.msg import State
@@ -361,7 +361,7 @@ class LifecycleComponent(ComponentInterface, LifecycleNodeMixin):
         return success
 
     def add_output(self, signal_name: str, data: str, message_type: MsgT,
-                   clproto_message_type=clproto.MessageType.UNKNOWN_MESSAGE, default_topic="", fixed_topic=False,
+                   clproto_message_type: Optional[clproto.MessageType] = None, default_topic="", fixed_topic=False,
                    publish_on_step=True):
         """
         Add an output signal of the component.

@@ -422,7 +422,7 @@ class ComponentInterface(Node):
         self.get_logger().debug(f"Removing signal '{signal_name}'.")
 
     def __create_output(self, signal_name: str, data: str, message_type: MsgT,
-                        clproto_message_type: clproto.MessageType, default_topic: str, fixed_topic: bool,
+                        clproto_message_type: Union[clproto.MessageType, None], default_topic: str, fixed_topic: bool,
                         publish_on_step: bool) -> str:
         """
         Helper function to parse the signal name and add an output without Publisher to the dict of outputs.
@@ -438,23 +438,26 @@ class ComponentInterface(Node):
         :return: The parsed signal name
         """
         try:
-            if message_type == EncodedState and clproto_message_type == clproto.MessageType.UNKNOWN_MESSAGE:
-                raise AddSignalError(f"Provide a valid clproto message type for outputs of type EncodedState.")
-            self.declare_output(signal_name, default_topic, fixed_topic)
-            parsed_signal_name = parse_topic_name(signal_name)
             if message_type == Bool or message_type == Float64 or \
                     message_type == Float64MultiArray or message_type == Int32 or message_type == String:
                 translator = modulo_writers.write_std_message
             elif message_type == EncodedState:
-                translator = partial(modulo_writers.write_clproto_message,
-                                     clproto_message_type=clproto_message_type)
+                cl_msg_type = clproto_message_type if clproto_message_type else modulo_writers.get_clproto_msg_type(
+                    self.__getattribute__(data))
+                if cl_msg_type == clproto.MessageType.UNKNOWN_MESSAGE:
+                    raise AddSignalError(f"Provide a valid clproto message type for output '{
+                                         signal_name}' of type EncodedState.")
+                translator = partial(modulo_writers.write_clproto_message, clproto_message_type=cl_msg_type)
             elif hasattr(message_type, 'get_fields_and_field_types'):
                 def write_ros_msg(message, data):
                     for field in message.get_fields_and_field_types().keys():
                         setattr(message, field, getattr(data, field))
                 translator = write_ros_msg
             else:
-                raise AddSignalError("The provided message type is not supported to create a component output.")
+                raise AddSignalError(
+                    f"The provided message type is not supported to create component output '{signal_name}'.")
+            self.declare_output(signal_name, default_topic, fixed_topic)
+            parsed_signal_name = parse_topic_name(signal_name)
             self.__outputs[parsed_signal_name] = {"attribute": data, "message_type": message_type,
                                                   "translator": translator}
             self.__periodic_outputs[parsed_signal_name] = publish_on_step

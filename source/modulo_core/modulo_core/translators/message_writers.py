@@ -14,6 +14,50 @@ MsgT = TypeVar('MsgT')
 StateT = TypeVar('StateT')
 
 
+def get_clproto_msg_type(state: StateT) -> clproto.MessageType:
+    if not isinstance(state, sr.State) or not hasattr(state, 'get_type') or not callable(state.get_type):
+        return clproto.MessageType.UNKNOWN_MESSAGE
+
+    state_type = state.get_type()
+    if state_type == sr.StateType.STATE:
+        return clproto.MessageType.STATE_MESSAGE
+    elif state_type == sr.StateType.SPATIAL_STATE:
+        return clproto.MessageType.SPATIAL_STATE_MESSAGE
+    elif state_type == sr.StateType.CARTESIAN_STATE:
+        return clproto.MessageType.CARTESIAN_STATE_MESSAGE
+    elif state_type == sr.StateType.CARTESIAN_POSE:
+        return clproto.MessageType.CARTESIAN_POSE_MESSAGE
+    elif state_type == sr.StateType.CARTESIAN_TWIST:
+        return clproto.MessageType.CARTESIAN_TWIST_MESSAGE
+    elif state_type == sr.StateType.CARTESIAN_ACCELERATION:
+        return clproto.MessageType.CARTESIAN_ACCELERATION_MESSAGE
+    elif state_type == sr.StateType.CARTESIAN_WRENCH:
+        return clproto.MessageType.CARTESIAN_WRENCH_MESSAGE
+    elif state_type == sr.StateType.JACOBIAN:
+        return clproto.MessageType.JACOBIAN_MESSAGE
+    elif state_type == sr.StateType.JOINT_STATE:
+        return clproto.MessageType.JOINT_STATE_MESSAGE
+    elif state_type == sr.StateType.JOINT_POSITIONS:
+        return clproto.MessageType.JOINT_POSITIONS_MESSAGE
+    elif state_type == sr.StateType.JOINT_VELOCITIES:
+        return clproto.MessageType.JOINT_VELOCITIES_MESSAGE
+    elif state_type == sr.StateType.JOINT_ACCELERATIONS:
+        return clproto.MessageType.JOINT_ACCELERATIONS_MESSAGE
+    elif state_type == sr.StateType.JOINT_TORQUES:
+        return clproto.MessageType.JOINT_TORQUES_MESSAGE
+    elif state_type == sr.StateType.GEOMETRY_SHAPE:
+        return clproto.MessageType.SHAPE_MESSAGE
+    elif state_type == sr.StateType.GEOMETRY_ELLIPSOID:
+        return clproto.MessageType.ELLIPSOID_MESSAGE
+    elif state_type == sr.StateType.PARAMETER:
+        return clproto.MessageType.PARAMETER_MESSAGE
+    elif state_type == sr.StateType.DIGITAL_IO_STATE:
+        return clproto.MessageType.DIGITAL_IO_STATE_MESSAGE
+    elif state_type == sr.StateType.ANALOG_IO_STATE:
+        return clproto.MessageType.ANALOG_IO_STATE_MESSAGE
+    return clproto.MessageType.UNKNOWN_MESSAGE
+
+
 def write_xyz(message: Union[geometry.Point, geometry.Vector3], vector: np.array):
     """
     Helper function to write a vector to a Point or Vector3 message.
