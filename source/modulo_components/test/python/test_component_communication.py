@@ -16,6 +16,15 @@ def test_input_output(ros_exec, random_pose, minimal_cartesian_output, minimal_c
         minimal_cartesian_output.publish()
 
 
+@pytest.mark.parametrize("exception_cartesian_input", [[Component, "/topic"]], indirect=True)
+@pytest.mark.parametrize("minimal_cartesian_output", [[Component, "/topic", True]], indirect=True)
+def test_exception_input_output(ros_exec, minimal_cartesian_output, exception_cartesian_input):
+    ros_exec.add_node(exception_cartesian_input)
+    ros_exec.add_node(minimal_cartesian_output)
+    ros_exec.spin_until_future_complete(exception_cartesian_input.received_future, timeout_sec=0.5)
+    assert exception_cartesian_input.received_future.done() and exception_cartesian_input.received_future.result()
+
+
 @pytest.mark.parametrize("minimal_cartesian_input", [[Component, "/topic"]], indirect=True)
 @pytest.mark.parametrize("minimal_cartesian_output", [[Component, "/topic", False]], indirect=True)
 def test_input_output_manual(ros_exec, random_pose, minimal_cartesian_output, minimal_cartesian_input):
