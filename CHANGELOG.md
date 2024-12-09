@@ -24,7 +24,6 @@ Release Versions:
  - fix(controllers): move predicate publishing rate parameter to BaseControllerInterface (#168)
  - feat(controllers): add TF listener in BaseControllerInterface (#169)
  - feat(controllers): add TF broadcaster in BaseControllerInterface (#170)
- - test(controllers): add TF listener and broadcaster tests (#172)
  - feat(components): get clproto message type from attribute (#175)
  - fix(components): add missing test case (#181)
 
