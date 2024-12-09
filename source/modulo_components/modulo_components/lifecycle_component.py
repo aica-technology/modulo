@@ -4,6 +4,7 @@ import clproto
 from lifecycle_msgs.msg import State
 from modulo_components.component_interface import ComponentInterface
 from modulo_core.exceptions import AddSignalError
+from rclpy.callback_groups import CallbackGroup
 from rclpy.lifecycle import LifecycleNodeMixin, LifecycleState
 from rclpy.lifecycle.node import TransitionCallbackReturn
 
@@ -11,7 +12,16 @@ MsgT = TypeVar('MsgT')
 LIFECYCLE_NODE_MIXIN_KWARGS = ["enable_communication_interface", "callback_group"]
 
 
-class LifecycleComponent(ComponentInterface, LifecycleNodeMixin):
+class _LifecycleNodeMixin(LifecycleNodeMixin):
+    def __init__(self, enable_communication_interface: bool = True, callback_group: Optional[CallbackGroup] = None):
+        super().__init__(enable_communication_interface=enable_communication_interface, callback_group=callback_group)
+
+    def destroy(self):
+        self._state_machine = None
+        self._callbacks = {}
+
+
+class LifecycleComponent(ComponentInterface, _LifecycleNodeMixin):
     """
     Class to represent a LifecycleComponent in python, following the same logic pattern
     as the C++ modulo_components::LifecycleComponent class.
@@ -25,8 +35,15 @@ class LifecycleComponent(ComponentInterface, LifecycleNodeMixin):
         """
         lifecycle_node_kwargs = {key: value for key, value in kwargs.items() if key in LIFECYCLE_NODE_MIXIN_KWARGS}
         ComponentInterface.__init__(self, node_name, *args, **kwargs)
-        LifecycleNodeMixin.__init__(self, *args, **lifecycle_node_kwargs)
+        _LifecycleNodeMixin.__init__(self, **lifecycle_node_kwargs)
         self.__has_error = False
+
+    def destroy_node(self):
+        """
+        Cleanly destroy the node by cleaning up the Mixin class.
+        """
+        _LifecycleNodeMixin.destroy(self)
+        ComponentInterface.destroy_node(self)
 
     def get_lifecycle_state(self) -> LifecycleState:
         """
