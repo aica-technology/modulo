@@ -79,7 +79,8 @@ def minimal_sensor_output(request, random_sensor):
 
         component = component_type("minimal_sensor_output")
         component._output = random_sensor
-        component.add_output("sensor_state", "_output", JointState, default_topic=topic, publish_on_step=publish_on_step)
+        component.add_output("sensor_state", "_output", JointState,
+                             default_topic=topic, publish_on_step=publish_on_step)
         component.publish = publish.__get__(component)
         return component
 

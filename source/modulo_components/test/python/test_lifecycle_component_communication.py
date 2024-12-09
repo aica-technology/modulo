@@ -48,6 +48,29 @@ def test_input_output_manual(ros_exec, make_lifecycle_change_client, random_pose
     assert random_pose.dist(minimal_cartesian_input.input) < 1e-3
 
 
+@pytest.mark.parametrize("minimal_sensor_input", [[LifecycleComponent, "/topic"]], indirect=True)
+@pytest.mark.parametrize("minimal_sensor_output", [[LifecycleComponent, "/topic", False]], indirect=True)
+def test_input_output_manual_sensor(
+        ros_exec, make_lifecycle_change_client, random_sensor, minimal_sensor_output, minimal_sensor_input):
+    input_change_client = make_lifecycle_change_client("minimal_sensor_input")
+    output_change_client = make_lifecycle_change_client("minimal_sensor_output")
+    ros_exec.add_node(input_change_client)
+    ros_exec.add_node(output_change_client)
+    ros_exec.add_node(minimal_sensor_input)
+    ros_exec.add_node(minimal_sensor_output)
+    input_change_client.configure(ros_exec)
+    output_change_client.configure(ros_exec)
+    input_change_client.activate(ros_exec)
+    output_change_client.activate(ros_exec)
+    ros_exec.spin_until_future_complete(minimal_sensor_input.received_future, timeout_sec=0.5)
+    assert not minimal_sensor_input.received_future.done()
+    minimal_sensor_output.publish()
+    ros_exec.spin_until_future_complete(minimal_sensor_input.received_future, timeout_sec=0.5)
+    assert minimal_sensor_input.received_future.done() and minimal_sensor_input.received_future.result()
+    for key in random_sensor.get_fields_and_field_types().keys():
+        assert getattr(random_sensor, key) == getattr(minimal_sensor_input.input, key)
+
+
 @pytest.mark.parametrize("minimal_cartesian_input", [[LifecycleComponent, "/topic"]], indirect=True)
 @pytest.mark.parametrize("minimal_joint_output", [[LifecycleComponent, "/topic", True]], indirect=True)
 def test_input_output_invalid_type(ros_exec, minimal_joint_output, minimal_cartesian_input):
