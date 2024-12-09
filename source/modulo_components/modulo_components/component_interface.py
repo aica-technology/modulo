@@ -438,6 +438,10 @@ class ComponentInterface(Node):
         :return: The parsed signal name
         """
         try:
+            if not hasattr(self, data):
+                raise AddSignalError(f"Component has no attribute '{data}'")
+            if self.__getattribute__ is None:
+                raise AddSignalError(f"Attribute '{data}' should not be None")
             if message_type == EncodedState and clproto_message_type == clproto.MessageType.UNKNOWN_MESSAGE:
                 raise AddSignalError(f"Provide a valid clproto message type for outputs of type EncodedState.")
             self.declare_output(signal_name, default_topic, fixed_topic)

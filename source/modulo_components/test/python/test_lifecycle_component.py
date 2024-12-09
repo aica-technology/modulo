@@ -10,6 +10,7 @@ def lifecycle_component(ros_context):
 
 
 def test_add_remove_output(lifecycle_component):
+    lifecycle_component.test = False
     lifecycle_component.add_output("8_teEsTt_#1@3", "test", Bool)
     assert "test_13" in lifecycle_component._ComponentInterface__outputs.keys()
     assert lifecycle_component.get_parameter_value("test_13_topic") == "~/test_13"

@@ -10,6 +10,7 @@ def component(ros_context):
 
 
 def test_add_remove_output(component):
+    component.test = False
     component.add_output("8_teEsTt_#1@3", "test", Bool)
     assert "test_13" in component._ComponentInterface__outputs.keys()
     assert component.get_parameter_value("test_13_topic") == "~/test_13"

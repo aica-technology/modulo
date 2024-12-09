@@ -146,6 +146,7 @@ def test_add_service(component_interface, ros_exec, make_service_client):
 
 
 def test_create_output(component_interface):
+    component_interface.test = False
     component_interface._ComponentInterface__create_output(
         "test", "test", Bool, clproto.MessageType.UNKNOWN_MESSAGE, "/topic", True, True)
     assert "test" in component_interface._ComponentInterface__outputs.keys()
