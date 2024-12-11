@@ -2,13 +2,9 @@
 
 #include <chrono>
 
-#include <console_bridge/console.h>
-
 #include <lifecycle_msgs/msg/state.hpp>
 
-#include <modulo_core/exceptions.hpp>
 #include <modulo_core/translators/message_readers.hpp>
-#include <stdexcept>
 
 template<class... Ts>
 struct overloaded : Ts... {
@@ -543,101 +539,6 @@ void BaseControllerInterface::add_service(
   }
 }
 
-void BaseControllerInterface::add_tf_listener() {
-  if (!is_node_initialized()) {
-    throw modulo_core::exceptions::CoreException("Failed to add TF buffer and listener: Node is not initialized yet.");
-  }
-  if (this->tf_buffer_ == nullptr || this->tf_listener_ == nullptr) {
-    RCLCPP_DEBUG(this->get_node()->get_logger(), "Adding TF buffer and listener.");
-    console_bridge::setLogLevel(console_bridge::CONSOLE_BRIDGE_LOG_NONE);
-    this->tf_buffer_ = std::make_shared<tf2_ros::Buffer>(this->get_node()->get_clock());
-    this->tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*this->tf_buffer_);
-  } else {
-    RCLCPP_DEBUG(this->get_node()->get_logger(), "TF buffer and listener already exist.");
-  }
-}
-
-state_representation::CartesianPose BaseControllerInterface::lookup_transform(
-    const std::string& frame, const std::string& reference_frame, const tf2::TimePoint& time_point,
-    const tf2::Duration& duration) {
-  auto transform = this->lookup_ros_transform(frame, reference_frame, time_point, duration);
-  state_representation::CartesianPose result(frame, reference_frame);
-  translators::read_message(result, transform);
-  return result;
-}
-
-state_representation::CartesianPose BaseControllerInterface::lookup_transform(
-    const std::string& frame, const std::string& reference_frame, double validity_period,
-    const tf2::Duration& duration) {
-  auto transform =
-      this->lookup_ros_transform(frame, reference_frame, tf2::TimePoint(std::chrono::microseconds(0)), duration);
-  if (validity_period > 0.0
-      && (this->get_node()->get_clock()->now() - transform.header.stamp).seconds() > validity_period) {
-    throw modulo_core::exceptions::LookupTransformException("Failed to lookup transform: Latest transform is too old!");
-  }
-  state_representation::CartesianPose result(frame, reference_frame);
-  translators::read_message(result, transform);
-  return result;
-}
-
-geometry_msgs::msg::TransformStamped BaseControllerInterface::lookup_ros_transform(
-    const std::string& frame, const std::string& reference_frame, const tf2::TimePoint& time_point,
-    const tf2::Duration& duration) {
-  if (this->tf_buffer_ == nullptr || this->tf_listener_ == nullptr) {
-    throw modulo_core::exceptions::LookupTransformException(
-        "Failed to lookup transform: No TF buffer / listener configured.");
-  }
-  try {
-    return this->tf_buffer_->lookupTransform(reference_frame, frame, time_point, duration);
-  } catch (const tf2::TransformException& ex) {
-    throw modulo_core::exceptions::LookupTransformException(
-        std::string("Failed to lookup transform: ").append(ex.what()));
-  }
-}
-
-void BaseControllerInterface::add_tf_broadcaster() {
-  if (!is_node_initialized()) {
-    throw modulo_core::exceptions::CoreException("Failed to add TF broadcaster: Node is not initialized yet.");
-  }
-  if (this->tf_broadcaster_ == nullptr) {
-    RCLCPP_DEBUG(this->get_node()->get_logger(), "Adding TF broadcaster.");
-    console_bridge::setLogLevel(console_bridge::CONSOLE_BRIDGE_LOG_NONE);
-    this->tf_broadcaster_ = std::make_shared<tf2_ros::TransformBroadcaster>(get_node());
-  } else {
-    RCLCPP_DEBUG(this->get_node()->get_logger(), "TF broadcaster already exists.");
-  }
-}
-
-void BaseControllerInterface::add_static_tf_broadcaster() {
-  if (!is_node_initialized()) {
-    throw modulo_core::exceptions::CoreException("Failed to add static TF broadcaster: Node is not initialized yet.");
-  }
-  if (this->static_tf_broadcaster_ == nullptr) {
-    RCLCPP_DEBUG(this->get_node()->get_logger(), "Adding static TF broadcaster.");
-    console_bridge::setLogLevel(console_bridge::CONSOLE_BRIDGE_LOG_NONE);
-    this->static_tf_broadcaster_ = std::make_shared<tf2_ros::StaticTransformBroadcaster>(get_node());
-  } else {
-    RCLCPP_DEBUG(this->get_node()->get_logger(), "Static TF broadcaster already exists.");
-  }
-}
-
-void BaseControllerInterface::send_transform(const state_representation::CartesianPose& transform) {
-  this->send_transforms(std::vector<state_representation::CartesianPose>{transform});
-}
-
-void BaseControllerInterface::send_transforms(const std::vector<state_representation::CartesianPose>& transforms) {
-  this->publish_transforms(transforms, this->tf_broadcaster_);
-}
-
-void BaseControllerInterface::send_static_transform(const state_representation::CartesianPose& transform) {
-  this->send_static_transforms(std::vector<state_representation::CartesianPose>{transform});
-}
-
-void BaseControllerInterface::send_static_transforms(
-    const std::vector<state_representation::CartesianPose>& transforms) {
-  this->publish_transforms(transforms, this->static_tf_broadcaster_, true);
-}
-
 rclcpp::QoS BaseControllerInterface::get_qos() const {
   return qos_;
 }
@@ -652,15 +553,6 @@ bool BaseControllerInterface::is_active() const {
 
 std::timed_mutex& BaseControllerInterface::get_command_mutex() {
   return command_mutex_;
-}
-
-bool BaseControllerInterface::is_node_initialized() const {
-  try {
-    get_node();
-    return true;
-  } catch (const std::runtime_error&) {
-    return false;
-  }
 }
 
 }// namespace modulo_controllers

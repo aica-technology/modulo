@@ -7,10 +7,6 @@
 #include <controller_interface/helpers.hpp>
 #include <realtime_tools/realtime_buffer.h>
 #include <realtime_tools/realtime_publisher.h>
-#include <tf2_ros/buffer.h>
-#include <tf2_ros/static_transform_broadcaster.h>
-#include <tf2_ros/transform_broadcaster.h>
-#include <tf2_ros/transform_listener.h>
 
 #include <state_representation/parameters/ParameterMap.hpp>
 
@@ -315,73 +311,6 @@ protected:
       const std::function<ControllerServiceResponse(const std::string& string)>& callback);
 
   /**
-   * @brief Configure a transform buffer and listener.
-   */
-  void add_tf_listener();
-
-  /**
-   * @brief Look up a transform from TF.
-   * @param frame The desired frame of the transform
-   * @param reference_frame The desired reference frame of the transform
-   * @param time_point The time at which the value of the transform is desired
-   * @param duration How long to block the lookup call before failing
-   * @throws modulo_core::exceptions::LookupTransformException if TF buffer/listener are unconfigured or
-   * if the lookupTransform call failed
-   * @return If it exists, the requested transform
-   */
-  [[nodiscard]] state_representation::CartesianPose lookup_transform(
-      const std::string& frame, const std::string& reference_frame, const tf2::TimePoint& time_point,
-      const tf2::Duration& duration);
-
-  /**
-   * @brief Look up a transform from TF.
-   * @param frame The desired frame of the transform
-   * @param reference_frame The desired reference frame of the transform
-   * @param validity_period The validity period of the latest transform from the time of lookup in seconds
-   * @param duration How long to block the lookup call before failing
-   * @throws modulo_core::exceptions::LookupTransformException if TF buffer/listener are unconfigured,
-   * if the lookupTransform call failed, or if the transform is too old
-   * @return If it exists and is still valid, the requested transform
-   */
-  [[nodiscard]] state_representation::CartesianPose lookup_transform(
-      const std::string& frame, const std::string& reference_frame = "world", double validity_period = -1.0,
-      const tf2::Duration& duration = tf2::Duration(std::chrono::microseconds(10)));
-
-  /**
-   *@brief Configure a transform broadcaster.
-   */
-  void add_tf_broadcaster();
-
-  /**
-   * @brief Configure a static transform broadcaster.
-   */
-  void add_static_tf_broadcaster();
-
-  /**
-   * @brief Send a transform to TF.
-   * @param transform The transform to send
-   */
-  void send_transform(const state_representation::CartesianPose& transform);
-
-  /**
-   * @brief Send a vector of transforms to TF.
-   * @param transforms The vector of transforms to send
-   */
-  void send_transforms(const std::vector<state_representation::CartesianPose>& transforms);
-
-  /**
-   * @brief Send a static transform to TF.
-   * @param transform The transform to send
-   */
-  void send_static_transform(const state_representation::CartesianPose& transform);
-
-  /**
-   * @brief Send a vector of static transforms to TF.
-   * @param transforms The vector of transforms to send
-   */
-  void send_static_transforms(const std::vector<state_representation::CartesianPose>& transforms);
-
-  /**
    * @brief Getter of the Quality of Service attribute.
    * @return The Quality of Service attribute
    */
@@ -404,12 +333,6 @@ protected:
    * @return The reference to the command mutex
    */
   std::timed_mutex& get_command_mutex();
-
-  /**
-   * @brief Check if the node has been initialized or not.
-   * @return True if the node is initialized, false otherwise
-   */
-  bool is_node_initialized() const;
 
 private:
   /**
@@ -524,32 +447,6 @@ private:
    */
   std::string validate_service_name(const std::string& service_name, const std::string& type) const;
 
-  /**
-   * @brief Helper method to look up a transform from TF.
-   * @param frame The desired frame of the transform
-   * @param reference_frame The desired reference frame of the transform
-   * @param time_point The time at which the value of the transform is desired
-   * @param duration How long to block the lookup call before failing
-   * @throws modulo_core::exceptions::LookupTransformException if TF buffer/listener are unconfigured or
-   * if the lookupTransform call failed
-   * @return If it exists, the requested transform
-   */
-  [[nodiscard]] geometry_msgs::msg::TransformStamped lookup_ros_transform(
-      const std::string& frame, const std::string& reference_frame, const tf2::TimePoint& time_point,
-      const tf2::Duration& duration);
-
-  /**
-   * @brief Helper function to send a vector of transforms through a transform broadcaster
-   * @tparam T The type of the broadcaster (tf2_ros::TransformBroadcaster or tf2_ros::StaticTransformBroadcaster)
-   * @param transforms The transforms to send
-   * @param tf_broadcaster A pointer to a configured transform broadcaster object
-   * @param is_static If true, treat the broadcaster as a static frame broadcaster for the sake of log messages
-   */
-  template<typename T>
-  void publish_transforms(
-      const std::vector<state_representation::CartesianPose>& transforms, const std::shared_ptr<T>& tf_broadcaster,
-      bool is_static = false);
-
   state_representation::ParameterMap parameter_map_;///< ParameterMap for handling parameters
   std::unordered_map<std::string, bool> read_only_parameters_;
   std::shared_ptr<rclcpp::node_interfaces::PreSetParametersCallbackHandle>
@@ -585,11 +482,6 @@ private:
       custom_output_configuration_callables_;
   std::map<std::string, std::function<void(const std::string&, const std::string&)>>
       custom_input_configuration_callables_;
-
-  std::shared_ptr<tf2_ros::Buffer> tf_buffer_;                                ///< TF buffer
-  std::shared_ptr<tf2_ros::TransformListener> tf_listener_;                   ///< TF listener
-  std::shared_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;             ///< TF broadcaster
-  std::shared_ptr<tf2_ros::StaticTransformBroadcaster> static_tf_broadcaster_;///< TF static broadcaster
 };
 
 template<typename T>
@@ -975,33 +867,4 @@ inline void BaseControllerInterface::write_output(const std::string& name, const
   write_std_output<StringPublishers, std_msgs::msg::String, std::string>(name, data);
 }
 
-template<typename T>
-inline void BaseControllerInterface::publish_transforms(
-    const std::vector<state_representation::CartesianPose>& transforms, const std::shared_ptr<T>& tf_broadcaster,
-    bool is_static) {
-  if (!is_node_initialized()) {
-    throw modulo_core::exceptions::CoreException("Failed send transform(s): Node is not initialized yet.");
-  }
-  std::string modifier = is_static ? "static " : "";
-  if (tf_broadcaster == nullptr) {
-    RCLCPP_ERROR_STREAM_THROTTLE(
-        this->get_node()->get_logger(), *this->get_node()->get_clock(), 1000,
-        "Failed to send " << modifier << "transform: No " << modifier << "TF broadcaster configured.");
-    return;
-  }
-  try {
-    std::vector<geometry_msgs::msg::TransformStamped> transform_messages;
-    transform_messages.reserve(transforms.size());
-    for (const auto& tf : transforms) {
-      geometry_msgs::msg::TransformStamped transform_message;
-      modulo_core::translators::write_message(transform_message, tf, this->get_node()->get_clock()->now());
-      transform_messages.emplace_back(transform_message);
-    }
-    tf_broadcaster->sendTransform(transform_messages);
-  } catch (const std::exception& ex) {
-    RCLCPP_ERROR_STREAM_THROTTLE(
-        this->get_node()->get_logger(), *this->get_node()->get_clock(), 1000,
-        "Failed to send " << modifier << "transform: " << ex.what());
-  }
-}
 }// namespace modulo_controllers
