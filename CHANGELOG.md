@@ -24,6 +24,7 @@ Release Versions:
  - fix(controllers): move predicate publishing rate parameter to BaseControllerInterface (#168)
  - feat(components): get clproto message type from attribute (#175)
  - fix(components): add missing test case (#181)
+ - fix(components): clean up lifecycle nodes properly (#178)
 
 ## 5.0.2
 
