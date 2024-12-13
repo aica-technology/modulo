@@ -20,11 +20,12 @@ Release Versions:
 
 ## Upcoming changes
 
- - fix(components): remove incorrect log line (#166)
- - fix(controllers): move predicate publishing rate parameter to BaseControllerInterface (#168)
- - feat(components): get clproto message type from attribute (#175)
- - fix(components): add missing test case (#181)
- - fix(components): clean up lifecycle nodes properly (#178)
+- fix(components): remove incorrect log line (#166)
+- fix(controllers): move predicate publishing rate parameter to BaseControllerInterface (#168)
+- feat(components): get clproto message type from attribute (#175)
+- fix(components): add missing test case (#181)
+- fix(components): clean up lifecycle nodes properly (#178)
+- fix(components): try catch subscription callbacks (#167)
 
 ## 5.0.2
 

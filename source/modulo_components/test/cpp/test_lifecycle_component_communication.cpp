@@ -33,6 +33,17 @@ TEST_F(LifecycleComponentCommunicationTest, InputOutput) {
   EXPECT_THROW(output_node->publish(), modulo_core::exceptions::CoreException);
 }
 
+TEST_F(LifecycleComponentCommunicationTest, ExceptionInputOutput) {
+  auto cartesian_state = state_representation::CartesianState::Random("test");
+  auto input_node = std::make_shared<ExceptionCartesianInput<LifecycleComponent>>(rclcpp::NodeOptions(), "/topic");
+  auto output_node = std::make_shared<MinimalCartesianOutput<LifecycleComponent>>(
+      rclcpp::NodeOptions(), "/topic", cartesian_state, true);
+  add_configure_activate(this->exec_, input_node);
+  add_configure_activate(this->exec_, output_node);
+  auto return_code = this->exec_->spin_until_future_complete(input_node->received_future, 500ms);
+  ASSERT_EQ(return_code, rclcpp::FutureReturnCode::SUCCESS);
+}
+
 TEST_F(LifecycleComponentCommunicationTest, InputOutputManual) {
   auto cartesian_state = state_representation::CartesianState::Random("test");
   auto input_node = std::make_shared<MinimalCartesianInput<LifecycleComponent>>(rclcpp::NodeOptions(), "/topic");
