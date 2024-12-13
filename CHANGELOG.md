@@ -18,7 +18,14 @@ Release Versions:
 - [2.1.1](#211)
 - [2.1.0](#210)
 
-## Upcoming changes
+## 5.1.0
+
+### December 16th, 2024
+
+Version 5.1.0  is an update to modulo that brings a small feature that removes the need of specifying the clproto
+message type when adding outputs in Python components. For user friendliness, the clproto message type is inferred from
+the type of the attribute with a helper function. Additionally, this version contains a few fixes that further improve
+the behavior of components under the hood.
 
 - fix(components): remove incorrect log line (#166)
 - fix(controllers): move predicate publishing rate parameter to BaseControllerInterface (#168)
