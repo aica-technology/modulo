@@ -27,15 +27,6 @@
       "internal": true
     },
     {
-      "display_name": "Robot description",
-      "description": "The string formatted content of the controller's URDF description",
-      "parameter_name": "robot_description",
-      "parameter_type": "string",
-      "default_value": null,
-      "optional": true,
-      "internal": true
-    },
-    {
       "display_name": "Activation timeout",
       "description": "The seconds to wait for valid data on the state interfaces before activating (in seconds)",
       "parameter_name": "activation_timeout",
