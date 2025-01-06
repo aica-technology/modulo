@@ -789,6 +789,12 @@ inline bool ComponentInterface::remove_signal(
     return false;
   } else {
     RCLCPP_DEBUG_STREAM(this->node_logging_->get_logger(), "Removing signal '" << signal_name << "'.");
+    auto parameter_name = signal_name + "_topic";
+    if (this->node_parameters_->has_parameter(parameter_name)) {
+      this->parameter_map_.remove_parameter(parameter_name);
+      this->read_only_parameters_.erase(parameter_name);
+      this->node_parameters_->undeclare_parameter(parameter_name);
+    }
     signal_map.at(signal_name).reset();
     return signal_map.erase(signal_name);
   }
