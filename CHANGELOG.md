@@ -2,6 +2,7 @@
 
 Release Versions:
 
+- [5.1.0](#510)
 - [5.0.2](#502)
 - [5.0.1](#501)
 - [5.0.0](#500)
@@ -17,6 +18,10 @@ Release Versions:
 - [2.2.0](#220)
 - [2.1.1](#211)
 - [2.1.0](#210)
+
+## Upcoming changes
+
+feat!(controllers): remove robot description parameter (#186)
 
 ## 5.1.0
 
