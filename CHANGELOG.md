@@ -2,6 +2,7 @@
 
 Release Versions:
 
+- [5.1.0](#510)
 - [5.0.2](#502)
 - [5.0.1](#501)
 - [5.0.0](#500)
@@ -22,6 +23,7 @@ Release Versions:
 
 - feat: improve devcontainer configuration (#198)
 - feat(components): use parent node for tf listener (cpp) (#189)
+feat(controllers)!: remove robot description parameter (#186)
 
 ## 5.1.0
 

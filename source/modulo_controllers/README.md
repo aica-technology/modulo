@@ -10,7 +10,6 @@ parameters, predicates, and services.
 It supports the following parameters:
 
 - `hardware_name` [string]: the name of the hardware interface
-- `robot_description` [string]: the string formatted content of the controller's URDF description
 - `joints` [string_array]: a vector of joint names that the controller will claim
 - `activation_timeout` [double]: the seconds to wait for valid data on state interfaces before activating
 - `input_validity_period` [double]: the maximum age of an input state before discarding it as expired
@@ -43,8 +42,7 @@ joint command or access the joint state using the `set_joint_command()` and `get
 
 ### Robot model and URDF
 
-If a controller needs a robot model, a `robot_model::Model` will be configured from URDF information. To support this,
-the `robot_description` must be specified.
+If a controller needs a robot model, a `robot_model::Model` will be configured from URDF information.
 
 The robot model is used to calculate the CartesianState of a task frame from the JointState using forward kinematics,
 which is available to derived classes using the `get_cartesian_state()` method.
