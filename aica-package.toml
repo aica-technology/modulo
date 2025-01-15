@@ -1,4 +1,4 @@
-#syntax=ghcr.io/aica-technology/package-builder:v1.3.0
+#syntax=ghcr.io/aica-technology/package-builder:v1.3.2
 
 [metadata]
 version = "5.1.0"
@@ -9,7 +9,7 @@ name = "modulo"
 
 [build]
 type = "ros"
-image = "v2.0.0-jazzy"
+image = "v2.1.0-rc1-jazzy"
 
 [build.dependencies]
 "@aica/foss/control-libraries" = "v9.0.0"
