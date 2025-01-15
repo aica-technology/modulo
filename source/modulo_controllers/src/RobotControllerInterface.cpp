@@ -57,27 +57,25 @@ rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn RobotC
 }
 
 rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn RobotControllerInterface::on_configure() {
-  if (*get_parameter("robot_description")) {
-    std::stringstream timestamp;
-    timestamp << std::time(nullptr);
-    auto urdf_path = "/tmp/" + hardware_name_ + "_" + timestamp.str();
-    try {
-      robot_model::Model::create_urdf_from_string(get_parameter_value<std::string>("robot_description"), urdf_path);
-      if (load_geometries_) {
-        robot_ = std::make_shared<robot_model::Model>(hardware_name_, urdf_path, [](const std::string& package_name) {
-          return ament_index_cpp::get_package_share_directory(package_name) + "/";
-        });
-        RCLCPP_DEBUG(get_node()->get_logger(), "Generated robot model with collision features");
-      } else {
-        robot_ = std::make_shared<robot_model::Model>(hardware_name_, urdf_path);
-        RCLCPP_DEBUG(get_node()->get_logger(), "Generated robot model");
-      }
-    } catch (const std::exception& ex) {
-      RCLCPP_WARN(
-          get_node()->get_logger(),
-          "Could not generate robot model with temporary urdf from string content at path %s: %s", urdf_path.c_str(),
-          ex.what());
+  std::stringstream timestamp;
+  timestamp << std::time(nullptr);
+  auto urdf_path = "/tmp/" + hardware_name_ + "_" + timestamp.str();
+  try {
+    robot_model::Model::create_urdf_from_string(get_robot_description(), urdf_path);
+    if (load_geometries_) {
+      robot_ = std::make_shared<robot_model::Model>(hardware_name_, urdf_path, [](const std::string& package_name) {
+        return ament_index_cpp::get_package_share_directory(package_name) + "/";
+      });
+      RCLCPP_DEBUG(get_node()->get_logger(), "Generated robot model with collision features");
+    } else {
+      robot_ = std::make_shared<robot_model::Model>(hardware_name_, urdf_path);
+      RCLCPP_DEBUG(get_node()->get_logger(), "Generated robot model");
     }
+  } catch (const std::exception& ex) {
+    RCLCPP_WARN(
+        get_node()->get_logger(),
+        "Could not generate robot model with temporary urdf from string content at path %s: %s", urdf_path.c_str(),
+        ex.what());
   }
   if (robot_model_required_ && robot_ == nullptr) {
     RCLCPP_ERROR(get_node()->get_logger(), "Robot model is not available even though it's required by the controller.");

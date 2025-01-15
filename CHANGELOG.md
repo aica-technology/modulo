@@ -35,6 +35,7 @@ base class.
 
 - feat(components): verify return value of callbacks (#206)
 - fix(controllers): move input validity period to base (#207)
+- feat(controllers)!: remove robot description parameter (#186)
 
 ## 5.2.0
 
