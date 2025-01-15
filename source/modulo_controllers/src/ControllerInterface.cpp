@@ -19,9 +19,6 @@ rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn Contro
   try {
     add_parameter(std::make_shared<Parameter<std::string>>("hardware_name"), "The name of the hardware interface");
     add_parameter(
-        std::make_shared<Parameter<std::string>>("robot_description"),
-        "The string formatted content of the controller's URDF description");
-    add_parameter(
         std::make_shared<Parameter<std::vector<std::string>>>("joints"),
         "A vector of joint names that the controller will claim");
     add_parameter<double>(
