@@ -1,5 +1,8 @@
 # Modulo
 
+:warning: Modulo is currently undergoing breaking changes and the main branch may not be stable until the next official
+release! :warning:
+
 Modulo is part of the AICA robotics framework.
 
 It is an extension layer to ROS 2 that adds interoperability support for
