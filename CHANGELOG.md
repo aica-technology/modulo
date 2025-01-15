@@ -21,7 +21,7 @@ Release Versions:
 
 ## Upcoming changes
 
-feat!(controllers): remove robot description parameter (#186)
+feat(controllers)!: remove robot description parameter (#186)
 
 ## 5.1.0
 
