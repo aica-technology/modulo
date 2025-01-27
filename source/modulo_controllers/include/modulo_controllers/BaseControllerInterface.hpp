@@ -537,6 +537,7 @@ private:
   [[nodiscard]] geometry_msgs::msg::TransformStamped lookup_ros_transform(
       const std::string& frame, const std::string& reference_frame, const tf2::TimePoint& time_point,
       const tf2::Duration& duration);
+
   /**
    * @brief Helper function to send a vector of transforms through a transform broadcaster
    * @tparam T The type of the broadcaster (tf2_ros::TransformBroadcaster or tf2_ros::StaticTransformBroadcaster)
