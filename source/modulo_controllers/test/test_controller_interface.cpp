@@ -18,7 +18,15 @@ class FriendControllerInterface : public ControllerInterface {
 public:
   using ControllerInterface::add_input;
   using ControllerInterface::add_output;
+  using ControllerInterface::add_static_tf_broadcaster;
+  using ControllerInterface::add_tf_broadcaster;
+  using ControllerInterface::add_tf_listener;
+  using ControllerInterface::lookup_transform;
   using ControllerInterface::read_input;
+  using ControllerInterface::send_static_transform;
+  using ControllerInterface::send_static_transforms;
+  using ControllerInterface::send_transform;
+  using ControllerInterface::send_transforms;
   using ControllerInterface::write_output;
 
 private:
@@ -211,7 +219,71 @@ TYPED_TEST_P(ControllerInterfaceTest, OutputTest) {
   }
 }
 
-REGISTER_TYPED_TEST_CASE_P(ControllerInterfaceTest, ConfigureErrorTest, InputTest, OutputTest);
+TYPED_TEST_P(ControllerInterfaceTest, TF) {
+  EXPECT_THROW(this->interface_->add_tf_broadcaster(), modulo_core::exceptions::CoreException);
+  EXPECT_THROW(this->interface_->add_static_tf_broadcaster(), modulo_core::exceptions::CoreException);
+  EXPECT_THROW(this->interface_->add_tf_listener(), modulo_core::exceptions::CoreException);
+  auto send_early_tf = state_representation::CartesianPose::Random("controller_test", "world");
+  EXPECT_THROW(this->interface_->send_transform(send_early_tf), modulo_core::exceptions::CoreException);
+  this->init();
+  this->interface_->add_tf_broadcaster();
+  this->interface_->add_static_tf_broadcaster();
+  this->interface_->add_tf_listener();
+  auto send_tf = state_representation::CartesianPose::Random("controller_test", "world");
+  EXPECT_NO_THROW(this->interface_->send_transform(send_tf));
+  sleep(1);
+  state_representation::CartesianPose lookup_tf;
+  EXPECT_NO_THROW(lookup_tf = this->interface_->lookup_transform("controller_test", "world"));
+  auto identity = send_tf * lookup_tf.inverse();
+  EXPECT_FLOAT_EQ(identity.data().norm(), 1.);
+  EXPECT_FLOAT_EQ(abs(identity.get_orientation().w()), 1.);
+
+  sleep(1);
+  EXPECT_THROW(
+      lookup_tf = this->interface_->lookup_transform("controller_test", "world", 0.1),
+      modulo_core::exceptions::LookupTransformException);
+
+  auto send_static_tf = state_representation::CartesianPose::Random("controller_static_test", "world");
+  EXPECT_NO_THROW(this->interface_->send_static_transform(send_static_tf));
+  EXPECT_THROW(
+      auto throw_tf = this->interface_->lookup_transform("dummy", "world"),
+      modulo_core::exceptions::LookupTransformException);
+
+  EXPECT_NO_THROW(lookup_tf = this->interface_->lookup_transform("controller_static_test", "world"));
+  identity = send_static_tf * lookup_tf.inverse();
+  EXPECT_FLOAT_EQ(identity.data().norm(), 1.);
+  EXPECT_FLOAT_EQ(abs(identity.get_orientation().w()), 1.);
+
+  std::vector<state_representation::CartesianPose> send_tfs;
+  send_tfs.reserve(3);
+  for (std::size_t idx = 0; idx < 3; ++idx) {
+    send_tfs.emplace_back(
+        state_representation::CartesianPose::Random("controller_test_" + std::to_string(idx), "world"));
+  }
+  EXPECT_NO_THROW(this->interface_->send_transforms(send_tfs));
+  for (const auto& tf : send_tfs) {
+    lookup_tf = this->interface_->lookup_transform(tf.get_name(), tf.get_reference_frame());
+    identity = tf * lookup_tf.inverse();
+    EXPECT_FLOAT_EQ(identity.data().norm(), 1.);
+    EXPECT_FLOAT_EQ(abs(identity.get_orientation().w()), 1.);
+  }
+
+  std::vector<state_representation::CartesianPose> send_static_tfs;
+  send_static_tfs.reserve(3);
+  for (std::size_t idx = 0; idx < 3; ++idx) {
+    send_static_tfs.emplace_back(
+        state_representation::CartesianPose::Random("controller_test_static_" + std::to_string(idx), "world"));
+  }
+  EXPECT_NO_THROW(this->interface_->send_static_transforms(send_static_tfs));
+  for (const auto& tf : send_static_tfs) {
+    lookup_tf = this->interface_->lookup_transform(tf.get_name(), tf.get_reference_frame());
+    identity = tf * lookup_tf.inverse();
+    EXPECT_FLOAT_EQ(identity.data().norm(), 1.);
+    EXPECT_FLOAT_EQ(abs(identity.get_orientation().w()), 1.);
+  }
+}
+
+REGISTER_TYPED_TEST_CASE_P(ControllerInterfaceTest, ConfigureErrorTest, InputTest, OutputTest, TF);
 
 typedef ::testing::Types<BoolT, DoubleT, DoubleVecT, IntT, StringT, CartesianStateT, JointStateT, ImageT> SignalTypes;
 INSTANTIATE_TYPED_TEST_CASE_P(TestPrefix, ControllerInterfaceTest, SignalTypes);
