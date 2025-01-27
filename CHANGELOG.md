@@ -23,7 +23,8 @@ Release Versions:
 
 - feat: improve devcontainer configuration (#198)
 - feat(components): use parent node for tf listener (cpp) (#189)
-feat(controllers)!: remove robot description parameter (#186)
+- feat(controllers)!: remove robot description parameter (#186)
+- feat(controllers): add TF listener interface in BaseControllerInterface (#169)
 
 ## 5.1.0
 
