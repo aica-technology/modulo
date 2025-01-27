@@ -28,6 +28,7 @@ Release Versions:
 ## Upcoming changes
 
 - fix(controllers): safety check for predicate publisher access (#238)
+- feat(controllers): add TF listener interface in BaseControllerInterface (#169)
 
 ## 5.4.0
 
