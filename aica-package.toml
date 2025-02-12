@@ -1,4 +1,4 @@
-#syntax=ghcr.io/aica-technology/package-builder:v1.3.2
+#syntax=ghcr.io/aica-technology/package-builder:v1.4.0
 
 [metadata]
 version = "5.1.0"
@@ -12,7 +12,7 @@ type = "ros"
 image = "v2.1.0-rc1-jazzy"
 
 [build.dependencies]
-"@aica/foss/control-libraries" = "v9.0.0"
+"@aica/foss/control-libraries" = "docker-image://docker.io/library/control-libraries:v9.2.0"
 
 [build.packages.modulo_components]
 source = "./source/modulo_components"
