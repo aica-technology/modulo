@@ -9,6 +9,7 @@ from modulo_core import EncodedState
 from modulo_core.exceptions import MessageTranslationError
 from rclpy.clock import Clock
 from sensor_msgs.msg import JointState
+import trajectory_msgs.msg as trajectory
 
 
 def read_xyz(message):
@@ -171,3 +172,56 @@ def test_encoded_state(cart_state: sr.CartesianState):
     assert_np_array_equal(new_state.data(), cart_state.data())
     assert new_state.get_name() == cart_state.get_name()
     assert new_state.get_reference_frame() == cart_state.get_reference_frame()
+
+
+def test_cartesian_trajectory(cartesian_trajectory: sr.CartesianTrajectory):
+    message = EncodedState()
+    modulo_writers.write_clproto_message(message, cartesian_trajectory,
+                                         clproto.MessageType.CARTESIAN_TRAJECTORY_MESSAGE)
+    new_state = modulo_readers.read_clproto_message(message)
+
+    assert cartesian_trajectory.get_size() == new_state.get_size()
+    assert cartesian_trajectory.get_name() == new_state.get_name()
+    assert cartesian_trajectory.get_reference_frame() == new_state.get_reference_frame()
+    for [point1, duration1, point2, duration2] in zip(
+            cartesian_trajectory.get_points(),
+            cartesian_trajectory.get_durations(),
+            new_state.get_points(),
+            new_state.get_durations()):
+        assert_np_array_equal(point1.data(), point2.data())
+        assert duration1 == duration2
+
+
+def test_joint_trajectory(joint_trajectory: sr.JointTrajectory):
+    # test encoded state
+    message = EncodedState()
+    modulo_writers.write_clproto_message(message, joint_trajectory,
+                                         clproto.MessageType.JOINT_TRAJECTORY_MESSAGE)
+    new_state = modulo_readers.read_clproto_message(message)
+
+    assert joint_trajectory.get_size() == new_state.get_size()
+    assert joint_trajectory.get_name() == new_state.get_name()
+    assert joint_trajectory.get_joint_names() == new_state.get_joint_names()
+    for [point1, duration1, point2, duration2] in zip(
+            joint_trajectory.get_points(),
+            joint_trajectory.get_durations(),
+            new_state.get_points(),
+            new_state.get_durations()):
+        assert_np_array_equal(point1.data(), point2.data())
+        assert duration1 == duration2
+
+    # test trajectory message from ROS trajectory message
+    message = trajectory.JointTrajectory()
+    modulo_writers.write_message(message, joint_trajectory)
+    new_state = modulo_readers.read_message(sr.JointTrajectory(), message)
+
+    assert joint_trajectory.get_size() == new_state.get_size()
+    assert joint_trajectory.get_name() == new_state.get_name()
+    assert joint_trajectory.get_joint_names() == new_state.get_joint_names()
+    for [point1, duration1, point2, duration2] in zip(
+            joint_trajectory.get_points(),
+            joint_trajectory.get_durations(),
+            new_state.get_points(),
+            new_state.get_durations()):
+        assert_np_array_equal(point1.data(), point2.data())
+        assert duration1 == duration2

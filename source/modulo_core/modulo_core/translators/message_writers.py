@@ -8,6 +8,7 @@ import state_representation as sr
 from modulo_core import EncodedState
 from modulo_core.exceptions import MessageTranslationError
 from sensor_msgs.msg import JointState
+import trajectory_msgs.msg as trajectory
 
 DataT = TypeVar('DataT')
 MsgT = TypeVar('MsgT')
@@ -55,6 +56,10 @@ def get_clproto_msg_type(state: StateT) -> clproto.MessageType:
         return clproto.MessageType.DIGITAL_IO_STATE_MESSAGE
     elif state_type == sr.StateType.ANALOG_IO_STATE:
         return clproto.MessageType.ANALOG_IO_STATE_MESSAGE
+    elif state_type == sr.StateType.CARTESIAN_TRAJECTORY:
+        return clproto.MessageType.CARTESIAN_TRAJECTORY_MESSAGE
+    elif state_type == sr.StateType.JOINT_TRAJECTORY:
+        return clproto.MessageType.JOINT_TRAJECTORY_MESSAGE
     return clproto.MessageType.UNKNOWN_MESSAGE
 
 
@@ -126,6 +131,20 @@ def write_message(message: MsgT, state: StateT):
             message.position = state.get_positions().tolist()
             message.velocity = state.get_velocities().tolist()
             message.effort = state.get_torques().tolist()
+        elif isinstance(message, trajectory.JointTrajectory) and isinstance(state, sr.JointTrajectory):
+            message.joint_names = state.get_joint_names()
+            point = trajectory.JointTrajectoryPoint()
+            for i, point in enumerate(state.get_points()):
+                ros_point = trajectory.JointTrajectoryPoint()
+                ros_point.positions = point.get_positions().tolist()
+                ros_point.velocities = point.get_velocities().tolist()
+                ros_point.accelerations = point.get_accelerations().tolist()
+                ros_point.effort = point.get_torques().tolist()
+                ros_point.time_from_start = rclpy.time.Duration(
+                    seconds=state.get_time_from_start(i).total_seconds()).to_msg()
+                message.points.append(ros_point)
+                message.header.frame_id = state.get_name()
+                # todo: should we properly stamp it?
         else:
             raise MessageTranslationError("The provided combination of state type and message type is not supported")
     except MessageTranslationError:

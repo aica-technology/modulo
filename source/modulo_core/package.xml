@@ -20,6 +20,7 @@
   <depend>std_msgs</depend>
   <depend>tf2_msgs</depend>
   <depend>modulo_interfaces</depend>
+  <depend>trajectory_msgs</depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>

@@ -1,11 +1,13 @@
 from typing import List, TypeVar, Union
 
 import clproto
+import datetime
 import geometry_msgs.msg as geometry
 import state_representation as sr
 from modulo_core import EncodedState
 from modulo_core.exceptions import MessageTranslationError
 from sensor_msgs.msg import JointState
+import trajectory_msgs.msg as trajectory
 
 DataT = TypeVar('DataT')
 MsgT = TypeVar('MsgT')
@@ -72,6 +74,27 @@ def read_message(state: StateT, message: MsgT) -> StateT:
                     state.set_velocities(message.velocity)
                 if len(message.effort):
                     state.set_torques(message.effort)
+            except Exception as e:
+                raise MessageTranslationError(f"{e}")
+        elif isinstance(message, trajectory.JointTrajectory) and isinstance(state, sr.JointTrajectory):
+            try:
+                state.set_joint_names(list(message.joint_names))
+                time_from_start = 0
+                for i, point in enumerate(message.points):
+                    dir(point.time_from_start)
+                    time_head = point.time_from_start.sec + point.time_from_start.nanosec * 1e-9
+                    duration = time_head - time_from_start
+                    time_from_start = time_head
+                    joint_state = sr.JointState(f"point_{i}", state.get_joint_names())
+                    joint_state.set_positions(point.positions)
+                    joint_state.set_velocities(point.velocities)
+                    joint_state.set_accelerations(point.accelerations)
+                    joint_state.set_torques(point.effort)
+                    state.add_point(
+                        joint_state,
+                        datetime.timedelta(seconds=duration)
+                    )
+                    state.set_name(message.header.frame_id)
             except Exception as e:
                 raise MessageTranslationError(f"{e}")
         else:
