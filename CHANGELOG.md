@@ -25,6 +25,7 @@ Release Versions:
 - feat(controllers): add TF listener interface in BaseControllerInterface (#169)
 - feat(controllers): add TF broadcaster in BaseControllerInterface (#170)
 - test(controllers): add TF listener and broadcaster tests (#172)
+- feat(core): update translators to include new trajectory msgs
 
 ## 5.1.0
 
