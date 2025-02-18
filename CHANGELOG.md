@@ -22,6 +22,7 @@ Release Versions:
 
 - feat: improve devcontainer configuration (#198)
 - feat(components): use parent node for tf listener (cpp) (#189)
+- feat(interfaces): add joint positions messages (#193)
 
 ## 5.1.0
 
