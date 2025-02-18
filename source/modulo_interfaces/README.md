@@ -11,6 +11,14 @@ Modulo classes broadcast predicates to a global channel in a predicate message.
 The encoded state message contains `state_representation::State` classes as binary format after serialization with
 `clproto`.
 
+### JointPositions
+
+The joint positions message contains a named joint configuration with joint names and positions.
+
+### JointPositionsCollection
+
+The joint positions collection message contains a vector of joint positions messages.
+
 ### Predicate
 
 The predicate message contains the predicate name and the current value (true or false) of the predicate.
