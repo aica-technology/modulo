@@ -28,19 +28,11 @@ TEST_F(LifecycleComponentTest, RateParameter) {
   component = std::make_shared<LifecycleComponentPublicInterface>(node_options);
   EXPECT_EQ(component->template get_parameter_value<double>("rate"), 10.0);
   EXPECT_EQ(component->get_rate(), 10.0);
-  auto double_period = component->template get_period<double>();
-  EXPECT_EQ(double_period, 0.1);
-  auto chrono_period = component->template get_period<std::chrono::nanoseconds>();
-  EXPECT_EQ(chrono_period, 100ms);
 
   node_options = rclcpp::NodeOptions().parameter_overrides({rclcpp::Parameter("rate", 200.0)});
   component = std::make_shared<LifecycleComponentPublicInterface>(node_options);
   EXPECT_EQ(component->template get_parameter_value<double>("rate"), 200.0);
   EXPECT_EQ(component->get_rate(), 200.0);
-  double_period = component->template get_period<double>();
-  EXPECT_EQ(double_period, 0.005);
-  chrono_period = component->template get_period<std::chrono::nanoseconds>();
-  EXPECT_EQ(chrono_period, 5ms);
 }
 
 TEST_F(LifecycleComponentTest, AddRemoveOutput) {
