@@ -24,7 +24,6 @@ ament_auto_find_build_dependencies()
 include_directories(include)
 
 ament_auto_add_library(${PROJECT_NAME} SHARED
-    ${PROJECT_SOURCE_DIR}/src/ComponentInterface.cpp
     ${PROJECT_SOURCE_DIR}/src/Component.cpp
     ${PROJECT_SOURCE_DIR}/src/LifecycleComponent.cpp)
 
