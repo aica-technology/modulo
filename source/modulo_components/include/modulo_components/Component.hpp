@@ -20,7 +20,7 @@ namespace modulo_components {
  * constructor.
  * @see LifecycleComponent for a state-based composition alternative
  */
-class Component : public rclcpp::Node, public ComponentInterface {
+class Component : public ComponentInterface<rclcpp::Node> {
 public:
   friend class ComponentPublicInterface;
 
@@ -38,9 +38,11 @@ public:
 
 protected:
   /**
-   * @copydoc ComponentInterface::get_parameter
-   */
-  [[nodiscard]] std::shared_ptr<state_representation::ParameterInterface> get_parameter(const std::string& name) const;
+   * @brief Get the component period
+   * @return The component period
+  */
+  template<typename T>
+  T get_period() const;
 
   /**
    * @brief Start the execution thread.
@@ -88,13 +90,11 @@ private:
   using ComponentInterface::create_output;
   using ComponentInterface::evaluate_periodic_callbacks;
   using ComponentInterface::finalize_interfaces;
-  using ComponentInterface::get_parameter;
   using ComponentInterface::inputs_;
   using ComponentInterface::outputs_;
   using ComponentInterface::periodic_outputs_;
   using ComponentInterface::publish_outputs;
   using ComponentInterface::publish_predicates;
-  using rclcpp::Node::get_parameter;
 
   std::thread execute_thread_;///< The execution thread of the component
   bool started_;              ///< Flag that indicates if execution has started or not
@@ -106,8 +106,7 @@ inline void Component::add_output(
     bool fixed_topic, bool publish_on_step) {
   using namespace modulo_core::communication;
   try {
-    auto parsed_signal_name =
-        this->create_output(PublisherType::PUBLISHER, signal_name, data, default_topic, fixed_topic, publish_on_step);
+    auto parsed_signal_name = this->create_output(signal_name, data, default_topic, fixed_topic, publish_on_step);
     auto topic_name = this->get_parameter_value<std::string>(parsed_signal_name + "_topic");
     RCLCPP_DEBUG_STREAM(
         this->get_logger(), "Adding output '" << parsed_signal_name << "' with topic name '" << topic_name << "'.");

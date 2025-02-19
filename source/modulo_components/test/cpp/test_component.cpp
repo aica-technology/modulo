@@ -37,7 +37,6 @@ TEST_F(ComponentTest, RateParameter) {
   auto ros_duration = component->template get_period<rclcpp::Duration>();
   EXPECT_EQ(ros_duration.seconds(), 0.1);
   EXPECT_EQ(ros_duration.nanoseconds(), 1e8);
-
   node_options = rclcpp::NodeOptions().parameter_overrides({rclcpp::Parameter("rate", 200.0)});
   component = std::make_shared<ComponentPublicInterface>(node_options);
   EXPECT_EQ(component->template get_parameter_value<double>("rate"), 200.0);

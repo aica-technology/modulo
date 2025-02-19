@@ -6,19 +6,23 @@ using namespace rclcpp_lifecycle;
 namespace modulo_components {
 
 LifecycleComponent::LifecycleComponent(const rclcpp::NodeOptions& node_options, const std::string& fallback_name)
-    : LifecycleNode(modulo_utils::parsing::parse_node_name(node_options, fallback_name), node_options),
-      ComponentInterface(std::make_shared<rclcpp::node_interfaces::NodeInterfaces<ALL_RCLCPP_NODE_INTERFACES>>(
-          LifecycleNode::get_node_base_interface(), LifecycleNode::get_node_clock_interface(),
-          LifecycleNode::get_node_graph_interface(), LifecycleNode::get_node_logging_interface(),
-          LifecycleNode::get_node_parameters_interface(), LifecycleNode::get_node_services_interface(),
-          LifecycleNode::get_node_time_source_interface(), LifecycleNode::get_node_timers_interface(),
-          LifecycleNode::get_node_topics_interface(), LifecycleNode::get_node_type_descriptions_interface(),
-          LifecycleNode::get_node_waitables_interface())),
+    : ComponentInterface<rclcpp_lifecycle::LifecycleNode>(
+        node_options, PublisherType::LIFECYCLE_PUBLISHER, fallback_name),
       has_error_(false) {}
 
-std::shared_ptr<state_representation::ParameterInterface>
-LifecycleComponent::get_parameter(const std::string& name) const {
-  return ComponentInterface::get_parameter(name);
+template<>
+double LifecycleComponent::get_period() const {
+  return 1.0 / this->get_rate();
+}
+
+template<>
+std::chrono::nanoseconds LifecycleComponent::get_period() const {
+  return std::chrono::nanoseconds(static_cast<int64_t>(1e9 * this->get_period<double>()));
+}
+
+template<>
+rclcpp::Duration LifecycleComponent::get_period() const {
+  return rclcpp::Duration::from_seconds(this->get_period<double>());
 }
 
 void LifecycleComponent::step() {
@@ -244,31 +248,34 @@ bool LifecycleComponent::configure_outputs() {
       switch (message_pair->get_type()) {
         case MessageType::BOOL: {
           auto publisher = this->create_publisher<std_msgs::msg::Bool>(topic_name, this->get_qos());
-          interface = std::make_shared<PublisherHandler<LifecyclePublisher<std_msgs::msg::Bool>, std_msgs::msg::Bool>>(
-                          PublisherType::LIFECYCLE_PUBLISHER, publisher)
-                          ->create_publisher_interface(message_pair);
+          interface =
+              std::make_shared<
+                  PublisherHandler<rclcpp_lifecycle::LifecyclePublisher<std_msgs::msg::Bool>, std_msgs::msg::Bool>>(
+                  PublisherType::LIFECYCLE_PUBLISHER, publisher)
+                  ->create_publisher_interface(message_pair);
           break;
         }
         case MessageType::FLOAT64: {
           auto publisher = this->create_publisher<std_msgs::msg::Float64>(topic_name, this->get_qos());
-          interface =
-              std::make_shared<PublisherHandler<LifecyclePublisher<std_msgs::msg::Float64>, std_msgs::msg::Float64>>(
-                  PublisherType::LIFECYCLE_PUBLISHER, publisher)
-                  ->create_publisher_interface(message_pair);
+          interface = std::make_shared<PublisherHandler<
+              rclcpp_lifecycle::LifecyclePublisher<std_msgs::msg::Float64>, std_msgs::msg::Float64>>(
+                          PublisherType::LIFECYCLE_PUBLISHER, publisher)
+                          ->create_publisher_interface(message_pair);
           break;
         }
         case MessageType::FLOAT64_MULTI_ARRAY: {
           auto publisher = this->create_publisher<std_msgs::msg::Float64MultiArray>(topic_name, this->get_qos());
           interface = std::make_shared<PublisherHandler<
-              LifecyclePublisher<std_msgs::msg::Float64MultiArray>, std_msgs::msg::Float64MultiArray>>(
-                          PublisherType::LIFECYCLE_PUBLISHER, publisher)
+              rclcpp_lifecycle::LifecyclePublisher<std_msgs::msg::Float64MultiArray>,
+              std_msgs::msg::Float64MultiArray>>(PublisherType::LIFECYCLE_PUBLISHER, publisher)
                           ->create_publisher_interface(message_pair);
           break;
         }
         case MessageType::INT32: {
           auto publisher = this->create_publisher<std_msgs::msg::Int32>(topic_name, this->get_qos());
           interface =
-              std::make_shared<PublisherHandler<LifecyclePublisher<std_msgs::msg::Int32>, std_msgs::msg::Int32>>(
+              std::make_shared<
+                  PublisherHandler<rclcpp_lifecycle::LifecyclePublisher<std_msgs::msg::Int32>, std_msgs::msg::Int32>>(
                   PublisherType::LIFECYCLE_PUBLISHER, publisher)
                   ->create_publisher_interface(message_pair);
           break;
@@ -276,15 +283,16 @@ bool LifecycleComponent::configure_outputs() {
         case MessageType::STRING: {
           auto publisher = this->create_publisher<std_msgs::msg::String>(topic_name, this->get_qos());
           interface =
-              std::make_shared<PublisherHandler<LifecyclePublisher<std_msgs::msg::String>, std_msgs::msg::String>>(
+              std::make_shared<
+                  PublisherHandler<rclcpp_lifecycle::LifecyclePublisher<std_msgs::msg::String>, std_msgs::msg::String>>(
                   PublisherType::LIFECYCLE_PUBLISHER, publisher)
                   ->create_publisher_interface(message_pair);
           break;
         }
         case MessageType::ENCODED_STATE: {
           auto publisher = this->create_publisher<modulo_core::EncodedState>(topic_name, this->get_qos());
-          interface = std::make_shared<
-                          PublisherHandler<LifecyclePublisher<modulo_core::EncodedState>, modulo_core::EncodedState>>(
+          interface = std::make_shared<PublisherHandler<
+              rclcpp_lifecycle::LifecyclePublisher<modulo_core::EncodedState>, modulo_core::EncodedState>>(
                           PublisherType::LIFECYCLE_PUBLISHER, publisher)
                           ->create_publisher_interface(message_pair);
           break;
@@ -330,18 +338,18 @@ bool LifecycleComponent::deactivate_outputs() {
   return success;
 }
 
-rclcpp_lifecycle::State LifecycleComponent::get_lifecycle_state() const {
+rclcpp_lifecycle::State LifecycleComponent::get_lifecycle_state() {
   return this->get_current_state();
 }
 
 void LifecycleComponent::raise_error() {
   ComponentInterface::raise_error();
   this->has_error_ = true;
-  if (get_current_state().id() == lifecycle_msgs::msg::State::PRIMARY_STATE_UNCONFIGURED) {
+  if (this->get_lifecycle_state().id() == lifecycle_msgs::msg::State::PRIMARY_STATE_UNCONFIGURED) {
     this->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_UNCONFIGURED_SHUTDOWN);
-  } else if (get_current_state().id() == lifecycle_msgs::msg::State::PRIMARY_STATE_INACTIVE) {
+  } else if (this->get_lifecycle_state().id() == lifecycle_msgs::msg::State::PRIMARY_STATE_INACTIVE) {
     this->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_INACTIVE_SHUTDOWN);
-  } else if (get_current_state().id() == lifecycle_msgs::msg::State::PRIMARY_STATE_ACTIVE) {
+  } else if (this->get_lifecycle_state().id() == lifecycle_msgs::msg::State::PRIMARY_STATE_ACTIVE) {
     this->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_ACTIVE_SHUTDOWN);
   }
 }

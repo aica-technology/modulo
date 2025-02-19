@@ -45,10 +45,8 @@ class ComponentInterface(Node):
         node_kwargs = {key: value for key, value in kwargs.items() if key in NODE_KWARGS}
         super().__init__(node_name, *args, **node_kwargs)
         self.__step_lock = Lock()
-        self.__parameter_dict: Dict[str, Union[str, sr.Parameter]] = {}
+        self.__parameter_dict: Dict[str, Union[str, sr.Parameter]] = {} 
         self.__read_only_parameters: Dict[str, bool] = {}
-        self.__pre_set_parameters_callback_called = False
-        self.__set_parameters_result = SetParametersResult()
         self.__predicates: Dict[str, Predicate] = {}
         self.__triggers: List[str] = []
         self.__periodic_callbacks: Dict[str, Callable[[], None]] = {}
@@ -63,7 +61,6 @@ class ComponentInterface(Node):
 
         self.__qos = QoSProfile(depth=10)
 
-        self.add_pre_set_parameters_callback(self.__pre_set_parameters_callback)
         self.add_on_set_parameters_callback(self.__on_set_parameters_callback)
         self.add_parameter(sr.Parameter("rate", 10.0, sr.ParameterType.DOUBLE),
                            "The rate in Hertz for all periodic callbacks")
@@ -148,19 +145,13 @@ class ComponentInterface(Node):
             self.__read_only_parameters[sr_parameter.get_name()] = False
             try:
                 descriptor = ParameterDescriptor(description=description, read_only=read_only)
-                self.__set_parameters_result = SetParametersResult(successful=True, reason="")
                 if sr_parameter.is_empty():
                     descriptor.dynamic_typing = True
                     descriptor.type = get_ros_parameter_type(sr_parameter.get_parameter_type()).value
                     self.declare_parameter(ros_param.name, None, descriptor=descriptor)
                 else:
                     self.declare_parameter(ros_param.name, ros_param.value, descriptor=descriptor)
-                new_parameters = self.__pre_set_parameters_callback([Node.get_parameter(self, ros_param.name)])
-                result = self.__on_set_parameters_callback(new_parameters)
-                if not result.successful:
-                    self.undeclare_parameter(ros_param.name)
-                    raise ParameterError(result.reason)
-                self.__read_only_parameters[sr_parameter.get_name()] = read_only
+                    self.__read_only_parameters[sr_parameter.get_name()] = read_only
             except Exception as e:
                 del self.__parameter_dict[sr_parameter.get_name()]
                 del self.__read_only_parameters[sr_parameter.get_name()]
@@ -226,10 +217,8 @@ class ComponentInterface(Node):
         :param parameter_type: The type of the parameter
         """
         try:
-            parameters = [write_parameter(sr.Parameter(name, value, parameter_type))]
-            new_parameters = self.__pre_set_parameters_callback(parameters)
-            self.__pre_set_parameters_callback_called = True
-            result = self.set_parameters(new_parameters)[0]
+            ros_param = write_parameter(sr.Parameter(name, value, parameter_type))
+            result = self.set_parameters([ros_param])[0]
             if not result.successful:
                 self.get_logger().error(f"Failed to set parameter value of parameter '{name}': {result.reason}",
                                         throttle_duration_sec=1.0)
@@ -274,17 +263,13 @@ class ComponentInterface(Node):
         """
         return True
 
-    def __pre_set_parameters_callback(self, ros_parameters: List[Parameter]) -> List[Parameter]:
+    def __on_set_parameters_callback(self, ros_parameters: List[Parameter]) -> SetParametersResult:
         """
         Callback function to validate and update parameters on change.
 
         :param ros_parameters: The new parameter objects provided by the ROS interface
-        :return: The validated parameter objects
+        :return: The result of the validation
         """
-        if self.__pre_set_parameters_callback_called:
-            self.__pre_set_parameters_callback_called = False
-            return ros_parameters
-        new_parameters = []
         result = SetParametersResult(successful=True)
         for ros_param in ros_parameters:
             try:
@@ -294,7 +279,6 @@ class ComponentInterface(Node):
                     continue
                 new_parameter = read_parameter_const(ros_param, parameter)
                 if not self.__validate_parameter(new_parameter):
-                    new_parameters.append(ros_param)
                     result.successful = False
                     result.reason = f"Validation of parameter '{ros_param.name}' returned false!"
                 else:
@@ -302,23 +286,9 @@ class ComponentInterface(Node):
                         self.__setattr__(self.__parameter_dict[ros_param.name], new_parameter)
                     else:
                         self.__parameter_dict[ros_param.name] = new_parameter
-                    new_parameters.append(write_parameter(new_parameter))
             except Exception as e:
                 result.successful = False
                 result.reason += str(e)
-        self.__set_parameters_result = result
-        return new_parameters
-
-    def __on_set_parameters_callback(self, ros_parameters: List[Parameter]) -> SetParametersResult:
-        """
-        Callback function to notify ROS about the validation result from the pre_set_parameters_callback step
-
-        :param ros_parameters: The parameter objects provided by the ROS interface
-        :return: The result of the validation
-        """
-        result = copy.copy(self.__set_parameters_result)
-        self.__set_parameters_result.successful = True
-        self.__set_parameters_result.reason = ""
         return result
 
     def add_predicate(self, name: str, predicate: Union[bool, Callable[[], bool]]) -> None:
@@ -358,8 +328,8 @@ class ComponentInterface(Node):
         try:
             return self.__predicates[name].get_value()
         except Exception as e:
-            self.get_logger().error(f"Failed to evaluate callback of predicate '{
-                name}', returning false: {e}", throttle_duration_sec=1.0)
+            self.get_logger().error(f"""Failed to evaluate callback of predicate '{
+                name}', returning false: {e}""", throttle_duration_sec=1.0)
         return False
 
     def set_predicate(self, name: str, predicate: Union[bool, Callable[[], bool]]) -> None:
@@ -372,8 +342,8 @@ class ComponentInterface(Node):
         :param predicate: The new value of the predicate as a bool or a callable function
         """
         if name not in self.__predicates.keys():
-            self.get_logger().error(f"Failed to set predicate '{
-                name}': Predicate does not exist.", throttle_duration_sec=1.0)
+            self.get_logger().error(f"""Failed to set predicate '{
+                name}': Predicate does not exist.""", throttle_duration_sec=1.0)
             return
         try:
             if callable(predicate):
@@ -455,8 +425,8 @@ class ComponentInterface(Node):
                 cl_msg_type = clproto_message_type if clproto_message_type else modulo_writers.get_clproto_msg_type(
                     self.__getattribute__(data))
                 if cl_msg_type == clproto.MessageType.UNKNOWN_MESSAGE:
-                    raise AddSignalError(f"Provide a valid clproto message type for output '{
-                                         signal_name}' of type EncodedState.")
+                    raise AddSignalError(f"""Provide a valid clproto message type for output '{
+                                         signal_name}' of type EncodedState.""")
                 translator = partial(modulo_writers.write_clproto_message, clproto_message_type=cl_msg_type)
             elif hasattr(message_type, 'get_fields_and_field_types'):
                 def write_ros_msg(message, data):
@@ -526,15 +496,15 @@ class ComponentInterface(Node):
         try:
             user_callback()
         except Exception as e:
-            self.get_logger().error(f"Failed to execute user callback in subscription for attribute"
-                                    f" '{attribute_name}': {e}", throttle_duration_sec=1.0)
+            self.get_logger().error(f"""Failed to execute user callback in subscription for attribute
+                                    '{attribute_name}': {e}""", throttle_duration_sec=1.0)
 
     def __safe_callback(self, message: MsgT, signal_name: str, callback: Callable) -> None:
         try:
             callback(message)
         except Exception as e:
-            self.get_logger().warn(f"Unhandled exception in callback of input '{
-                signal_name}': {e}", throttle_duration_sec=1.0)
+            self.get_logger().warn(f"""Unhandled exception in callback of input '{
+                signal_name}': {e}""", throttle_duration_sec=1.0)
 
     def __declare_signal(self, signal_name: str, signal_type: str, default_topic="", fixed_topic=False) -> None:
         """
@@ -551,8 +521,8 @@ class ComponentInterface(Node):
             raise AddSignalError(topic_validation_warning(signal_name, signal_type))
         if signal_name != parsed_signal_name:
             self.get_logger().warn(
-                f"The parsed name for {signal_type} '{signal_name}' is '{parsed_signal_name}'."
-                "Use the parsed name to refer to this {signal_type}.")
+                f"""The parsed name for {signal_type} '{signal_name}' is '{parsed_signal_name}'."
+                "Use the parsed name to refer to this {signal_type}.""")
         if parsed_signal_name in self.__inputs.keys():
             raise AddSignalError(f"Signal with name '{parsed_signal_name}' already exists as input.")
         if parsed_signal_name in self.__outputs.keys():

@@ -26,7 +26,7 @@ namespace modulo_components {
  * - on_step_callback()
  * @see Component for a stateless composition alternative
  */
-class LifecycleComponent : public rclcpp_lifecycle::LifecycleNode, public ComponentInterface {
+class LifecycleComponent : public ComponentInterface<rclcpp_lifecycle::LifecycleNode> {
 public:
   friend class LifecycleComponentPublicInterface;
 
@@ -45,9 +45,11 @@ public:
 
 protected:
   /**
-   * @copydoc ComponentInterface::get_parameter
-   */
-  [[nodiscard]] std::shared_ptr<state_representation::ParameterInterface> get_parameter(const std::string& name) const;
+   * @brief Get the component period
+   * @return The component period
+  */
+  template<typename T>
+  T get_period() const;
 
   /**
    * @brief Steps to execute when configuring the component.
@@ -114,7 +116,7 @@ protected:
   /**
    * @brief Get the current lifecycle state of the component
    */
-  rclcpp_lifecycle::State get_lifecycle_state() const;
+  rclcpp_lifecycle::State get_lifecycle_state();
 
   /**
    * @brief Trigger the shutdown and error transitions.
@@ -269,13 +271,11 @@ private:
   using ComponentInterface::create_output;
   using ComponentInterface::evaluate_periodic_callbacks;
   using ComponentInterface::finalize_interfaces;
-  using ComponentInterface::get_parameter;
   using ComponentInterface::inputs_;
   using ComponentInterface::outputs_;
   using ComponentInterface::periodic_outputs_;
   using ComponentInterface::publish_outputs;
   using ComponentInterface::publish_predicates;
-  using rclcpp_lifecycle::LifecycleNode::get_parameter;
 
   std::map<
       std::string,
@@ -298,8 +298,7 @@ inline void LifecycleComponent::add_output(
     using modulo_core::communication::PublisherHandler;
     using modulo_core::communication::PublisherType;
 
-    auto parsed_signal_name = this->create_output(
-        PublisherType::LIFECYCLE_PUBLISHER, signal_name, data, default_topic, fixed_topic, publish_on_step);
+    auto parsed_signal_name = this->create_output(signal_name, data, default_topic, fixed_topic, publish_on_step);
 
     auto message_pair = this->outputs_.at(parsed_signal_name)->get_message_pair();
     if (message_pair->get_type() == modulo_core::communication::MessageType::CUSTOM_MESSAGE) {
