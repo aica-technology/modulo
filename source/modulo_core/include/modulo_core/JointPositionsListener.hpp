@@ -29,8 +29,16 @@ rclcpp::SubscriptionOptionsWithAllocator<AllocatorT> get_default_transform_liste
 }
 }// namespace detail
 
+/**
+ * @class JointPositionsListener
+ * @brief The JointPositionsBroadcaster is a TF2 style class that publishes a collection of JointPositions messages to
+ * the fixed /joint_positions topic.
+ */
 class JointPositionsListener {
 public:
+  /**
+   * @brief Constructor of the JointPositionsListener with a node
+   */
   template<class NodeT, class AllocatorT = std::allocator<void>>
   JointPositionsListener(
       NodeT&& node, bool spin_thread = true, const rclcpp::QoS& qos = rclcpp::QoS(100).transient_local(),
@@ -40,6 +48,9 @@ public:
             node->get_node_base_interface(), node->get_node_parameters_interface(), node->get_node_topics_interface(),
             spin_thread, qos, options) {}
 
+  /**
+   * @brief Constructor of the JointPositionsListener with node interfaces
+   */
   template<class AllocatorT = std::allocator<void>>
   JointPositionsListener(
       rclcpp::node_interfaces::NodeBaseInterface::SharedPtr node_base,
@@ -53,9 +64,18 @@ public:
 
   virtual ~JointPositionsListener();
 
+  /**
+   * @brief Look up JointPositions object by it's name
+   * @tparam T Type of the JointPositions object
+   * @param name The name of the JointPositions object to lookup
+   */
   template<typename T>
   T lookup(const std::string& name) const;
 
+  /**
+   * @brief Get a vector of all buffered JointPositions objects
+   * @tparam T Type of the JointPositions objects
+   */
   template<typename T>
   std::vector<T> get_buffer() const;
 
