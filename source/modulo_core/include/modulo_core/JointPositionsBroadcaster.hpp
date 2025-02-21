@@ -11,8 +11,16 @@
 
 namespace modulo_core {
 
+/**
+ * @class JointPositionsBroadcaster
+ * @brief The JointPositionsBroadcaster is a TF2 style class that publishes a collection of JointPositions messages to
+ * the fixed /joint_positions topic.
+ */
 class JointPositionsBroadcaster {
 public:
+  /**
+   * @brief Constructor of the JointPositionsBroadcaster with a node
+   */
   template<class NodeT, class AllocatorT = std::allocator<void>>
   JointPositionsBroadcaster(
       NodeT&& node, const rclcpp::QoS& qos = rclcpp::QoS(1).transient_local(),
@@ -33,6 +41,9 @@ public:
             rclcpp::node_interfaces::get_node_parameters_interface(node),
             rclcpp::node_interfaces::get_node_topics_interface(node), qos, options) {}
 
+  /**
+   * @brief Constructor of the JointPositionsBroadcaster with node interfaces
+   */
   template<class AllocatorT = std::allocator<void>>
   JointPositionsBroadcaster(
       rclcpp::node_interfaces::NodeParametersInterface::SharedPtr node_parameters,
@@ -44,7 +55,7 @@ public:
             rclcpp::QosPolicyKind::Depth, rclcpp::QosPolicyKind::History, rclcpp::QosPolicyKind::Reliability};
         /*
           This flag disables intra-process communication when the JointPositionsBroadcaster is constructed
-          using an existing node handle which happens to be a component (in rclcpp terminology).
+          using existing node interfaces which happen to be from a component (in rclcpp terminology).
           Required until rclcpp intra-process communication supports transient_local QoS durability.
         */
         options.use_intra_process_comm = rclcpp::IntraProcessSetting::Disable;
@@ -54,9 +65,19 @@ public:
         node_parameters, node_topics, "/joint_positions", qos, options);
   }
 
+  /**
+   * @brief Send a JointPositions object
+   * @tparam T Type of the JointPositions object
+   * @param joint_positions The JointPositions object to send
+   */
   template<typename T>
   void send(const T& joint_positions);
 
+  /**
+   * @brief Send a vector of JointPositions objects
+   * @tparam T Type of the JointPositions objects
+   * @param joint_positions The vector of JointPositions objects to send
+   */
   template<typename T>
   void send(const std::vector<T>& joint_positions);
 
