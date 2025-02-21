@@ -93,7 +93,7 @@ private:
 
 template<typename T>
 inline void JointPositionsBroadcaster::send(const T& joint_positions) {
-  send({joint_positions});
+  send(std::vector<T>{joint_positions});
 }
 
 template<typename T>
