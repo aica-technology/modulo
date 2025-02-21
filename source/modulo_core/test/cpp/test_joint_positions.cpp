@@ -5,8 +5,7 @@
 
 using namespace modulo_core;
 
-TEST(TestJointPositions, SendLookup)
-{
+TEST(TestJointPositions, SendLookup) {
   rclcpp::init(0, nullptr);
 
   auto node = rclcpp::Node::make_shared("test_joint_positions");
