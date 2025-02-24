@@ -3,6 +3,7 @@
 **/.cache/**
 
 .idea
+.DS_Store
 cmake-build-*
 ./fileList.txt
 build
