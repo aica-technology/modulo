@@ -18,6 +18,10 @@ Release Versions:
 - [2.1.1](#211)
 - [2.1.0](#210)
 
+## Upcoming changes
+
+- feat: improve devcontainer configuration (#198)
+
 ## 5.1.0
 
 ### December 16th, 2024
