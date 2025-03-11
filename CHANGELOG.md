@@ -21,7 +21,7 @@ Release Versions:
 ## Upcoming changes
 
 - feat: improve devcontainer configuration (#198)
-- feat: use parent node for tf listener (cpp) (#189)
+- feat(components): use parent node for tf listener (cpp) (#189)
 
 ## 5.1.0
 
