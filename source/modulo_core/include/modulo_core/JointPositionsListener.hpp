@@ -31,8 +31,8 @@ rclcpp::SubscriptionOptionsWithAllocator<AllocatorT> get_default_transform_liste
 
 /**
  * @class JointPositionsListener
- * @brief The JointPositionsBroadcaster is a TF2 style class that publishes a collection of JointPositions messages to
- * the fixed /joint_positions topic.
+ * @brief The JointPositionsListener is a TF2 style class that listens to the fixed /joint_positions topic and allows to
+ * lookup messages from a buffer.
  */
 class JointPositionsListener {
 public:
@@ -41,7 +41,7 @@ public:
    */
   template<class NodeT, class AllocatorT = std::allocator<void>>
   JointPositionsListener(
-      NodeT&& node, bool spin_thread = true, const rclcpp::QoS& qos = rclcpp::QoS(100).transient_local(),
+      NodeT&& node, bool spin_thread = false, const rclcpp::QoS& qos = rclcpp::QoS(100).transient_local(),
       const rclcpp::SubscriptionOptionsWithAllocator<AllocatorT>& options =
           detail::get_default_transform_listener_sub_options<AllocatorT>())
       : JointPositionsListener(
@@ -55,7 +55,7 @@ public:
   JointPositionsListener(
       rclcpp::node_interfaces::NodeBaseInterface::SharedPtr node_base,
       rclcpp::node_interfaces::NodeParametersInterface::SharedPtr node_parameters,
-      rclcpp::node_interfaces::NodeTopicsInterface::SharedPtr node_topics, bool spin_thread = true,
+      rclcpp::node_interfaces::NodeTopicsInterface::SharedPtr node_topics, bool spin_thread = false,
       const rclcpp::QoS& qos = rclcpp::QoS(100).transient_local(),
       const rclcpp::SubscriptionOptionsWithAllocator<AllocatorT>& options =
           detail::get_default_transform_listener_sub_options<AllocatorT>()) {
