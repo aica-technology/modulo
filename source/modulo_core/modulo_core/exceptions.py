@@ -65,3 +65,12 @@ class ParameterTranslationError(CoreError):
 
     def __init__(self, message: str):
         super().__init__(message, "ParameterTranslationError")
+
+class LookupJointPositionsException(CoreError):
+    """
+    An exception class to notify an error while looking up joint positions. This is an exception class to be thrown if
+    there is a problem with looking up a joint configuration (unconfigured listener, joint positions not available).
+    """
+
+    def __init__(self, message: str):
+        super().__init__(message, "LookupJointPositionsException")

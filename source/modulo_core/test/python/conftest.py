@@ -5,6 +5,9 @@ import state_representation as sr
 from rclpy import Parameter
 
 
+pytest_plugins = ["modulo_utils.testutils.ros"]
+
+
 @pytest.fixture
 def cart_state():
     return sr.CartesianState().Random("test", "ref")
