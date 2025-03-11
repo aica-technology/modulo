@@ -24,7 +24,7 @@ Release Versions:
 - feat(components): use parent node for tf listener (cpp) (#189)
 - fix(core): handle custom message pub/sub that also exist in translators (#199)
 - feat(interfaces): add joint positions messages (#193)
-- feat(core): add joint positions broadcaster and listener (#197)
+- feat(core): add joint positions broadcaster and listener (cpp) (#197)
 
 ## 5.1.0
 
