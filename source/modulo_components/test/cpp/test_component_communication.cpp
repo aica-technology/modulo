@@ -64,8 +64,7 @@ TEST_F(ComponentCommunicationTest, TwistInputOutput) {
   auto twist = std::make_shared<geometry_msgs::msg::Twist>();
   twist->linear.x = 1.0;
   auto input_node = std::make_shared<MinimalTwistInput<Component>>(rclcpp::NodeOptions(), "/topic");
-  auto output_node =
-      std::make_shared<MinimalTwistOutput<Component>>(rclcpp::NodeOptions(), "/topic", twist, true);
+  auto output_node = std::make_shared<MinimalTwistOutput<Component>>(rclcpp::NodeOptions(), "/topic", twist, true);
   this->exec_->add_node(input_node);
   this->exec_->add_node(output_node);
   auto return_code = this->exec_->spin_until_future_complete(input_node->received_future, 500ms);
