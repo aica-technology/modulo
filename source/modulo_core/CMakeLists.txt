@@ -31,6 +31,8 @@ find_package(control_libraries 9.0.0 REQUIRED COMPONENTS state_representation)
 find_package(clproto 9.0.0 REQUIRED)
 
 add_library(${PROJECT_NAME} SHARED
+    ${PROJECT_SOURCE_DIR}/src/JointPositionsBroadcaster.cpp
+    ${PROJECT_SOURCE_DIR}/src/JointPositionsListener.cpp
     ${PROJECT_SOURCE_DIR}/src/communication/MessagePair.cpp
     ${PROJECT_SOURCE_DIR}/src/communication/MessagePairInterface.cpp
     ${PROJECT_SOURCE_DIR}/src/communication/PublisherInterface.cpp

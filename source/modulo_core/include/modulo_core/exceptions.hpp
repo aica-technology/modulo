@@ -114,4 +114,16 @@ public:
   explicit ParameterTranslationException(const std::string& msg)
       : CoreException("ParameterTranslationException", msg) {}
 };
+
+/**
+ * @class LookupJointPositionsException
+ * @brief An exception class to notify an error while looking up joint positions.
+ * @details This is an exception class to be thrown if there is a problem with looking up a joint configuration
+ * (unconfigured listener, joint positions not available).
+ */
+class LookupJointPositionsException : public CoreException {
+public:
+  explicit LookupJointPositionsException(const std::string& msg)
+      : CoreException("LookupJointPositionsException", msg) {}
+};
 }// namespace modulo_core::exceptions
