@@ -14,8 +14,7 @@
   "workspaceMount": "source=${localWorkspaceFolder},target=/home/ros2/.devcontainer,type=bind,consistency=cached",
   "workspaceFolder": "/home/ros2/.devcontainer",
   "mounts": [
-    "source=${localWorkspaceFolder}/source,target=/home/ros2/ws/src,type=bind,consistency=cached",
-    "source=${localWorkspaceFolder}/.devcontainer/generate_compile_commands,target=/tmp/generate_compile_commands,type=bind,consistency=cached"
+    "source=${localWorkspaceFolder}/source,target=/home/ros2/ws/src,type=bind,consistency=cached"
   ],
   "customizations": {
     "vscode": {
@@ -29,5 +28,5 @@
       ]
     }
   },
-  "postCreateCommand": "/bin/sh /tmp/generate_compile_commands --packages modulo_interfaces modulo_core modulo_utils modulo_components modulo_controllers --cmake-args BUILD_TESTING=ON --timeout 60"
+  "postCreateCommand": "/usr/local/bin/generate_compile_commands --packages modulo_interfaces modulo_core modulo_utils modulo_components modulo_controllers --cmake-args BUILD_TESTING=ON --timeout 100"
 }
