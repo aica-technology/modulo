@@ -3,9 +3,17 @@
 **/.cache/**
 
 .idea
+.DS_Store
 cmake-build-*
 ./fileList.txt
 build
 .*CommandMarker
+.onCreateCommandMarker
+.postCreateCommandMarker
+.updateContentCommandMarker
 
 doxygen/docs/html
+
+# clangd generated files
+compile_commands.json
+.cache

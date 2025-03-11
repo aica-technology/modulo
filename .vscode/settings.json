@@ -1,11 +1,14 @@
 {
-    "C_Cpp.clang_format_style": "file:/home/ros2/.clang-format",
     "cmake.sourceDirectory": "/home/ros2/ws/src/modulo_components",
+    "clang-format.fallbackStyle": "none",
+    "clang-format.language.cpp.style": "file:/home/ros2/.clang-format",
+    "C_Cpp.intelliSenseEngine": "disabled",
+    "[cpp]": {
+        "editor.defaultFormatter": "xaver.clang-format",
+        "editor.inlayHints.enabled": "on"
+    },
     "python.analysis.typeCheckingMode": "basic",
     "python.languageServer": "Pylance",
-    "editor.rulers": [
-        120
-    ],
     "autopep8.args": [
         "--max-line-length",
         "120",
@@ -21,5 +24,8 @@
         "C0115",
         "-d",
         "C0116"
+    ],
+    "editor.rulers": [
+        120
     ],
 }
