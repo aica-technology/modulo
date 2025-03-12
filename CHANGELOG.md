@@ -39,6 +39,7 @@ base class.
 - feat(controllers): add TF listener interface in BaseControllerInterface (#169)
 - feat(controllers): add TF broadcaster in BaseControllerInterface (#170)
 - test(controllers): add TF listener and broadcaster tests (#172)
+- feat(controllers): use parent node for tf listener (#190)
 
 ## 5.2.0
 
