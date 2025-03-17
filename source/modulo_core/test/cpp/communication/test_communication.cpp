@@ -76,4 +76,10 @@ TEST_F(CommunicationTest, CustomTypes) {
   sensor_msgs::msg::Imu new_imu;
   new_imu.linear_acceleration.x = 0.5;
   this->communicate<sensor_msgs::msg::Imu, sensor_msgs::msg::Imu>(initial_imu, new_imu);
+
+  std_msgs::msg::Float64MultiArray initial_array;
+  initial_array.data = {1.0, 2.0, 3.0};
+  std_msgs::msg::Float64MultiArray new_array;
+  new_array.data = {4.0, 5.0, 6.0};
+  this->communicate<std_msgs::msg::Float64MultiArray, std_msgs::msg::Float64MultiArray>(initial_array, new_array);
 }

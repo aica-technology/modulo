@@ -105,13 +105,20 @@ inline void PublisherHandler<PubT, MsgT>::deactivate() {
 template<typename PubT, typename MsgT>
 inline void PublisherHandler<PubT, MsgT>::publish() {
   try {
+    if (this->message_pair_ == nullptr) {
+      throw exceptions::NullPointerException("Message pair is not set, nothing to publish");
+    }
     if constexpr (concepts::CustomT<MsgT> && !concepts::TranslatedMsgT<MsgT>) {
-      if (this->message_pair_ == nullptr) {
-        throw exceptions::NullPointerException("Message pair is not set, nothing to publish");
-      }
-      publish(this->message_pair_->write<MsgT, MsgT>());
+      publish(this->message_pair_->template write<MsgT, MsgT>());
     } else {
-      PublisherInterface::publish();
+      if (this->message_pair_->get_type() == MessageType::CUSTOM_MESSAGE) {
+        if constexpr (concepts::CustomT<MsgT>) {
+          publish(this->message_pair_->template write<MsgT, MsgT>());
+        }
+        __builtin_unreachable();
+      } else {
+        PublisherInterface::publish();
+      }
     }
   } catch (const exceptions::CoreException& ex) {
     throw;

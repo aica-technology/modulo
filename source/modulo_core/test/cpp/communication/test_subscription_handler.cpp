@@ -67,4 +67,8 @@ TEST_F(SubscriptionTest, CustomTypes) {
   sensor_msgs::msg::Imu imu;
   imu.linear_acceleration.x = 1.0;
   test_subscription_interface<sensor_msgs::msg::Imu, sensor_msgs::msg::Imu>(node, imu);
+
+  std_msgs::msg::Float64MultiArray initial_array;
+  initial_array.data = {1.0, 2.0, 3.0};
+  test_subscription_interface<std_msgs::msg::Float64MultiArray, std_msgs::msg::Float64MultiArray>(node, initial_array);
 }
