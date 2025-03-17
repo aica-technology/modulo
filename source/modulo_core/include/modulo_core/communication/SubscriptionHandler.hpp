@@ -123,8 +123,18 @@ void SubscriptionHandler<MsgT>::set_subscription(const std::shared_ptr<rclcpp::S
 
 template<typename MsgT>
 inline std::function<void(const std::shared_ptr<MsgT>)> SubscriptionHandler<MsgT>::get_callback() {
+  if (this->message_pair_ == nullptr) {
+    throw exceptions::NullPointerException("Message pair is not set, can't get subscription callback");
+  }
   if constexpr (concepts::TranslatedMsgT<MsgT>) {
-    return get_translated_callback();
+    if (this->message_pair_->get_type() == MessageType::CUSTOM_MESSAGE) {
+      if constexpr (concepts::CustomT<MsgT>) {
+        return get_raw_callback();
+      }
+      __builtin_unreachable();
+    } else {
+      return get_translated_callback();
+    }
   } else {
     return get_raw_callback();
   }

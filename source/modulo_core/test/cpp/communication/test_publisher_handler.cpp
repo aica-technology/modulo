@@ -77,4 +77,6 @@ TEST_F(PublisherTest, EncodedState) {
 TEST_F(PublisherTest, CustomTypes) {
   test_publisher_interface<sensor_msgs::msg::Image, sensor_msgs::msg::Image>(node, sensor_msgs::msg::Image());
   test_publisher_interface<sensor_msgs::msg::Imu, sensor_msgs::msg::Imu>(node, sensor_msgs::msg::Imu());
+  test_publisher_interface<std_msgs::msg::Float64MultiArray, std_msgs::msg::Float64MultiArray>(
+      node, std_msgs::msg::Float64MultiArray());
 }

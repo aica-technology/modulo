@@ -32,7 +32,7 @@ public:
    * @param clock The ROS clock for translating messages
    */
   MessagePair(std::shared_ptr<DataT> data, std::shared_ptr<rclcpp::Clock> clock)
-    requires concepts::CustomT<MsgT> && concepts::CustomT<DataT>
+    requires concepts::CustomT<DataT> && std::is_same_v<MsgT, DataT>
       : MessagePairInterface(MessageType::CUSTOM_MESSAGE), data_(std::move(data)), clock_(std::move(clock)) {}
 
   /**

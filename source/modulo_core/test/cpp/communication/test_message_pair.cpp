@@ -114,4 +114,11 @@ TEST_F(MessagePairTest, GenericTypes) {
   sensor_msgs::msg::Image new_img;
   new_img.height = 480;
   test_custom_message_interface<sensor_msgs::msg::Image, sensor_msgs::msg::Image>(initial_img, new_img, clock_);
+
+  std_msgs::msg::Float64MultiArray initial_array;
+  initial_array.data = {1.0, 2.0, 3.0};
+  std_msgs::msg::Float64MultiArray new_array;
+  new_array.data = {4.0, 5.0, 6.0};
+  test_custom_message_interface<std_msgs::msg::Float64MultiArray, std_msgs::msg::Float64MultiArray>(
+      initial_array, new_array, clock_);
 }
