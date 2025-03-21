@@ -89,6 +89,8 @@ void read_message(state_representation::JointTrajectory& state, const trajectory
     state.set_name(message.header.frame_id);
     if (!message.joint_names.empty()) {
       state.set_joint_names(message.joint_names);
+    } else {
+      throw exceptions::MessageTranslationException("JointTrajectory message has no joint names");
     }
     std::chrono::nanoseconds time_from_start(0);
     for (unsigned int i = 0; i < message.points.size(); ++i) {

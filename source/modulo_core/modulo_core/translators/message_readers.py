@@ -81,7 +81,6 @@ def read_message(state: StateT, message: MsgT) -> StateT:
                 state.set_joint_names(list(message.joint_names))
                 time_from_start = 0
                 for i, point in enumerate(message.points):
-                    dir(point.time_from_start)
                     time_head = point.time_from_start.sec + point.time_from_start.nanosec * 1e-9
                     duration = time_head - time_from_start
                     time_from_start = time_head
