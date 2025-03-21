@@ -131,20 +131,6 @@ def write_message(message: MsgT, state: StateT):
             message.position = state.get_positions().tolist()
             message.velocity = state.get_velocities().tolist()
             message.effort = state.get_torques().tolist()
-        elif isinstance(message, trajectory.JointTrajectory) and isinstance(state, sr.JointTrajectory):
-            message.joint_names = state.get_joint_names()
-            point = trajectory.JointTrajectoryPoint()
-            for i, point in enumerate(state.get_points()):
-                ros_point = trajectory.JointTrajectoryPoint()
-                ros_point.positions = point.get_positions().tolist()
-                ros_point.velocities = point.get_velocities().tolist()
-                ros_point.accelerations = point.get_accelerations().tolist()
-                ros_point.effort = point.get_torques().tolist()
-                ros_point.time_from_start = rclpy.time.Duration(
-                    seconds=state.get_time_from_start(i).total_seconds()).to_msg()
-                message.points.append(ros_point)
-                message.header.frame_id = state.get_name()
-                # todo: should we properly stamp it?
         else:
             raise MessageTranslationError("The provided combination of state type and message type is not supported")
     except MessageTranslationError:
@@ -174,10 +160,24 @@ def write_stamped_message(message: MsgT, state: StateT, time: rclpy.time.Time):
             write_message(message.twist, state)
         elif isinstance(message, geometry.WrenchStamped):
             write_message(message.wrench, state)
+        elif isinstance(message, trajectory.JointTrajectory) and isinstance(state, sr.JointTrajectory):
+            message.joint_names = state.get_joint_names()
+            point = trajectory.JointTrajectoryPoint()
+            for i, point in enumerate(state.get_points()):
+                ros_point = trajectory.JointTrajectoryPoint()
+                ros_point.positions = point.get_positions().tolist()
+                ros_point.velocities = point.get_velocities().tolist()
+                ros_point.accelerations = point.get_accelerations().tolist()
+                ros_point.effort = point.get_torques().tolist()
+                ros_point.time_from_start = rclpy.time.Duration(
+                    seconds=state.get_time_from_start(i).total_seconds()).to_msg()
+                message.points.append(ros_point)
+                message.header.frame_id = state.get_name()
         else:
             raise MessageTranslationError("The provided combination of state type and message type is not supported")
         message.header.stamp = time.to_msg()
-        message.header.frame_id = state.get_reference_frame()
+        if not isinstance(message, trajectory.JointTrajectory):
+            message.header.frame_id = state.get_reference_frame()
     except MessageTranslationError:
         raise
     except Exception as e:

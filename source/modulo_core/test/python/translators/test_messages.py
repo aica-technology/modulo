@@ -192,7 +192,7 @@ def test_cartesian_trajectory(cartesian_trajectory: sr.CartesianTrajectory):
         assert duration1 == duration2
 
 
-def test_joint_trajectory(joint_trajectory: sr.JointTrajectory):
+def test_joint_trajectory(joint_trajectory: sr.JointTrajectory, clock: Clock):
     # test encoded state
     message = EncodedState()
     modulo_writers.write_clproto_message(message, joint_trajectory,
@@ -212,7 +212,7 @@ def test_joint_trajectory(joint_trajectory: sr.JointTrajectory):
 
     # test trajectory message from ROS trajectory message
     message = trajectory.JointTrajectory()
-    modulo_writers.write_message(message, joint_trajectory)
+    modulo_writers.write_stamped_message(message, joint_trajectory, clock.now())
     new_state = modulo_readers.read_message(sr.JointTrajectory(), message)
 
     assert joint_trajectory.get_size() == new_state.get_size()
