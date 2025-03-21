@@ -9,10 +9,10 @@ name = "modulo"
 
 [build]
 type = "ros"
-image = "v2.1.0-rc1-jazzy"
+image = "v2.0.2-jazzy"
 
 [build.dependencies]
-"@aica/foss/control-libraries" = "docker-image://docker.io/library/control-libraries:v9.2.0"
+"@aica/foss/control-libraries" = "v10.0.0-rc0001"
 
 [build.packages.modulo_components]
 source = "./source/modulo_components"

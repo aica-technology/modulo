@@ -22,8 +22,11 @@
         "ms-vscode.cpptools-extension-pack",
         "ms-python.pylint",
         "ms-python.autopep8",
-        "ms-python.isort"
+        "ms-python.isort",
+        "llvm-vs-code-extensions.vscode-clangd",
+        "xaver.clang-format"
       ]
     }
-  }
+  },
+  "postCreateCommand": "/usr/local/bin/generate_compile_commands --packages modulo_interfaces modulo_core modulo_utils modulo_components modulo_controllers --cmake-args BUILD_TESTING=ON --timeout 100"
 }
