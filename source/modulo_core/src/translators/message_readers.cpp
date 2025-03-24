@@ -1,6 +1,8 @@
 #include "modulo_core/translators/message_readers.hpp"
 #include <chrono>
+#include <exception>
 #include <rclcpp/time.hpp>
+#include <stdexcept>
 
 namespace modulo_core::translators {
 
@@ -90,7 +92,7 @@ void read_message(state_representation::JointTrajectory& state, const trajectory
     if (!message.joint_names.empty()) {
       state.set_joint_names(message.joint_names);
     } else {
-      throw exceptions::MessageTranslationException("JointTrajectory message has no joint names");
+      throw std::runtime_error("JointTrajectory message has no joint names");
     }
     std::chrono::nanoseconds time_from_start(0);
     for (unsigned int i = 0; i < message.points.size(); ++i) {
