@@ -1,9 +1,13 @@
+#include <chrono>
 #include <gtest/gtest.h>
 
 #include "modulo_core/translators/message_readers.hpp"
 #include "modulo_core/translators/message_writers.hpp"
+#include "trajectory_msgs/msg/joint_trajectory.hpp"
 
 #include <rclcpp/clock.hpp>
+#include <state_representation/State.hpp>
+#include <state_representation/StateType.hpp>
 #include <state_representation/exceptions/EmptyStateException.hpp>
 
 using namespace modulo_core::translators;
@@ -42,9 +46,20 @@ protected:
   void SetUp() override {
     state_ = state_representation::CartesianState::Random("test", "reference");
     joint_state_ = state_representation::JointState::Random("robot", 3);
+    ctrajectory_ = state_representation::CartesianTrajectory("test", "reference");
+    jtrajectory_.set_joint_names({"joint_0", "joint_1", "joint_2"});
+    for (unsigned int i = 0; i < 10; i++) {
+      ctrajectory_.add_point(
+          state_representation::CartesianState::Random("test", "reference"), std::chrono::nanoseconds((i + 1) * 10));
+      jtrajectory_.add_point(
+          state_representation::JointState::Random("robot", jtrajectory_.get_joint_names()),
+          std::chrono::nanoseconds((i + 1) * 10));
+    }
   }
   state_representation::CartesianState state_;
   state_representation::JointState joint_state_;
+  state_representation::CartesianTrajectory ctrajectory_;
+  state_representation::JointTrajectory jtrajectory_;
   rclcpp::Clock clock_;
 };
 
@@ -255,4 +270,55 @@ TEST_F(MessageTranslatorsTest, TestEncodedStatePointerIncompatibleType) {
   write_message(message, state_ptr, clock_.now());
   auto new_state_ptr = state_representation::make_shared_state(state_representation::CartesianPose());
   EXPECT_THROW(read_message(new_state_ptr, message), modulo_core::exceptions::MessageTranslationException);
+}
+
+TEST_F(MessageTranslatorsTest, TestTrajectory) {
+  {// CartesianTrajectory
+    auto state_ptr = state_representation::make_shared_state(ctrajectory_);
+    auto message = modulo_core::EncodedState();
+    write_message(message, state_ptr, clock_.now());
+    auto new_state_ptr = state_representation::make_shared_state(state_representation::CartesianTrajectory());
+    read_message(new_state_ptr, message);
+    EXPECT_EQ(new_state_ptr->get_type(), state_representation::StateType::CARTESIAN_TRAJECTORY);
+    auto new_state = *std::dynamic_pointer_cast<state_representation::CartesianTrajectory>(new_state_ptr);
+    EXPECT_EQ(ctrajectory_.get_size(), new_state.get_size());
+    EXPECT_EQ(ctrajectory_.get_name(), new_state.get_name());
+    EXPECT_EQ(ctrajectory_.get_reference_frame(), new_state.get_reference_frame());
+    for (unsigned int i = 0; i < ctrajectory_.get_size(); ++i) {
+      EXPECT_TRUE(ctrajectory_.get_point(i).data().isApprox(new_state.get_point(i).data()));
+      EXPECT_EQ(ctrajectory_.get_duration(i), new_state.get_duration(i));
+    }
+  }
+
+  {// JointTrajectory
+    auto state_ptr = state_representation::make_shared_state(jtrajectory_);
+    auto message = modulo_core::EncodedState();
+    write_message(message, state_ptr, clock_.now());
+    auto new_state_ptr = state_representation::make_shared_state(state_representation::JointTrajectory());
+    read_message(new_state_ptr, message);
+    EXPECT_EQ(new_state_ptr->get_type(), state_representation::StateType::JOINT_TRAJECTORY);
+    auto new_state = *std::dynamic_pointer_cast<state_representation::JointTrajectory>(new_state_ptr);
+    EXPECT_EQ(jtrajectory_.get_size(), new_state.get_size());
+    EXPECT_EQ(jtrajectory_.get_name(), new_state.get_name());
+    EXPECT_EQ(jtrajectory_.get_joint_names(), new_state.get_joint_names());
+    for (unsigned int i = 0; i < jtrajectory_.get_size(); ++i) {
+      EXPECT_TRUE(jtrajectory_.get_point(i).data().isApprox(new_state.get_point(i).data()));
+      EXPECT_EQ(jtrajectory_.get_duration(i), new_state.get_duration(i));
+    }
+  }
+
+  {// test trajectory_msgs::msg::JointTrajectory conversion to/from JointTrajectory
+    trajectory_msgs::msg::JointTrajectory ros_trajectory;
+    write_message(ros_trajectory, jtrajectory_, clock_.now());
+    state_representation::JointTrajectory new_state;
+    read_message(new_state, ros_trajectory);
+
+    EXPECT_EQ(jtrajectory_.get_size(), new_state.get_size());
+    EXPECT_EQ(jtrajectory_.get_name(), new_state.get_name());
+    EXPECT_EQ(jtrajectory_.get_joint_names(), new_state.get_joint_names());
+    for (unsigned int i = 0; i < jtrajectory_.get_size(); ++i) {
+      EXPECT_TRUE(jtrajectory_.get_point(i).data().isApprox(new_state.get_point(i).data()));
+      EXPECT_EQ(jtrajectory_.get_duration(i), new_state.get_duration(i));
+    }
+  }
 }
