@@ -13,11 +13,15 @@
 #include <std_msgs/msg/int32.hpp>
 #include <std_msgs/msg/string.hpp>
 #include <tf2_msgs/msg/tf_message.hpp>
+#include <trajectory_msgs/msg/joint_trajectory.hpp>
+#include <trajectory_msgs/msg/joint_trajectory_point.hpp>
 
 #include <clproto.hpp>
 #include <state_representation/parameters/Parameter.hpp>
 #include <state_representation/space/cartesian/CartesianState.hpp>
 #include <state_representation/space/joint/JointState.hpp>
+#include <state_representation/trajectory/CartesianTrajectory.hpp>
+#include <state_representation/trajectory/JointTrajectory.hpp>
 
 #include "modulo_core/EncodedState.hpp"
 #include "modulo_core/exceptions.hpp"
@@ -149,6 +153,17 @@ void write_message(
  */
 void write_message(
     tf2_msgs::msg::TFMessage& message, const state_representation::CartesianState& state, const rclcpp::Time& time);
+
+/**
+ * @brief Convert a CartesianTrajectory to a ROS trajectory_msgs::msg::JointTrajectory
+ * @param message The ROS message to populate
+ * @param state The state to read from
+ * @param time The time of the message
+ * @throws modulo_core::exceptions::MessageTranslationException if the provided state is empty.
+ */
+void write_message(
+    trajectory_msgs::msg::JointTrajectory& message, const state_representation::JointTrajectory& state,
+    const rclcpp::Time& time);
 
 /**
  * @brief Convert a Parameter<T> to a ROS equivalent representation

@@ -40,6 +40,7 @@ base class.
 - feat(controllers): add TF broadcaster in BaseControllerInterface (#170)
 - test(controllers): add TF listener and broadcaster tests (#172)
 - feat(controllers): use parent node for tf listener (#190)
+- feat(core): update translators to include new trajectory msgs (#194)
 
 ## 5.2.0
 
