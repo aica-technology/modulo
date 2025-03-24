@@ -13,6 +13,8 @@
 #include <std_msgs/msg/float64_multi_array.hpp>
 #include <std_msgs/msg/int32.hpp>
 #include <std_msgs/msg/string.hpp>
+#include <trajectory_msgs/msg/joint_trajectory.hpp>
+#include <trajectory_msgs/msg/joint_trajectory_point.hpp>
 
 #include <clproto.hpp>
 #include <state_representation/AnalogIOState.hpp>
@@ -21,6 +23,8 @@
 #include <state_representation/space/Jacobian.hpp>
 #include <state_representation/space/cartesian/CartesianPose.hpp>
 #include <state_representation/space/joint/JointPositions.hpp>
+#include <state_representation/trajectory/CartesianTrajectory.hpp>
+#include <state_representation/trajectory/JointTrajectory.hpp>
 
 #include "modulo_core/EncodedState.hpp"
 #include "modulo_core/exceptions.hpp"
@@ -103,6 +107,13 @@ void read_message(state_representation::CartesianState& state, const geometry_ms
  * @param message The ROS message to read from
  */
 void read_message(state_representation::JointState& state, const sensor_msgs::msg::JointState& message);
+
+/**
+ * @brief Convert a ROS trajectory_msgs::msg::JointTrajectory to a JointTrajectory
+ * @param state The JointTrajectory to populate
+ * @param message The ROS message to read from
+ */
+void read_message(state_representation::JointTrajectory& state, const trajectory_msgs::msg::JointTrajectory& message);
 
 /**
  * @brief Template function to convert a ROS std_msgs::msg::T to a Parameter<T>
@@ -435,6 +446,12 @@ inline void read_message(std::shared_ptr<state_representation::State>& state, co
       }
       case StateType::JACOBIAN:
         safe_dynamic_cast<Jacobian>(state, new_state);
+        break;
+      case StateType::CARTESIAN_TRAJECTORY:
+        safe_dynamic_cast<CartesianTrajectory>(state, new_state);
+        break;
+      case StateType::JOINT_TRAJECTORY:
+        safe_dynamic_cast<JointTrajectory>(state, new_state);
         break;
       case StateType::PARAMETER: {
         auto param_ptr = std::dynamic_pointer_cast<ParameterInterface>(state);

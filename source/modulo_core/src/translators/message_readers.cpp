@@ -1,4 +1,6 @@
 #include "modulo_core/translators/message_readers.hpp"
+#include <rclcpp/time.hpp>
+#include <stdexcept>
 
 namespace modulo_core::translators {
 
@@ -79,6 +81,41 @@ void read_message(state_representation::JointState& state, const sensor_msgs::ms
     }
   } catch (const std::exception& ex) {
     throw exceptions::MessageTranslationException(ex.what());
+  }
+}
+
+void read_message(state_representation::JointTrajectory& state, const trajectory_msgs::msg::JointTrajectory& message) {
+  try {
+    state.set_name(message.header.frame_id);
+    if (!message.joint_names.empty()) {
+      state.set_joint_names(message.joint_names);
+    } else {
+      throw std::runtime_error("JointTrajectory message has no joint names");
+    }
+    std::chrono::nanoseconds time_from_start(0);
+    for (unsigned int i = 0; i < message.points.size(); ++i) {
+      state_representation::JointState point("point_" + std::to_string(i), state.get_joint_names());
+      if (!message.points[i].positions.empty()) {
+        point.set_positions(message.points[i].positions);
+      }
+      if (!message.points[i].velocities.empty()) {
+        point.set_velocities(message.points[i].velocities);
+      }
+      if (!message.points[i].accelerations.empty()) {
+        point.set_accelerations(message.points[i].accelerations);
+      }
+      if (!message.points[i].effort.empty()) {
+        point.set_torques(message.points[i].effort);
+      }
+      auto ros_time_from_start = std::chrono::nanoseconds(message.points[i].time_from_start.nanosec);
+      auto duration = ros_time_from_start - time_from_start;
+      time_from_start = ros_time_from_start;
+      state.add_point(point, duration);
+    }
+  } catch (const std::exception& ex) {
+    throw exceptions::MessageTranslationException(ex.what());
+  } catch (...) {
+    throw exceptions::MessageTranslationException("Unknown error while reading JointTrajectory message");
   }
 }
 
