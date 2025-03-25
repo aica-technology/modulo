@@ -9,6 +9,8 @@
 #include <modulo_interfaces/msg/joint_positions_collection.hpp>
 #include <state_representation/space/joint/JointPositions.hpp>
 
+#include "modulo_core/joint_positions_options.hpp"
+
 namespace modulo_core {
 
 /**
@@ -25,18 +27,7 @@ public:
   JointPositionsBroadcaster(
       NodeT&& node, const rclcpp::QoS& qos = rclcpp::QoS(1).transient_local(),
       const rclcpp::PublisherOptionsWithAllocator<AllocatorT>& options =
-          []() {
-            rclcpp::PublisherOptionsWithAllocator<AllocatorT> options;
-            options.qos_overriding_options = rclcpp::QosOverridingOptions{
-                rclcpp::QosPolicyKind::Depth, rclcpp::QosPolicyKind::History, rclcpp::QosPolicyKind::Reliability};
-            /*
-              This flag disables intra-process communication when the JointPositionsBroadcaster is constructed
-              using an existing node handle which happens to be a component (in rclcpp terminology).
-              Required until rclcpp intra-process communication supports transient_local QoS durability.
-            */
-            options.use_intra_process_comm = rclcpp::IntraProcessSetting::Disable;
-            return options;
-          }())
+          detail::get_default_joint_positions_options<rclcpp::PublisherOptionsWithAllocator<AllocatorT>>())
       : JointPositionsBroadcaster(
             rclcpp::node_interfaces::get_node_parameters_interface(node),
             rclcpp::node_interfaces::get_node_topics_interface(node), qos, options) {}
@@ -49,18 +40,8 @@ public:
       rclcpp::node_interfaces::NodeParametersInterface::SharedPtr node_parameters,
       rclcpp::node_interfaces::NodeTopicsInterface::SharedPtr node_topics,
       const rclcpp::QoS& qos = rclcpp::QoS(1).transient_local(),
-      const rclcpp::PublisherOptionsWithAllocator<AllocatorT>& options = []() {
-        rclcpp::PublisherOptionsWithAllocator<AllocatorT> options;
-        options.qos_overriding_options = rclcpp::QosOverridingOptions{
-            rclcpp::QosPolicyKind::Depth, rclcpp::QosPolicyKind::History, rclcpp::QosPolicyKind::Reliability};
-        /*
-          This flag disables intra-process communication when the JointPositionsBroadcaster is constructed
-          using existing node interfaces which happen to be from a component (in rclcpp terminology).
-          Required until rclcpp intra-process communication supports transient_local QoS durability.
-        */
-        options.use_intra_process_comm = rclcpp::IntraProcessSetting::Disable;
-        return options;
-      }()) {
+      const rclcpp::PublisherOptionsWithAllocator<AllocatorT>& options =
+          detail::get_default_joint_positions_options<rclcpp::PublisherOptionsWithAllocator<AllocatorT>>()) {
     publisher_ = rclcpp::create_publisher<modulo_interfaces::msg::JointPositionsCollection>(
         node_parameters, node_topics, "/joint_positions", qos, options);
   }

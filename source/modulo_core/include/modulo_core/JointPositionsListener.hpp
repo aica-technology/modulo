@@ -1,6 +1,5 @@
 #pragma once
 
-#include <functional>
 #include <memory>
 #include <thread>
 #include <utility>
@@ -11,23 +10,9 @@
 #include <modulo_interfaces/msg/joint_positions_collection.hpp>
 #include <state_representation/space/joint/JointPositions.hpp>
 
-namespace modulo_core {
+#include "modulo_core/joint_positions_options.hpp"
 
-namespace detail {
-template<class AllocatorT = std::allocator<void>>
-rclcpp::SubscriptionOptionsWithAllocator<AllocatorT> get_default_transform_listener_sub_options() {
-  rclcpp::SubscriptionOptionsWithAllocator<AllocatorT> options;
-  options.qos_overriding_options = rclcpp::QosOverridingOptions{
-      rclcpp::QosPolicyKind::Depth, rclcpp::QosPolicyKind::History, rclcpp::QosPolicyKind::Reliability};
-  /*
-      This flag disables intra-process communication when the JointPositionsListener is constructed
-      using an existing node handle which happens to be a component (in rclcpp terminology).
-      Required until rclcpp intra-process communication supports transient_local QoS durability.
-  */
-  options.use_intra_process_comm = rclcpp::IntraProcessSetting::Disable;
-  return options;
-}
-}// namespace detail
+namespace modulo_core {
 
 /**
  * @class JointPositionsListener
@@ -43,7 +28,7 @@ public:
   JointPositionsListener(
       NodeT&& node, bool spin_thread = false, const rclcpp::QoS& qos = rclcpp::QoS(100).transient_local(),
       const rclcpp::SubscriptionOptionsWithAllocator<AllocatorT>& options =
-          detail::get_default_transform_listener_sub_options<AllocatorT>())
+      detail::get_default_joint_positions_options<rclcpp::SubscriptionOptionsWithAllocator<AllocatorT>>())
       : JointPositionsListener(
             node->get_node_base_interface(), node->get_node_parameters_interface(), node->get_node_topics_interface(),
             spin_thread, qos, options) {}
@@ -58,7 +43,7 @@ public:
       rclcpp::node_interfaces::NodeTopicsInterface::SharedPtr node_topics, bool spin_thread = false,
       const rclcpp::QoS& qos = rclcpp::QoS(100).transient_local(),
       const rclcpp::SubscriptionOptionsWithAllocator<AllocatorT>& options =
-          detail::get_default_transform_listener_sub_options<AllocatorT>()) {
+      detail::get_default_joint_positions_options<rclcpp::SubscriptionOptionsWithAllocator<AllocatorT>>()) {
     init(node_base, node_parameters, node_topics, spin_thread, qos, options);
   }
 
