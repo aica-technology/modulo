@@ -23,22 +23,25 @@ class JointPositionsBroadcaster:
         self._publisher = node.create_publisher(JointPositionsCollection, '/joint_positions', qos)
         self._net_message = JointPositionsCollection()
         self._names = set()
+        self._logger = node.get_logger()
 
     def send(self, joint_positions: Union[JointPositions, List[JointPositions]]):
         """
         Send a JointPositions object or a list of JointPositions.
 
-        :param transform: A JointPositions object or list of JointPositions to send.
+        :param joint_positions: A JointPositions object or list of JointPositions to send.
         """
-        if not isinstance(joint_positions, list):
-            if hasattr(joint_positions, '__iter__'):
-                joint_positions = list(joint_positions)
-            else:
-                joint_positions = [joint_positions]
-
-        for jp_in in joint_positions:
+        def update_net_message(jp_in: JointPositions):
+            if not isinstance(jp_in, JointPositions):
+                self._logger.warn("Sending joint positions failed, incorrect argument type")
+                return
             if jp_in.header.frame_id not in self._names:
                 self._names.add(jp_in.header.frame_id)
                 self._net_message.joint_positions.append(jp_in)
-
+    
+        if hasattr(joint_positions, '__iter__'):
+            [update_net_message(jp) for jp in joint_positions]
+        else:
+            update_net_message(joint_positions)
+    
         self._publisher.publish(self._net_message)
