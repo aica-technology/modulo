@@ -2,6 +2,8 @@
 
 Release Versions:
 
+- [5.2.0](#520)
+- [5.1.0](#510)
 - [5.0.2](#502)
 - [5.0.1](#501)
 - [5.0.0](#500)
@@ -18,13 +20,26 @@ Release Versions:
 - [2.1.1](#211)
 - [2.1.0](#210)
 
-## Upcoming changes
+## 5.2.0
+
+### March 31st, 2025
+
+Version 5.2.0 is a minor relase of modulo that includes a simplified version of TF in joint space. With a
+`JointPositionsBroadcaster` and `JointPositionsListener` from the core package, named static joint configurations can be
+sent and looked up from a global `/joint_positions` topic, equivalent to `/tf_static`. Additionally, this version
+contains a couple of improvements for the custom message publisher and subscriber interfaces and to the component
+interface.
 
 - feat: improve devcontainer configuration (#198)
 - feat(components): use parent node for tf listener (cpp) (#189)
 - fix(core): handle custom message pub/sub that also exist in translators (#199)
 - feat(interfaces): add joint positions messages (#193)
 - feat(core): add joint positions broadcaster and listener (#197, #201)
+
+### Dependencies
+
+- ros2-ws: v2.0.0-jazzy -> v2.0.2-jazzy (#198)
+- package-builder: v1.3.0 -> v1.4.0 (#198)
 
 ## 5.1.0
 
