@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['lifecyclecomponent_0',['LifecycleComponent',['../classmodulo__components_1_1_lifecycle_component.html',1,'modulo_components']]],
-  ['lookuptransformexception_1',['LookupTransformException',['../classmodulo__core_1_1exceptions_1_1_lookup_transform_exception.html',1,'modulo_core::exceptions']]]
+  ['jointpositionsbroadcaster_0',['JointPositionsBroadcaster',['../classmodulo__core_1_1_joint_positions_broadcaster.html',1,'modulo_core']]],
+  ['jointpositionslistener_1',['JointPositionsListener',['../classmodulo__core_1_1_joint_positions_listener.html',1,'modulo_core']]]
 ];

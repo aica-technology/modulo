@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['update_0',['update',['../classmodulo__controllers_1_1_controller_interface.html#a8f2ab4824543884e6d4e16a903c9a1bf',1,'modulo_controllers::ControllerInterface']]]
+  ['trigger_0',['trigger',['../classmodulo__components_1_1_component_interface.html#a6460ddfe54a6cdf5c52edcec86658f3f',1,'modulo_components::ComponentInterface::trigger()'],['../classmodulo__controllers_1_1_base_controller_interface.html#ab4dca6a7f56af5b758ca75f8e36eeb8f',1,'modulo_controllers::BaseControllerInterface::trigger()']]]
 ];
