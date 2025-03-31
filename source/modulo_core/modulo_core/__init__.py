@@ -1,2 +1,4 @@
 from modulo_core.encoded_state import EncodedState
+from modulo_core.joint_positions_broadcaster import JointPositionsBroadcaster
+from modulo_core.joint_positions_listener import JointPositionsListener
 from modulo_core.predicate import Predicate
