@@ -251,16 +251,16 @@ class ComponentInterface(Node):
                 self.get_logger().error("Value for parameter 'rate' has to be a positive finite number.")
                 return False
         try:
-            ret = self.on_validate_parameter_callback(parameter)
+            result = self.on_validate_parameter_callback(parameter)
         except AttributeError:
             self.get_logger().error("Attribute error during 'on_validate_parameter_callback', declare necessary "
                                     "attributes before __init__ of the parent class")
             raise
-        if ret is None:
+        if result is None:
             self.get_logger().error("'on_validate_parameter_callback' does not return a value, "
                                     "parameter change will be rejected.")
             return False
-        return ret
+        return result
 
     def on_validate_parameter_callback(self, parameter: sr.Parameter) -> bool:
         """
