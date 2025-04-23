@@ -20,6 +20,10 @@ Release Versions:
 - [2.1.1](#211)
 - [2.1.0](#210)
 
+## Upcoming changes
+
+- feat(components): verify return value of callbacks (#206)
+
 ## 5.2.0
 
 ### March 31st, 2025
