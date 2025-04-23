@@ -80,7 +80,7 @@ class ComponentInterface(Node):
     def __del__(self):
         self.__step_lock.acquire()
 
-    def get_rate(self):
+    def get_rate(self) -> float:
         """
         Get the component rate in Hertz.
 
@@ -88,7 +88,7 @@ class ComponentInterface(Node):
         """
         return self.__rate
 
-    def get_period(self):
+    def get_period(self) -> float:
         """
         Get the component period in seconds.
 
@@ -96,7 +96,7 @@ class ComponentInterface(Node):
         """
         return self.__period
 
-    def __step_with_mutex(self):
+    def __step_with_mutex(self) -> None:
         if self.__step_lock.acquire(blocking=False):
             self._step()
             self.__step_lock.release()
@@ -107,7 +107,7 @@ class ComponentInterface(Node):
         """
         pass
 
-    def on_step_callback(self):
+    def on_step_callback(self) -> None:
         """
         Steps to execute periodically. To be redefined by derived classes.
         """
@@ -250,7 +250,17 @@ class ComponentInterface(Node):
             if value <= 0 or value > sys.float_info.max:
                 self.get_logger().error("Value for parameter 'rate' has to be a positive finite number.")
                 return False
-        return self.on_validate_parameter_callback(parameter)
+        try:
+            ret = self.on_validate_parameter_callback(parameter)
+        except AttributeError:
+            self.get_logger().error("Attribute error during 'on_validate_parameter_callback', declare necessary "
+                                    "attributes before __init__ of the parent class")
+            raise
+        if ret is None:
+            self.get_logger().error("'on_validate_parameter_callback' does not return a value, "
+                                    "parameter change will be rejected.")
+            return False
+        return ret
 
     def on_validate_parameter_callback(self, parameter: sr.Parameter) -> bool:
         """
@@ -311,7 +321,7 @@ class ComponentInterface(Node):
         self.__set_parameters_result.reason = ""
         return result
 
-    def add_predicate(self, name: str, predicate: Union[bool, Callable[[], bool]]):
+    def add_predicate(self, name: str, predicate: Union[bool, Callable[[], bool]]) -> None:
         """
         Add a predicate to the map of predicates.
 
@@ -352,7 +362,7 @@ class ComponentInterface(Node):
                 name}', returning false: {e}", throttle_duration_sec=1.0)
         return False
 
-    def set_predicate(self, name: str, predicate: Union[bool, Callable[[], bool]]):
+    def set_predicate(self, name: str, predicate: Union[bool, Callable[[], bool]]) -> None:
         """
         Set the value of the predicate given as parameter, if the predicate is not found does not do anything. Even
         though the predicates are published periodically, the new value of this predicate will be published once
@@ -377,7 +387,7 @@ class ComponentInterface(Node):
         if new_value is not None:
             self.__publish_predicate(name, new_value)
 
-    def add_trigger(self, trigger_name: str):
+    def add_trigger(self, trigger_name: str) -> None:
         """
         Add a trigger to the component. Triggers are predicates that are always false except when it's triggered in
         which case it is set back to false immediately after it is read.
@@ -396,7 +406,7 @@ class ComponentInterface(Node):
         self.__triggers.append(trigger_name)
         self.add_predicate(trigger_name, False)
 
-    def trigger(self, trigger_name: str):
+    def trigger(self, trigger_name: str) -> None:
         """
         Latch the trigger with the provided name.
 
@@ -409,7 +419,7 @@ class ComponentInterface(Node):
         # reset the trigger to be published on the next step
         self.__predicates[trigger_name].set_predicate(lambda: False)
 
-    def remove_output(self, signal_name):
+    def remove_output(self, signal_name) -> None:
         if signal_name not in self.__outputs.keys():
             parsed_signal_name = parse_topic_name(signal_name)
             if parsed_signal_name not in self.__outputs.keys():
@@ -467,7 +477,7 @@ class ComponentInterface(Node):
         except Exception as e:
             raise AddSignalError(f"{e}")
 
-    def __set_output_publisher(self, output_name: str, publisher):
+    def __set_output_publisher(self, output_name: str, publisher) -> None:
         """
         Set the publisher object for a component output.
 
@@ -479,7 +489,7 @@ class ComponentInterface(Node):
         except Exception as e:
             self.get_logger().warn(f"Failed to set output publisher: {e}")
 
-    def remove_input(self, signal_name: str):
+    def remove_input(self, signal_name: str) -> None:
         if not self.destroy_subscription(self.__inputs.pop(signal_name, None)):
             parsed_signal_name = parse_topic_name(signal_name)
             if not self.destroy_subscription(self.__inputs.pop(parsed_signal_name, None)):
@@ -489,17 +499,17 @@ class ComponentInterface(Node):
             return
         self.get_logger().debug(f"Removing signal '{signal_name}'.")
 
-    def __read_translated_message(self, message: MsgT, attribute_name: str, reader: Callable):
+    def __read_translated_message(self, message: MsgT, attribute_name: str, reader: Callable) -> None:
         obj_type = type(self.__getattribute__(attribute_name))
         decoded_message = reader(message)
         self.__setattr__(attribute_name, obj_type(decoded_message))
 
-    def __read_custom_message(self, message: MsgT, attribute_name: str):
+    def __read_custom_message(self, message: MsgT, attribute_name: str) -> None:
         for field in message.get_fields_and_field_types().keys():
             setattr(self.__getattribute__(attribute_name), field, getattr(message, field))
 
     def __subscription_callback(
-            self, message: MsgT, attribute_name: str, read_message: Callable, user_callback: Callable):
+            self, message: MsgT, attribute_name: str, read_message: Callable, user_callback: Callable) -> None:
         """
         Subscription callback for the ROS subscriptions.
 
@@ -519,14 +529,14 @@ class ComponentInterface(Node):
             self.get_logger().error(f"Failed to execute user callback in subscription for attribute"
                                     f" '{attribute_name}': {e}", throttle_duration_sec=1.0)
 
-    def __safe_callback(self, message: MsgT, signal_name: str, callback: Callable):
+    def __safe_callback(self, message: MsgT, signal_name: str, callback: Callable) -> None:
         try:
             callback(message)
         except Exception as e:
             self.get_logger().warn(f"Unhandled exception in callback of input '{
                 signal_name}': {e}", throttle_duration_sec=1.0)
 
-    def __declare_signal(self, signal_name: str, signal_type: str, default_topic="", fixed_topic=False):
+    def __declare_signal(self, signal_name: str, signal_type: str, default_topic="", fixed_topic=False) -> None:
         """
         Declare an input to create the topic parameter without adding it to the map of inputs yet.
 
@@ -557,7 +567,7 @@ class ComponentInterface(Node):
         self.get_logger().debug(
             f"Declared signal '{parsed_signal_name}' and parameter '{parameter_name}' with value '{topic_name}'.")
 
-    def declare_input(self, signal_name: str, default_topic="", fixed_topic=False):
+    def declare_input(self, signal_name: str, default_topic="", fixed_topic=False) -> None:
         """
         Declare an input to create the topic parameter without adding it to the map of inputs yet.
 
@@ -568,7 +578,7 @@ class ComponentInterface(Node):
         """
         self.__declare_signal(signal_name, "input", default_topic, fixed_topic)
 
-    def declare_output(self, signal_name: str, default_topic="", fixed_topic=False):
+    def declare_output(self, signal_name: str, default_topic="", fixed_topic=False) -> None:
         """
         Declare an output to create the topic parameter without adding it to the map of outputs yet.
 
@@ -580,7 +590,7 @@ class ComponentInterface(Node):
         self.__declare_signal(signal_name, "output", default_topic, fixed_topic)
 
     def add_input(self, signal_name: str, subscription: Union[str, Callable], message_type: MsgT, default_topic="",
-                  fixed_topic=False, user_callback: Callable = None):
+                  fixed_topic=False, user_callback: Callable = None) -> None:
         """
         Add and configure an input signal of the component.
 
@@ -652,7 +662,7 @@ class ComponentInterface(Node):
         except Exception as e:
             self.get_logger().error(f"Failed to add input '{signal_name}': {e}")
 
-    def add_service(self, service_name: str, callback: Union[Callable[[], dict], Callable[[str], dict]]):
+    def add_service(self, service_name: str, callback: Union[Callable[[], dict], Callable[[str], dict]]) -> None:
         """
         Add a service to trigger a callback function.
         The callback should take either no arguments (empty service) or a single string argument (string service).
@@ -711,7 +721,7 @@ class ComponentInterface(Node):
         except Exception as e:
             self.get_logger().error(f"Failed to add service '{service_name}': {e}")
 
-    def add_tf_broadcaster(self):
+    def add_tf_broadcaster(self) -> None:
         """
         Configure a transform broadcaster.
         """
@@ -721,7 +731,7 @@ class ComponentInterface(Node):
         else:
             self.get_logger().error("TF broadcaster already exists.")
 
-    def add_static_tf_broadcaster(self):
+    def add_static_tf_broadcaster(self) -> None:
         """
         Configure a static transform broadcaster.
         """
@@ -731,7 +741,7 @@ class ComponentInterface(Node):
         else:
             self.get_logger().error("TF broadcaster already exists.")
 
-    def add_tf_listener(self):
+    def add_tf_listener(self) -> None:
         """
         Configure a transform buffer and listener.
         """
@@ -742,7 +752,7 @@ class ComponentInterface(Node):
         else:
             self.get_logger().error("TF buffer and listener already exist.")
 
-    def send_transforms(self, transforms: Iterable[sr.CartesianPose]):
+    def send_transforms(self, transforms: Iterable[sr.CartesianPose]) -> None:
         """
         Send a list of transforms to TF.
 
@@ -758,7 +768,7 @@ class ComponentInterface(Node):
         """
         self.send_transforms([transform])
 
-    def send_static_transforms(self, transforms: Iterable[sr.CartesianPose]):
+    def send_static_transforms(self, transforms: Iterable[sr.CartesianPose]) -> None:
         """
         Send a list of static transforms to TF.
 
@@ -806,7 +816,7 @@ class ComponentInterface(Node):
         """
         return self.__qos
 
-    def set_qos(self, qos: QoSProfile):
+    def set_qos(self, qos: QoSProfile) -> None:
         """
         Setter of the Quality of Service for ROS publishers and subscribers.
 
@@ -814,7 +824,7 @@ class ComponentInterface(Node):
         """
         self.__qos = qos
 
-    def add_periodic_callback(self, name: str, callback: Callable[[], None]):
+    def add_periodic_callback(self, name: str, callback: Callable[[], None]) -> None:
         """
         Add a periodic callback function. The provided function is evaluated periodically at the component step period.
 
@@ -842,7 +852,7 @@ class ComponentInterface(Node):
         message.value = value
         return message
 
-    def __publish_predicate(self, name: str, value: bool):
+    def __publish_predicate(self, name: str, value: bool) -> None:
         """
         Helper function to publish a predicate.
 
@@ -853,7 +863,7 @@ class ComponentInterface(Node):
         message.predicates = [self.__get_predicate_message(name, value)]
         self.__predicate_publisher.publish(message)
 
-    def __publish_predicates(self):
+    def __publish_predicates(self) -> None:
         """
         Helper function to publish all predicates.
         """
@@ -865,7 +875,7 @@ class ComponentInterface(Node):
         if len(message.predicates):
             self.__predicate_publisher.publish(message)
 
-    def __translate_and_publish(self, output_name: str):
+    def __translate_and_publish(self, output_name: str) -> None:
         """
         Translate and publish a message of an output
 
@@ -878,7 +888,7 @@ class ComponentInterface(Node):
             self.__outputs[output_name]["translator"](message, data)
             self.__outputs[output_name]["publisher"].publish(message)
 
-    def publish_output(self, signal_name: str):
+    def publish_output(self, signal_name: str) -> None:
         """
         Trigger the publishing of an output
 
@@ -895,7 +905,7 @@ class ComponentInterface(Node):
         except Exception as e:
             self.get_logger().error(f"Failed to publish output '{parsed_signal_name}': {e}")
 
-    def __publish_outputs(self):
+    def __publish_outputs(self) -> None:
         """
         Helper function to publish all outputs.
         """
@@ -906,7 +916,7 @@ class ComponentInterface(Node):
             except Exception as e:
                 self.get_logger().error(f"{e}")
 
-    def __evaluate_periodic_callbacks(self):
+    def __evaluate_periodic_callbacks(self) -> None:
         """
         Helper function to evaluate all periodic function callbacks.
         """
@@ -917,7 +927,7 @@ class ComponentInterface(Node):
                 self.get_logger().error(f"Failed to evaluate periodic function callback '{name}': {e}",
                                         throttle_duration_sec=1.0)
 
-    def __publish_transforms(self, transforms: Iterable[sr.CartesianPose], static=False):
+    def __publish_transforms(self, transforms: Iterable[sr.CartesianPose], static=False) -> None:
         """
         Send a list of transforms to TF using the normal or static tf broadcaster
 
@@ -940,13 +950,13 @@ class ComponentInterface(Node):
         except (MessageTranslationError, TransformException) as e:
             self.get_logger().error(f"Failed to send {modifier}transform: {e}", throttle_duration_sec=1.0)
 
-    def raise_error(self):
+    def raise_error(self) -> None:
         """
         Notify an error in the component.
         """
         self.get_logger().error("An error was raised in the component.")
 
-    def __finalize_interfaces(self):
+    def __finalize_interfaces(self) -> None:
         """
         Finalize all interfaces.
         """
