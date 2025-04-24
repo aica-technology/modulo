@@ -257,7 +257,7 @@ class ComponentInterface(Node):
                                     "attributes before __init__ of the parent class")
             raise
         if result is None:
-            self.get_logger().error("'on_validate_parameter_callback' does not return a value, "
+            self.get_logger().error("'on_validate_parameter_callback' doesn't return a value, "
                                     "parameter change will be rejected.")
             return False
         return result

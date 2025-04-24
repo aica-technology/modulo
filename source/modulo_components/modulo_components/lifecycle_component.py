@@ -89,6 +89,7 @@ class LifecycleComponent(ComponentInterface, _LifecycleNodeMixin):
             result = self.on_configure_callback()
             if result is None:
                 self.get_logger().error("'on_configure_callback' doesn't return a value, transition will be rejected.")
+                return False
         except Exception as e:
             self.get_logger().error(f"{e}")
             return False
@@ -184,6 +185,7 @@ class LifecycleComponent(ComponentInterface, _LifecycleNodeMixin):
             result = self.on_activate_callback()
             if result is None:
                 self.get_logger().error("'on_configure_callback' doesn't return a value, transition will be rejected.")
+                return False
         except Exception as e:
             self.get_logger().error(f"{e}")
             return False
@@ -229,6 +231,7 @@ class LifecycleComponent(ComponentInterface, _LifecycleNodeMixin):
             cb_result = self.on_deactivate_callback()
             if cb_result is None:
                 self.get_logger().error("'on_deactivate_callback' doesn't return a value, transition will be rejected.")
+                return False
             return result and cb_result
         except Exception as e:
             self.get_logger().error(f"{e}")
