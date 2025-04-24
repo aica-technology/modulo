@@ -25,7 +25,7 @@ class Component(ComponentInterface):
         self.add_predicate("is_finished", False)
         self.add_predicate("in_error_state", False)
 
-    def _step(self):
+    def _step(self) -> None:
         """
         Step function that is called periodically.
         """
@@ -38,7 +38,7 @@ class Component(ComponentInterface):
             self.get_logger().error(f"Failed to execute step function: {e}", throttle_duration_sec=1.0)
             self.raise_error()
 
-    def execute(self):
+    def execute(self) -> None:
         """
         Start the execution thread.
         """
@@ -49,13 +49,18 @@ class Component(ComponentInterface):
         self.__execute_thread = Thread(target=self.__on_execute)
         self.__execute_thread.start()
 
-    def __on_execute(self):
+    def __on_execute(self) -> None:
         """
         Run the execution function in a try catch block and set the predicates according to the outcome of the
         execution.
         """
         try:
-            if not self.on_execute_callback():
+            result = self.on_execute_callback()
+            if result is None:
+                self.get_logger().error("Expected a return value from 'on_execute_callback'.")
+                self.raise_error()
+                return
+            if not result:
                 self.raise_error()
                 return
         except Exception as e:
@@ -75,7 +80,7 @@ class Component(ComponentInterface):
 
     def add_output(self, signal_name: str, data: str, message_type: MsgT,
                    clproto_message_type: Optional[clproto.MessageType] = None, default_topic="", fixed_topic=False,
-                   publish_on_step=True):
+                   publish_on_step=True) -> None:
         """
         Add and configure an output signal of the component.
 
@@ -97,7 +102,7 @@ class Component(ComponentInterface):
         except Exception as e:
             self.get_logger().error(f"Failed to add output '{signal_name}': {e}")
 
-    def raise_error(self):
+    def raise_error(self) -> None:
         """
         Set the in_error_state predicate to true and cancel the step timer.
         """

@@ -38,7 +38,7 @@ class LifecycleComponent(ComponentInterface, _LifecycleNodeMixin):
         _LifecycleNodeMixin.__init__(self, **lifecycle_node_kwargs)
         self.__has_error = False
 
-    def destroy_node(self):
+    def destroy_node(self) -> None:
         """
         Cleanly destroy the node by cleaning up the Mixin class.
         """
@@ -87,6 +87,10 @@ class LifecycleComponent(ComponentInterface, _LifecycleNodeMixin):
         """
         try:
             result = self.on_configure_callback()
+            if result is None:
+                self.get_logger().error("Expected a return value from 'on_configure_callback'. "
+                                        "Transition will be rejected.")
+                return False
         except Exception as e:
             self.get_logger().error(f"{e}")
             return False
@@ -127,7 +131,12 @@ class LifecycleComponent(ComponentInterface, _LifecycleNodeMixin):
         :return: True if cleanup is successful, false otherwise
         """
         try:
-            return self.on_cleanup_callback()
+            result = self.on_cleanup_callback()
+            if result is None:
+                self.get_logger().error("Expected a return value from 'on_cleanup_callback'. "
+                                        "Transition will be rejected.")
+                return False
+            return result
         except Exception as e:
             self.get_logger().error(f"{e}")
             return False
@@ -176,6 +185,10 @@ class LifecycleComponent(ComponentInterface, _LifecycleNodeMixin):
         """
         try:
             result = self.on_activate_callback()
+            if result is None:
+                self.get_logger().error("Expected a return value from 'on_activate_callback'. "
+                                        "Transition will be rejected.")
+                return False
         except Exception as e:
             self.get_logger().error(f"{e}")
             return False
@@ -218,7 +231,12 @@ class LifecycleComponent(ComponentInterface, _LifecycleNodeMixin):
         """
         result = self.__deactivate_outputs()
         try:
-            return result and self.on_deactivate_callback()
+            cb_result = self.on_deactivate_callback()
+            if cb_result is None:
+                self.get_logger().error("Expected a return value from 'on_deactivate_callback'. "
+                                        "Transition will be rejected.")
+                return False
+            return result and cb_result
         except Exception as e:
             self.get_logger().error(f"{e}")
             return False
@@ -286,7 +304,12 @@ class LifecycleComponent(ComponentInterface, _LifecycleNodeMixin):
         :return: True if shutdown is successful, false otherwise
         """
         try:
-            return self.on_shutdown_callback()
+            result = self.on_shutdown_callback()
+            if result is None:
+                self.get_logger().error("Expected a return value from 'on_shutdown_callback'. "
+                                        "Transition will be rejected.")
+                return False
+            return result
         except Exception as e:
             self.get_logger().error(f"{e}")
             return False
@@ -332,7 +355,11 @@ class LifecycleComponent(ComponentInterface, _LifecycleNodeMixin):
 
         :return: True if error handling is successful, false otherwise
         """
-        return self.on_error_callback()
+        result = self.on_error_callback()
+        if result is None:
+            self.get_logger().error("Expected a return value from 'on_error_callback'. Transition will be rejected.")
+            return False
+        return result
 
     def on_error_callback(self) -> bool:
         """
@@ -343,7 +370,7 @@ class LifecycleComponent(ComponentInterface, _LifecycleNodeMixin):
         """
         return False
 
-    def _step(self):
+    def _step(self) -> None:
         """
         Step function that is called periodically and publishes predicates, outputs, evaluates daemon callbacks, and
         calls the on_step function.
@@ -379,7 +406,7 @@ class LifecycleComponent(ComponentInterface, _LifecycleNodeMixin):
 
     def add_output(self, signal_name: str, data: str, message_type: MsgT,
                    clproto_message_type: Optional[clproto.MessageType] = None, default_topic="", fixed_topic=False,
-                   publish_on_step=True):
+                   publish_on_step=True) -> None:
         """
         Add an output signal of the component.
 
@@ -403,7 +430,7 @@ class LifecycleComponent(ComponentInterface, _LifecycleNodeMixin):
         except AddSignalError as e:
             self.get_logger().error(f"Failed to add output '{signal_name}': {e}")
 
-    def __activate_outputs(self):
+    def __activate_outputs(self) -> None:
         success = True
         state = self.get_lifecycle_state().state_id
         for signal_name, output_dict in self._ComponentInterface__outputs.items():
@@ -415,7 +442,7 @@ class LifecycleComponent(ComponentInterface, _LifecycleNodeMixin):
         self.get_logger().debug("All outputs activated.")
         return success
 
-    def __deactivate_outputs(self):
+    def __deactivate_outputs(self) -> None:
         success = True
         state = self.get_lifecycle_state().state_id
         for signal_name, output_dict in self._ComponentInterface__outputs.items():
@@ -427,7 +454,7 @@ class LifecycleComponent(ComponentInterface, _LifecycleNodeMixin):
         self.get_logger().debug("All outputs deactivated.")
         return success
 
-    def raise_error(self):
+    def raise_error(self) -> None:
         """
         Trigger the shutdown and error transitions.
         """
