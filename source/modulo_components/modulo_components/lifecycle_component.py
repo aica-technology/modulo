@@ -88,7 +88,8 @@ class LifecycleComponent(ComponentInterface, _LifecycleNodeMixin):
         try:
             result = self.on_configure_callback()
             if result is None:
-                self.get_logger().error("'on_configure_callback' doesn't return a value, transition will be rejected.")
+                self.get_logger().error("Expected a return value from 'on_configure_callback'. "
+                                        "Transition will be rejected.")
                 return False
         except Exception as e:
             self.get_logger().error(f"{e}")
@@ -132,7 +133,8 @@ class LifecycleComponent(ComponentInterface, _LifecycleNodeMixin):
         try:
             result = self.on_cleanup_callback()
             if result is None:
-                self.get_logger().error("'on_cleanup_callback' doesn't return a value, transition will be rejected.")
+                self.get_logger().error("Expected a return value from 'on_cleanup_callback'. "
+                                        "Transition will be rejected.")
                 return False
             return result
         except Exception as e:
@@ -184,7 +186,8 @@ class LifecycleComponent(ComponentInterface, _LifecycleNodeMixin):
         try:
             result = self.on_activate_callback()
             if result is None:
-                self.get_logger().error("'on_configure_callback' doesn't return a value, transition will be rejected.")
+                self.get_logger().error("Expected a return value from 'on_activate_callback'. "
+                                        "Transition will be rejected.")
                 return False
         except Exception as e:
             self.get_logger().error(f"{e}")
@@ -230,7 +233,8 @@ class LifecycleComponent(ComponentInterface, _LifecycleNodeMixin):
         try:
             cb_result = self.on_deactivate_callback()
             if cb_result is None:
-                self.get_logger().error("'on_deactivate_callback' doesn't return a value, transition will be rejected.")
+                self.get_logger().error("Expected a return value from 'on_deactivate_callback'. "
+                                        "Transition will be rejected.")
                 return False
             return result and cb_result
         except Exception as e:
@@ -302,7 +306,8 @@ class LifecycleComponent(ComponentInterface, _LifecycleNodeMixin):
         try:
             result = self.on_shutdown_callback()
             if result is None:
-                self.get_logger().error("'on_shutdown_callback' doesn't return a value, transition will be rejected.")
+                self.get_logger().error("Expected a return value from 'on_shutdown_callback'. "
+                                        "Transition will be rejected.")
                 return False
             return result
         except Exception as e:
@@ -352,7 +357,7 @@ class LifecycleComponent(ComponentInterface, _LifecycleNodeMixin):
         """
         result = self.on_error_callback()
         if result is None:
-            self.get_logger().error("'on_error_callback' doesn't return a value, transition will be rejected.")
+            self.get_logger().error("Expected a return value from 'on_error_callback'. Transition will be rejected.")
             return False
         return result
 

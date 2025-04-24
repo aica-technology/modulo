@@ -253,12 +253,12 @@ class ComponentInterface(Node):
         try:
             result = self.on_validate_parameter_callback(parameter)
         except AttributeError:
-            self.get_logger().error("Attribute error during 'on_validate_parameter_callback', declare necessary "
+            self.get_logger().error("Attribute error during 'on_validate_parameter_callback'. Declare necessary "
                                     "attributes before __init__ of the parent class")
             raise
         if result is None:
-            self.get_logger().error("'on_validate_parameter_callback' doesn't return a value, "
-                                    "parameter change will be rejected.")
+            self.get_logger().error("Expected a return value from 'on_validate_parameter_callback'. "
+                                    "Parameter change will be rejected.")
             return False
         return result
 

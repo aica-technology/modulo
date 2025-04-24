@@ -57,7 +57,7 @@ class Component(ComponentInterface):
         try:
             result = self.on_execute_callback()
             if result is None:
-                self.get_logger().error("'on_execute_callback' doesn't return a value, error will be raised.")
+                self.get_logger().error("Expected a return value from 'on_execute_callback'.")
                 self.raise_error()
                 return
             if not result:
