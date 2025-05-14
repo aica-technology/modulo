@@ -14,6 +14,13 @@
       "parameter_type": "double",
       "default_value": "10.0",
       "internal": true
+    },
+    {
+      "display_name": "Input validity period",
+      "description": "The maximum age of an input state before discarding it as expired (in seconds)",
+      "parameter_name": "input_validity_period",
+      "parameter_type": "double",
+      "default_value": "1.0"
     }
   ]
 }

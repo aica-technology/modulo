@@ -26,8 +26,6 @@ rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn Contro
         "A vector of joint names that the controller will claim");
     add_parameter<double>(
         "activation_timeout", 1.0, "The seconds to wait for valid data on the state interfaces before activating");
-    add_parameter<double>(
-        "input_validity_period", 1.0, "The maximum age of an input state before discarding it as expired");
 
     return add_interfaces();
   } catch (const std::exception& e) {
@@ -61,8 +59,6 @@ ControllerInterface::on_configure(const rclcpp_lifecycle::State& previous_state)
     return CallbackReturn::ERROR;
   }
   hardware_name_ = hardware_name->get_parameter_value<std::string>();
-
-  set_input_validity_period(get_parameter_value<double>("input_validity_period"));
 
   RCLCPP_DEBUG(get_node()->get_logger(), "Configuration of ControllerInterface successful");
   try {
