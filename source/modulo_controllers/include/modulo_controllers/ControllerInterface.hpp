@@ -166,6 +166,12 @@ protected:
   */
   void set_command_interface(const std::string& name, const std::string& interface, double value);
 
+  /**
+   * @copydoc modulo_controllers::BaseControllerInterface::on_validate_parameter_callback()
+   */
+  bool
+  on_validate_parameter_callback(const std::shared_ptr<state_representation::ParameterInterface>& parameter) override;
+
   std::string hardware_name_;///< The hardware name provided by a parameter
 
 private:
