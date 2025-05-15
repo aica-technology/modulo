@@ -366,7 +366,7 @@ bool RobotControllerInterface::on_validate_parameter_callback(const std::shared_
         get_node()->get_logger(), "Parameter value of '%s' should be greater than 0", parameter->get_name().c_str());
     return false;
   }
-  return true;
+  return ControllerInterface::on_validate_parameter_callback(parameter);
 }
 
 }// namespace modulo_controllers
