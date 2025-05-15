@@ -425,10 +425,6 @@ void BaseControllerInterface::add_outputs() {
   }
 }
 
-void BaseControllerInterface::set_input_validity_period(double input_validity_period) {
-  input_validity_period_ = input_validity_period;
-}
-
 bool BaseControllerInterface::check_input_valid(const std::string& name) const {
   if (inputs_.find(name) == inputs_.end()) {
     RCLCPP_WARN_THROTTLE(

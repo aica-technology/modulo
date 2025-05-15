@@ -30,6 +30,7 @@ Release Versions:
 - test(controllers): add TF listener and broadcaster tests (#172)
 - feat(controllers): use parent node for tf listener (#190)
 - feat(core): update translators to include new trajectory msgs (#194)
+- fix(controllers)!: remove input validity setter (#209)
 
 ## 5.2.0
 

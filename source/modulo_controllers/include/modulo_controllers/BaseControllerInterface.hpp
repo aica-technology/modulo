@@ -269,12 +269,6 @@ protected:
   void add_output(const std::string& name, const std::string& topic_name = "");
 
   /**
-   * @brief Set the input validity period of input signals
-   * @param input_validity_period The desired input validity period
-   */
-  void set_input_validity_period(double input_validity_period);
-
-  /**
    * @brief Read the most recent message of an input
    * @tparam T The expected type of the input data
    * @param name The name of the input

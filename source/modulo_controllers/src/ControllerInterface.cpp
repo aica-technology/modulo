@@ -282,4 +282,17 @@ void ControllerInterface::set_command_interface(const std::string& name, const s
   }
 }
 
+bool ControllerInterface::on_validate_parameter_callback(const std::shared_ptr<ParameterInterface>& parameter) {
+  if (parameter->get_name() == "activation_timeout") {
+    auto value = parameter->get_parameter_value<double>();
+    if (value < 0.0 || value > std::numeric_limits<double>::max()) {
+      RCLCPP_ERROR(
+          get_node()->get_logger(), "Parameter value of parameter '%s' should be a positive finite number",
+          parameter->get_name().c_str());
+      return false;
+    }
+  }
+  return true;
+}
+
 }// namespace modulo_controllers
