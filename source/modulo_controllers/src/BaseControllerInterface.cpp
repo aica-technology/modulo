@@ -32,11 +32,14 @@ rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn BaseCo
         return this->on_set_parameters_callback(parameters);
       });
   add_parameter<double>("predicate_publishing_rate", 10.0, "The rate at which to publish controller predicates");
+  add_parameter<double>(
+      "input_validity_period", 1.0, "The maximum age of an input state before discarding it as expired");
   return CallbackReturn::SUCCESS;
 }
 
 rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn
 BaseControllerInterface::on_configure(const rclcpp_lifecycle::State&) {
+  input_validity_period_ = get_parameter_value<double>("input_validity_period");
   add_inputs();
   add_outputs();
 
@@ -149,7 +152,7 @@ BaseControllerInterface::on_set_parameters_callback(const std::vector<rclcpp::Pa
 }
 
 bool BaseControllerInterface::validate_parameter(const std::shared_ptr<ParameterInterface>& parameter) {
-  if (parameter->get_name() == "activation_timeout" || parameter->get_name() == "input_validity_period") {
+  if (parameter->get_name() == "predicate_publishing_rate" || parameter->get_name() == "input_validity_period") {
     auto value = parameter->get_parameter_value<double>();
     if (value < 0.0 || value > std::numeric_limits<double>::max()) {
       RCLCPP_ERROR(
