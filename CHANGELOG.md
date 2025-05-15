@@ -32,6 +32,7 @@ Release Versions:
 - feat(controllers)!: add TF listener interface in BaseControllerInterface (#169)
 - feat(controllers)!: add TF broadcaster in BaseControllerInterface (#170)
 - test(controllers): add TF listener and broadcaster tests (#172)
+- fix(controllers)!: remove input validity setter (#209)
 
 ## 5.4.1
 
@@ -102,6 +103,12 @@ base class.
 
 - feat(components): verify return value of callbacks (#206)
 - fix(controllers): move input validity period to base (#207)
+- feat(controllers)!: remove robot description parameter (#186)
+- feat(controllers): add TF listener interface in BaseControllerInterface (#169)
+- feat(controllers): add TF broadcaster in BaseControllerInterface (#170)
+- test(controllers): add TF listener and broadcaster tests (#172)
+- feat(controllers): use parent node for tf listener (#190)
+- feat(core): update translators to include new trajectory msgs (#194)
 
 ## 5.2.0
 
