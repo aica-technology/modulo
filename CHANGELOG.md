@@ -26,7 +26,7 @@ Release Versions:
 ### May 15th, 2025
 
 Starting with version 5.2.1, the Python component interfaces verify the return values of execution and lifecycle
-callbacks to avoid unexpected behavior. Additionally, it contains a fix that puts a parameter in the correct controllers
+callbacks to avoid unexpected behavior. Additionally, it contains a fix that puts a parameter in the correct controller
 base class.
 
 - feat(components): verify return value of callbacks (#206)
