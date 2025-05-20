@@ -2,6 +2,7 @@
 
 Release Versions:
 
+- [5.2.1](#521)
 - [5.2.0](#520)
 - [5.1.0](#510)
 - [5.0.2](#502)
@@ -20,7 +21,13 @@ Release Versions:
 - [2.1.1](#211)
 - [2.1.0](#210)
 
-## Upcoming changes
+## 5.2.1
+
+### May 15th, 2025
+
+Starting with version 5.2.1, the Python component interfaces verify the return values of execution and lifecycle
+callbacks to avoid unexpected behavior. Additionally, it contains a fix that puts a parameter in the correct controller
+base class.
 
 - feat(components): verify return value of callbacks (#206)
 - fix(controllers): move input validity period to base (#207)
