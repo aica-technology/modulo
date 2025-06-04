@@ -734,7 +734,7 @@ ComponentInterface<NodeT>::on_set_parameters_callback(const std::vector<rclcpp::
   result.successful = true;
   for (const auto& ros_parameter : parameters) {
     try {
-      if (ros_parameter.get_name().substr(0, 27) == "qos_overrides./tf.publisher") {
+      if (ros_parameter.get_name().substr(0, 17) == "qos_overrides./tf") {
         continue;
       }
       // get the associated parameter interface by name
