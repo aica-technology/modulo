@@ -55,6 +55,12 @@ public:
    */
   CallbackReturn on_activate() override;
 
+  /**
+   * @copydoc modulo_controllers::ControllerInterface::on_deactivate()
+   * @details Reset the previous joint commands
+   */
+  CallbackReturn on_deactivate() override;
+
 protected:
   /**
    * @brief Access the joint state object.
