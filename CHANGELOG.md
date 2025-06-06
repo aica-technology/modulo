@@ -21,6 +21,10 @@ Release Versions:
 - [2.1.1](#211)
 - [2.1.0](#210)
 
+## Upcoming changes
+
+- fix(controllers): reset previous joint commands (#211)
+
 ## 5.2.1
 
 ### May 15th, 2025
