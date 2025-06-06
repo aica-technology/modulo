@@ -197,14 +197,9 @@ rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn RobotC
 }
 
 rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn RobotControllerInterface::on_deactivate() {
-  if (!control_type_.empty()) {
-    if (control_type_ == hardware_interface::HW_IF_POSITION) {
-      for (std::size_t index = 0; index < joints_.size(); ++index) {
-        previous_joint_command_values_[index] = joint_state_.get_position(index);
-      }
-    } else {
-      std::fill(previous_joint_command_values_.begin(), previous_joint_command_values_.end(), 0.0);
-    }
+  if (!control_type_.empty() && control_type_ != hardware_interface::HW_IF_POSITION) {
+    std::fill(previous_joint_command_values_.begin(), previous_joint_command_values_.end(), 0.0);
+  }
   }
   RCLCPP_DEBUG(get_node()->get_logger(), "Deactivation of RobotControllerInterface successful");
   return CallbackReturn::SUCCESS;
