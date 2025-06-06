@@ -200,7 +200,6 @@ rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn RobotC
   if (!control_type_.empty() && control_type_ != hardware_interface::HW_IF_POSITION) {
     std::fill(previous_joint_command_values_.begin(), previous_joint_command_values_.end(), 0.0);
   }
-  }
   RCLCPP_DEBUG(get_node()->get_logger(), "Deactivation of RobotControllerInterface successful");
   return CallbackReturn::SUCCESS;
 }
