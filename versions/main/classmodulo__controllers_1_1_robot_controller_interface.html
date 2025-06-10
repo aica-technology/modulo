@@ -129,6 +129,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a27bec46fefa9083c1b0a19e5b8a69172" id="r_a27bec46fefa9083c1b0a19e5b8a69172"><td class="memItemLeft" align="right" valign="top">CallbackReturn&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a27bec46fefa9083c1b0a19e5b8a69172">on_activate</a> () override</td></tr>
 <tr class="memdesc:a27bec46fefa9083c1b0a19e5b8a69172"><td class="mdescLeft">&#160;</td><td class="mdescRight">Activate the controller.     <br /></td></tr>
 <tr class="separator:a27bec46fefa9083c1b0a19e5b8a69172"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a514494756e25fe8b459f487d4ac09939" id="r_a514494756e25fe8b459f487d4ac09939"><td class="memItemLeft" align="right" valign="top">CallbackReturn&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a514494756e25fe8b459f487d4ac09939">on_deactivate</a> () override</td></tr>
+<tr class="memdesc:a514494756e25fe8b459f487d4ac09939"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deactivate the controller.     <br /></td></tr>
+<tr class="separator:a514494756e25fe8b459f487d4ac09939"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classmodulo__controllers_1_1_controller_interface"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_methods_classmodulo__controllers_1_1_controller_interface')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classmodulo__controllers_1_1_controller_interface.html">modulo_controllers::ControllerInterface</a></td></tr>
 <tr class="memitem:a45af1adc882e1d005c6ce3a0bf63f061 inherit pub_methods_classmodulo__controllers_1_1_controller_interface" id="r_a45af1adc882e1d005c6ce3a0bf63f061"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmodulo__controllers_1_1_controller_interface.html#a45af1adc882e1d005c6ce3a0bf63f061">ControllerInterface</a> (bool claim_all_state_interfaces=false)</td></tr>
 <tr class="memdesc:a45af1adc882e1d005c6ce3a0bf63f061 inherit pub_methods_classmodulo__controllers_1_1_controller_interface"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor.  <br /></td></tr>
@@ -201,9 +204,6 @@ Protected Member Functions</h2></td></tr>
 <tr class="memdesc:a3e8115f4baa72f001179efe8295bfe5c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Parameter validation function to be redefined by derived controller classes.     <br /></td></tr>
 <tr class="separator:a3e8115f4baa72f001179efe8295bfe5c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_methods_classmodulo__controllers_1_1_controller_interface"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pro_methods_classmodulo__controllers_1_1_controller_interface')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="classmodulo__controllers_1_1_controller_interface.html">modulo_controllers::ControllerInterface</a></td></tr>
-<tr class="memitem:ac9742c368a3bbdbf5ea6603f253ad2a7 inherit pro_methods_classmodulo__controllers_1_1_controller_interface" id="r_ac9742c368a3bbdbf5ea6603f253ad2a7"><td class="memItemLeft" align="right" valign="top">virtual CallbackReturn&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmodulo__controllers_1_1_controller_interface.html#ac9742c368a3bbdbf5ea6603f253ad2a7">on_deactivate</a> ()</td></tr>
-<tr class="memdesc:ac9742c368a3bbdbf5ea6603f253ad2a7 inherit pro_methods_classmodulo__controllers_1_1_controller_interface"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deactivate the controller.  <br /></td></tr>
-<tr class="separator:ac9742c368a3bbdbf5ea6603f253ad2a7 inherit pro_methods_classmodulo__controllers_1_1_controller_interface"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a258e8cc74be6bf915a2c1aa5f9278fc1 inherit pro_methods_classmodulo__controllers_1_1_controller_interface" id="r_a258e8cc74be6bf915a2c1aa5f9278fc1"><td class="memItemLeft" align="right" valign="top">virtual controller_interface::return_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmodulo__controllers_1_1_controller_interface.html#a258e8cc74be6bf915a2c1aa5f9278fc1">evaluate</a> (const rclcpp::Time &amp;time, const std::chrono::nanoseconds &amp;period)=0</td></tr>
 <tr class="memdesc:a258e8cc74be6bf915a2c1aa5f9278fc1 inherit pro_methods_classmodulo__controllers_1_1_controller_interface"><td class="mdescLeft">&#160;</td><td class="mdescRight">The control logic callback.  <br /></td></tr>
 <tr class="separator:a258e8cc74be6bf915a2c1aa5f9278fc1 inherit pro_methods_classmodulo__controllers_1_1_controller_interface"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -482,7 +482,7 @@ Protected Attributes</h2></td></tr>
 <p>Compute the Cartesian state from forward kinematics of the current joint state. </p>
 <p>This should only be used if a robot model has been generated, in which case the forward kinematics is calculated to get pose and twist for the desired target frame. </p>
 
-<p class="definition">Definition at line <a class="el" href="_robot_controller_interface_8cpp_source.html#l00302">302</a> of file <a class="el" href="_robot_controller_interface_8cpp_source.html">RobotControllerInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_robot_controller_interface_8cpp_source.html#l00310">310</a> of file <a class="el" href="_robot_controller_interface_8cpp_source.html">RobotControllerInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -512,7 +512,7 @@ Protected Attributes</h2></td></tr>
 <p>Access the Cartesian state object. </p>
 <p>This internally calls <a class="el" href="#a92904926dd9e22ff7c462a33b9306575" title="Compute the Cartesian state from forward kinematics of the current joint state.">compute_cartesian_state()</a> </p><dl class="section return"><dt>Returns</dt><dd>A const reference to the CartesianState object </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_robot_controller_interface_8cpp_source.html#l00292">292</a> of file <a class="el" href="_robot_controller_interface_8cpp_source.html">RobotControllerInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_robot_controller_interface_8cpp_source.html#l00300">300</a> of file <a class="el" href="_robot_controller_interface_8cpp_source.html">RobotControllerInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -542,7 +542,7 @@ Protected Attributes</h2></td></tr>
 <p>Access the Cartesian wrench object. </p>
 <dl class="section return"><dt>Returns</dt><dd>A const reference to the CartesianWrench object </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_robot_controller_interface_8cpp_source.html#l00298">298</a> of file <a class="el" href="_robot_controller_interface_8cpp_source.html">RobotControllerInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_robot_controller_interface_8cpp_source.html#l00306">306</a> of file <a class="el" href="_robot_controller_interface_8cpp_source.html">RobotControllerInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -572,7 +572,7 @@ Protected Attributes</h2></td></tr>
 <p>Access the joint state object. </p>
 <dl class="section return"><dt>Returns</dt><dd>A const reference to the JointState object </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_robot_controller_interface_8cpp_source.html#l00288">288</a> of file <a class="el" href="_robot_controller_interface_8cpp_source.html">RobotControllerInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_robot_controller_interface_8cpp_source.html#l00296">296</a> of file <a class="el" href="_robot_controller_interface_8cpp_source.html">RobotControllerInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -642,6 +642,39 @@ Protected Attributes</h2></td></tr>
 
 </div>
 </div>
+<a id="a514494756e25fe8b459f487d4ac09939" name="a514494756e25fe8b459f487d4ac09939"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a514494756e25fe8b459f487d4ac09939">&#9670;&#160;</a></span>on_deactivate()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn modulo_controllers::RobotControllerInterface::on_deactivate </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Deactivate the controller.    </p>
+<p>This method should be overridden by derived classes. </p><dl class="section return"><dt>Returns</dt><dd>SUCCESS or ERROR   </dd></dl>
+<p>Reset the previous joint commands </p>
+
+<p>Reimplemented from <a class="el" href="classmodulo__controllers_1_1_controller_interface.html#ac9742c368a3bbdbf5ea6603f253ad2a7">modulo_controllers::ControllerInterface</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="_robot_controller_interface_8cpp_source.html#l00199">199</a> of file <a class="el" href="_robot_controller_interface_8cpp_source.html">RobotControllerInterface.cpp</a>.</p>
+
+</div>
+</div>
 <a id="a3e8115f4baa72f001179efe8295bfe5c" name="a3e8115f4baa72f001179efe8295bfe5c"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a3e8115f4baa72f001179efe8295bfe5c">&#9670;&#160;</a></span>on_validate_parameter_callback()</h2>
 
@@ -676,7 +709,7 @@ Protected Attributes</h2></td></tr>
 
 <p>Reimplemented from <a class="el" href="classmodulo__controllers_1_1_base_controller_interface.html#ad302e4f9728d36c82177a7cfd52e6aec">modulo_controllers::BaseControllerInterface</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="_robot_controller_interface_8cpp_source.html#l00356">356</a> of file <a class="el" href="_robot_controller_interface_8cpp_source.html">RobotControllerInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_robot_controller_interface_8cpp_source.html#l00364">364</a> of file <a class="el" href="_robot_controller_interface_8cpp_source.html">RobotControllerInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -711,7 +744,7 @@ Protected Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_robot_controller_interface_8cpp_source.html#l00314">314</a> of file <a class="el" href="_robot_controller_interface_8cpp_source.html">RobotControllerInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_robot_controller_interface_8cpp_source.html#l00322">322</a> of file <a class="el" href="_robot_controller_interface_8cpp_source.html">RobotControllerInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -738,7 +771,7 @@ Protected Attributes</h2></td></tr>
 
 <p>The name of a force torque sensor in the hardware description. </p>
 
-<p class="definition">Definition at line <a class="el" href="_robot_controller_interface_8hpp_source.html#l00100">100</a> of file <a class="el" href="_robot_controller_interface_8hpp_source.html">RobotControllerInterface.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_robot_controller_interface_8hpp_source.html#l00106">106</a> of file <a class="el" href="_robot_controller_interface_8hpp_source.html">RobotControllerInterface.hpp</a>.</p>
 
 </div>
 </div>
@@ -764,7 +797,7 @@ Protected Attributes</h2></td></tr>
 
 <p>The sensing reference frame. </p>
 
-<p class="definition">Definition at line <a class="el" href="_robot_controller_interface_8hpp_source.html#l00101">101</a> of file <a class="el" href="_robot_controller_interface_8hpp_source.html">RobotControllerInterface.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_robot_controller_interface_8hpp_source.html#l00107">107</a> of file <a class="el" href="_robot_controller_interface_8hpp_source.html">RobotControllerInterface.hpp</a>.</p>
 
 </div>
 </div>
@@ -790,7 +823,7 @@ Protected Attributes</h2></td></tr>
 
 <p>Robot model object generated from URDF. </p>
 
-<p class="definition">Definition at line <a class="el" href="_robot_controller_interface_8hpp_source.html#l00097">97</a> of file <a class="el" href="_robot_controller_interface_8hpp_source.html">RobotControllerInterface.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_robot_controller_interface_8hpp_source.html#l00103">103</a> of file <a class="el" href="_robot_controller_interface_8hpp_source.html">RobotControllerInterface.hpp</a>.</p>
 
 </div>
 </div>
@@ -816,7 +849,7 @@ Protected Attributes</h2></td></tr>
 
 <p>The frame in task space for forward kinematics calculations, if applicable. </p>
 
-<p class="definition">Definition at line <a class="el" href="_robot_controller_interface_8hpp_source.html#l00098">98</a> of file <a class="el" href="_robot_controller_interface_8hpp_source.html">RobotControllerInterface.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_robot_controller_interface_8hpp_source.html#l00104">104</a> of file <a class="el" href="_robot_controller_interface_8hpp_source.html">RobotControllerInterface.hpp</a>.</p>
 
 </div>
 </div>
