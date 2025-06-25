@@ -21,7 +21,13 @@ Release Versions:
 - [2.1.1](#211)
 - [2.1.0](#210)
 
-## Upcoming changes
+## 5.2.2
+
+### June 25th, 2025
+
+Version 5.2.2 is a patch release that makes sure that the joint commands are reset on deactivation in the
+`modulo_controllers::RobotControllerInterface`. This ensures that any previous joint command is cleared when a derived
+controller is activated again.
 
 - fix(controllers): reset previous joint commands (#211)
 
