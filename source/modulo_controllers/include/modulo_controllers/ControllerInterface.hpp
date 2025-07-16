@@ -179,8 +179,8 @@ private:
   void add_interface(
       const std::string& name, const std::string& interface, std::vector<std::string>& list, const std::string& type);
 
-  using controller_interface::ControllerInterfaceBase::command_interfaces_;
-  using controller_interface::ControllerInterfaceBase::state_interfaces_;
+  // using controller_interface::ControllerInterfaceBase::command_interfaces_;
+  // using controller_interface::ControllerInterfaceBase::state_interfaces_;
 
   std::unordered_map<std::string, std::unordered_map<std::string, double>>
       state_interface_data_;                  ///< Map of all state interface data
