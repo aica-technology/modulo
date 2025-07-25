@@ -25,8 +25,6 @@ BaseControllerInterface::BaseControllerInterface()
 rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn BaseControllerInterface::on_init() {
   // registering set_parameter callbacks is only possible on_init since the lifecycle node is not yet initialized
   // on construction. This means we might not be able to validate parameter overrides - if they are provided.
-  pre_set_parameter_cb_handle_ = get_node()->add_pre_set_parameters_callback(
-      [this](std::vector<rclcpp::Parameter>& parameters) { return this->pre_set_parameters_callback(parameters); });
   on_set_parameter_cb_handle_ = get_node()->add_on_set_parameters_callback(
       [this](const std::vector<rclcpp::Parameter>& parameters) -> rcl_interfaces::msg::SetParametersResult {
         return this->on_set_parameters_callback(parameters);
@@ -46,7 +44,7 @@ BaseControllerInterface::on_configure(const rclcpp_lifecycle::State&) {
   if (predicates_.size()) {
     predicate_publisher_ =
         get_node()->create_publisher<modulo_interfaces::msg::PredicateCollection>("/predicates", qos_);
-    predicate_message_.node = get_node()->get_fully_qualified_name();
+    predicate_message_.node = get_node()->get_node_base_interface()->get_fully_qualified_name();
     predicate_message_.type = modulo_interfaces::msg::PredicateCollection::CONTROLLER;
 
     predicate_timer_ = get_node()->create_wall_timer(
@@ -60,6 +58,7 @@ BaseControllerInterface::on_configure(const rclcpp_lifecycle::State&) {
 
 void BaseControllerInterface::add_parameter(
     const std::shared_ptr<ParameterInterface>& parameter, const std::string& description, bool read_only) {
+  set_parameter_callback_called_ = false;
   rclcpp::Parameter ros_param;
   try {
     ros_param = translators::write_parameter(parameter);
@@ -74,9 +73,6 @@ void BaseControllerInterface::add_parameter(
       rcl_interfaces::msg::ParameterDescriptor descriptor;
       descriptor.description = description;
       descriptor.read_only = read_only;
-      // since the pre_set_parameters_callback is not called on parameter declaration, this has to be true
-      set_parameters_result_.successful = true;
-      set_parameters_result_.reason = "";
       if (parameter->is_empty()) {
         descriptor.dynamic_typing = true;
         descriptor.type = translators::get_ros_parameter_type(parameter->get_parameter_type());
@@ -84,12 +80,12 @@ void BaseControllerInterface::add_parameter(
       } else {
         get_node()->declare_parameter(parameter->get_name(), ros_param.get_parameter_value(), descriptor);
       }
-      std::vector<rclcpp::Parameter> ros_parameters{get_node()->get_parameters({parameter->get_name()})};
-      pre_set_parameters_callback(ros_parameters);
-      auto result = on_set_parameters_callback(ros_parameters);
-      if (!result.successful) {
-        get_node()->undeclare_parameter(parameter->get_name());
-        throw modulo_core::exceptions::ParameterException(result.reason);
+      if (!set_parameter_callback_called_) {
+        auto result = on_set_parameters_callback(get_node()->get_parameters({parameter->get_name()}));
+        if (!result.successful) {
+          get_node()->undeclare_parameter(parameter->get_name());
+          throw modulo_core::exceptions::ParameterException(result.reason);
+        }
       }
       read_only_parameters_.at(parameter->get_name()) = read_only;
     } catch (const std::exception& ex) {
@@ -110,15 +106,15 @@ std::shared_ptr<ParameterInterface> BaseControllerInterface::get_parameter(const
   }
 }
 
-void BaseControllerInterface::pre_set_parameters_callback(std::vector<rclcpp::Parameter>& parameters) {
-  if (pre_set_parameter_callback_called_) {
-    pre_set_parameter_callback_called_ = false;
-    return;
-  }
+rcl_interfaces::msg::SetParametersResult
+BaseControllerInterface::on_set_parameters_callback(const std::vector<rclcpp::Parameter>& parameters) {
   rcl_interfaces::msg::SetParametersResult result;
   result.successful = true;
   for (auto& ros_parameter : parameters) {
     try {
+      if (ros_parameter.get_name().substr(0, 17) == "qos_overrides./tf") {
+        continue;
+      }
       auto parameter = parameter_map_.get_parameter(ros_parameter.get_name());
       if (read_only_parameters_.at(ros_parameter.get_name())) {
         RCLCPP_DEBUG(get_node()->get_logger(), "Parameter '%s' is read only.", ros_parameter.get_name().c_str());
@@ -133,21 +129,13 @@ void BaseControllerInterface::pre_set_parameters_callback(std::vector<rclcpp::Pa
       } else if (!new_parameter->is_empty()) {
         // update the value of the parameter in the map
         translators::copy_parameter_value(new_parameter, parameter);
-        ros_parameter = translators::write_parameter(new_parameter);
       }
     } catch (const std::exception& ex) {
       result.successful = false;
       result.reason += ex.what();
     }
   }
-  set_parameters_result_ = result;
-}
-
-rcl_interfaces::msg::SetParametersResult
-BaseControllerInterface::on_set_parameters_callback(const std::vector<rclcpp::Parameter>&) {
-  auto result = set_parameters_result_;
-  set_parameters_result_.successful = true;
-  set_parameters_result_.reason = "";
+  this->set_parameter_callback_called_ = true;
   return result;
 }
 
@@ -499,8 +487,7 @@ void BaseControllerInterface::add_service(
               response->success = false;
               response->message = ex.what();
             }
-          },
-          qos_);
+          });
       empty_services_.insert_or_assign(parsed_service_name, service);
     } catch (const std::exception& ex) {
       RCLCPP_ERROR(get_node()->get_logger(), "Failed to add service '%s': %s", parsed_service_name.c_str(), ex.what());
@@ -533,8 +520,7 @@ void BaseControllerInterface::add_service(
               response->success = false;
               response->message = ex.what();
             }
-          },
-          qos_);
+          });
       string_services_.insert_or_assign(parsed_service_name, service);
     } catch (const std::exception& ex) {
       RCLCPP_ERROR(get_node()->get_logger(), "Failed to add service '%s': %s", parsed_service_name.c_str(), ex.what());
@@ -551,7 +537,7 @@ void BaseControllerInterface::set_qos(const rclcpp::QoS& qos) {
 }
 
 bool BaseControllerInterface::is_active() const {
-  return get_lifecycle_state().id() == lifecycle_msgs::msg::State::PRIMARY_STATE_ACTIVE;
+  return get_state().id() == lifecycle_msgs::msg::State::PRIMARY_STATE_ACTIVE;
 }
 
 std::timed_mutex& BaseControllerInterface::get_command_mutex() {

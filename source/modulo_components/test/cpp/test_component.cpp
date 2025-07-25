@@ -30,10 +30,24 @@ TEST_F(ComponentTest, RateParameter) {
   component = std::make_shared<ComponentPublicInterface>(node_options);
   EXPECT_EQ(component->template get_parameter_value<double>("rate"), 10.0);
   EXPECT_EQ(component->get_rate(), 10.0);
+  auto double_period = component->template get_period<double>();
+  EXPECT_EQ(double_period, 0.1);
+  auto chrono_period = component->template get_period<std::chrono::nanoseconds>();
+  EXPECT_EQ(chrono_period, 100ms);
+  auto ros_duration = component->template get_period<rclcpp::Duration>();
+  EXPECT_EQ(ros_duration.seconds(), 0.1);
+  EXPECT_EQ(ros_duration.nanoseconds(), 1e8);
   node_options = rclcpp::NodeOptions().parameter_overrides({rclcpp::Parameter("rate", 200.0)});
   component = std::make_shared<ComponentPublicInterface>(node_options);
   EXPECT_EQ(component->template get_parameter_value<double>("rate"), 200.0);
   EXPECT_EQ(component->get_rate(), 200.0);
+  double_period = component->template get_period<double>();
+  EXPECT_EQ(double_period, 0.005);
+  chrono_period = component->template get_period<std::chrono::nanoseconds>();
+  EXPECT_EQ(chrono_period, 5000000ns);
+  ros_duration = component->template get_period<rclcpp::Duration>();
+  EXPECT_EQ(ros_duration.seconds(), 0.005);
+  EXPECT_EQ(ros_duration.nanoseconds(), 5e6);
 }
 
 TEST_F(ComponentTest, AddRemoveOutput) {

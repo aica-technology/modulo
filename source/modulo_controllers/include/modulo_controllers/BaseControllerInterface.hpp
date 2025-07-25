@@ -449,12 +449,9 @@ private:
 
   state_representation::ParameterMap parameter_map_;///< ParameterMap for handling parameters
   std::unordered_map<std::string, bool> read_only_parameters_;
-  std::shared_ptr<rclcpp::node_interfaces::PreSetParametersCallbackHandle>
-      pre_set_parameter_cb_handle_;///< ROS callback function handle on pre set of parameters
   std::shared_ptr<rclcpp::node_interfaces::OnSetParametersCallbackHandle>
       on_set_parameter_cb_handle_;///< ROS callback function handle on set of parameters
-  rcl_interfaces::msg::SetParametersResult set_parameters_result_;
-  bool pre_set_parameter_callback_called_ = false;///< Flag to indicate if pre_set_parameter_callback was called
+  bool set_parameter_callback_called_ = false;///< Flag to indicate if pre_set_parameter_callback was called
 
   std::vector<SubscriptionVariant> subscriptions_;///< Vector of subscriptions
   std::map<std::string, ControllerInput> inputs_; ///< Map of inputs
@@ -507,11 +504,8 @@ inline T BaseControllerInterface::get_parameter_value(const std::string& name) c
 template<typename T>
 inline void BaseControllerInterface::set_parameter_value(const std::string& name, const T& value) {
   try {
-    std::vector<rclcpp::Parameter> parameters{
-        modulo_core::translators::write_parameter(state_representation::make_shared_parameter(name, value))};
-    pre_set_parameters_callback(parameters);
-    pre_set_parameter_callback_called_ = true;
-    auto result = get_node()->set_parameters(parameters).at(0);
+    rcl_interfaces::msg::SetParametersResult result = get_node()->set_parameter(
+        modulo_core::translators::write_parameter(state_representation::make_shared_parameter(name, value)));
     if (!result.successful) {
       RCLCPP_ERROR_THROTTLE(
           get_node()->get_logger(), *get_node()->get_clock(), 1000,

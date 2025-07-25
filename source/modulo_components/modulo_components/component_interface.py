@@ -45,7 +45,8 @@ class ComponentInterface(Node):
         node_kwargs = {key: value for key, value in kwargs.items() if key in NODE_KWARGS}
         super().__init__(node_name, *args, **node_kwargs)
         self.__step_lock = Lock()
-        self.__parameter_dict: Dict[str, Union[str, sr.Parameter]] = {}
+        self.__parameter_dict: Dict[str, Union[str, sr.Parameter]] = {} 
+        self.__read_only_parameters: Dict[str, bool] = {}
         self.__predicates: Dict[str, Predicate] = {}
         self.__triggers: List[str] = []
         self.__periodic_callbacks: Dict[str, Callable[[], None]] = {}
@@ -141,6 +142,7 @@ class ComponentInterface(Node):
         if not self.has_parameter(sr_parameter.get_name()):
             self.get_logger().debug(f"Adding parameter '{sr_parameter.get_name()}'.")
             self.__parameter_dict[sr_parameter.get_name()] = parameter
+            self.__read_only_parameters[sr_parameter.get_name()] = False
             try:
                 descriptor = ParameterDescriptor(description=description, read_only=read_only)
                 if sr_parameter.is_empty():
@@ -149,8 +151,10 @@ class ComponentInterface(Node):
                     self.declare_parameter(ros_param.name, None, descriptor=descriptor)
                 else:
                     self.declare_parameter(ros_param.name, ros_param.value, descriptor=descriptor)
+                    self.__read_only_parameters[sr_parameter.get_name()] = read_only
             except Exception as e:
                 del self.__parameter_dict[sr_parameter.get_name()]
+                del self.__read_only_parameters[sr_parameter.get_name()]
                 raise ParameterError(f"Failed to add parameter: {e}")
         else:
             self.get_logger().debug(f"Parameter '{sr_parameter.get_name()}' already exists.")
@@ -270,6 +274,9 @@ class ComponentInterface(Node):
         for ros_param in ros_parameters:
             try:
                 parameter = self.__get_component_parameter(ros_param.name)
+                if self.__read_only_parameters.get(ros_param.name):
+                    self.get_logger().debug(f"Parameter '{ros_param.name}' is read only")
+                    continue
                 new_parameter = read_parameter_const(ros_param, parameter)
                 if not self.__validate_parameter(new_parameter):
                     result.successful = False

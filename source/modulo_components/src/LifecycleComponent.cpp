@@ -10,6 +10,21 @@ LifecycleComponent::LifecycleComponent(const rclcpp::NodeOptions& node_options, 
         node_options, PublisherType::LIFECYCLE_PUBLISHER, fallback_name),
       has_error_(false) {}
 
+template<>
+double LifecycleComponent::get_period() const {
+  return 1.0 / this->get_rate();
+}
+
+template<>
+std::chrono::nanoseconds LifecycleComponent::get_period() const {
+  return std::chrono::nanoseconds(static_cast<int64_t>(1e9 * this->get_period<double>()));
+}
+
+template<>
+rclcpp::Duration LifecycleComponent::get_period() const {
+  return rclcpp::Duration::from_seconds(this->get_period<double>());
+}
+
 void LifecycleComponent::step() {
   try {
     if (this->get_lifecycle_state().id() == lifecycle_msgs::msg::State::PRIMARY_STATE_ACTIVE) {
