@@ -81,6 +81,7 @@ public:
   using Component::publish_output;
   using Component::remove_output;
   using Component::get_parameter_value;
+  using Component::get_period;
   using Component::get_predicate;
   using Component::get_rate;
 };
@@ -90,6 +91,7 @@ public:
   explicit LifecycleComponentPublicInterface(const rclcpp::NodeOptions& node_options, const std::string& fallback_name = "LifecycleComponentPublicInterface") :
       LifecycleComponent(node_options, fallback_name) {}
   using LifecycleComponent::get_parameter_value;
+  using LifecycleComponent::get_period;
   using LifecycleComponent::get_predicate;
   using LifecycleComponent::get_rate;
   using LifecycleComponent::activate_outputs;

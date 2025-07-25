@@ -1,7 +1,7 @@
 #syntax=ghcr.io/aica-technology/package-builder:v1.4.0
 
 [metadata]
-version = "0.2.0-humble"
+version = "0.3.0-humble"
 description = "Modular ROS 2 extension library for dynamic composition of components and controllers with the AICA robotics framework"
 
 [metadata.collection]
@@ -9,7 +9,7 @@ name = "modulo"
 
 [build]
 type = "ros"
-image = "v0.2.2-humble"
+image = "v0.3.0-humble"
 
 [build.dependencies]
 "@aica/foss/control-libraries" = "v9.2.0-jammy"
@@ -26,5 +26,5 @@ source = "./source/modulo_interfaces"
 [build.packages.modulo_utils]
 source = "./source/modulo_utils"
 
-#[build.packages.modulo_controllers]
-#source = "./source/modulo_controllers"
+[build.packages.modulo_controllers]
+source = "./source/modulo_controllers"

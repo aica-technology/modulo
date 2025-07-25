@@ -228,26 +228,26 @@ TYPED_TEST(ComponentInterfaceEmptyParameterTest, ParameterOverridesEmpty) {
   }
 }
 
-// TYPED_TEST(ComponentInterfaceEmptyParameterTest, ValueParameter) {
-//   EXPECT_EQ(this->component_->get_parameter("value")->template get_parameter_value<double>(), 0);
-//   this->component_->template set_parameter_value<double>("value", 1);
-//   EXPECT_EQ(this->component_->get_parameter("value")->template get_parameter_value<double>(), 1);
-//   EXPECT_EQ(this->component_->get_ros_parameter("value").as_double(), 1);
-//   this->component_->template set_parameter_value<double>("value", -2);
-//   EXPECT_EQ(this->component_->get_parameter("value")->template get_parameter_value<double>(), 2);
-//   EXPECT_EQ(this->component_->get_ros_parameter("value").as_double(), 2);
-//   this->component_->template set_parameter_value<double>("value", 11);
-//   EXPECT_EQ(this->component_->get_parameter("value")->template get_parameter_value<double>(), 2);
-//   EXPECT_EQ(this->component_->get_ros_parameter("value").as_double(), 2);
+TYPED_TEST(ComponentInterfaceEmptyParameterTest, ValueParameter) {
+  EXPECT_EQ(this->component_->get_parameter("value")->template get_parameter_value<double>(), 0);
+  this->component_->template set_parameter_value<double>("value", 1);
+  EXPECT_EQ(this->component_->get_parameter("value")->template get_parameter_value<double>(), 1);
+  EXPECT_EQ(this->component_->get_ros_parameter("value").as_double(), 1);
+  // this->component_->template set_parameter_value<double>("value", -2);
+  // EXPECT_EQ(this->component_->get_parameter("value")->template get_parameter_value<double>(), 2);
+  // EXPECT_EQ(this->component_->get_ros_parameter("value").as_double(), 2);
+  // this->component_->template set_parameter_value<double>("value", 11);
+  // EXPECT_EQ(this->component_->get_parameter("value")->template get_parameter_value<double>(), 2);
+  // EXPECT_EQ(this->component_->get_ros_parameter("value").as_double(), 2);
 
-//   this->component_->set_ros_parameter({"value", 3.0});
-//   EXPECT_EQ(this->component_->get_parameter("value")->template get_parameter_value<double>(), 3);
-//   EXPECT_EQ(this->component_->get_ros_parameter("value").as_double(), 3);
-//   this->component_->set_ros_parameter({"value", -4.0});
-//   EXPECT_EQ(this->component_->get_parameter("value")->template get_parameter_value<double>(), 4);
-//   EXPECT_EQ(this->component_->get_ros_parameter("value").as_double(), 4);
-//   this->component_->set_ros_parameter({"value", -11.0});
-//   EXPECT_EQ(this->component_->get_parameter("value")->template get_parameter_value<double>(), 4);
-//   EXPECT_EQ(this->component_->get_ros_parameter("value").as_double(), 4);
-// }
+  this->component_->set_ros_parameter({"value", 3.0});
+  EXPECT_EQ(this->component_->get_parameter("value")->template get_parameter_value<double>(), 3);
+  EXPECT_EQ(this->component_->get_ros_parameter("value").as_double(), 3);
+  // this->component_->set_ros_parameter({"value", -4.0});
+  // EXPECT_EQ(this->component_->get_parameter("value")->template get_parameter_value<double>(), 4);
+  // EXPECT_EQ(this->component_->get_ros_parameter("value").as_double(), 4);
+  // this->component_->set_ros_parameter({"value", -11.0});
+  // EXPECT_EQ(this->component_->get_parameter("value")->template get_parameter_value<double>(), 4);
+  // EXPECT_EQ(this->component_->get_ros_parameter("value").as_double(), 4);
+}
 }// namespace modulo_components

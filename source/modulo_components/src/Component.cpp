@@ -16,6 +16,21 @@ Component::~Component() {
   }
 }
 
+template<>
+double Component::get_period() const {
+  return 1.0 / this->get_rate();
+}
+
+template<>
+std::chrono::nanoseconds Component::get_period() const {
+  return std::chrono::nanoseconds(static_cast<int64_t>(1e9 * this->get_period<double>()));
+}
+
+template<>
+rclcpp::Duration Component::get_period() const {
+  return rclcpp::Duration::from_seconds(this->get_period<double>());
+}
+
 void Component::step() {
   try {
     this->evaluate_periodic_callbacks();

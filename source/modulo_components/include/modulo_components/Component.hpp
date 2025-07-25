@@ -38,6 +38,13 @@ public:
 
 protected:
   /**
+   * @brief Get the component period
+   * @return The component period
+  */
+  template<typename T>
+  T get_period() const;
+
+  /**
    * @brief Start the execution thread.
    */
   void execute();

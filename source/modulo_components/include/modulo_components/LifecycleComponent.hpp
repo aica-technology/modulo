@@ -45,6 +45,13 @@ public:
 
 protected:
   /**
+   * @brief Get the component period
+   * @return The component period
+  */
+  template<typename T>
+  T get_period() const;
+
+  /**
    * @brief Steps to execute when configuring the component.
    * @details This method can be overridden by derived Component classes.
    * Configuration generally involves reading parameters and adding inputs and outputs.
