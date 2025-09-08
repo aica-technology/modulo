@@ -115,6 +115,9 @@ BaseControllerInterface::on_set_parameters_callback(const std::vector<rclcpp::Pa
       if (ros_parameter.get_name().substr(0, 17) == "qos_overrides./tf") {
         continue;
       }
+      if (ros_parameter.get_name().substr(0, 30) == "qos_overrides./joint_positions") {
+        continue;
+      }
       auto parameter = parameter_map_.get_parameter(ros_parameter.get_name());
       if (read_only_parameters_.at(ros_parameter.get_name())) {
         RCLCPP_DEBUG(get_node()->get_logger(), "Parameter '%s' is read only.", ros_parameter.get_name().c_str());
