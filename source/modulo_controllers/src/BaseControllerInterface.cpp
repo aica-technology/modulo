@@ -31,6 +31,13 @@ rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn BaseCo
       [this](const std::vector<rclcpp::Parameter>& parameters) -> rcl_interfaces::msg::SetParametersResult {
         return this->on_set_parameters_callback(parameters);
       });
+
+  // these two parameters are declared in the ControllerInterface, need to add them in the internal map as well
+  parameter_map_.set_parameter(std::make_shared<Parameter<int>>("update_rate"));
+  read_only_parameters_.insert_or_assign("update_rate", false);
+  parameter_map_.set_parameter(std::make_shared<Parameter<bool>>("is_async", false));
+  read_only_parameters_.insert_or_assign("is_async", false);
+
   add_parameter<double>("predicate_publishing_rate", 10.0, "The rate at which to publish controller predicates");
   add_parameter<double>(
       "input_validity_period", 1.0, "The maximum age of an input state before discarding it as expired");
