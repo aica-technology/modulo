@@ -21,6 +21,10 @@ Release Versions:
 - [2.1.1](#211)
 - [2.1.0](#210)
 
+## Upcoming changes
+
+- feat(controllers): expose parameters from base class (#214)
+
 ## 5.2.2
 
 ### June 25th, 2025
