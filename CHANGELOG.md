@@ -2,6 +2,8 @@
 
 Release Versions:
 
+- [5.2.3](#523)
+- [5.2.2](#522)
 - [5.2.1](#521)
 - [5.2.0](#520)
 - [5.1.0](#510)
@@ -21,7 +23,12 @@ Release Versions:
 - [2.1.1](#211)
 - [2.1.0](#210)
 
-## Upcoming changes
+## 5.2.3
+
+### October 6th, 2025
+
+Version 5.2.3 is a patch release that correctly handles already existing parameters of the base controller class to
+enable advanced functionality like running controllers asynchronously or at a lower rate than the controller manager.
 
 - feat(controllers): expose parameters from base class (#214)
 
@@ -50,7 +57,7 @@ base class.
 
 ### March 31st, 2025
 
-Version 5.2.0 is a minor relase of modulo that includes a simplified version of TF in joint space. With a
+Version 5.2.0 is a minor release of modulo that includes a simplified version of TF in joint space. With a
 `JointPositionsBroadcaster` and `JointPositionsListener` from the core package, named static joint configurations can be
 sent and looked up from a global `/joint_positions` topic, equivalent to `/tf_static`. Additionally, this version
 contains a couple of improvements for the custom message publisher and subscriber interfaces and to the component
