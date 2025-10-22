@@ -254,6 +254,12 @@ controller_interface::return_type RobotControllerInterface::read_state_interface
     const auto& ft_sensor = get_state_interfaces(ft_sensor_name_);
     std::vector<double> wrench = {ft_sensor.at("force.x"),  ft_sensor.at("force.y"),  ft_sensor.at("force.z"),
                                   ft_sensor.at("torque.x"), ft_sensor.at("torque.y"), ft_sensor.at("torque.z")};
+    if (std::any_of(wrench.begin(), wrench.end(), [](double v) { return !std::isfinite(v); })) {
+      RCLCPP_WARN_THROTTLE(
+          get_node()->get_logger(), *get_node()->get_clock(), 1000,
+          "Found non-finite values in the force torque sensor '%s' state interfaces", ft_sensor_name_.c_str());
+      return controller_interface::return_type::ERROR;
+    }
     ft_sensor_.set_wrench(wrench);
   }
 
