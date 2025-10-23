@@ -23,6 +23,10 @@ Release Versions:
 - [2.1.1](#211)
 - [2.1.0](#210)
 
+## Upcoming changes
+
+- fix(controllers): check for finite wrench values (#216)
+
 ## 5.2.3
 
 ### October 6th, 2025
