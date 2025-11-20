@@ -3,7 +3,7 @@ name: Build and release
 on:
   push:
     branches:
-      - main
+      - humble-v5.2.2
 
 jobs:
   check-version:
@@ -36,17 +36,7 @@ jobs:
       - run: |
           CREATE_TAG=false
           GIT_TAG=""
-          if [ ${{ needs.check-version.outputs.has_changed }} = 'true' ]; then
-            CREATE_TAG=true
-            GIT_TAG="v${{ needs.check-version.outputs.version }}"
-            if [[ "${GIT_TAG}" == *"-"* ]]; then
-              IMAGE_TAGS="${GIT_TAG}",rolling
-            else
-              IMAGE_TAGS=latest,"${GIT_TAG}",rolling
-            fi
-          else
-            IMAGE_TAGS=rolling
-          fi
+          IMAGE_TAGS="v${{ needs.check-version.outputs.version }}"
           echo "Image tags: ${IMAGE_TAGS}"
           echo "Create tag: ${CREATE_TAG}"
           echo "Git tag: ${GIT_TAG}"
