@@ -100,6 +100,13 @@ protected:
   bool
   on_validate_parameter_callback(const std::shared_ptr<state_representation::ParameterInterface>& parameter) override;
 
+  /**
+   * @brief Set the control type of the controller after construction
+   * @param control_type One of [position, velocity, effort or acceleration]
+   * @throws std::runtime_error if the control type is already fixed (after configuring) or invalid
+   */
+  void set_control_type(const std::string& control_type);
+
   std::shared_ptr<robot_model::Model> robot_;///< Robot model object generated from URDF
   std::string task_space_frame_;///< The frame in task space for forward kinematics calculations, if applicable
 
@@ -121,6 +128,7 @@ private:
 
   std::vector<std::string> joints_;///< The joint names provided by a parameter
   std::string control_type_;       ///< The high-level interface type (position, velocity, acceleration or effort)
+  bool control_type_fixed_;        ///< If true, the control type cannot be changed after
 
   bool robot_model_required_;///< If true, check that a robot model is available on configure
   bool load_geometries_;     ///< If true, load geometries from the URDF into the robot model
