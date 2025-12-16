@@ -380,6 +380,10 @@ bool RobotControllerInterface::on_validate_parameter_callback(const std::shared_
   return true;
 }
 
+std::string RobotControllerInterface::get_control_type() const {
+  return control_type_;
+}
+
 void RobotControllerInterface::set_control_type(const std::string& control_type) {
   if (control_type_fixed_) {
     throw std::runtime_error("Control type is fixed and cannot be changed anymore");

@@ -14,7 +14,7 @@ namespace modulo_controllers {
 /**
  * @class RobotControllerInterface
  * @brief Base controller class that automatically associates joints with a JointState object
- * @details The robot controller interface extends the functionality of the modulo controller interface byautomatically
+ * @details The robot controller interface extends the functionality of the modulo controller interface by automatically
  * claiming all state interfaces from joints and command interfaces of a given type (position, velocity, effort or
  * acceleration) for those same joints. Joint state and command are associated with these interfaces and abstracted as
  * JointState pointers for derived classes to access. A robot model, Cartesian state and force-torque sensor state are
@@ -99,6 +99,11 @@ protected:
    */
   bool
   on_validate_parameter_callback(const std::shared_ptr<state_representation::ParameterInterface>& parameter) override;
+
+  /**
+   * @brief Get the control type of the controller, empty or one of [position, velocity, effort or acceleration]
+   */
+  std::string get_control_type() const;
 
   /**
    * @brief Set the control type of the controller after construction
