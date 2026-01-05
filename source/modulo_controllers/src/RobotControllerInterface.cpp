@@ -2,7 +2,6 @@
 
 #include <ament_index_cpp/get_package_share_directory.hpp>
 #include <hardware_interface/types/hardware_interface_type_values.hpp>
-#include <lifecycle_msgs/msg/state.hpp>
 
 #include <state_representation/exceptions/JointNotFoundException.hpp>
 
