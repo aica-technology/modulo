@@ -311,6 +311,26 @@ protected:
       const std::function<ControllerServiceResponse(const std::string& string)>& callback);
 
   /**
+   * @brief Add a service to trigger a callback function with no input arguments.
+   * @param service_name The name of the service
+   * @param callback A service callback function with no arguments that returns a ControllerServiceResponse
+   */
+  void
+  add_service_lockfree(const std::string& service_name, const std::function<ControllerServiceResponse(void)>& callback);
+
+  /**
+   * @brief Add a service to trigger a callback function with a string payload.
+   * @details The string payload can have an arbitrary format to parameterize and control the callback behaviour
+   * as desired. It is the responsibility of the service callback to parse the string according to some payload format.
+   * When adding a service with a string payload, be sure to document the payload format appropriately.
+   * @param service_name The name of the service
+   * @param callback A service callback function with a string argument that returns a ControllerServiceResponse
+   */
+  void add_service_lockfree(
+      const std::string& service_name,
+      const std::function<ControllerServiceResponse(const std::string& string)>& callback);
+
+  /**
    * @brief Getter of the Quality of Service attribute.
    * @return The Quality of Service attribute
    */
