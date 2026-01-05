@@ -311,7 +311,8 @@ protected:
       const std::function<ControllerServiceResponse(const std::string& string)>& callback);
 
   /**
-   * @brief Add a service to trigger a callback function with no input arguments.
+   * @brief Add a service to trigger a callback function with no input arguments. This version is lock-free and does not
+   * block the control loop.
    * @param service_name The name of the service
    * @param callback A service callback function with no arguments that returns a ControllerServiceResponse
    */
@@ -319,7 +320,8 @@ protected:
   add_service_lockfree(const std::string& service_name, const std::function<ControllerServiceResponse(void)>& callback);
 
   /**
-   * @brief Add a service to trigger a callback function with a string payload.
+   * @brief Add a service to trigger a callback function with a string payload. This version is lock-free and does not
+   * block the control loop.
    * @details The string payload can have an arbitrary format to parameterize and control the callback behaviour
    * as desired. It is the responsibility of the service callback to parse the string according to some payload format.
    * When adding a service with a string payload, be sure to document the payload format appropriately.
