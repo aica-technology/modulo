@@ -462,6 +462,29 @@ private:
   void add_outputs();
 
   /**
+   * @brief Add a service to trigger a callback function with no input arguments.
+   * @param service_name The name of the service
+   * @param callback A service callback function with no arguments that returns a ControllerServiceResponse
+   * @param acquire_lock If true, the service callback will acquire the command mutex before executing
+   */
+  void add_service(
+      const std::string& service_name, const std::function<ControllerServiceResponse(void)>& callback,
+      bool acquire_lock);
+
+  /**
+   * @brief Add a service to trigger a callback function with a string payload.
+   * @details The string payload can have an arbitrary format to parameterize and control the callback behaviour
+   * as desired. It is the responsibility of the service callback to parse the string according to some payload format.
+   * When adding a service with a string payload, be sure to document the payload format appropriately.
+   * @param service_name The name of the service
+   * @param callback A service callback function with a string argument that returns a ControllerServiceResponse
+   * @param acquire_lock If true, the service callback will acquire the command mutex before executing
+   */
+  void add_service(
+      const std::string& service_name,
+      const std::function<ControllerServiceResponse(const std::string& string)>& callback, bool acquire_lock);
+
+  /**
    * @brief Validate an add_service request by parsing the service name and checking the maps of registered services.
    * @param service_name The name of the service
    * @param type One of 'empty' or 'string'
