@@ -1,0 +1,3 @@
+string node
+string assignment
+rcl_interfaces/ParameterValue value

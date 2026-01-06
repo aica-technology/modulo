@@ -26,6 +26,7 @@ Release Versions:
 ## Upcoming changes
 
 - fix(controllers): check for finite wrench values (#216)
+- feat(interfaces): add assignment message definition (#220)
 
 ## 5.2.3
 
