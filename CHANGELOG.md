@@ -36,6 +36,7 @@ computations, without blocking the control loop.
 - fix(controllers): check for finite wrench values (#216)
 - feat(controllers): allow control type change after construction (#217)
 - feat(controllers): implement lock-free service wrappers for demanding callbacks (#218)
+- feat(interfaces): add assignment message definition (#220)
 
 ## 5.2.3
 
