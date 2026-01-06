@@ -28,6 +28,10 @@ The predicate message contains the predicate name and the current value (true or
 The predicate collection message contains a vector of predicate messages as well as the name of the node that emits the
 predicates.
 
+### Assignment
+
+TODO
+
 ## Services
 
 Modulo classes provide a simplified method to add services which trigger a pre-defined callback function.
