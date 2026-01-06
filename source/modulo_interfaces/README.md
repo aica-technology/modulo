@@ -30,7 +30,8 @@ predicates.
 
 ### Assignment
 
-TODO
+The assignment message contains the assignment name and the value (a parameter value) as well as the name of the node
+that emits the assignment.
 
 ## Services
 
