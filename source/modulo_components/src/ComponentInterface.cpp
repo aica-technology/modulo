@@ -28,6 +28,9 @@ ComponentInterface::ComponentInterface(
       });
   this->add_parameter("rate", 10.0, "The rate in Hertz for all periodic callbacks", true);
 
+  this->assignment_publisher_ = rclcpp::create_publisher<modulo_interfaces::msg::Assignment>(
+      this->node_parameters_, this->node_topics_, "/assignments", this->qos_);
+
   this->predicate_publisher_ = rclcpp::create_publisher<modulo_interfaces::msg::PredicateCollection>(
       this->node_parameters_, this->node_topics_, "/predicates", this->qos_);
   this->predicate_message_.node = this->node_base_->get_fully_qualified_name();
@@ -185,6 +188,70 @@ bool ComponentInterface::validate_parameter(
 bool ComponentInterface::on_validate_parameter_callback(
     const std::shared_ptr<state_representation::ParameterInterface>&) {
   return true;
+}
+
+rcl_interfaces::msg::ParameterValue ComponentInterface::rcl_translator(
+    const std::variant<int64_t, double, bool, std::string>& value,
+    const state_representation::ParameterType& type)
+{
+    rcl_interfaces::msg::ParameterValue msg;
+
+    // TODO: add missing types
+    switch (type) {
+        case state_representation::ParameterType::BOOL:
+            msg.type = rcl_interfaces::msg::ParameterType::PARAMETER_BOOL;
+            msg.bool_value = std::get<bool>(value);
+            break;
+        case state_representation::ParameterType::INT:
+            msg.type = rcl_interfaces::msg::ParameterType::PARAMETER_INTEGER;
+            msg.integer_value = std::get<int64_t>(value);
+            break;
+        case state_representation::ParameterType::DOUBLE:
+            msg.type = rcl_interfaces::msg::ParameterType::PARAMETER_DOUBLE;
+            msg.double_value = std::get<double>(value);
+            break;
+        case state_representation::ParameterType::STRING:
+            msg.type = rcl_interfaces::msg::ParameterType::PARAMETER_STRING;
+            msg.string_value = std::get<std::string>(value);
+            break;
+        default:
+            throw std::runtime_error("Unsupported ParameterType for rcl_intergaces/ParameterValue translation");
+    }
+
+    return msg;
+}
+
+void ComponentInterface::add_assignment(
+    const std::string& assignment_name, const state_representation::ParameterType& type) {
+  if (assignment_name.empty()) {
+    RCLCPP_ERROR(this->node_logging_->get_logger(), "Failed to add assignment: Provide a non empty string as a name.");
+    return;
+  }
+  if (this->assignments_.find(assignment_name) != this->assignments_.end()) {
+    RCLCPP_WARN_STREAM(
+        this->node_logging_->get_logger(),
+        "Assignment with name '" << assignment_name << "' already exists, overwriting.");
+  } else {
+    RCLCPP_DEBUG_STREAM(this->node_logging_->get_logger(), "Adding assignment '" << assignment_name << "'.");
+  }
+  try {
+    this->assignments_.insert_or_assign(assignment_name, Assignment(type));
+  } catch (const std::exception& ex) {
+    RCLCPP_ERROR_STREAM_THROTTLE(
+        this->node_logging_->get_logger(), *this->node_clock_->get_clock(), 1000,
+        "Failed to add assignment '" << assignment_name << "': " << ex.what());
+  }
+}
+
+state_representation::ParameterType
+ComponentInterface::get_assignment_type(const std::string& assignment_name)
+{
+    auto assignment_it = this->assignments_.find(assignment_name);
+    if (assignment_it == this->assignments_.end()) {
+        throw exceptions::CoreException("Assignment '" + assignment_name + "' does not exist");
+    }
+
+    return assignment_it->second.get_type();
 }
 
 void ComponentInterface::add_predicate(const std::string& predicate_name, bool predicate_value) {

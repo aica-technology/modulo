@@ -10,6 +10,7 @@
 #include <state_representation/parameters/ParameterMap.hpp>
 
 #include <modulo_core/Predicate.hpp>
+#include <modulo_core/Assignment.hpp>
 #include <modulo_core/communication/PublisherHandler.hpp>
 #include <modulo_core/communication/PublisherType.hpp>
 #include <modulo_core/communication/SubscriptionHandler.hpp>
@@ -18,6 +19,7 @@
 #include <modulo_core/translators/parameter_translators.hpp>
 
 #include <modulo_interfaces/msg/predicate_collection.hpp>
+#include <modulo_interfaces/msg/assignment.hpp>
 #include <modulo_interfaces/srv/empty_trigger.hpp>
 #include <modulo_interfaces/srv/string_trigger.hpp>
 
@@ -161,6 +163,49 @@ protected:
    */
   virtual bool
   on_validate_parameter_callback(const std::shared_ptr<state_representation::ParameterInterface>& parameter);
+
+  /**
+   * @brief Add an assignment to the map of assignmens.
+   * @param assignment_name the name of the associated assignment
+   * @param type the type of the variable or parameter to assign
+   */
+  void add_assignment(const std::string& assignment_name, const state_representation::ParameterType& type);
+
+  // Should we move to utils somewhere?
+  /**
+  * @brief Helper to translate a value and type to an rcl_interfaces message.
+  * @param value the value of the parameter
+  * @param type the type of the parameter to be set in the message
+  */
+  rcl_interfaces::msg::ParameterValue rcl_translator(
+      const std::variant<int64_t, double, bool, std::string>& value,
+      const state_representation::ParameterType& type);
+
+  /**
+  * @brief Trigger an assignment.
+  * @tparam T The type of the assignment   
+  * @param assignment_name The name of the assignment to publish
+  * @param assignment_value The value of the assignment
+  */
+  template<typename T>
+  void trigger_assignment(const std::string& assignment_name, const T& assignment_value);
+
+  /**
+  * @brief Helper function to publish an assignment.
+  * @tparam T The type of the assignment   
+  * @param assignment_name The name of the assignment to publish
+  * @param assignment_value The value of the assignment
+  */
+  template<typename T>
+  void publish_assignment(const std::string& assignment_name, const T& assignment_value);
+
+  // Could be private? Thought it might be useful elsewhere. 
+  /**
+   * @brief Helper function to get the type of an assignment.
+   * @param assignment_name the name of the associated assignment
+   */
+  state_representation::ParameterType
+  get_assignment_type(const std::string& assignment_name);
 
   /**
    * @brief Add a predicate to the map of predicates.
@@ -471,11 +516,20 @@ private:
   bool validate_parameter(const std::shared_ptr<state_representation::ParameterInterface>& parameter);
 
   /**
-   * @brief Populate a Prediate message with the name and the value of a predicate.
+   * @brief Populate a Predicate message with the name and the value of a predicate.
    * @param name The name of the predicate
    * @param value The value of the predicate
   */
   modulo_interfaces::msg::Predicate get_predicate_message(const std::string& name, bool value) const;
+
+  /**
+   * @brief Populate an Assignment message with the name and the value of an assignment.
+   * @param name The name of the assignment
+   * @param value The value of the assignment
+  */
+  template<typename T>
+  modulo_interfaces::msg::Assignment
+  get_assignment_message(const std::string& name, const T& value);
 
   /**
    * @brief Declare a signal to create the topic parameter without adding it to the map of signals.
@@ -552,6 +606,9 @@ private:
   std::shared_ptr<rclcpp::Publisher<modulo_interfaces::msg::PredicateCollection>>
       predicate_publisher_;///< Predicate publisher
   modulo_interfaces::msg::PredicateCollection predicate_message_;
+  std::map<std::string, modulo_core::Assignment> assignments_;///< Map of assignments
+  std::shared_ptr<rclcpp::Publisher<modulo_interfaces::msg::Assignment>>
+      assignment_publisher_;///< Assignment publisher
   std::vector<std::string> triggers_;///< List of triggers
 
   std::map<std::string, std::shared_ptr<rclcpp::Service<modulo_interfaces::srv::EmptyTrigger>>>
@@ -819,5 +876,38 @@ inline void ComponentInterface::publish_transforms(
         this->node_logging_->get_logger(), *this->node_clock_->get_clock(), 1000,
         "Failed to send " << modifier << "transform: " << ex.what());
   }
+}
+
+template<typename T>
+void ComponentInterface::trigger_assignment(const std::string& assignment_name, const T& assignment_value)
+{
+  auto assignment_it = this->assignments_.find(assignment_name);
+  if (assignment_it == this->assignments_.end()) {
+      RCLCPP_ERROR_STREAM_THROTTLE(
+          this->node_logging_->get_logger(), *this->node_clock_->get_clock(), 1000,
+          "Failed to trigger assignment '" << assignment_name << "': Assignment does not exist.");
+      return;
+  }
+  // TODO: make the following return a bool
+  assignment_it->second.check_types(assignment_value);
+  this->publish_assignment(assignment_name, assignment_value);
+}
+
+template<typename T>
+inline void ComponentInterface::publish_assignment(const std::string& assignment_name, const T& assignment_value) {
+  this->assignment_publisher_->publish(this->get_assignment_message(assignment_name, assignment_value));
+}
+
+template<typename T>
+modulo_interfaces::msg::Assignment
+ComponentInterface::get_assignment_message(const std::string& name, const T& value)
+{
+  modulo_interfaces::msg::Assignment message;
+  message.node = this->node_base_->get_fully_qualified_name();
+  message.assignment = name;
+  // Here I am passing the actually declared assignment type. Should I infer it directly from the value?
+  // Since I have already checked for matching types, technically I could
+  message.value = rcl_translator(value, get_assignment_type(name));
+  return message;
 }
 }// namespace modulo_components
