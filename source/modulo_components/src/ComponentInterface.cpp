@@ -191,34 +191,32 @@ bool ComponentInterface::on_validate_parameter_callback(
 }
 
 rcl_interfaces::msg::ParameterValue ComponentInterface::rcl_translator(
-    const std::variant<int64_t, double, bool, std::string>& value,
-    const state_representation::ParameterType& type)
-{
-    rcl_interfaces::msg::ParameterValue msg;
+    const std::variant<int64_t, double, bool, std::string>& value, const state_representation::ParameterType& type) {
+  rcl_interfaces::msg::ParameterValue msg;
 
-    // TODO: add missing types
-    switch (type) {
-        case state_representation::ParameterType::BOOL:
-            msg.type = rcl_interfaces::msg::ParameterType::PARAMETER_BOOL;
-            msg.bool_value = std::get<bool>(value);
-            break;
-        case state_representation::ParameterType::INT:
-            msg.type = rcl_interfaces::msg::ParameterType::PARAMETER_INTEGER;
-            msg.integer_value = std::get<int64_t>(value);
-            break;
-        case state_representation::ParameterType::DOUBLE:
-            msg.type = rcl_interfaces::msg::ParameterType::PARAMETER_DOUBLE;
-            msg.double_value = std::get<double>(value);
-            break;
-        case state_representation::ParameterType::STRING:
-            msg.type = rcl_interfaces::msg::ParameterType::PARAMETER_STRING;
-            msg.string_value = std::get<std::string>(value);
-            break;
-        default:
-            throw std::runtime_error("Unsupported ParameterType for rcl_intergaces/ParameterValue translation");
-    }
+  // TODO: add missing types
+  switch (type) {
+    case state_representation::ParameterType::BOOL:
+      msg.type = rcl_interfaces::msg::ParameterType::PARAMETER_BOOL;
+      msg.bool_value = std::get<bool>(value);
+      break;
+    case state_representation::ParameterType::INT:
+      msg.type = rcl_interfaces::msg::ParameterType::PARAMETER_INTEGER;
+      msg.integer_value = std::get<int64_t>(value);
+      break;
+    case state_representation::ParameterType::DOUBLE:
+      msg.type = rcl_interfaces::msg::ParameterType::PARAMETER_DOUBLE;
+      msg.double_value = std::get<double>(value);
+      break;
+    case state_representation::ParameterType::STRING:
+      msg.type = rcl_interfaces::msg::ParameterType::PARAMETER_STRING;
+      msg.string_value = std::get<std::string>(value);
+      break;
+    default:
+      throw std::runtime_error("Unsupported ParameterType for rcl_intergaces/ParameterValue translation");
+  }
 
-    return msg;
+  return msg;
 }
 
 void ComponentInterface::add_assignment(
@@ -243,15 +241,13 @@ void ComponentInterface::add_assignment(
   }
 }
 
-state_representation::ParameterType
-ComponentInterface::get_assignment_type(const std::string& assignment_name)
-{
-    auto assignment_it = this->assignments_.find(assignment_name);
-    if (assignment_it == this->assignments_.end()) {
-        throw exceptions::CoreException("Assignment '" + assignment_name + "' does not exist");
-    }
+state_representation::ParameterType ComponentInterface::get_assignment_type(const std::string& assignment_name) {
+  auto assignment_it = this->assignments_.find(assignment_name);
+  if (assignment_it == this->assignments_.end()) {
+    throw exceptions::CoreException("Assignment '" + assignment_name + "' does not exist");
+  }
 
-    return assignment_it->second.get_type();
+  return assignment_it->second.get_type();
 }
 
 void ComponentInterface::add_predicate(const std::string& predicate_name, bool predicate_value) {
