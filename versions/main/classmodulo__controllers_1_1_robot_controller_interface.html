@@ -203,6 +203,12 @@ Protected Member Functions</h2></td></tr>
 <tr class="memitem:a3e8115f4baa72f001179efe8295bfe5c" id="r_a3e8115f4baa72f001179efe8295bfe5c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3e8115f4baa72f001179efe8295bfe5c">on_validate_parameter_callback</a> (const std::shared_ptr&lt; state_representation::ParameterInterface &gt; &amp;parameter) override</td></tr>
 <tr class="memdesc:a3e8115f4baa72f001179efe8295bfe5c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Parameter validation function to be redefined by derived controller classes.     <br /></td></tr>
 <tr class="separator:a3e8115f4baa72f001179efe8295bfe5c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad981b27240aa2080a51c5786be80d36c" id="r_ad981b27240aa2080a51c5786be80d36c"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad981b27240aa2080a51c5786be80d36c">get_control_type</a> () const</td></tr>
+<tr class="memdesc:ad981b27240aa2080a51c5786be80d36c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the control type of the controller, empty or one of [position, velocity, effort or acceleration].  <br /></td></tr>
+<tr class="separator:ad981b27240aa2080a51c5786be80d36c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a515384260e5a0838758b1f0a1b02b4c8" id="r_a515384260e5a0838758b1f0a1b02b4c8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a515384260e5a0838758b1f0a1b02b4c8">set_control_type</a> (const std::string &amp;control_type)</td></tr>
+<tr class="memdesc:a515384260e5a0838758b1f0a1b02b4c8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the control type of the controller after construction.  <br /></td></tr>
+<tr class="separator:a515384260e5a0838758b1f0a1b02b4c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_methods_classmodulo__controllers_1_1_controller_interface"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pro_methods_classmodulo__controllers_1_1_controller_interface')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="classmodulo__controllers_1_1_controller_interface.html">modulo_controllers::ControllerInterface</a></td></tr>
 <tr class="memitem:a258e8cc74be6bf915a2c1aa5f9278fc1 inherit pro_methods_classmodulo__controllers_1_1_controller_interface" id="r_a258e8cc74be6bf915a2c1aa5f9278fc1"><td class="memItemLeft" align="right" valign="top">virtual controller_interface::return_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmodulo__controllers_1_1_controller_interface.html#a258e8cc74be6bf915a2c1aa5f9278fc1">evaluate</a> (const rclcpp::Time &amp;time, const std::chrono::nanoseconds &amp;period)=0</td></tr>
 <tr class="memdesc:a258e8cc74be6bf915a2c1aa5f9278fc1 inherit pro_methods_classmodulo__controllers_1_1_controller_interface"><td class="mdescLeft">&#160;</td><td class="mdescRight">The control logic callback.  <br /></td></tr>
@@ -351,7 +357,7 @@ Protected Attributes</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Base controller class that automatically associates joints with a JointState object. </p>
-<p>The robot controller interface extends the functionality of the modulo controller interface byautomatically claiming all state interfaces from joints and command interfaces of a given type (position, velocity, effort or acceleration) for those same joints. Joint state and command are associated with these interfaces and abstracted as JointState pointers for derived classes to access. A robot model, Cartesian state and force-torque sensor state are similarly available based on the URDF and state interfaces. </p>
+<p>The robot controller interface extends the functionality of the modulo controller interface by automatically claiming all state interfaces from joints and command interfaces of a given type (position, velocity, effort or acceleration) for those same joints. Joint state and command are associated with these interfaces and abstracted as JointState pointers for derived classes to access. A robot model, Cartesian state and force-torque sensor state are similarly available based on the URDF and state interfaces. </p>
 
 <p class="definition">Definition at line <a class="el" href="_robot_controller_interface_8hpp_source.html#l00023">23</a> of file <a class="el" href="_robot_controller_interface_8hpp_source.html">RobotControllerInterface.hpp</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
@@ -452,7 +458,7 @@ Protected Attributes</h2></td></tr>
 
 <p>Reimplemented from <a class="el" href="classmodulo__controllers_1_1_controller_interface.html#a019f11368af787d1cb34fc3b6f1c6234">modulo_controllers::ControllerInterface</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="_robot_controller_interface_8cpp_source.html#l00035">35</a> of file <a class="el" href="_robot_controller_interface_8cpp_source.html">RobotControllerInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_robot_controller_interface_8cpp_source.html#l00036">36</a> of file <a class="el" href="_robot_controller_interface_8cpp_source.html">RobotControllerInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -482,7 +488,7 @@ Protected Attributes</h2></td></tr>
 <p>Compute the Cartesian state from forward kinematics of the current joint state. </p>
 <p>This should only be used if a robot model has been generated, in which case the forward kinematics is calculated to get pose and twist for the desired target frame. </p>
 
-<p class="definition">Definition at line <a class="el" href="_robot_controller_interface_8cpp_source.html#l00316">316</a> of file <a class="el" href="_robot_controller_interface_8cpp_source.html">RobotControllerInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_robot_controller_interface_8cpp_source.html#l00318">318</a> of file <a class="el" href="_robot_controller_interface_8cpp_source.html">RobotControllerInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -512,7 +518,36 @@ Protected Attributes</h2></td></tr>
 <p>Access the Cartesian state object. </p>
 <p>This internally calls <a class="el" href="#a92904926dd9e22ff7c462a33b9306575" title="Compute the Cartesian state from forward kinematics of the current joint state.">compute_cartesian_state()</a> </p><dl class="section return"><dt>Returns</dt><dd>A const reference to the CartesianState object </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_robot_controller_interface_8cpp_source.html#l00306">306</a> of file <a class="el" href="_robot_controller_interface_8cpp_source.html">RobotControllerInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_robot_controller_interface_8cpp_source.html#l00308">308</a> of file <a class="el" href="_robot_controller_interface_8cpp_source.html">RobotControllerInterface.cpp</a>.</p>
+
+</div>
+</div>
+<a id="ad981b27240aa2080a51c5786be80d36c" name="ad981b27240aa2080a51c5786be80d36c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad981b27240aa2080a51c5786be80d36c">&#9670;&#160;</a></span>get_control_type()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string modulo_controllers::RobotControllerInterface::get_control_type </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the control type of the controller, empty or one of [position, velocity, effort or acceleration]. </p>
+
+<p class="definition">Definition at line <a class="el" href="_robot_controller_interface_8cpp_source.html#l00382">382</a> of file <a class="el" href="_robot_controller_interface_8cpp_source.html">RobotControllerInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -542,7 +577,7 @@ Protected Attributes</h2></td></tr>
 <p>Access the Cartesian wrench object. </p>
 <dl class="section return"><dt>Returns</dt><dd>A const reference to the CartesianWrench object </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_robot_controller_interface_8cpp_source.html#l00312">312</a> of file <a class="el" href="_robot_controller_interface_8cpp_source.html">RobotControllerInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_robot_controller_interface_8cpp_source.html#l00314">314</a> of file <a class="el" href="_robot_controller_interface_8cpp_source.html">RobotControllerInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -572,7 +607,7 @@ Protected Attributes</h2></td></tr>
 <p>Access the joint state object. </p>
 <dl class="section return"><dt>Returns</dt><dd>A const reference to the JointState object </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_robot_controller_interface_8cpp_source.html#l00302">302</a> of file <a class="el" href="_robot_controller_interface_8cpp_source.html">RobotControllerInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_robot_controller_interface_8cpp_source.html#l00304">304</a> of file <a class="el" href="_robot_controller_interface_8cpp_source.html">RobotControllerInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -605,7 +640,7 @@ Protected Attributes</h2></td></tr>
 
 <p>Reimplemented from <a class="el" href="classmodulo__controllers_1_1_controller_interface.html#a5e9758c1b2f19970f5912e65274678b6">modulo_controllers::ControllerInterface</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="_robot_controller_interface_8cpp_source.html#l00176">176</a> of file <a class="el" href="_robot_controller_interface_8cpp_source.html">RobotControllerInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_robot_controller_interface_8cpp_source.html#l00178">178</a> of file <a class="el" href="_robot_controller_interface_8cpp_source.html">RobotControllerInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -638,7 +673,7 @@ Protected Attributes</h2></td></tr>
 
 <p>Reimplemented from <a class="el" href="classmodulo__controllers_1_1_controller_interface.html#a20045ceffec9a44e4666d92632be5400">modulo_controllers::ControllerInterface</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="_robot_controller_interface_8cpp_source.html#l00059">59</a> of file <a class="el" href="_robot_controller_interface_8cpp_source.html">RobotControllerInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_robot_controller_interface_8cpp_source.html#l00060">60</a> of file <a class="el" href="_robot_controller_interface_8cpp_source.html">RobotControllerInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -671,7 +706,7 @@ Protected Attributes</h2></td></tr>
 
 <p>Reimplemented from <a class="el" href="classmodulo__controllers_1_1_controller_interface.html#ac9742c368a3bbdbf5ea6603f253ad2a7">modulo_controllers::ControllerInterface</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="_robot_controller_interface_8cpp_source.html#l00199">199</a> of file <a class="el" href="_robot_controller_interface_8cpp_source.html">RobotControllerInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_robot_controller_interface_8cpp_source.html#l00201">201</a> of file <a class="el" href="_robot_controller_interface_8cpp_source.html">RobotControllerInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -709,7 +744,48 @@ Protected Attributes</h2></td></tr>
 
 <p>Reimplemented from <a class="el" href="classmodulo__controllers_1_1_base_controller_interface.html#ad302e4f9728d36c82177a7cfd52e6aec">modulo_controllers::BaseControllerInterface</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="_robot_controller_interface_8cpp_source.html#l00370">370</a> of file <a class="el" href="_robot_controller_interface_8cpp_source.html">RobotControllerInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_robot_controller_interface_8cpp_source.html#l00372">372</a> of file <a class="el" href="_robot_controller_interface_8cpp_source.html">RobotControllerInterface.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a515384260e5a0838758b1f0a1b02b4c8" name="a515384260e5a0838758b1f0a1b02b4c8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a515384260e5a0838758b1f0a1b02b4c8">&#9670;&#160;</a></span>set_control_type()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void modulo_controllers::RobotControllerInterface::set_control_type </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>control_type</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set the control type of the controller after construction. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">control_type</td><td>One of [position, velocity, effort or acceleration] </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">std::runtime_error</td><td>if the control type is already fixed (after configuring) or invalid </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="_robot_controller_interface_8cpp_source.html#l00386">386</a> of file <a class="el" href="_robot_controller_interface_8cpp_source.html">RobotControllerInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -744,7 +820,7 @@ Protected Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_robot_controller_interface_8cpp_source.html#l00328">328</a> of file <a class="el" href="_robot_controller_interface_8cpp_source.html">RobotControllerInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_robot_controller_interface_8cpp_source.html#l00330">330</a> of file <a class="el" href="_robot_controller_interface_8cpp_source.html">RobotControllerInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -771,7 +847,7 @@ Protected Attributes</h2></td></tr>
 
 <p>The name of a force torque sensor in the hardware description. </p>
 
-<p class="definition">Definition at line <a class="el" href="_robot_controller_interface_8hpp_source.html#l00106">106</a> of file <a class="el" href="_robot_controller_interface_8hpp_source.html">RobotControllerInterface.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_robot_controller_interface_8hpp_source.html#l00118">118</a> of file <a class="el" href="_robot_controller_interface_8hpp_source.html">RobotControllerInterface.hpp</a>.</p>
 
 </div>
 </div>
@@ -797,7 +873,7 @@ Protected Attributes</h2></td></tr>
 
 <p>The sensing reference frame. </p>
 
-<p class="definition">Definition at line <a class="el" href="_robot_controller_interface_8hpp_source.html#l00107">107</a> of file <a class="el" href="_robot_controller_interface_8hpp_source.html">RobotControllerInterface.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_robot_controller_interface_8hpp_source.html#l00119">119</a> of file <a class="el" href="_robot_controller_interface_8hpp_source.html">RobotControllerInterface.hpp</a>.</p>
 
 </div>
 </div>
@@ -823,7 +899,7 @@ Protected Attributes</h2></td></tr>
 
 <p>Robot model object generated from URDF. </p>
 
-<p class="definition">Definition at line <a class="el" href="_robot_controller_interface_8hpp_source.html#l00103">103</a> of file <a class="el" href="_robot_controller_interface_8hpp_source.html">RobotControllerInterface.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_robot_controller_interface_8hpp_source.html#l00115">115</a> of file <a class="el" href="_robot_controller_interface_8hpp_source.html">RobotControllerInterface.hpp</a>.</p>
 
 </div>
 </div>
@@ -849,7 +925,7 @@ Protected Attributes</h2></td></tr>
 
 <p>The frame in task space for forward kinematics calculations, if applicable. </p>
 
-<p class="definition">Definition at line <a class="el" href="_robot_controller_interface_8hpp_source.html#l00104">104</a> of file <a class="el" href="_robot_controller_interface_8hpp_source.html">RobotControllerInterface.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_robot_controller_interface_8hpp_source.html#l00116">116</a> of file <a class="el" href="_robot_controller_interface_8hpp_source.html">RobotControllerInterface.hpp</a>.</p>
 
 </div>
 </div>
