@@ -26,7 +26,8 @@ Release Versions:
 ## Upcoming changes
 
 - fix(controllers): check for finite wrench values (#216)
-- fix(controllers): implement lock-free service wrappers for demanding callbacks (#218)
+- feat(controllers): allow control type change after construction (#217)
+- feat(controllers): implement lock-free service wrappers for demanding callbacks (#218)
 
 ## 5.2.3
 
