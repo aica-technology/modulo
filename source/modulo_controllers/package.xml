@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="3">
   <name>modulo_controllers</name>
-  <version>v5.3.0</version>
+  <version>5.3.0</version>
   <description>Interface class for modulo controllers</description>
   <maintainer email="enrico@aica.tech">Enrico Eberhard</maintainer>
   <maintainer email="dominic@aica.tech">Dominic Reber</maintainer>
