@@ -2,6 +2,7 @@
 
 Release Versions:
 
+- [5.3.0](#530)
 - [5.2.3](#523)
 - [5.2.2](#522)
 - [5.2.1](#521)
@@ -23,7 +24,14 @@ Release Versions:
 - [2.1.1](#211)
 - [2.1.0](#210)
 
-## Upcoming changes
+## 5.3.0
+
+### January 13th, 2026
+
+Version 5.3.0 is a minor release of modulo that includes a fix for checking whether wrench values are finite during
+controller activation, as well as two extensions to controllers: enabling the control type of a controller to be changed
+post-construction, and adding lock-free service addition helpers that allow service calls to be used for demanding
+computations, without blocking the control loop.
 
 - fix(controllers): check for finite wrench values (#216)
 - feat(controllers): allow control type change after construction (#217)
