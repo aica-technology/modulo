@@ -1,6 +1,6 @@
 #include "modulo_controllers/RobotControllerInterface.hpp"
 
-#include "ament_index_cpp/get_package_share_directory.hpp"
+#include <ament_index_cpp/get_package_share_directory.hpp>
 #include <hardware_interface/types/hardware_interface_type_values.hpp>
 
 #include <state_representation/exceptions/JointNotFoundException.hpp>
@@ -21,6 +21,7 @@ RobotControllerInterface::RobotControllerInterface(
     bool robot_model_required, const std::string& control_type, bool load_geometries)
     : ControllerInterface(true),
       control_type_(control_type),
+      control_type_fixed_(false),
       robot_model_required_(robot_model_required),
       load_geometries_(load_geometries),
       new_joint_command_ready_(false),
@@ -28,7 +29,7 @@ RobotControllerInterface::RobotControllerInterface(
       command_rate_limit_(std::numeric_limits<double>::infinity()) {
   if (!control_type.empty() && interface_map.find(control_type) == interface_map.cend()) {
     RCLCPP_ERROR(get_node()->get_logger(), "Invalid control type: %s", control_type.c_str());
-    throw std::invalid_argument("Invalid control type");
+    throw std::invalid_argument("Invalid control type: " + control_type);
   }
 }
 
@@ -144,6 +145,7 @@ rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn RobotC
     for (const auto& joint : joints_) {
       add_command_interface(joint, control_type_);
     }
+    control_type_fixed_ = true;
   }
 
   auto ft_sensor_name = get_parameter("ft_sensor_name");
@@ -375,6 +377,20 @@ bool RobotControllerInterface::on_validate_parameter_callback(const std::shared_
     return false;
   }
   return true;
+}
+
+std::string RobotControllerInterface::get_control_type() const {
+  return control_type_;
+}
+
+void RobotControllerInterface::set_control_type(const std::string& control_type) {
+  if (control_type_fixed_) {
+    throw std::runtime_error("Control type is fixed and cannot be changed anymore");
+  }
+  if (!control_type.empty() && interface_map.find(control_type) == interface_map.cend()) {
+    throw std::runtime_error("Invalid control type: " + control_type);
+  }
+  control_type_ = control_type;
 }
 
 }// namespace modulo_controllers
