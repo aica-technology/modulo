@@ -1,6 +1,7 @@
 #pragma once
 
 #include <any>
+#include <chrono>
 #include <mutex>
 
 #include <controller_interface/controller_interface.hpp>
@@ -311,22 +312,15 @@ protected:
       const std::function<ControllerServiceResponse(const std::string& string)>& callback);
 
   /**
-   * @brief Add a service to trigger a callback function with no input arguments. This version is lock-free and does not
-   * block the control loop.
-   * @param service_name The name of the service
-   * @param callback A service callback function with no arguments that returns a ControllerServiceResponse
+   * @copydetails add_service(const std::string& service_name, 
+   *                                const std::function<ControllerServiceResponse(void)>& callback)
    */
   void
   add_service_lockfree(const std::string& service_name, const std::function<ControllerServiceResponse(void)>& callback);
 
   /**
-   * @brief Add a service to trigger a callback function with a string payload. This version is lock-free and does not
-   * block the control loop.
-   * @details The string payload can have an arbitrary format to parameterize and control the callback behaviour
-   * as desired. It is the responsibility of the service callback to parse the string according to some payload format.
-   * When adding a service with a string payload, be sure to document the payload format appropriately.
-   * @param service_name The name of the service
-   * @param callback A service callback function with a string argument that returns a ControllerServiceResponse
+   * @copydetails add_service(const std::string& service_name, 
+   *                                const std::function<ControllerServiceResponse(const std::string& string)>& callback)
    */
   void add_service_lockfree(
       const std::string& service_name,
@@ -461,28 +455,18 @@ private:
    */
   void add_outputs();
 
-  /**
-   * @brief Add a service to trigger a callback function with no input arguments.
+  /** 
+   * @brief Create a service to trigger a callback function.
+   * @tparam acquire_lock If true, the command mutex is locked when invoking the callback
+   * @tparam CallbackT The type of the callback function
    * @param service_name The name of the service
-   * @param callback A service callback function with no arguments that returns a ControllerServiceResponse
-   * @param acquire_lock If true, the service callback will acquire the command mutex before executing
+   * @param callback A service callback function that returns a ControllerServiceResponse
    */
-  void add_service(
-      const std::string& service_name, const std::function<ControllerServiceResponse(void)>& callback,
-      bool acquire_lock);
-
-  /**
-   * @brief Add a service to trigger a callback function with a string payload.
-   * @details The string payload can have an arbitrary format to parameterize and control the callback behaviour
-   * as desired. It is the responsibility of the service callback to parse the string according to some payload format.
-   * When adding a service with a string payload, be sure to document the payload format appropriately.
-   * @param service_name The name of the service
-   * @param callback A service callback function with a string argument that returns a ControllerServiceResponse
-   * @param acquire_lock If true, the service callback will acquire the command mutex before executing
-   */
-  void add_service(
-      const std::string& service_name,
-      const std::function<ControllerServiceResponse(const std::string& string)>& callback, bool acquire_lock);
+  template<bool acquire_lock, typename CallbackT>
+  void create_service(const std::string& service_name, const std::function<CallbackT>& callback)
+    requires(
+        std::is_same_v<CallbackT, ControllerServiceResponse(const std::string&)>
+        || std::is_same_v<CallbackT, ControllerServiceResponse(void)>);
 
   /**
    * @brief Validate an add_service request by parsing the service name and checking the maps of registered services.
@@ -910,6 +894,67 @@ inline void BaseControllerInterface::write_output(const std::string& name, const
 template<>
 inline void BaseControllerInterface::write_output(const std::string& name, const std::string& data) {
   write_std_output<StringPublishers, std_msgs::msg::String, std::string>(name, data);
+}
+
+template<bool acquire_lock, typename CallbackT>
+inline void
+BaseControllerInterface::create_service(const std::string& service_name, const std::function<CallbackT>& callback)
+  requires(
+      std::is_same_v<CallbackT, ControllerServiceResponse(const std::string&)>
+      || std::is_same_v<CallbackT, ControllerServiceResponse(void)>)
+{
+  constexpr bool is_empty = std::is_same_v<CallbackT, ControllerServiceResponse(void)>;
+  using ServiceT =
+      std::conditional_t<is_empty, modulo_interfaces::srv::EmptyTrigger, modulo_interfaces::srv::StringTrigger>;
+
+  auto parsed_service_name = validate_service_name(service_name, is_empty ? "empty" : "string");
+  if (parsed_service_name.empty()) {
+    return;
+  }
+
+  try {
+    auto service = get_node()->create_service<ServiceT>(
+        "~/" + parsed_service_name,
+        [this, callback](
+            const std::shared_ptr<typename ServiceT::Request> request,
+            std::shared_ptr<typename ServiceT::Response> response) {
+          try {
+            auto run_callback = [&]() {
+              ControllerServiceResponse callback_response;
+              if constexpr (is_empty) {
+                callback_response = callback();
+              } else {
+                callback_response = callback(request->payload);
+              }
+              response->success = callback_response.success;
+              response->message = callback_response.message;
+            };
+
+            if constexpr (!acquire_lock) {
+              run_callback();
+            } else {
+              std::unique_lock<std::timed_mutex> lock(this->command_mutex_, std::defer_lock);
+              if (lock.try_lock_for(std::chrono::milliseconds{100})) {
+                run_callback();
+              } else {
+                response->success = false;
+                response->message = "Unable to acquire lock for command interface within 100ms";
+              }
+            }
+          } catch (const std::exception& ex) {
+            response->success = false;
+            response->message = ex.what();
+          }
+        },
+        qos_);
+    if constexpr (is_empty) {
+      empty_services_.insert_or_assign(parsed_service_name, service);
+    } else {
+      string_services_.insert_or_assign(parsed_service_name, service);
+    }
+  } catch (const std::exception& ex) {
+    RCLCPP_ERROR(get_node()->get_logger(), "Failed to add service '%s': %s", parsed_service_name.c_str(), ex.what());
+  }
 }
 
 }// namespace modulo_controllers

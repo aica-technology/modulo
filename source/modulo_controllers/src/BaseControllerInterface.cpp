@@ -1,7 +1,5 @@
 #include "modulo_controllers/BaseControllerInterface.hpp"
 
-#include <chrono>
-
 #include <lifecycle_msgs/msg/state.hpp>
 
 #include <modulo_core/translators/message_readers.hpp>
@@ -484,114 +482,24 @@ BaseControllerInterface::validate_service_name(const std::string& service_name, 
 
 void BaseControllerInterface::add_service(
     const std::string& service_name, const std::function<ControllerServiceResponse(void)>& callback) {
-  this->add_service(service_name, callback, true);
+  this->create_service<true>(service_name, callback);
 }
 
 void BaseControllerInterface::add_service(
     const std::string& service_name,
     const std::function<ControllerServiceResponse(const std::string& string)>& callback) {
-  this->add_service(service_name, callback, true);
+  this->create_service<true>(service_name, callback);
 }
 
 void BaseControllerInterface::add_service_lockfree(
     const std::string& service_name, const std::function<ControllerServiceResponse(void)>& callback) {
-  this->add_service(service_name, callback, false);
+  this->create_service<false>(service_name, callback);
 }
 
 void BaseControllerInterface::add_service_lockfree(
     const std::string& service_name,
     const std::function<ControllerServiceResponse(const std::string& string)>& callback) {
-  this->add_service(service_name, callback, false);
-}
-
-void BaseControllerInterface::add_service(
-    const std::string& service_name, const std::function<ControllerServiceResponse(void)>& callback,
-    bool acquire_lock) {
-  auto parsed_service_name = validate_service_name(service_name, "empty");
-  if (parsed_service_name.empty()) {
-    return;
-  }
-
-  try {
-    auto service = get_node()->create_service<modulo_interfaces::srv::EmptyTrigger>(
-        "~/" + parsed_service_name,
-        [this, callback, acquire_lock](
-            const std::shared_ptr<modulo_interfaces::srv::EmptyTrigger::Request>,
-            std::shared_ptr<modulo_interfaces::srv::EmptyTrigger::Response> response) {
-          try {
-            auto run_callback = [&]() {
-              const auto callback_response = callback();
-              response->success = callback_response.success;
-              response->message = callback_response.message;
-            };
-
-            if (!acquire_lock) {
-              run_callback();
-              return;
-            }
-
-            std::unique_lock<std::timed_mutex> lock(this->command_mutex_, std::defer_lock);
-            if (lock.try_lock_for(100ms)) {
-              run_callback();
-            } else {
-              response->success = false;
-              response->message = "Unable to acquire lock for command interface within 100ms";
-            }
-          } catch (const std::exception& ex) {
-            response->success = false;
-            response->message = ex.what();
-          }
-        },
-        qos_);
-    empty_services_.insert_or_assign(parsed_service_name, service);
-  } catch (const std::exception& ex) {
-    RCLCPP_ERROR(get_node()->get_logger(), "Failed to add service '%s': %s", parsed_service_name.c_str(), ex.what());
-  }
-}
-
-void BaseControllerInterface::add_service(
-    const std::string& service_name,
-    const std::function<ControllerServiceResponse(const std::string& string)>& callback, bool acquire_lock) {
-  auto parsed_service_name = validate_service_name(service_name, "string");
-  if (parsed_service_name.empty()) {
-    return;
-  }
-
-  try {
-    auto service = get_node()->create_service<modulo_interfaces::srv::StringTrigger>(
-        "~/" + parsed_service_name,
-        [this, callback, acquire_lock](
-            const std::shared_ptr<modulo_interfaces::srv::StringTrigger::Request> request,
-            std::shared_ptr<modulo_interfaces::srv::StringTrigger::Response> response) {
-          try {
-            auto run_callback = [&]() {
-              const auto callback_response = callback(request->payload);
-              response->success = callback_response.success;
-              response->message = callback_response.message;
-            };
-
-            if (!acquire_lock) {
-              run_callback();
-              return;
-            }
-
-            std::unique_lock<std::timed_mutex> lock(this->command_mutex_, std::defer_lock);
-            if (lock.try_lock_for(100ms)) {
-              run_callback();
-            } else {
-              response->success = false;
-              response->message = "Unable to acquire lock for command interface within 100ms";
-            }
-          } catch (const std::exception& ex) {
-            response->success = false;
-            response->message = ex.what();
-          }
-        },
-        qos_);
-    string_services_.insert_or_assign(parsed_service_name, service);
-  } catch (const std::exception& ex) {
-    RCLCPP_ERROR(get_node()->get_logger(), "Failed to add service '%s': %s", parsed_service_name.c_str(), ex.what());
-  }
+  this->create_service<false>(service_name, callback);
 }
 
 rclcpp::QoS BaseControllerInterface::get_qos() const {
