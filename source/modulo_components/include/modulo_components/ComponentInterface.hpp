@@ -171,15 +171,6 @@ protected:
    */
   void add_assignment(const std::string& assignment_name, const state_representation::ParameterType& type);
 
-  // Should we move to utils somewhere?
-  /**
-  * @brief Helper to translate a value and type to an rcl_interfaces message.
-  * @param value the value of the parameter
-  * @param type the type of the parameter to be set in the message
-  */
-  rcl_interfaces::msg::ParameterValue rcl_translator(
-      const std::variant<int64_t, double, bool, std::string>& value, const state_representation::ParameterType& type);
-
   /**
   * @brief Trigger an assignment.
   * @tparam T The type of the assignment   
@@ -898,9 +889,7 @@ modulo_interfaces::msg::Assignment ComponentInterface::get_assignment_message(co
   modulo_interfaces::msg::Assignment message;
   message.node = this->node_base_->get_fully_qualified_name();
   message.assignment = name;
-  // Here I am passing the actually declared assignment type. Should I infer it directly from the value?
-  // Since I have already checked for matching types, technically I could
-  message.value = rcl_translator(value, get_assignment_type(name));
+  message.value = modulo_core::translators::write_parameter(state_representation::make_shared_parameter("", value)).to_parameter_msg().value;
   return message;
 }
 }// namespace modulo_components
