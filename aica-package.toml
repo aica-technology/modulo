@@ -1,7 +1,7 @@
 #syntax=ghcr.io/aica-technology/package-builder:v1.4.0
 
 [metadata]
-version = "5.2.3"
+version = "5.3.0"
 description = "Modular ROS 2 extension library for dynamic composition of components and controllers with the AICA robotics framework"
 
 [metadata.collection]
