@@ -888,8 +888,7 @@ template<typename T>
 modulo_interfaces::msg::Assignment ComponentInterface::get_assignment_message(const std::string& name, const T& value) {
   modulo_interfaces::msg::Assignment message;
   message.node = this->node_base_->get_fully_qualified_name();
-  message.assignment = name;
-  message.value = modulo_core::translators::write_parameter(state_representation::make_shared_parameter("", value)).to_parameter_msg().value;
+  message.assignment = modulo_core::translators::write_parameter(state_representation::make_shared_parameter(name, value)).to_parameter_msg();
   return message;
 }
 }// namespace modulo_components
