@@ -6,7 +6,6 @@
 #include <modulo_core/translators/message_writers.hpp>
 #include <modulo_utils/testutils/ServiceClient.hpp>
 
-#include "modulo_core/exceptions.hpp"
 #include "test_modulo_components/component_public_interfaces.hpp"
 
 #include <sensor_msgs/msg/image.hpp>
