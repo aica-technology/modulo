@@ -41,6 +41,38 @@ protected:
 using NodeTypes = ::testing::Types<rclcpp::Node, rclcpp_lifecycle::LifecycleNode>;
 TYPED_TEST_SUITE(ComponentInterfaceTest, NodeTypes);
 
+TYPED_TEST(ComponentInterfaceTest, AddAssignment) {
+  this->component_->add_assignment("an_assignment", state_representation::ParameterType::INT);
+  const auto one = this->component_->assignments_.size();
+  // adding an assignment with empty name should do nothing
+  this->component_->add_assignment("", state_representation::ParameterType::INT);
+  EXPECT_EQ(this->component_->assignments_.size(), one);
+  // adding an assignment with the same name should just overwrite
+  this->component_->add_assignment("an_assignment", state_representation::ParameterType::INT);
+  EXPECT_EQ(this->component_->assignments_.size(), one);
+  // adding another assignment should work
+  this->component_->add_assignment("another_assignment", state_representation::ParameterType::STRING);
+  EXPECT_NE(this->component_->assignments_.size(), one);
+
+  auto assignment_iterator = this->component_->assignments_.find("an_assignment");
+  auto another_assignment_iterator = this->component_->assignments_.find("another_assignment");
+  auto no_assignment_iterator = this->component_->assignments_.find("no_assignment");
+
+  EXPECT_TRUE(assignment_iterator != this->component_->assignments_.end());
+  EXPECT_TRUE(another_assignment_iterator != this->component_->assignments_.end());
+  EXPECT_TRUE(no_assignment_iterator == this->component_->assignments_.end());
+}
+
+TYPED_TEST(ComponentInterfaceTest, TriggerAssignment) {
+  this->component_->add_assignment("trigger_assignment_string", state_representation::ParameterType::STRING);
+  this->component_->add_assignment("trigger_assignment_int", state_representation::ParameterType::INT);
+
+  EXPECT_NO_THROW(this->component_->trigger_assignment("trigger_assignment_string", std::string("test")));
+  EXPECT_NO_THROW(this->component_->trigger_assignment("trigger_assignment_int", 5));
+  EXPECT_THROW(this->component_->trigger_assignment("trigger_assignment_string", 5), std::runtime_error);
+  EXPECT_THROW(this->component_->trigger_assignment("trigger_assignment_int", std::string("test")), std::runtime_error);
+}
+
 TYPED_TEST(ComponentInterfaceTest, AddBoolPredicate) {
   this->component_->add_predicate("foo", true);
   auto predicate_iterator = this->component_->predicates_.find("foo");
