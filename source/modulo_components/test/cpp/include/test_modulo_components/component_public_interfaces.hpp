@@ -21,6 +21,7 @@ public:
   using ComponentInterface::add_input;
   using ComponentInterface::add_parameter;
   using ComponentInterface::add_predicate;
+  using ComponentInterface::add_assignment;
   using ComponentInterface::add_service;
   using ComponentInterface::add_static_tf_broadcaster;
   using ComponentInterface::add_tf_broadcaster;
@@ -44,6 +45,7 @@ public:
   using ComponentInterface::parameter_map_;
   using ComponentInterface::periodic_outputs_;
   using ComponentInterface::predicates_;
+  using ComponentInterface::assignments_;
   using ComponentInterface::publish_output;
   using ComponentInterface::raise_error;
   using ComponentInterface::remove_input;
@@ -56,6 +58,7 @@ public:
   using ComponentInterface::set_qos;
   using ComponentInterface::string_services_;
   using ComponentInterface::trigger;
+  using ComponentInterface::trigger_assignment;
   using ComponentInterface::triggers_;
 
   bool on_validate_parameter_callback(const std::shared_ptr<state_representation::ParameterInterface>&) override {

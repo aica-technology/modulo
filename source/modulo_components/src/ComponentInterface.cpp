@@ -28,6 +28,9 @@ ComponentInterface::ComponentInterface(
       });
   this->add_parameter("rate", 10.0, "The rate in Hertz for all periodic callbacks", true);
 
+  this->assignment_publisher_ = rclcpp::create_publisher<modulo_interfaces::msg::Assignment>(
+      this->node_parameters_, this->node_topics_, "/assignments", this->qos_);
+
   this->predicate_publisher_ = rclcpp::create_publisher<modulo_interfaces::msg::PredicateCollection>(
       this->node_parameters_, this->node_topics_, "/predicates", this->qos_);
   this->predicate_message_.node = this->node_base_->get_fully_qualified_name();
@@ -185,6 +188,45 @@ bool ComponentInterface::validate_parameter(
 bool ComponentInterface::on_validate_parameter_callback(
     const std::shared_ptr<state_representation::ParameterInterface>&) {
   return true;
+}
+
+void ComponentInterface::add_assignment(
+    const std::string& assignment_name, const state_representation::ParameterType& type) {
+  // Reusing parse_topic_name. Not very elegant. Could add a more generic parse_name
+  std::string parsed_name = modulo_utils::parsing::parse_topic_name(assignment_name);
+  if (parsed_name.empty()) {
+    throw exceptions::AddAssignmentException(
+        "The parsed name for assignment '" + assignment_name
+        + "' is empty. Provide a string with valid characters for the assignment name ([a-z0-9_]).");
+  }
+  if (assignment_name != parsed_name) {
+    RCLCPP_WARN_STREAM(
+        this->node_logging_->get_logger(),
+        "The parsed name for assignment '" << assignment_name << "' is '" + parsed_name
+            + "'. Use the parsed name to refer to this assignment.");
+  }
+  if (this->assignments_.find(parsed_name) != this->assignments_.end()) {
+    RCLCPP_WARN_STREAM(
+        this->node_logging_->get_logger(), "Assignment with name '" + parsed_name + "' already exists, overwriting.");
+  } else {
+    RCLCPP_DEBUG_STREAM(this->node_logging_->get_logger(), "Adding assignment '" << parsed_name << "'.");
+  }
+  try {
+    this->assignments_.insert_or_assign(parsed_name, Assignment(type));
+  } catch (const std::exception& ex) {
+    RCLCPP_ERROR_STREAM_THROTTLE(
+        this->node_logging_->get_logger(), *this->node_clock_->get_clock(), 1000,
+        "Failed to add assignment '" << parsed_name << "': " << ex.what());
+  }
+}
+
+state_representation::ParameterType ComponentInterface::get_assignment_type(const std::string& assignment_name) {
+  auto assignment_it = this->assignments_.find(assignment_name);
+  if (assignment_it == this->assignments_.end()) {
+    throw exceptions::CoreException("Assignment '" + assignment_name + "' does not exist");
+  }
+
+  return assignment_it->second.get_type();
 }
 
 void ComponentInterface::add_predicate(const std::string& predicate_name, bool predicate_value) {

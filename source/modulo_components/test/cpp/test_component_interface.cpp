@@ -6,6 +6,7 @@
 #include <modulo_core/translators/message_writers.hpp>
 #include <modulo_utils/testutils/ServiceClient.hpp>
 
+#include "modulo_core/exceptions.hpp"
 #include "test_modulo_components/component_public_interfaces.hpp"
 
 #include <sensor_msgs/msg/image.hpp>
@@ -40,6 +41,39 @@ protected:
 
 using NodeTypes = ::testing::Types<rclcpp::Node, rclcpp_lifecycle::LifecycleNode>;
 TYPED_TEST_SUITE(ComponentInterfaceTest, NodeTypes);
+
+TYPED_TEST(ComponentInterfaceTest, AddAssignment) {
+  this->component_->add_assignment("an_assignment", state_representation::ParameterType::INT);
+  const auto one = this->component_->assignments_.size();
+  // adding an assignment with empty name should fail
+  EXPECT_THROW(this->component_->add_assignment("", state_representation::ParameterType::INT), modulo_core::exceptions::AddAssignmentException);
+  // adding an assignment with the same name should just overwrite
+  this->component_->add_assignment("an_assignment", state_representation::ParameterType::INT);
+  EXPECT_EQ(this->component_->assignments_.size(), one);
+  // names should be cleaned up
+  EXPECT_NO_THROW(this->component_->add_assignment("7cleEaGn_AaSssiGNgn#ment", state_representation::ParameterType::DOUBLE));
+  EXPECT_NE(this->component_->assignments_.size(), one);
+  // names without valid characters should fail
+  EXPECT_THROW(this->component_->add_assignment("@@@@@@", state_representation::ParameterType::DOUBLE), modulo_core::exceptions::AddAssignmentException);
+
+  auto assignment_iterator = this->component_->assignments_.find("an_assignment");
+  auto another_assignment_iterator = this->component_->assignments_.find("clean_assignment");
+  auto no_assignment_iterator = this->component_->assignments_.find("no_assignment");
+
+  EXPECT_TRUE(assignment_iterator != this->component_->assignments_.end());
+  EXPECT_TRUE(another_assignment_iterator != this->component_->assignments_.end());
+  EXPECT_TRUE(no_assignment_iterator == this->component_->assignments_.end());
+}
+
+TYPED_TEST(ComponentInterfaceTest, TriggerAssignment) {
+  this->component_->add_assignment("trigger_assignment_string", state_representation::ParameterType::STRING);
+  this->component_->add_assignment("trigger_assignment_int", state_representation::ParameterType::INT);
+
+  EXPECT_NO_THROW(this->component_->trigger_assignment("trigger_assignment_string", std::string("test")));
+  EXPECT_NO_THROW(this->component_->trigger_assignment("trigger_assignment_int", 5));
+  EXPECT_THROW(this->component_->trigger_assignment("trigger_assignment_string", 5), std::runtime_error);
+  EXPECT_THROW(this->component_->trigger_assignment("trigger_assignment_int", std::string("test")), std::runtime_error);
+}
 
 TYPED_TEST(ComponentInterfaceTest, AddBoolPredicate) {
   this->component_->add_predicate("foo", true);

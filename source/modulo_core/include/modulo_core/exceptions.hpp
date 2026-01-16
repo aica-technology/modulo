@@ -43,6 +43,16 @@ public:
 };
 
 /**
+ * @class AddAssignmentException
+ * @brief An exception class to notify errors when adding an assignment.
+ * @details This is an exception class to be thrown if there is a problem while adding an assignment to a modulo class.
+ */
+class AddAssignmentException : public CoreException {
+public:
+  explicit AddAssignmentException(const std::string& msg) : CoreException("AddAssignmentException", msg) {}
+};
+
+/**
  * @class InvalidPointerCastException
  * @brief An exception class to notify if the result of getting an instance of a derived class through dynamic
  * down-casting of an object of the base class is not a correctly typed instance of the derived class.

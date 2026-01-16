@@ -1,3 +1,2 @@
 string node
-string assignment
-rcl_interfaces/ParameterValue value
+rcl_interfaces/Parameter assignment
