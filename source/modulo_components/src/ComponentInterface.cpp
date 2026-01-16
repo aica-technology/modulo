@@ -192,23 +192,31 @@ bool ComponentInterface::on_validate_parameter_callback(
 
 void ComponentInterface::add_assignment(
     const std::string& assignment_name, const state_representation::ParameterType& type) {
-  if (assignment_name.empty()) {
-    RCLCPP_ERROR(this->node_logging_->get_logger(), "Failed to add assignment: Provide a non empty string as a name.");
-    return;
+  // Reusing parse_topic_name. Not very elegant. Could add a more generic parse_name
+  std::string parsed_name = modulo_utils::parsing::parse_topic_name(assignment_name);
+  if (parsed_name.empty()) {
+    throw exceptions::AddAssignmentException(
+        "The parsed name for assignment '" + assignment_name
+        + "' is empty. Provide a string with valid characters for the assignment name ([a-z0-9_]).");
   }
-  if (this->assignments_.find(assignment_name) != this->assignments_.end()) {
+  if (assignment_name != parsed_name) {
     RCLCPP_WARN_STREAM(
         this->node_logging_->get_logger(),
-        "Assignment with name '" << assignment_name << "' already exists, overwriting.");
+        "The parsed name for assignment '" << assignment_name << "' is '" + parsed_name
+            + "'. Use the parsed name to refer to this assignment.");
+  }
+  if (this->assignments_.find(parsed_name) != this->assignments_.end()) {
+    RCLCPP_WARN_STREAM(
+        this->node_logging_->get_logger(), "Assignment with name '" + parsed_name + "' already exists, overwriting.");
   } else {
-    RCLCPP_DEBUG_STREAM(this->node_logging_->get_logger(), "Adding assignment '" << assignment_name << "'.");
+    RCLCPP_DEBUG_STREAM(this->node_logging_->get_logger(), "Adding assignment '" << parsed_name << "'.");
   }
   try {
-    this->assignments_.insert_or_assign(assignment_name, Assignment(type));
+    this->assignments_.insert_or_assign(parsed_name, Assignment(type));
   } catch (const std::exception& ex) {
     RCLCPP_ERROR_STREAM_THROTTLE(
         this->node_logging_->get_logger(), *this->node_clock_->get_clock(), 1000,
-        "Failed to add assignment '" << assignment_name << "': " << ex.what());
+        "Failed to add assignment '" << parsed_name << "': " << ex.what());
   }
 }
 

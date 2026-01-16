@@ -180,15 +180,6 @@ protected:
   template<typename T>
   void trigger_assignment(const std::string& assignment_name, const T& assignment_value);
 
-  /**
-  * @brief Helper function to publish an assignment.
-  * @tparam T The type of the assignment   
-  * @param assignment_name The name of the assignment to publish
-  * @param assignment_value The value of the assignment
-  */
-  template<typename T>
-  void publish_assignment(const std::string& assignment_name, const T& assignment_value);
-
   // Could be private? Thought it might be useful elsewhere.
   /**
    * @brief Helper function to get the type of an assignment.
@@ -561,6 +552,15 @@ private:
   void publish_predicate(const std::string& predicate_name, bool value) const;
 
   /**
+  * @brief Helper function to publish an assignment.
+  * @tparam T The type of the assignment   
+  * @param assignment_name The name of the assignment to publish
+  * @param value The value of the assignment
+  */
+  template<typename T>
+  void publish_assignment(const std::string& assignment_name, const T& value);
+
+  /**
    * @brief Helper function to send a vector of transforms through a transform broadcaster
    * @tparam T The type of the broadcaster (tf2_ros::TransformBroadcaster or tf2_ros::StaticTransformBroadcaster)
    * @param transforms The transforms to send
@@ -880,8 +880,8 @@ void ComponentInterface::trigger_assignment(const std::string& assignment_name, 
 }
 
 template<typename T>
-inline void ComponentInterface::publish_assignment(const std::string& assignment_name, const T& assignment_value) {
-  this->assignment_publisher_->publish(this->get_assignment_message(assignment_name, assignment_value));
+inline void ComponentInterface::publish_assignment(const std::string& assignment_name, const T& value) {
+  this->assignment_publisher_->publish(this->get_assignment_message(assignment_name, value));
 }
 
 template<typename T>
