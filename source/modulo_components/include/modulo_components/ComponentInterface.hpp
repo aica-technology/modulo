@@ -9,7 +9,6 @@
 
 #include <state_representation/parameters/ParameterMap.hpp>
 
-#include <modulo_core/Assignment.hpp>
 #include <modulo_core/Predicate.hpp>
 #include <modulo_core/communication/PublisherHandler.hpp>
 #include <modulo_core/communication/PublisherType.hpp>
