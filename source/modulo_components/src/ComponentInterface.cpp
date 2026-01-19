@@ -192,41 +192,41 @@ bool ComponentInterface::on_validate_parameter_callback(
 
 void ComponentInterface::add_assignment(
     const std::string& assignment_name, const state_representation::ParameterType& type) {
-  // Reusing parse_topic_name. Not very elegant. Could add a more generic parse_name
+  // Reusing parse_topic_name. Not very elegant. Could add a validate_assignment_name
+  // similar to services but it's a lot of code duplication
   std::string parsed_name = modulo_utils::parsing::parse_topic_name(assignment_name);
   if (parsed_name.empty()) {
-    throw exceptions::AddAssignmentException(
+    RCLCPP_ERROR_STREAM(
+        this->node_logging_->get_logger(),
         "The parsed name for assignment '" + assignment_name
-        + "' is empty. Provide a string with valid characters for the assignment name ([a-z0-9_]).");
+            + "' is empty. Provide a string with valid characters for the assignment name ([a-z0-9_]).");
+    return;
   }
   if (assignment_name != parsed_name) {
     RCLCPP_WARN_STREAM(
         this->node_logging_->get_logger(),
-        "The parsed name for assignment '" << assignment_name << "' is '" + parsed_name
-            + "'. Use the parsed name to refer to this assignment.");
+        "The parsed name for assignment '"
+            + assignment_name + "' is '" + parsed_name + "'. Use the parsed name to refer to this assignment.");
   }
-  if (this->assignments_.find(parsed_name) != this->assignments_.end()) {
+  // Check if it already exists
+  // In the following, I don't like that the expected case is in the catch
+  // The assert_param_valid is protected and either way does not differentiate between
+  // a parameter that does not exist and one that does but has the wrong type
+  try {
+    auto assignment_ = this->assignments_map_.get_parameter(parsed_name);
     RCLCPP_WARN_STREAM(
         this->node_logging_->get_logger(), "Assignment with name '" + parsed_name + "' already exists, overwriting.");
-  } else {
+  } catch (const state_representation::exceptions::InvalidParameterException& ex) {
     RCLCPP_DEBUG_STREAM(this->node_logging_->get_logger(), "Adding assignment '" << parsed_name << "'.");
   }
+  // Add the assignment
   try {
-    this->assignments_.insert_or_assign(parsed_name, Assignment(type));
+    assignments_map_.set_parameter(state_representation::make_shared_parameter_interface(parsed_name, type));
   } catch (const std::exception& ex) {
     RCLCPP_ERROR_STREAM_THROTTLE(
         this->node_logging_->get_logger(), *this->node_clock_->get_clock(), 1000,
         "Failed to add assignment '" << parsed_name << "': " << ex.what());
   }
-}
-
-state_representation::ParameterType ComponentInterface::get_assignment_type(const std::string& assignment_name) {
-  auto assignment_it = this->assignments_.find(assignment_name);
-  if (assignment_it == this->assignments_.end()) {
-    throw exceptions::CoreException("Assignment '" + assignment_name + "' does not exist");
-  }
-
-  return assignment_it->second.get_type();
 }
 
 void ComponentInterface::add_predicate(const std::string& predicate_name, bool predicate_value) {

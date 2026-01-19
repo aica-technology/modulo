@@ -45,7 +45,7 @@ public:
   using ComponentInterface::parameter_map_;
   using ComponentInterface::periodic_outputs_;
   using ComponentInterface::predicates_;
-  using ComponentInterface::assignments_;
+  using ComponentInterface::assignments_map_;
   using ComponentInterface::publish_output;
   using ComponentInterface::raise_error;
   using ComponentInterface::remove_input;

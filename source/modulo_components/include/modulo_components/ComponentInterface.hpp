@@ -180,13 +180,6 @@ protected:
   template<typename T>
   void trigger_assignment(const std::string& assignment_name, const T& assignment_value);
 
-  // Could be private? Thought it might be useful elsewhere.
-  /**
-   * @brief Helper function to get the type of an assignment.
-   * @param assignment_name the name of the associated assignment
-   */
-  state_representation::ParameterType get_assignment_type(const std::string& assignment_name);
-
   /**
    * @brief Add a predicate to the map of predicates.
    * @param predicate_name the name of the associated predicate
@@ -594,7 +587,7 @@ private:
   std::shared_ptr<rclcpp::Publisher<modulo_interfaces::msg::PredicateCollection>>
       predicate_publisher_;///< Predicate publisher
   modulo_interfaces::msg::PredicateCollection predicate_message_;
-  std::map<std::string, modulo_core::Assignment> assignments_;                                 ///< Map of assignments
+  state_representation::ParameterMap assignments_map_;                                         ///< Map of assignments
   std::shared_ptr<rclcpp::Publisher<modulo_interfaces::msg::Assignment>> assignment_publisher_;///< Assignment publisher
   std::vector<std::string> triggers_;                                                          ///< List of triggers
 
@@ -867,15 +860,16 @@ inline void ComponentInterface::publish_transforms(
 
 template<typename T>
 void ComponentInterface::trigger_assignment(const std::string& assignment_name, const T& assignment_value) {
-  auto assignment_it = this->assignments_.find(assignment_name);
-  if (assignment_it == this->assignments_.end()) {
+  // Since it's essentially a parameter, attempts to trigger a non-existent assignment will show
+  // "Could not find a parameter named 'assignment_name'."
+  try {
+    this->assignments_map_.get_parameter(assignment_name)->set_parameter_value<T>(assignment_value);
+  } catch (const std::exception& ex) {
     RCLCPP_ERROR_STREAM_THROTTLE(
         this->node_logging_->get_logger(), *this->node_clock_->get_clock(), 1000,
-        "Failed to trigger assignment '" << assignment_name << "': Assignment does not exist.");
+        "Failed to trigger assignment '" << assignment_name << "': " << ex.what());
     return;
   }
-  // TODO: make the following return a bool
-  assignment_it->second.check_types(assignment_value);
   this->publish_assignment(assignment_name, assignment_value);
 }
 
