@@ -31,6 +31,7 @@ public:
   using ComponentInterface::declare_input;
   using ComponentInterface::declare_output;
   using ComponentInterface::empty_services_;
+  using ComponentInterface::get_assignment;
   using ComponentInterface::get_parameter;
   using ComponentInterface::get_parameter_value;
   using ComponentInterface::get_predicate;
@@ -53,12 +54,12 @@ public:
   using ComponentInterface::send_static_transforms;
   using ComponentInterface::send_transform;
   using ComponentInterface::send_transforms;
+  using ComponentInterface::set_assignment;
   using ComponentInterface::set_parameter_value;
   using ComponentInterface::set_predicate;
   using ComponentInterface::set_qos;
   using ComponentInterface::string_services_;
   using ComponentInterface::trigger;
-  using ComponentInterface::set_assignment;
   using ComponentInterface::triggers_;
 
   bool on_validate_parameter_callback(const std::shared_ptr<state_representation::ParameterInterface>&) override {

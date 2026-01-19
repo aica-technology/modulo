@@ -181,6 +181,14 @@ protected:
   void set_assignment(const std::string& assignment_name, const T& assignment_value);
 
   /**
+  * @brief Get an assignment value.
+  * @tparam T The type of the assignment value   
+  * @param assignment_name The name of the assignment to get
+  */
+  template<typename T>
+  T get_assignment(const std::string& assignment_name) const;
+
+  /**
    * @brief Add a predicate to the map of predicates.
    * @param predicate_name the name of the associated predicate
    * @param predicate_value the boolean value of the predicate
@@ -871,6 +879,11 @@ void ComponentInterface::set_assignment(const std::string& assignment_name, cons
     return;
   }
   this->publish_assignment(assignment_name, assignment_value);
+}
+
+template<typename T>
+T ComponentInterface::get_assignment(const std::string& assignment_name) const {
+  return this->assignments_map_.get_parameter(assignment_name)->template get_parameter_value<T>();
 }
 
 template<typename T>

@@ -7,6 +7,7 @@
 #include <modulo_utils/testutils/ServiceClient.hpp>
 
 #include "test_modulo_components/component_public_interfaces.hpp"
+#include "state_representation/exceptions/EmptyStateException.hpp"
 
 #include <sensor_msgs/msg/image.hpp>
 
@@ -66,6 +67,14 @@ TYPED_TEST(ComponentInterfaceTest, SetAssignment) {
   EXPECT_NO_THROW(this->component_->set_assignment("non_existent", 5));
   EXPECT_NO_THROW(this->component_->set_assignment("trigger_assignment_string", std::string("test")));
   EXPECT_NO_THROW(this->component_->set_assignment("trigger_assignment_string", 5));
+}
+
+TYPED_TEST(ComponentInterfaceTest, GetAssignment) {
+  this->component_->add_assignment("get_assignment_int", state_representation::ParameterType::INT);
+  EXPECT_THROW(this->component_->template get_assignment<int>("not_declared"), state_representation::exceptions::InvalidParameterException); 
+  EXPECT_THROW(this->component_->template get_assignment<int>("get_assignment_int"), state_representation::exceptions::EmptyStateException); 
+  EXPECT_NO_THROW(this->component_->set_assignment("get_assignment_int", 5));
+  EXPECT_EQ(this->component_->template get_assignment<int>("get_assignment_int"), 5); 
 }
 
 TYPED_TEST(ComponentInterfaceTest, AddBoolPredicate) {
