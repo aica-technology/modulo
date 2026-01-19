@@ -58,7 +58,7 @@ public:
   using ComponentInterface::set_qos;
   using ComponentInterface::string_services_;
   using ComponentInterface::trigger;
-  using ComponentInterface::trigger_assignment;
+  using ComponentInterface::set_assignment;
   using ComponentInterface::triggers_;
 
   bool on_validate_parameter_callback(const std::shared_ptr<state_representation::ParameterInterface>&) override {

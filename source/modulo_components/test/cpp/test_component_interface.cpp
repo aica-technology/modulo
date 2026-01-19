@@ -60,12 +60,12 @@ TYPED_TEST(ComponentInterfaceTest, AddAssignment) {
   EXPECT_THROW(this->component_->assignments_map_.get_parameter("no_assignment"), state_representation::exceptions::InvalidParameterException);
 }
 
-TYPED_TEST(ComponentInterfaceTest, TriggerAssignment) {
+TYPED_TEST(ComponentInterfaceTest, SetAssignment) {
   this->component_->add_assignment("trigger_assignment_string", state_representation::ParameterType::STRING);
 
-  EXPECT_THROW(this->component_->trigger_assignment("non_existent", 5), state_representation::exceptions::InvalidParameterException);
-  EXPECT_NO_THROW(this->component_->trigger_assignment("trigger_assignment_string", std::string("test")));
-  EXPECT_NO_THROW(this->component_->trigger_assignment("trigger_assignment_string", 5));
+  EXPECT_NO_THROW(this->component_->set_assignment("non_existent", 5));
+  EXPECT_NO_THROW(this->component_->set_assignment("trigger_assignment_string", std::string("test")));
+  EXPECT_NO_THROW(this->component_->set_assignment("trigger_assignment_string", 5));
 }
 
 TYPED_TEST(ComponentInterfaceTest, AddBoolPredicate) {

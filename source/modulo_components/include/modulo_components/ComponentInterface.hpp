@@ -172,13 +172,13 @@ protected:
   void add_assignment(const std::string& assignment_name, const state_representation::ParameterType& type);
 
   /**
-  * @brief Trigger an assignment.
+  * @brief Set an assignment.
   * @tparam T The type of the assignment   
   * @param assignment_name The name of the assignment to publish
   * @param assignment_value The value of the assignment
   */
   template<typename T>
-  void trigger_assignment(const std::string& assignment_name, const T& assignment_value);
+  void set_assignment(const std::string& assignment_name, const T& assignment_value);
 
   /**
    * @brief Add a predicate to the map of predicates.
@@ -859,7 +859,7 @@ inline void ComponentInterface::publish_transforms(
 }
 
 template<typename T>
-void ComponentInterface::trigger_assignment(const std::string& assignment_name, const T& assignment_value) {
+void ComponentInterface::set_assignment(const std::string& assignment_name, const T& assignment_value) {
   // Since it's essentially a parameter, attempts to trigger a non-existent assignment will show
   // "Could not find a parameter named 'assignment_name'."
   try {
