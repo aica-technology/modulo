@@ -56,9 +56,9 @@ TYPED_TEST(ComponentInterfaceTest, AddAssignment) {
   // names without valid characters should fail
   EXPECT_NO_THROW(this->component_->add_assignment("@@@@@@", state_representation::ParameterType::DOUBLE));
 
-  EXPECT_NO_THROW(this->component_->assignments_map_.get_parameter("an_assignment"));
-  EXPECT_NO_THROW(this->component_->assignments_map_.get_parameter("clean_assignment"));
-  EXPECT_THROW(this->component_->assignments_map_.get_parameter("no_assignment"), state_representation::exceptions::InvalidParameterException);
+  EXPECT_NO_THROW(auto discard = this->component_->assignments_map_.get_parameter("an_assignment"));
+  EXPECT_NO_THROW(auto discard = this->component_->assignments_map_.get_parameter("clean_assignment"));
+  EXPECT_THROW(auto discard = this->component_->assignments_map_.get_parameter("no_assignment"), state_representation::exceptions::InvalidParameterException);
 }
 
 TYPED_TEST(ComponentInterfaceTest, SetAssignment) {
