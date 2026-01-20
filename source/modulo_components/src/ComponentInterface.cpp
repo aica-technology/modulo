@@ -208,10 +208,6 @@ void ComponentInterface::add_assignment(
         "The parsed name for assignment '"
             + assignment_name + "' is '" + parsed_name + "'. Use the parsed name to refer to this assignment.");
   }
-  // Check if it already exists
-  // In the following, I don't like that the expected case is in the catch
-  // The assert_param_valid is protected and either way does not differentiate between
-  // a parameter that does not exist and one that does but has the wrong type
   try {
     auto assignment_ = this->assignments_map_.get_parameter(parsed_name);
     RCLCPP_WARN_STREAM(
@@ -219,7 +215,6 @@ void ComponentInterface::add_assignment(
   } catch (const state_representation::exceptions::InvalidParameterException& ex) {
     RCLCPP_DEBUG_STREAM(this->node_logging_->get_logger(), "Adding assignment '" << parsed_name << "'.");
   }
-  // Add the assignment
   try {
     assignments_map_.set_parameter(state_representation::make_shared_parameter_interface(parsed_name, type));
   } catch (const std::exception& ex) {

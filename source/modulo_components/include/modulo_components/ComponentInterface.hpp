@@ -164,7 +164,7 @@ protected:
   on_validate_parameter_callback(const std::shared_ptr<state_representation::ParameterInterface>& parameter);
 
   /**
-   * @brief Add an assignment to the map of assignmens.
+   * @brief Add an assignment to the map of assignments.
    * @param assignment_name the name of the associated assignment
    * @param type the type of the variable or parameter to assign
    */
@@ -180,7 +180,7 @@ protected:
   void set_assignment(const std::string& assignment_name, const T& assignment_value);
 
   /**
-  * @brief Get an assignment value.
+  * @brief Get the value of an assignment.
   * @tparam T The type of the assignment value   
   * @param assignment_name The name of the assignment to get
   */
