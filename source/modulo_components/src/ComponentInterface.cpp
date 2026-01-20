@@ -190,41 +190,6 @@ bool ComponentInterface::on_validate_parameter_callback(
   return true;
 }
 
-void ComponentInterface::add_assignment(
-    const std::string& assignment_name, const state_representation::ParameterType& type) {
-  // Reusing parse_topic_name. Not very elegant. Could add a validate_assignment_name
-  // similar to services but it's a lot of code duplication
-  std::string parsed_name = modulo_utils::parsing::parse_topic_name(assignment_name);
-  if (parsed_name.empty()) {
-    // TODO: throw an exception
-    RCLCPP_ERROR_STREAM(
-        this->node_logging_->get_logger(),
-        "The parsed name for assignment '" + assignment_name
-            + "' is empty. Provide a string with valid characters for the assignment name ([a-z0-9_]).");
-    return;
-  }
-  if (assignment_name != parsed_name) {
-    RCLCPP_WARN_STREAM(
-        this->node_logging_->get_logger(),
-        "The parsed name for assignment '" + assignment_name + "' is '" + parsed_name
-            + "'. Use the parsed name to refer to this assignment.");
-  }
-  try {
-    this->assignments_map_.get_parameter(parsed_name);
-    RCLCPP_WARN_STREAM(
-        this->node_logging_->get_logger(), "Assignment with name '" + parsed_name + "' already exists, overwriting.");
-  } catch (const state_representation::exceptions::InvalidParameterException& ex) {
-    RCLCPP_DEBUG_STREAM(this->node_logging_->get_logger(), "Adding assignment '" << parsed_name << "'.");
-  }
-  try {
-    assignments_map_.set_parameter(state_representation::make_shared_parameter_interface(parsed_name, type));
-  } catch (const std::exception& ex) {
-    RCLCPP_ERROR_STREAM_THROTTLE(
-        this->node_logging_->get_logger(), *this->node_clock_->get_clock(), 1000,
-        "Failed to add assignment '" << parsed_name << "': " << ex.what());
-  }
-}
-
 void ComponentInterface::add_predicate(const std::string& predicate_name, bool predicate_value) {
   this->add_predicate(predicate_name, [predicate_value]() { return predicate_value; });
 }

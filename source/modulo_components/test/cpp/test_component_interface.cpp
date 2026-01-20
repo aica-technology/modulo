@@ -43,18 +43,18 @@ using NodeTypes = ::testing::Types<rclcpp::Node, rclcpp_lifecycle::LifecycleNode
 TYPED_TEST_SUITE(ComponentInterfaceTest, NodeTypes);
 
 TYPED_TEST(ComponentInterfaceTest, AddAssignment) {
-  this->component_->add_assignment("an_assignment", state_representation::ParameterType::INT);
+  this->component_->template add_assignment<int>("an_assignment");
   const auto one = this->component_->assignments_map_.get_parameter_list().size();
   // adding an assignment with empty name should fail
-  EXPECT_NO_THROW(this->component_->add_assignment("", state_representation::ParameterType::INT));
+  EXPECT_NO_THROW(this->component_->template add_assignment<int>(""));
   // adding an assignment with the same name should just overwrite
-  this->component_->add_assignment("an_assignment", state_representation::ParameterType::INT);
+  this->component_->template add_assignment<int>("an_assignment");
   EXPECT_EQ(this->component_->assignments_map_.get_parameter_list().size(), one);
   // names should be cleaned up
-  EXPECT_NO_THROW(this->component_->add_assignment("7cleEaGn_AaSssiGNgn#ment", state_representation::ParameterType::DOUBLE));
+  EXPECT_NO_THROW(this->component_->template add_assignment<int>("7cleEaGn_AaSssiGNgn#ment"));
   EXPECT_NE(this->component_->assignments_map_.get_parameter_list().size(), one);
   // names without valid characters should fail
-  EXPECT_NO_THROW(this->component_->add_assignment("@@@@@@", state_representation::ParameterType::DOUBLE));
+  EXPECT_NO_THROW(this->component_->template add_assignment<int>("@@@@@@"));
 
   EXPECT_NO_THROW(auto discard = this->component_->assignments_map_.get_parameter("an_assignment"));
   EXPECT_NO_THROW(auto discard = this->component_->assignments_map_.get_parameter("clean_assignment"));
@@ -62,7 +62,7 @@ TYPED_TEST(ComponentInterfaceTest, AddAssignment) {
 }
 
 TYPED_TEST(ComponentInterfaceTest, SetAssignment) {
-  this->component_->add_assignment("trigger_assignment_string", state_representation::ParameterType::STRING);
+  this->component_->template add_assignment<int>("trigger_assignment_string");
 
   EXPECT_NO_THROW(this->component_->set_assignment("non_existent", 5));
   EXPECT_NO_THROW(this->component_->set_assignment("trigger_assignment_string", std::string("test")));
@@ -70,7 +70,7 @@ TYPED_TEST(ComponentInterfaceTest, SetAssignment) {
 }
 
 TYPED_TEST(ComponentInterfaceTest, GetAssignment) {
-  this->component_->add_assignment("get_assignment_int", state_representation::ParameterType::INT);
+  this->component_->template add_assignment<int>("get_assignment_int");
   EXPECT_THROW(this->component_->template get_assignment<int>("not_declared"), modulo_core::exceptions::InvalidAssignmentException); 
   EXPECT_THROW(this->component_->template get_assignment<int>("get_assignment_int"), state_representation::exceptions::EmptyStateException); 
   EXPECT_NO_THROW(this->component_->set_assignment("get_assignment_int", 5));

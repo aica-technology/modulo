@@ -165,10 +165,12 @@ protected:
 
   /**
    * @brief Add an assignment to the map of assignments.
+   * @tparam T The type of the assignment
    * @param assignment_name the name of the associated assignment
-   * @param type the type of the variable or parameter to assign
+   * @throws std::exception if the assignment could not be added
    */
-  void add_assignment(const std::string& assignment_name, const state_representation::ParameterType& type);
+  template<typename T>
+  void add_assignment(const std::string& assignment_name);
 
   /**
   * @brief Set an assignment.
@@ -848,6 +850,39 @@ inline void ComponentInterface::publish_transforms(
     RCLCPP_ERROR_STREAM_THROTTLE(
         this->node_logging_->get_logger(), *this->node_clock_->get_clock(), 1000,
         "Failed to send " << modifier << "transform: " << ex.what());
+  }
+}
+
+template<typename T>
+inline void ComponentInterface::add_assignment(const std::string& assignment_name) {
+  std::string parsed_name = modulo_utils::parsing::parse_topic_name(assignment_name);
+  if (parsed_name.empty()) {
+    // TODO: throw an exception
+    RCLCPP_ERROR_STREAM(
+        this->node_logging_->get_logger(),
+        "The parsed name for assignment '" + assignment_name
+            + "' is empty. Provide a string with valid characters for the assignment name ([a-z0-9_]).");
+    return;
+  }
+  if (assignment_name != parsed_name) {
+    RCLCPP_WARN_STREAM(
+        this->node_logging_->get_logger(),
+        "The parsed name for assignment '" + assignment_name + "' is '" + parsed_name
+            + "'. Use the parsed name to refer to this assignment.");
+  }
+  try {
+    this->assignments_map_.get_parameter(parsed_name);
+    RCLCPP_WARN_STREAM(
+        this->node_logging_->get_logger(), "Assignment with name '" + parsed_name + "' already exists, overwriting.");
+  } catch (const state_representation::exceptions::InvalidParameterException& ex) {
+    RCLCPP_DEBUG_STREAM(this->node_logging_->get_logger(), "Adding assignment '" << parsed_name << "'.");
+  }
+  try {
+    assignments_map_.set_parameter(state_representation::make_shared_parameter<T>(parsed_name));
+  } catch (const std::exception& ex) {
+    RCLCPP_ERROR_STREAM_THROTTLE(
+        this->node_logging_->get_logger(), *this->node_clock_->get_clock(), 1000,
+        "Failed to add assignment '" << parsed_name << "': " << ex.what());
   }
 }
 
