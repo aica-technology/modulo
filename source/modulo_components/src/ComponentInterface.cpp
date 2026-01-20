@@ -196,6 +196,7 @@ void ComponentInterface::add_assignment(
   // similar to services but it's a lot of code duplication
   std::string parsed_name = modulo_utils::parsing::parse_topic_name(assignment_name);
   if (parsed_name.empty()) {
+    // TODO: throw an exception
     RCLCPP_ERROR_STREAM(
         this->node_logging_->get_logger(),
         "The parsed name for assignment '" + assignment_name
@@ -205,11 +206,11 @@ void ComponentInterface::add_assignment(
   if (assignment_name != parsed_name) {
     RCLCPP_WARN_STREAM(
         this->node_logging_->get_logger(),
-        "The parsed name for assignment '"
-            + assignment_name + "' is '" + parsed_name + "'. Use the parsed name to refer to this assignment.");
+        "The parsed name for assignment '" + assignment_name + "' is '" + parsed_name
+            + "'. Use the parsed name to refer to this assignment.");
   }
   try {
-    auto assignment_ = this->assignments_map_.get_parameter(parsed_name);
+    this->assignments_map_.get_parameter(parsed_name);
     RCLCPP_WARN_STREAM(
         this->node_logging_->get_logger(), "Assignment with name '" + parsed_name + "' already exists, overwriting.");
   } catch (const state_representation::exceptions::InvalidParameterException& ex) {

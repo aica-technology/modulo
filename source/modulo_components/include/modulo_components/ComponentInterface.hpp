@@ -850,8 +850,6 @@ inline void ComponentInterface::publish_transforms(
 
 template<typename T>
 void ComponentInterface::set_assignment(const std::string& assignment_name, const T& assignment_value) {
-  // Since it's essentially a parameter, attempts to trigger a non-existent assignment will show
-  // "Could not find a parameter named 'assignment_name'."
   modulo_interfaces::msg::Assignment message;
   std::shared_ptr<state_representation::ParameterInterface> assignment;
   try {
