@@ -71,11 +71,11 @@ TYPED_TEST(ComponentInterfaceTest, SetAssignment) {
 
 TYPED_TEST(ComponentInterfaceTest, GetAssignment) {
   this->component_->add_assignment("get_assignment_int", state_representation::ParameterType::INT);
-  EXPECT_THROW(this->component_->template get_assignment<int>("not_declared"), state_representation::exceptions::InvalidParameterException); 
+  EXPECT_THROW(this->component_->template get_assignment<int>("not_declared"), modulo_core::exceptions::InvalidAssignmentException); 
   EXPECT_THROW(this->component_->template get_assignment<int>("get_assignment_int"), state_representation::exceptions::EmptyStateException); 
   EXPECT_NO_THROW(this->component_->set_assignment("get_assignment_int", 5));
   EXPECT_EQ(this->component_->template get_assignment<int>("get_assignment_int"), 5); 
-  EXPECT_THROW(this->component_->template get_assignment<std::string>("get_assignment_int"),  state_representation::exceptions::InvalidParameterCastException); 
+  EXPECT_THROW(this->component_->template get_assignment<std::string>("get_assignment_int"), modulo_core::exceptions::InvalidAssignmentException); 
 }
 
 TYPED_TEST(ComponentInterfaceTest, AddBoolPredicate) {

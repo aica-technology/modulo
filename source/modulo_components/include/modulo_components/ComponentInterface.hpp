@@ -183,6 +183,9 @@ protected:
   * @brief Get the value of an assignment.
   * @tparam T The type of the assignment value   
   * @param assignment_name The name of the assignment to get
+  * @throws modulo_core::exceptions::InvalidAssignmentException if the assignment does not exist or the type does not 
+    match
+    @throws state_representation::exceptions::EmptyStateException if the assignment has not been set yet 
   */
   template<typename T>
   T get_assignment(const std::string& assignment_name) const;
@@ -856,16 +859,16 @@ void ComponentInterface::set_assignment(const std::string& assignment_name, cons
     assignment = this->assignments_map_.get_parameter(assignment_name);
   } catch (const state_representation::exceptions::InvalidParameterException&) {
     RCLCPP_ERROR_STREAM_THROTTLE(
-          this->node_logging_->get_logger(), *this->node_clock_->get_clock(), 1000,
-          "Failed to set assignment '" << assignment_name << "': Assignment does not exist.");
+        this->node_logging_->get_logger(), *this->node_clock_->get_clock(), 1000,
+        "Failed to set assignment '" << assignment_name << "': Assignment does not exist.");
     return;
   }
   try {
     assignment->set_parameter_value<T>(assignment_value);
-  } catch (const state_representation::exceptions::InvalidParameterCastException&){
+  } catch (const state_representation::exceptions::InvalidParameterCastException&) {
     RCLCPP_ERROR_STREAM_THROTTLE(
         this->node_logging_->get_logger(), *this->node_clock_->get_clock(), 1000,
-        "Failed to trigger assignment '" << assignment_name << "': Incompatible value type.");
+        "Failed to set assignment '" << assignment_name << "': Incompatible value type.");
     return;
   }
   message.node = this->node_base_->get_fully_qualified_name();
@@ -875,6 +878,20 @@ void ComponentInterface::set_assignment(const std::string& assignment_name, cons
 
 template<typename T>
 T ComponentInterface::get_assignment(const std::string& assignment_name) const {
-  return this->assignments_map_.get_parameter(assignment_name)->template get_parameter_value<T>();
+  std::shared_ptr<state_representation::ParameterInterface> assignment;
+  try {
+    assignment = this->assignments_map_.get_parameter(assignment_name);
+  } catch (const state_representation::exceptions::InvalidParameterException&) {
+    throw modulo_core::exceptions::InvalidAssignmentException(
+        "Failed to get assignment '" + assignment_name + "' value: Assignment does not exist.");
+  }
+  try {
+    return assignment->get_parameter_value<T>();
+  } catch (const state_representation::exceptions::InvalidParameterCastException&) {
+    auto expected_type = state_representation::get_parameter_type_name(assignment->get_parameter_type());
+    throw modulo_core::exceptions::InvalidAssignmentException(
+        "Failed to get assignment '" + assignment_name + "' value: Incompatible type for assignment defined with type '"
+        + expected_type + "'.");
+  }
 }
 }// namespace modulo_components
