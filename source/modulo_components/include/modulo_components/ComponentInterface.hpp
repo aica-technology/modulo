@@ -167,17 +167,16 @@ protected:
    * @brief Add an assignment to the map of assignments.
    * @tparam T The type of the assignment
    * @param assignment_name the name of the associated assignment
-   * @throws std::exception if the assignment could not be added
    */
   template<typename T>
   void add_assignment(const std::string& assignment_name);
 
   /**
-  * @brief Set an assignment.
-  * @tparam T The type of the assignment   
-  * @param assignment_name The name of the assignment to publish
-  * @param assignment_value The value of the assignment
-  */
+   * @brief Set an assignment.
+   * @tparam T The type of the assignment   
+   * @param assignment_name The name of the assignment to publish
+   * @param assignment_value The value of the assignment
+   */
   template<typename T>
   void set_assignment(const std::string& assignment_name, const T& assignment_value);
 
@@ -582,9 +581,10 @@ private:
   std::shared_ptr<rclcpp::Publisher<modulo_interfaces::msg::PredicateCollection>>
       predicate_publisher_;///< Predicate publisher
   modulo_interfaces::msg::PredicateCollection predicate_message_;
+  std::vector<std::string> triggers_;///< List of triggers
+
   state_representation::ParameterMap assignments_map_;                                         ///< Map of assignments
   std::shared_ptr<rclcpp::Publisher<modulo_interfaces::msg::Assignment>> assignment_publisher_;///< Assignment publisher
-  std::vector<std::string> triggers_;                                                          ///< List of triggers
 
   std::map<std::string, std::shared_ptr<rclcpp::Service<modulo_interfaces::srv::EmptyTrigger>>>
       empty_services_;///< Map of EmptyTrigger services
@@ -857,7 +857,6 @@ template<typename T>
 inline void ComponentInterface::add_assignment(const std::string& assignment_name) {
   std::string parsed_name = modulo_utils::parsing::parse_topic_name(assignment_name);
   if (parsed_name.empty()) {
-    // TODO: throw an exception
     RCLCPP_ERROR_STREAM(
         this->node_logging_->get_logger(),
         "The parsed name for assignment '" + assignment_name
@@ -918,7 +917,7 @@ T ComponentInterface::get_assignment(const std::string& assignment_name) const {
     assignment = this->assignments_map_.get_parameter(assignment_name);
   } catch (const state_representation::exceptions::InvalidParameterException&) {
     throw modulo_core::exceptions::InvalidAssignmentException(
-        "Failed to get assignment '" + assignment_name + "' value: Assignment does not exist.");
+        "Failed to get value of assignment '" + assignment_name + "': Assignment does not exist.");
   }
   try {
     return assignment->get_parameter_value<T>();

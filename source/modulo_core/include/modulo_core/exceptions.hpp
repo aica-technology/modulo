@@ -43,16 +43,6 @@ public:
 };
 
 /**
- * @class AddAssignmentException
- * @brief An exception class to notify errors when adding an assignment.
- * @details This is an exception class to be thrown if there is a problem while adding an assignment to a modulo class.
- */
-class AddAssignmentException : public CoreException {
-public:
-  explicit AddAssignmentException(const std::string& msg) : CoreException("AddAssignmentException", msg) {}
-};
-
-/**
  * @class InvalidAssignmentException
  * @brief An exception class to notify errors when getting the value of an assignment.
  * @details This is an exception class to be thrown if there is a problem while getting the value of an assignment in a modulo class.
