@@ -924,8 +924,7 @@ T ComponentInterface::get_assignment(const std::string& assignment_name) const {
   } catch (const state_representation::exceptions::InvalidParameterCastException&) {
     auto expected_type = state_representation::get_parameter_type_name(assignment->get_parameter_type());
     throw modulo_core::exceptions::InvalidAssignmentException(
-        "Failed to get assignment '" + assignment_name + "' value: Incompatible type for assignment defined with type '"
-        + expected_type + "'.");
+        "Incompatible type for assignment '" + assignment_name + "' defined with type '" + expected_type + "'.");
   }
 }
 }// namespace modulo_components
