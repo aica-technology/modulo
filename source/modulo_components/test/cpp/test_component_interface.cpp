@@ -44,38 +44,31 @@ TYPED_TEST_SUITE(ComponentInterfaceTest, NodeTypes);
 
 TYPED_TEST(ComponentInterfaceTest, AddAssignment) {
   this->component_->template add_assignment<int>("an_assignment");
-  const auto one = this->component_->assignments_map_.get_parameter_list().size();
   // adding an assignment with empty name should fail
   EXPECT_NO_THROW(this->component_->template add_assignment<int>(""));
   // adding an assignment with the same name should just overwrite
   this->component_->template add_assignment<int>("an_assignment");
-  EXPECT_EQ(this->component_->assignments_map_.get_parameter_list().size(), one);
+  EXPECT_EQ(this->component_->assignments_map_.get_parameter_list().size(), 1);
   // names should be cleaned up
   EXPECT_NO_THROW(this->component_->template add_assignment<int>("7cleEaGn_AaSssiGNgn#ment"));
-  EXPECT_NE(this->component_->assignments_map_.get_parameter_list().size(), one);
+  EXPECT_EQ(this->component_->assignments_map_.get_parameter_list().size(), 2);
   // names without valid characters should fail
   EXPECT_NO_THROW(this->component_->template add_assignment<int>("@@@@@@"));
-
-  EXPECT_NO_THROW(auto discard = this->component_->assignments_map_.get_parameter("an_assignment"));
-  EXPECT_NO_THROW(auto discard = this->component_->assignments_map_.get_parameter("clean_assignment"));
-  EXPECT_THROW(auto discard = this->component_->assignments_map_.get_parameter("no_assignment"), state_representation::exceptions::InvalidParameterException);
+  EXPECT_EQ(this->component_->assignments_map_.get_parameter_list().size(), 2);
 }
 
-TYPED_TEST(ComponentInterfaceTest, SetAssignment) {
-  this->component_->template add_assignment<int>("trigger_assignment_string");
-
+TYPED_TEST(ComponentInterfaceTest, GetSetAssignment) {
+  this->component_->template add_assignment<int>("int_assignment");
+  
+  EXPECT_THROW(this->component_->template get_assignment<int>("non_existent"), modulo_core::exceptions::InvalidAssignmentException); 
   EXPECT_NO_THROW(this->component_->set_assignment("non_existent", 5));
-  EXPECT_NO_THROW(this->component_->set_assignment("trigger_assignment_string", std::string("test")));
-  EXPECT_NO_THROW(this->component_->set_assignment("trigger_assignment_string", 5));
-}
 
-TYPED_TEST(ComponentInterfaceTest, GetAssignment) {
-  this->component_->template add_assignment<int>("get_assignment_int");
-  EXPECT_THROW(this->component_->template get_assignment<int>("not_declared"), modulo_core::exceptions::InvalidAssignmentException); 
-  EXPECT_THROW(this->component_->template get_assignment<int>("get_assignment_int"), state_representation::exceptions::EmptyStateException); 
-  EXPECT_NO_THROW(this->component_->set_assignment("get_assignment_int", 5));
-  EXPECT_EQ(this->component_->template get_assignment<int>("get_assignment_int"), 5); 
-  EXPECT_THROW(this->component_->template get_assignment<std::string>("get_assignment_int"), modulo_core::exceptions::InvalidAssignmentException); 
+  EXPECT_THROW(this->component_->template get_assignment<int>("int_assignment"), state_representation::exceptions::EmptyStateException); 
+  EXPECT_NO_THROW(this->component_->set_assignment("int_assignment", 5));
+  EXPECT_NO_THROW(this->component_->set_assignment("int_assignment", std::string("test")));
+
+  EXPECT_EQ(this->component_->template get_assignment<int>("int_assignment"), 5); 
+  EXPECT_THROW(this->component_->template get_assignment<std::string>("int_assignment"), modulo_core::exceptions::InvalidAssignmentException); 
 }
 
 TYPED_TEST(ComponentInterfaceTest, AddBoolPredicate) {

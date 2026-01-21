@@ -181,13 +181,13 @@ protected:
   void set_assignment(const std::string& assignment_name, const T& assignment_value);
 
   /**
-  * @brief Get the value of an assignment.
-  * @tparam T The type of the assignment value   
-  * @param assignment_name The name of the assignment to get
-  * @throws modulo_core::exceptions::InvalidAssignmentException if the assignment does not exist or the type does not 
-    match
-    @throws state_representation::exceptions::EmptyStateException if the assignment has not been set yet 
-  */
+   * @brief Get the value of an assignment.
+   * @tparam T The type of the assignment value   
+   * @param assignment_name The name of the assignment to get
+   * @throws modulo_core::exceptions::InvalidAssignmentException if the assignment does not exist or the type does not 
+     match
+     @throws state_representation::exceptions::EmptyStateException if the assignment has not been set yet 
+   */
   template<typename T>
   T get_assignment(const std::string& assignment_name) const;
 
