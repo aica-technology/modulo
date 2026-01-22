@@ -32,5 +32,5 @@ parameters:
     description: The seconds to wait for valid data on the state interfaces before activating (in seconds)
     parameter_name: activation_timeout
     parameter_type: double
-    default_value: "1.0"
+    default_value: 1.0
     internal: true
