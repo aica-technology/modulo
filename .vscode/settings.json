@@ -28,4 +28,9 @@
     "editor.rulers": [
         120
     ],
+    "yaml.schemas": {
+        "https://docs.aica.tech/schemas/1-0-2/extension.schema.json": [
+            "extension_descriptions/*.yaml"
+        ]
+    }
 }

@@ -1,0 +1,48 @@
+schema: 1-0-2
+name: Robot Controller Interface
+description:
+  brief: Base controller class that automatically associates joints with a JointState object
+virtual: true
+inherits: modulo_controllers/ControllerInterface
+class: modulo_controllers/RobotControllerInterface
+type: controller
+parameters:
+  - display_name: FT sensor name
+    description: Optionally, the name of a force-torque sensor in the hardware interface
+    parameter_name: ft_sensor_name
+    parameter_type: string
+    default_value: null
+    optional: true
+  - display_name: FT sensor reference frame
+    description: The reference frame of the force-torque sensor in the robot model
+    parameter_name: ft_sensor_reference_frame
+    parameter_type: string
+    default_value: null
+    optional: true
+  - display_name: Command half life
+    description:
+      A time constant for the exponential decay of the commanded velocity, acceleration or torque if no new command is
+      set
+    parameter_name: command_half_life
+    parameter_type: double
+    default_value: 0.1
+  - display_name: Command rate limit
+    description: The maximum allowable change in command on any interface expressed in command units / second
+    parameter_name: command_rate_limit
+    parameter_type: double
+    default_value: null
+    optional: true
+  - display_name: Task-space frame
+    description:
+      The frame name in the robot model to use for kinematics calculations (defaults to the last frame in the model)
+    parameter_name: task_space_frame
+    parameter_type: string
+    default_value: null
+    optional: true
+    internal: true
+  - display_name: Sort joints
+    description: If true, re-arrange the 'joints' parameter into a physically correct order according to the robot model
+    parameter_name: joints
+    parameter_type: bool
+    default_value: true
+    internal: true

@@ -1,0 +1,24 @@
+schema: 1-0-2
+name: Component
+description:
+  brief: A wrapper for rclcpp::Node to simplify application composition through unified component interfaces.
+  details:
+    This class is intended for direct inheritance to implement custom components that perform one-shot or externally
+    triggered operations.
+virtual: true
+inherits: ""
+class: modulo_components::Component
+type: component
+parameters:
+  - display_name: Rate
+    description: The frequency in Hertz for all periodic callbacks
+    parameter_name: rate
+    parameter_type: double
+    default_value: 10.0
+predicates:
+  - display_name: In error state
+    description: True if the component is in error state
+    predicate_name: in_error_state
+  - display_name: Is finished
+    description: True if the on_execute_callback() method of one-shot components successfully finished
+    predicate_name: is_finished

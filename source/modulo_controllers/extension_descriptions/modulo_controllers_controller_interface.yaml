@@ -1,0 +1,36 @@
+schema: 1-0-2
+name: Controller Interface
+description:
+  brief: Controller interface class that includes custom parameters for derived controllers
+virtual: true
+inherits: modulo_controllers/BaseControllerInterface
+class: modulo_controllers/ControllerInterface
+type: controller
+parameters:
+  - display_name: Hardware name
+    description: The name of the hardware interface
+    parameter_name: hardware_name
+    parameter_type: string
+    default_value: null
+    optional: true
+    internal: true
+  - display_name: Joints
+    description: A vector of joint names that the controller will claim
+    parameter_name: joints
+    parameter_type: string_array
+    default_value: null
+    optional: true
+    internal: true
+  - display_name: Robot description
+    description: The string formatted content of the controller's URDF description
+    parameter_name: robot_description
+    parameter_type: string
+    default_value: null
+    optional: true
+    internal: true
+  - display_name: Activation timeout
+    description: The seconds to wait for valid data on the state interfaces before activating (in seconds)
+    parameter_name: activation_timeout
+    parameter_type: double
+    default_value: "1.0"
+    internal: true
