@@ -27,6 +27,7 @@ Release Versions:
 ## Upcoming changes
 
 - fix(controllers): safe interface map check (#233)
+- feat: add extension descriptions (#225)
 
 ## 5.3.0
 
