@@ -411,7 +411,7 @@ class ComponentInterface(Node):
         message = copy.copy(self.__assignment_message)
         message.assignment = assigned_parameter.to_parameter_msg()
         self.__assignment_publisher.publish(message)
-self.__predicate_message.type = PredicateCollection.COMPONENT
+
     def get_predicate(self, name: str) -> bool:
         """
         Get the value of the predicate given as parameter. If the predicate is not found or the callable function fails,
