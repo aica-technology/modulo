@@ -7,7 +7,7 @@ import rclpy
 import state_representation as sr
 from modulo_interfaces.srv import EmptyTrigger, StringTrigger
 from modulo_components.component_interface import ComponentInterface
-from modulo_core.exceptions import CoreError, LookupTransformError
+from modulo_core.exceptions import CoreError, LookupTransformError, ParameterError, AssignmentException
 from rclpy.qos import QoSProfile
 from std_msgs.msg import Bool, String
 from sensor_msgs.msg import JointState
@@ -69,6 +69,35 @@ def test_set_predicate(component_interface):
     component_interface.add_predicate('bar', True)
     component_interface.set_predicate('bar', lambda: False)
     assert not component_interface.get_predicate('bar')
+
+
+def test_add_assignment(component_interface):
+    component_interface.add_assignment('string_assignment', sr.ParameterType.STRING)
+    assert 'string_assignment' in component_interface._ComponentInterface__assignment_dict.keys()
+    assert component_interface._ComponentInterface__assignment_dict['string_assignment'].is_empty()
+    # adding an empty assignment should fail
+    component_interface.add_assignment('', sr.ParameterType.STRING)
+    assert len(component_interface._ComponentInterface__assignment_dict) == 1
+
+
+def test_set_get_assignment(component_interface):
+    # setting a non defined assignment should fail
+    component_interface.set_assignment('string_assignment', 'test')
+    with pytest.raises(ParameterError):
+        component_interface.get_assignment('string_assignment')
+    component_interface.add_assignment('string_assignment', sr.ParameterType.STRING)
+
+    # setting the wrong type of value should fail
+    with pytest.raises(AssignmentException):
+        component_interface.set_assignment('string_assignment', 5)
+    assert component_interface._ComponentInterface__assignment_dict['string_assignment'].is_empty()
+    # setting the right type of value should succeed
+    component_interface.set_assignment('string_assignment', 'test')
+    assert component_interface.get_assignment('string_assignment') == 'test'
+    # setting the worng type again and getting should still work
+    with pytest.raises(AssignmentException):
+        component_interface.set_assignment('string_assignment', 5)
+    assert component_interface.get_assignment('string_assignment') == 'test'
 
 
 def test_declare_signal(component_interface):
