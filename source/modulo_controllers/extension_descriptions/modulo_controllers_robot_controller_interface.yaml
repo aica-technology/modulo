@@ -28,7 +28,7 @@ parameters:
     default_value: 0.1
     validation:
       range:
-        exclusive_minimum: 0
+        minimum: 0
   - display_name: Command rate limit
     description: The maximum allowable change in command on any interface expressed in command units / second
     parameter_name: command_rate_limit
@@ -37,7 +37,7 @@ parameters:
     optional: true
     validation:
       range:
-        exclusive_minimum: 0
+        minimum: 0
   - display_name: Task-space frame
     description:
       The frame name in the robot model to use for kinematics calculations (defaults to the last frame in the model)
