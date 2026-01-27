@@ -3,7 +3,7 @@ name: Base Controller Interface
 description:
   brief: Base controller class to combine ros2_control, control libraries and modulo
 virtual: true
-inherits: ""
+inherits: "controller_interface::ControllerInterface"
 class: modulo_controllers/BaseControllerInterface
 type: controller
 parameters:
@@ -12,12 +12,18 @@ parameters:
     parameter_name: input_validity_period
     parameter_type: double
     default_value: 1.0
+    validation:
+      range:
+        exclusive_minimum: 0
   - display_name: Predicate publishing rate
     description: The rate at which to publish controller predicates (in Hertz)
     parameter_name: predicate_publishing_rate
     parameter_type: double
     default_value: 10.0
     internal: true
+    validation:
+      range:
+        exclusive_minimum: 0
   - display_name: Update rate
     description:
       The rate at which to evaluate the controller (in Hertz). Defaults to the controller manager rate if not set.
@@ -26,6 +32,9 @@ parameters:
     default_value: null
     optional: true
     internal: true
+    validation:
+      range:
+        exclusive_minimum: 0
   - display_name: Is Async
     description: Whether the controller should be evaluated asynchronously
     parameter_name: is_async

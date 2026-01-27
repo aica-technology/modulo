@@ -8,7 +8,7 @@ description:
     This class is intended for direct inheritance to implement custom state-based components that perform different
     behaviors based on their state and on state transitions.
 virtual: true
-inherits: ""
+inherits: "rclcpp_lifecycle::LifecycleNode"
 class: modulo_components::LifecycleComponent
 type: lifecycle_component
 parameters:
@@ -17,3 +17,6 @@ parameters:
     parameter_name: rate
     parameter_type: double
     default_value: 10.0
+    validation:
+      range:
+        exclusive_minimum: 0

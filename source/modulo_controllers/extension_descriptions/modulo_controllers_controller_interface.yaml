@@ -34,3 +34,6 @@ parameters:
     parameter_type: double
     default_value: 1.0
     internal: true
+    validation:
+      range:
+        exclusive_minimum: 0
