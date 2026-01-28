@@ -159,6 +159,7 @@ BaseControllerInterface::on_set_parameters_callback(const std::vector<rclcpp::Pa
 bool BaseControllerInterface::validate_parameter(const std::shared_ptr<ParameterInterface>& parameter) {
   if (parameter->get_name() == "predicate_publishing_rate" || parameter->get_name() == "input_validity_period") {
     auto value = parameter->get_parameter_value<double>();
+    // FIXME: don't allow zero
     if (value < 0.0 || value > std::numeric_limits<double>::max()) {
       RCLCPP_ERROR(
           get_node()->get_logger(), "Parameter value of parameter '%s' should be a positive finite number",

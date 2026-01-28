@@ -23,6 +23,8 @@ endif()
 find_package(ament_cmake_auto REQUIRED)
 find_package(control_libraries 9.0.0 CONFIG REQUIRED COMPONENTS state_representation robot_model controllers)
 
+include(InstallAicaDescriptions)
+
 ament_auto_find_build_dependencies()
 
 include_directories(include)
@@ -34,8 +36,8 @@ ament_auto_add_library(${PROJECT_NAME} SHARED
 
 target_link_libraries(${PROJECT_NAME} ${control_libraries_LIBRARIES})
 
-install(DIRECTORY ./controller_descriptions
-        DESTINATION .)
+install_aica_descriptions(./controller_descriptions ${CMAKE_INSTALL_PREFIX}/controller_descriptions)
+install_aica_descriptions(./extension_descriptions ${CMAKE_INSTALL_PREFIX}/extension_descriptions)
 
 ament_auto_package()
 
