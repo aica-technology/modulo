@@ -80,24 +80,22 @@ def test_add_assignment(component_interface):
     assert len(component_interface._ComponentInterface__assignment_dict) == 1
 
 
-def test_set_get_assignment(component_interface):
-    # setting a non defined assignment should fail
-    component_interface.set_assignment('string_assignment', 'test')
+def test_get_set_assignment(component_interface):
+    component_interface.add_assignment('int_assignment', sr.ParameterType.INT)
+
     with pytest.raises(ParameterError):
         component_interface.get_assignment('string_assignment')
-    component_interface.add_assignment('string_assignment', sr.ParameterType.STRING)
+    component_interface.set_assignment('string_assignment', 'test')
 
+    # TODO: Will not throw, pending release of #261 PR in control libraries
+    with pytest.raises(sr.exceptions.EmptyStateError):
+        component_interface.get_assignment('int_assignment')
     # setting the wrong type of value should fail
     with pytest.raises(AssignmentException):
-        component_interface.set_assignment('string_assignment', 5)
-    assert component_interface._ComponentInterface__assignment_dict['string_assignment'].is_empty()
-    # setting the right type of value should succeed
-    component_interface.set_assignment('string_assignment', 'test')
-    assert component_interface.get_assignment('string_assignment') == 'test'
-    # setting the worng type again and getting should still work
-    with pytest.raises(AssignmentException):
-        component_interface.set_assignment('string_assignment', 5)
-    assert component_interface.get_assignment('string_assignment') == 'test'
+        component_interface.set_assignment('int_assignment', 'test')
+    assert component_interface._ComponentInterface__assignment_dict['int_assignment'].is_empty()
+    component_interface.set_assignment('int_assignment', 5)
+    assert component_interface.get_assignment('int_assignment') == 5
 
 
 def test_declare_signal(component_interface):
