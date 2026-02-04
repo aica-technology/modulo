@@ -398,9 +398,8 @@ class ComponentInterface(Node):
                 f"Failed to set assignment '{name}': Assignment does not exist.", throttle_duration_sec=1.0)
             return
         try:
-            assigned_parameter = write_parameter(
-                sr.Parameter(name, value, self.__assignment_dict[name].get_parameter_type()))
-            self.__assignment_dict[name] = read_parameter_const(assigned_parameter, self.__assignment_dict[name])
+            self.__assignment_dict[name].set_value(value)
+            ros_param = write_parameter(self.__assignment_dict[name])
         except Exception as e:
             self.get_logger().error(
                 f"Failed to set assignment '{name}': {e}",
@@ -409,7 +408,7 @@ class ComponentInterface(Node):
             raise AssignmentException(f"Failed to set assignment '{name}': {e}")
 
         message = copy.copy(self.__assignment_message)
-        message.assignment = assigned_parameter.to_parameter_msg()
+        message.assignment = ros_param.to_parameter_msg()
         self.__assignment_publisher.publish(message)
 
     def get_predicate(self, name: str) -> bool:
