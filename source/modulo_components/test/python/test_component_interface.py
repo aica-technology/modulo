@@ -7,7 +7,7 @@ import rclpy
 import state_representation as sr
 from modulo_interfaces.srv import EmptyTrigger, StringTrigger
 from modulo_components.component_interface import ComponentInterface
-from modulo_core.exceptions import CoreError, LookupTransformError, ParameterError, AssignmentException
+from modulo_core.exceptions import CoreError, LookupTransformError, InvalidAssignmentError
 from rclpy.qos import QoSProfile
 from std_msgs.msg import Bool, String
 from sensor_msgs.msg import JointState
@@ -73,17 +73,26 @@ def test_set_predicate(component_interface):
 
 def test_add_assignment(component_interface):
     component_interface.add_assignment('string_assignment', sr.ParameterType.STRING)
-    assert 'string_assignment' in component_interface._ComponentInterface__assignment_dict.keys()
-    assert component_interface._ComponentInterface__assignment_dict['string_assignment'].is_empty()
+    assert len(component_interface._ComponentInterface__assignment_dict) == 1
     # adding an empty assignment should fail
     component_interface.add_assignment('', sr.ParameterType.STRING)
     assert len(component_interface._ComponentInterface__assignment_dict) == 1
+    # adding the assignment again should just overwrite
+    component_interface.add_assignment('string_assignment', sr.ParameterType.STRING)
+    assert len(component_interface._ComponentInterface__assignment_dict) == 1
+    # names should be cleaned up
+    component_interface.add_assignment('7cleEaGn_AaSssiGNgn#ment', sr.ParameterType.STRING)
+    assert 'clean_assignment' in component_interface._ComponentInterface__assignment_dict.keys()
+    assert len(component_interface._ComponentInterface__assignment_dict) == 2
+    # names without valid characters should fail
+    component_interface.add_assignment('@@@@@@@', sr.ParameterType.STRING)
+    assert len(component_interface._ComponentInterface__assignment_dict) == 2
 
 
 def test_get_set_assignment(component_interface):
     component_interface.add_assignment('int_assignment', sr.ParameterType.INT)
 
-    with pytest.raises(ParameterError):
+    with pytest.raises(InvalidAssignmentError):
         component_interface.get_assignment('string_assignment')
     component_interface.set_assignment('string_assignment', 'test')
 
@@ -91,7 +100,7 @@ def test_get_set_assignment(component_interface):
     with pytest.raises(sr.exceptions.EmptyStateError):
         component_interface.get_assignment('int_assignment')
     # setting the wrong type of value should fail
-    with pytest.raises(AssignmentException):
+    with pytest.raises(InvalidAssignmentError):
         component_interface.set_assignment('int_assignment', 'test')
     assert component_interface._ComponentInterface__assignment_dict['int_assignment'].is_empty()
     component_interface.set_assignment('int_assignment', 5)

@@ -376,11 +376,11 @@ class ComponentInterface(Node):
         Get the assignment value from the assignment dictionary by its name.
 
         :param name: The name of the assignment
-        :raises ParameterError: if the assignment does not exist
+        :raises InvalidAssignmentError: if the assignment does not exist
         :return: The value of the assignment, if the assignment exists and has been assigned
         """
         if name not in self.__assignment_dict.keys():
-            raise ParameterError(f"Assignment '{name}' is not in the dict of assignments")
+            raise InvalidAssignmentError(f"Assignment '{name}' is not in the dict of assignments")
         try:
             return self.__assignment_dict[name].get_value()
         except AttributeError as e:
@@ -405,7 +405,7 @@ class ComponentInterface(Node):
                 f"Failed to set assignment '{name}': {e}",
                 throttle_duration_sec=1.0,
             )
-            raise AssignmentException(f"Failed to set assignment '{name}': {e}")
+            raise InvalidAssignmentError(f"Failed to set assignment '{name}': {e}")
 
         message = copy.copy(self.__assignment_message)
         message.assignment = ros_param.to_parameter_msg()
