@@ -384,7 +384,7 @@ class ComponentInterface(Node):
         try:
             return self.__assignment_dict[name].get_value()
         except AttributeError as e:
-            raise ParameterError(f"{e}")
+            raise InvalidAssignmentError(f"{e}")
 
     def set_assignment(self, name: str, value: T) -> None:
         """
