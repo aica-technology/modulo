@@ -356,12 +356,12 @@ class ComponentInterface(Node):
         """
         parsed_name = parse_topic_name(name)
         if not parsed_name:
-            self.get_logger().error((f"The parsed assignment name for '{name}' is empty. Provide a "
+            self.get_logger().error((f"The parsed name for assignment '{name}' is empty. Provide a "
             "string with valid characters for the assignment name ([a-z0-9_])."))
             return        
         if parsed_name != name:
-            self.get_logger().error((f"The parsed assignment name for '{name}' is '{parsed_name}'. Use that "
-            "to refer to the assignment."))
+            self.get_logger().error((f"The parsed name for assignment '{name}' is '{parsed_name}'. Use the parsed name "
+            "to refer to this assignment."))
         if parsed_name in self.__assignment_dict.keys():
             self.get_logger().warn(f"Assignment with name '{parsed_name}' already exists, overwriting.")
         else:
@@ -381,10 +381,10 @@ class ComponentInterface(Node):
         """
         if name not in self.__assignment_dict.keys():
             raise InvalidAssignmentError(f"Assignment '{name}' is not in the dict of assignments")
-        try:
-            return self.__assignment_dict[name].get_value()
-        except AttributeError as e:
-            raise InvalidAssignmentError(f"{e}")
+        if self.__assignment_dict[name].is_empty():
+            # TODO: remove after control libraries v9.3.1
+            raise sr.exceptions.EmptyStateError(f"Parameter '{name}' is empty")
+        return self.__assignment_dict[name].get_value()
 
     def set_assignment(self, name: str, value: T) -> None:
         """
