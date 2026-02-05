@@ -377,6 +377,7 @@ class ComponentInterface(Node):
 
         :param name: The name of the assignment
         :raises InvalidAssignmentError: if the assignment does not exist
+        :raises EmptyStateError: if the assignment has not been set yet
         :return: The value of the assignment, if the assignment exists and has been assigned
         """
         if name not in self.__assignment_dict.keys():
