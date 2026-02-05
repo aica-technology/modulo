@@ -91,12 +91,9 @@ def test_add_assignment(component_interface):
 
 def test_get_set_assignment(component_interface):
     component_interface.add_assignment('int_assignment', sr.ParameterType.INT)
-
     with pytest.raises(InvalidAssignmentError):
         component_interface.get_assignment('string_assignment')
     component_interface.set_assignment('string_assignment', 'test')
-
-    # TODO: Will not throw, pending release of #261 PR in control libraries
     with pytest.raises(sr.exceptions.EmptyStateError):
         component_interface.get_assignment('int_assignment')
     # setting the wrong type of value should fail
