@@ -356,12 +356,14 @@ class ComponentInterface(Node):
         """
         parsed_name = parse_topic_name(name)
         if not parsed_name:
-            self.get_logger().error((f"The parsed name for assignment '{name}' is empty. Provide a "
-            "string with valid characters for the assignment name ([a-z0-9_])."))
+            self.get_logger().error(
+                f"The parsed name for assignment '{name}' is empty. Provide a "
+                "string with valid characters for the assignment name ([a-z0-9_]).")
             return        
         if parsed_name != name:
-            self.get_logger().error((f"The parsed name for assignment '{name}' is '{parsed_name}'. Use the parsed name "
-            "to refer to this assignment."))
+            self.get_logger().error(
+                f"The parsed name for assignment '{name}' is '{parsed_name}'. Use the parsed name "
+                "to refer to this assignment.")
         if parsed_name in self.__assignment_dict.keys():
             self.get_logger().warn(f"Assignment with name '{parsed_name}' already exists, overwriting.")
         else:
