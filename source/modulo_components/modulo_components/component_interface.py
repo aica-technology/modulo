@@ -384,7 +384,7 @@ class ComponentInterface(Node):
             raise InvalidAssignmentError(f"Assignment '{name}' is not in the dict of assignments")
         if self.__assignment_dict[name].is_empty():
             # TODO: remove after control libraries v9.3.1
-            raise sr.exceptions.EmptyStateError(f"Parameter '{name}' is empty")
+            raise sr.exceptions.EmptyStateError(f"{name} state is empty")
         return self.__assignment_dict[name].get_value()
 
     def set_assignment(self, name: str, value: T) -> None:
@@ -402,10 +402,7 @@ class ComponentInterface(Node):
             self.__assignment_dict[name].set_value(value)
             ros_param = write_parameter(self.__assignment_dict[name])
         except Exception as e:
-            self.get_logger().error(
-                f"Failed to set assignment '{name}': {e}",
-                throttle_duration_sec=1.0,
-            )
+            self.get_logger().error(f"Failed to set assignment '{name}': {e}", throttle_duration_sec=1.0)
             return
 
         message = copy.copy(self.__assignment_message)
