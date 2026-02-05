@@ -406,7 +406,7 @@ class ComponentInterface(Node):
                 f"Failed to set assignment '{name}': {e}",
                 throttle_duration_sec=1.0,
             )
-            raise InvalidAssignmentError(f"Failed to set assignment '{name}': {e}")
+            return
 
         message = copy.copy(self.__assignment_message)
         message.assignment = ros_param.to_parameter_msg()
