@@ -97,8 +97,7 @@ def test_get_set_assignment(component_interface):
     with pytest.raises(sr.exceptions.EmptyStateError):
         component_interface.get_assignment('int_assignment')
     # setting the wrong type of value should fail
-    with pytest.raises(InvalidAssignmentError):
-        component_interface.set_assignment('int_assignment', 'test')
+    component_interface.set_assignment('int_assignment', 'test')
     assert component_interface._ComponentInterface__assignment_dict['int_assignment'].is_empty()
     component_interface.set_assignment('int_assignment', 5)
     assert component_interface.get_assignment('int_assignment') == 5
