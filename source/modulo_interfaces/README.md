@@ -30,7 +30,7 @@ predicates.
 
 ### Assignment
 
-The assignment message contains the assignment name and the value (a parameter value) as well as the name of the node
+The assignment message contains the value and the name of the assignment as a parameter, as well as the name of the node
 that emits the assignment.
 
 ## Services
