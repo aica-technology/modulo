@@ -74,3 +74,11 @@ class LookupJointPositionsException(CoreError):
 
     def __init__(self, message: str):
         super().__init__(message, "LookupJointPositionsException")
+
+class InvalidAssignmentError(CoreError):
+    """
+    An exception class to notify errors when getting the value of an assignment.
+    """
+
+    def __init__(self, message: str):
+        super().__init__(message, "InvalidAssignmentError")

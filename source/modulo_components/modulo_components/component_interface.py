@@ -10,6 +10,7 @@ import modulo_core.translators.message_readers as modulo_readers
 import modulo_core.translators.message_writers as modulo_writers
 import state_representation as sr
 from geometry_msgs.msg import TransformStamped
+from modulo_interfaces.msg import Assignment as AssignmentMsg
 from modulo_interfaces.msg import Predicate as PredicateMsg
 from modulo_interfaces.msg import PredicateCollection
 from modulo_interfaces.srv import EmptyTrigger, StringTrigger
@@ -46,6 +47,7 @@ class ComponentInterface(Node):
         super().__init__(node_name, *args, **node_kwargs)
         self.__step_lock = Lock()
         self.__parameter_dict: Dict[str, Union[str, sr.Parameter]] = {}
+        self.__assignment_dict: Dict[str, sr.Parameter] = {}
         self.__read_only_parameters: Dict[str, bool] = {}
         self.__pre_set_parameters_callback_called = False
         self.__set_parameters_result = SetParametersResult()
@@ -68,6 +70,9 @@ class ComponentInterface(Node):
         self.add_parameter(sr.Parameter("rate", 10.0, sr.ParameterType.DOUBLE),
                            "The rate in Hertz for all periodic callbacks")
 
+        self.__assignment_publisher = self.create_publisher(AssignmentMsg, "/assignments", self.__qos)
+        self.__assignment_message = AssignmentMsg()
+        self.__assignment_message.node = self.get_fully_qualified_name()
         self.__predicate_publisher = self.create_publisher(PredicateCollection, "/predicates", self.__qos)
         self.__predicate_message = PredicateCollection()
         self.__predicate_message.node = self.get_fully_qualified_name()
@@ -341,6 +346,70 @@ class ComponentInterface(Node):
                 self.__predicates[name] = Predicate(lambda: predicate)
         except Exception as e:
             self.get_logger().error(f"Failed to add predicate '{name}': {e}")
+
+    def add_assignment(self, name: str, type: sr.ParameterType) -> None:
+        """
+        Add an assignment to the dictionary of assignments.
+
+        :param name: The name of the assignment
+        :param type: The type of the assignment
+        """
+        parsed_name = parse_topic_name(name)
+        if not parsed_name:
+            self.get_logger().error(
+                f"The parsed name for assignment '{name}' is empty. Provide a "
+                "string with valid characters for the assignment name ([a-z0-9_]).")
+            return        
+        if parsed_name != name:
+            self.get_logger().error(
+                f"The parsed name for assignment '{name}' is '{parsed_name}'. Use the parsed name "
+                "to refer to this assignment.")
+        if parsed_name in self.__assignment_dict.keys():
+            self.get_logger().warn(f"Assignment with name '{parsed_name}' already exists, overwriting.")
+        else:
+            self.get_logger().debug(f"Adding assignment '{parsed_name}'.")
+        try:
+            self.__assignment_dict[parsed_name] = sr.Parameter(parsed_name, type)
+        except Exception as e:
+            self.get_logger().error(f"Failed to add assignment '{parsed_name}': {e}")
+
+    def get_assignment(self, name: str) -> T:
+        """
+        Get the assignment value from the assignment dictionary by its name.
+
+        :param name: The name of the assignment
+        :raises InvalidAssignmentError: if the assignment does not exist
+        :raises EmptyStateError: if the assignment has not been set yet
+        :return: The value of the assignment, if the assignment exists and has been assigned
+        """
+        if name not in self.__assignment_dict.keys():
+            raise InvalidAssignmentError(f"Assignment '{name}' is not in the dict of assignments")
+        if self.__assignment_dict[name].is_empty():
+            # TODO: remove after control libraries v9.3.1
+            raise sr.exceptions.EmptyStateError(f"{name} state is empty")
+        return self.__assignment_dict[name].get_value()
+
+    def set_assignment(self, name: str, value: T) -> None:
+        """
+        Set the value of an assignment. The assignment must have been previously declared.
+
+        :param name: The name of the assignment
+        :param value: The value of the assignment
+        """
+        if name not in self.__assignment_dict.keys():
+            self.get_logger().error(
+                f"Failed to set assignment '{name}': Assignment does not exist.", throttle_duration_sec=1.0)
+            return
+        try:
+            self.__assignment_dict[name].set_value(value)
+            ros_param = write_parameter(self.__assignment_dict[name])
+        except Exception as e:
+            self.get_logger().error(f"Failed to set assignment '{name}': {e}", throttle_duration_sec=1.0)
+            return
+
+        message = copy.copy(self.__assignment_message)
+        message.assignment = ros_param.to_parameter_msg()
+        self.__assignment_publisher.publish(message)
 
     def get_predicate(self, name: str) -> bool:
         """
