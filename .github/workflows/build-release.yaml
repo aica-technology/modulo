@@ -63,7 +63,7 @@ jobs:
         arch: [amd64, arm64]
         include:
           - image: ubuntu-latest
-          - image: buildjet-8vcpu-ubuntu-2204-arm
+          - image: ubuntu-24.04-arm
             arch: arm64
 
     runs-on: ${{ matrix.image }}
@@ -78,7 +78,7 @@ jobs:
           suffixes: ${{ matrix.arch }}
           glue_separator: "-"
 
-      - uses: aica-technology/.github/.github/actions/ghcr-build@v0.6.1
+      - uses: aica-technology/.github/.github/actions/ghcr-build@v1.1.0
         with:
           dockerfile_path: aica-package.toml
           image_name: ${{ needs.metadata.outputs.image_name }}
