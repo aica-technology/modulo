@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.12.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Modulo: Modulo Interfaces</title>
+<title>Modulo: Member List</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -81,35 +81,23 @@ $(function(){ initResizable(false); });
 </div>
 </div>
 
+<div id="nav-path" class="navpath">
+  <ul>
+<li class="navelem"><a class="el" href="namespacemodulo__core.html">modulo_core</a></li><li class="navelem"><a class="el" href="namespacemodulo__core_1_1exceptions.html">exceptions</a></li><li class="navelem"><a class="el" href="classmodulo__core_1_1exceptions_1_1_invalid_assignment_exception.html">InvalidAssignmentException</a></li>  </ul>
+</div>
 </div><!-- top -->
 <div id="doc-content">
-<div><div class="header">
-  <div class="headertitle"><div class="title">Modulo Interfaces</div></div>
+<div class="header">
+  <div class="headertitle"><div class="title">modulo_core::exceptions::InvalidAssignmentException Member List</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p>This package defines custom standard interfaces for modulo classes.</p>
-<h1>Messages</h1>
-<p>Modulo classes broadcast predicates to a global channel in a predicate message.</p>
-<h2>EncodedState</h2>
-<p>The encoded state message contains <code>state_representation::State</code> classes as binary format after serialization with <code>clproto</code>.</p>
-<h2>JointPositions</h2>
-<p>The joint positions message contains a named joint configuration with joint names and positions.</p>
-<h2>JointPositionsCollection</h2>
-<p>The joint positions collection message contains a vector of joint positions messages.</p>
-<h2>Predicate</h2>
-<p>The predicate message contains the predicate name and the current value (true or false) of the predicate.</p>
-<h2>PredicateCollection</h2>
-<p>The predicate collection message contains a vector of predicate messages as well as the name of the node that emits the predicates.</p>
-<h2>Assignment</h2>
-<p>The assignment message contains the value and the name of the assignment as a parameter, as well as the name of the node that emits the assignment.</p>
-<h1>Services</h1>
-<p>Modulo classes provide a simplified method to add services which trigger a pre-defined callback function. Services are either empty (with no request payload) or carry a string request. They return a common <a class="el" href="structmodulo__components_1_1_component_service_response.html" title="Response structure to be returned by component services.">modulo_components::ComponentServiceResponse</a> structure with a success flag and status message.</p>
-<h2>EmptyTrigger</h2>
-<p>The EmptyTrigger service request takes no parameters. The response contains a boolean <code>success</code> flag and a string <code>message</code>.</p>
-<h2>StringTrigger</h2>
-<p>The EmptyTrigger service request takes a string <code>payload</code>. The response contains a boolean <code>success</code> flag and a string <code>message</code>. It is the responsibility of the component to define the expected payload format and to document it appropriately. </p>
-</div></div><!-- contents -->
-</div><!-- PageDoc -->
+
+<p>This is the complete list of members for <a class="el" href="classmodulo__core_1_1exceptions_1_1_invalid_assignment_exception.html">modulo_core::exceptions::InvalidAssignmentException</a>, including all inherited members.</p>
+<table class="directory">
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>CoreException</b>(const std::string &amp;msg) (defined in <a class="el" href="classmodulo__core_1_1exceptions_1_1_core_exception.html">modulo_core::exceptions::CoreException</a>)</td><td class="entry"><a class="el" href="classmodulo__core_1_1exceptions_1_1_core_exception.html">modulo_core::exceptions::CoreException</a></td><td class="entry"><span class="mlabel">inline</span><span class="mlabel">explicit</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="odd"><td class="entry"><b>CoreException</b>(const std::string &amp;prefix, const std::string &amp;msg) (defined in <a class="el" href="classmodulo__core_1_1exceptions_1_1_core_exception.html">modulo_core::exceptions::CoreException</a>)</td><td class="entry"><a class="el" href="classmodulo__core_1_1exceptions_1_1_core_exception.html">modulo_core::exceptions::CoreException</a></td><td class="entry"><span class="mlabel">inline</span><span class="mlabel">protected</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>InvalidAssignmentException</b>(const std::string &amp;msg) (defined in <a class="el" href="classmodulo__core_1_1exceptions_1_1_invalid_assignment_exception.html">modulo_core::exceptions::InvalidAssignmentException</a>)</td><td class="entry"><a class="el" href="classmodulo__core_1_1exceptions_1_1_invalid_assignment_exception.html">modulo_core::exceptions::InvalidAssignmentException</a></td><td class="entry"><span class="mlabel">inline</span><span class="mlabel">explicit</span></td></tr>
+</table></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0
