@@ -375,15 +375,15 @@ class ComponentInterface(Node):
 
     def get_assignment(self, name: str) -> T:
         """
-        Get the assignment value from the assignment dictionary by its name.
+        Get the value of an assignment.
 
-        :param name: The name of the assignment
+        :param name: The name of the assignment to get
         :raises InvalidAssignmentError: if the assignment does not exist
         :raises EmptyStateError: if the assignment has not been set yet
         :return: The value of the assignment, if the assignment exists and has been assigned
         """
         if name not in self.__assignment_dict.keys():
-            raise InvalidAssignmentError(f"Assignment '{name}' is not in the dict of assignments")
+            raise InvalidAssignmentError(f"Failed to get value of assignment '{name}': Assignment does not exist.")
         if self.__assignment_dict[name].is_empty():
             # TODO: remove after control libraries v9.3.1
             raise sr.exceptions.EmptyStateError(f"{name} state is empty")
@@ -391,9 +391,9 @@ class ComponentInterface(Node):
 
     def set_assignment(self, name: str, value: T) -> None:
         """
-        Set the value of an assignment. The assignment must have been previously declared.
+        Set the value of an assignment.
 
-        :param name: The name of the assignment
+        :param name: The name of the assignment to set
         :param value: The value of the assignment
         """
         if name not in self.__assignment_dict.keys():

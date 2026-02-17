@@ -37,6 +37,7 @@ computations, without blocking the control loop.
 - feat(controllers): allow control type change after construction (#217)
 - feat(controllers): implement lock-free service wrappers for demanding callbacks (#218)
 - feat(interfaces): add assignment message definition (#220)
+- feat(components): add assignment methods (#224, #227)
 
 ## 5.2.3
 
