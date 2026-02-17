@@ -172,9 +172,9 @@ protected:
   void add_assignment(const std::string& assignment_name);
 
   /**
-   * @brief Set an assignment.
+   * @brief Set the value of an assignment.
    * @tparam T The type of the assignment   
-   * @param assignment_name The name of the assignment to publish
+   * @param assignment_name The name of the assignment to set
    * @param assignment_value The value of the assignment
    */
   template<typename T>
@@ -182,7 +182,7 @@ protected:
 
   /**
    * @brief Get the value of an assignment.
-   * @tparam T The type of the assignment value   
+   * @tparam T The type of the assignment   
    * @param assignment_name The name of the assignment to get
    * @throws modulo_core::exceptions::InvalidAssignmentException if the assignment does not exist or the type does not 
      match
