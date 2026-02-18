@@ -169,6 +169,7 @@ ControllerInterface::on_activate(const rclcpp_lifecycle::State&) {
   }
 
   auto start_time = get_node()->get_clock()->now();
+  // FIXME: validate activation timeout parameter
   auto activation_timeout = rclcpp::Duration::from_seconds(get_parameter_value<double>("activation_timeout"));
   while (read_state_interfaces() != controller_interface::return_type::OK) {
     RCLCPP_DEBUG_THROTTLE(
