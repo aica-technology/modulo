@@ -28,7 +28,6 @@ Release Versions:
 
 - fix(controllers): safe interface map check (#233)
 
-
 ## 5.3.0
 
 ### January 13th, 2026
