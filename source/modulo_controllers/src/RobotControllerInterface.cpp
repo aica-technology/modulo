@@ -27,7 +27,7 @@ RobotControllerInterface::RobotControllerInterface(
       new_joint_command_ready_(false),
       command_decay_factor_(0.0),
       command_rate_limit_(std::numeric_limits<double>::infinity()) {
-  if (!control_type.empty() && interface_map.find(control_type) == interface_map.cend()) {
+  if (!control_type.empty() && interface_map.count(control_type) == 0) {
     RCLCPP_ERROR(get_node()->get_logger(), "Invalid control type: %s", control_type.c_str());
     throw std::invalid_argument("Invalid control type: " + control_type);
   }
@@ -233,6 +233,9 @@ controller_interface::return_type RobotControllerInterface::read_state_interface
             joint.c_str(), interface.c_str());
         return controller_interface::return_type::ERROR;
       }
+      if (interface_map.count(interface) == 0) {
+        continue;
+      }
       switch (interface_map.at(interface)) {
         case JointStateVariable::POSITIONS:
           joint_state_.set_position(value, joint_index);
@@ -387,7 +390,7 @@ void RobotControllerInterface::set_control_type(const std::string& control_type)
   if (control_type_fixed_) {
     throw std::runtime_error("Control type is fixed and cannot be changed anymore");
   }
-  if (!control_type.empty() && interface_map.find(control_type) == interface_map.cend()) {
+  if (!control_type.empty() && interface_map.count(control_type) == 0) {
     throw std::runtime_error("Invalid control type: " + control_type);
   }
   control_type_ = control_type;
