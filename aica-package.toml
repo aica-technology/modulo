@@ -9,7 +9,7 @@ name = "modulo"
 
 [build]
 type = "ros"
-image = "v2.0.5-jazzy"
+image = "v2.0.6-jazzy"
 
 [build.dependencies]
 "@aica/foss/control-libraries" = "v9.0.0"

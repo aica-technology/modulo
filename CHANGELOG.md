@@ -26,7 +26,10 @@ Release Versions:
 
 ## Upcoming changes
 
+- feat(interfaces): add assignment message definition (#220)
+- feat(components): add assignment methods (#224, #227)
 - fix(controllers): safe interface map check (#233)
+- feat: add extension descriptions (#225)
 
 ## 5.3.0
 
@@ -40,8 +43,6 @@ computations, without blocking the control loop.
 - fix(controllers): check for finite wrench values (#216)
 - feat(controllers): allow control type change after construction (#217)
 - feat(controllers): implement lock-free service wrappers for demanding callbacks (#218)
-- feat(interfaces): add assignment message definition (#220)
-- feat(components): add assignment methods (#224, #227)
 
 ## 5.2.3
 
