@@ -30,6 +30,7 @@ Release Versions:
 - feat(components): add assignment methods (#224, #227)
 - fix(controllers): safe interface map check (#233)
 - feat: add extension descriptions (#225)
+- fieat(controllers): add assignment methods (#236)
 
 ## 5.3.0
 
