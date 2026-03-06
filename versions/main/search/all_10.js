@@ -10,7 +10,7 @@ var searchData=
   ['send_5ftransform_7',['send_transform',['../classmodulo__components_1_1_component_interface.html#ab3d9b98663be5983a1c677c32f582d3e',1,'modulo_components::ComponentInterface']]],
   ['send_5ftransforms_8',['send_transforms',['../classmodulo__components_1_1_component_interface.html#a07e38f6eb54ae52374056e1ccc595e7f',1,'modulo_components::ComponentInterface']]],
   ['serviceclient_9',['ServiceClient',['../classmodulo__utils_1_1testutils_1_1_service_client.html',1,'modulo_utils::testutils']]],
-  ['set_5fassignment_10',['set_assignment',['../classmodulo__components_1_1_component_interface.html#aabbcec64b5fb1b592c505c6963cc17d0',1,'modulo_components::ComponentInterface']]],
+  ['set_5fassignment_10',['set_assignment',['../classmodulo__components_1_1_component_interface.html#aabbcec64b5fb1b592c505c6963cc17d0',1,'modulo_components::ComponentInterface::set_assignment()'],['../classmodulo__controllers_1_1_base_controller_interface.html#a8c8914ac3d79684ef9320cb0f64588d0',1,'modulo_controllers::BaseControllerInterface::set_assignment()']]],
   ['set_5fcommand_5finterface_11',['set_command_interface',['../classmodulo__controllers_1_1_controller_interface.html#a9623c4028e3da288789b80a750c96304',1,'modulo_controllers::ControllerInterface']]],
   ['set_5fcontrol_5ftype_12',['set_control_type',['../classmodulo__controllers_1_1_robot_controller_interface.html#a515384260e5a0838758b1f0a1b02b4c8',1,'modulo_controllers::RobotControllerInterface']]],
   ['set_5fdata_13',['set_data',['../classmodulo__core_1_1communication_1_1_message_pair.html#ae71ad28f6e4270b5a318ddbdbf620585',1,'modulo_core::communication::MessagePair']]],

@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['get_5fassignment_0',['get_assignment',['../classmodulo__components_1_1_component_interface.html#adeda20dfe8c7c553365c9d2f5d373430',1,'modulo_components::ComponentInterface']]],
+  ['get_5fassignment_0',['get_assignment',['../classmodulo__components_1_1_component_interface.html#adeda20dfe8c7c553365c9d2f5d373430',1,'modulo_components::ComponentInterface::get_assignment()'],['../classmodulo__controllers_1_1_base_controller_interface.html#a93c883cd52068c10a91e257811258728',1,'modulo_controllers::BaseControllerInterface::get_assignment()']]],
   ['get_5fbuffer_1',['get_buffer',['../classmodulo__core_1_1_joint_positions_listener.html#acd0cccca758e1406c4d90c856b7b14fd',1,'modulo_core::JointPositionsListener']]],
   ['get_5fcallback_2',['get_callback',['../classmodulo__core_1_1communication_1_1_subscription_handler.html#a01f697561ba64f5d98ae0522f8c57cc6',1,'modulo_core::communication::SubscriptionHandler::get_callback()'],['../classmodulo__core_1_1communication_1_1_subscription_handler.html#a60039333a4c81ea81c66ab2e88b6eaff',1,'modulo_core::communication::SubscriptionHandler::get_callback(const std::function&lt; void()&gt; &amp;user_callback)']]],
   ['get_5fcartesian_5fstate_3',['get_cartesian_state',['../classmodulo__controllers_1_1_robot_controller_interface.html#a1ba472ffaa66f3061a85cd3918bceaa2',1,'modulo_controllers::RobotControllerInterface']]],
