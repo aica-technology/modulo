@@ -1026,7 +1026,7 @@ inline void BaseControllerInterface::set_assignment(const std::string& assignmen
   modulo_interfaces::msg::Assignment message;
   std::shared_ptr<state_representation::ParameterInterface> assignment;
   try {
-    assignment = this->assignments_map_.get_parameter(assignment_name);
+    assignment = assignments_map_.get_parameter(assignment_name);
   } catch (const state_representation::exceptions::InvalidParameterException&) {
     RCLCPP_ERROR_STREAM_THROTTLE(
         get_node()->get_logger(), *get_node()->get_clock(), 1000,
@@ -1043,14 +1043,14 @@ inline void BaseControllerInterface::set_assignment(const std::string& assignmen
   }
   message.node = get_node()->get_fully_qualified_name();
   message.assignment = modulo_core::translators::write_parameter(assignment).to_parameter_msg();
-  this->assignment_publisher_->publish(message);
+  assignment_publisher_->publish(message);
 }
 
 template<typename T>
 inline T BaseControllerInterface::get_assignment(const std::string& assignment_name) const {
   std::shared_ptr<state_representation::ParameterInterface> assignment;
   try {
-    assignment = this->assignments_map_.get_parameter(assignment_name);
+    assignment = assignments_map_.get_parameter(assignment_name);
   } catch (const state_representation::exceptions::InvalidParameterException&) {
     throw modulo_core::exceptions::InvalidAssignmentException(
         "Failed to get value of assignment '" + assignment_name + "': Assignment does not exist.");
