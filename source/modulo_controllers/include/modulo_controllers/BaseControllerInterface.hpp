@@ -1042,7 +1042,9 @@ inline void BaseControllerInterface::set_assignment(const std::string& assignmen
     return;
   }
   if (assignment_publisher_ == nullptr) {
-    RCLCPP_ERROR_STREAM_THROTTLE(get_node()->get_logger(), *get_node()->get_clock(), 1000, "No assignment publisher configured. Make sure to add assignments `on_init` of the controller."); // this line is probably too long
+    RCLCPP_ERROR_STREAM_THROTTLE(
+        get_node()->get_logger(), *get_node()->get_clock(), 1000,
+        "No assignment publisher configured. Make sure to add assignments `on_init` of the controller.");
     return;
   }
   message.node = get_node()->get_fully_qualified_name();
