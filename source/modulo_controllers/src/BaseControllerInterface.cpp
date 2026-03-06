@@ -58,6 +58,9 @@ BaseControllerInterface::on_configure(const rclcpp_lifecycle::State&) {
         std::chrono::nanoseconds(static_cast<int64_t>(1e9 / get_parameter_value<double>("predicate_publishing_rate"))),
         [this]() { this->publish_predicates(); });
   }
+  if (assignments_map_.get_parameters().size()) {
+    assignment_publisher_ = get_node()->create_publisher<modulo_interfaces::msg::Assignment>("/assignments", qos_);
+  }
 
   RCLCPP_DEBUG(get_node()->get_logger(), "Configuration of BaseControllerInterface successful");
   return CallbackReturn::SUCCESS;
