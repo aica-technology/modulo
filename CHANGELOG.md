@@ -25,6 +25,10 @@ Release Versions:
 - [2.1.1](#211)
 - [2.1.0](#210)
 
+## Upcoming changes
+
+- fix(controllers): safety check for predicate publisher access (#238)
+
 ## 5.4.0
 
 ### March 4th, 2026
