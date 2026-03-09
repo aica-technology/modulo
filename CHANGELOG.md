@@ -2,6 +2,7 @@
 
 Release Versions:
 
+- [5.4.0](#540)
 - [5.3.0](#530)
 - [5.2.3](#523)
 - [5.2.2](#522)
@@ -24,7 +25,12 @@ Release Versions:
 - [2.1.1](#211)
 - [2.1.0](#210)
 
-## Upcoming changes
+## 5.4.0
+
+### March 4th, 2026
+
+Version 5.4.0 is a minor release of modulo that adds support for assignments, extension descriptions for components and
+controllers, as well as a check to make sure state interfaces exist before trying to access their map. 
 
 - feat(interfaces): add assignment message definition (#220)
 - feat(components): add assignment methods (#224, #227)
