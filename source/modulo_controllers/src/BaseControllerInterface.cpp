@@ -280,12 +280,24 @@ BaseControllerInterface::get_predicate_message(const std::string& name, bool val
 }
 
 void BaseControllerInterface::publish_predicate(const std::string& predicate_name, bool value) const {
+  if (predicate_publisher_ == nullptr) {
+    RCLCPP_ERROR_STREAM_THROTTLE(
+        get_node()->get_logger(), *get_node()->get_clock(), 1000,
+        "No predicate publisher configured. Make sure to add predicates `on_init` of the controller.");
+    return;
+  }
   auto message(predicate_message_);
   message.predicates.push_back(get_predicate_message(predicate_name, value));
   predicate_publisher_->publish(message);
 }
 
 void BaseControllerInterface::publish_predicates() {
+  if (predicate_publisher_ == nullptr) {
+    RCLCPP_ERROR_STREAM_THROTTLE(
+        get_node()->get_logger(), *get_node()->get_clock(), 1000,
+        "No predicate publisher configured. Make sure to add predicates `on_init` of the controller.");
+    return;
+  }
   auto message(predicate_message_);
   for (auto predicate_it = predicates_.begin(); predicate_it != predicates_.end(); ++predicate_it) {
     if (auto new_predicate = predicate_it->second.query(); new_predicate) {
