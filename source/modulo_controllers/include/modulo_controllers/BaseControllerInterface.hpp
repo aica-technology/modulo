@@ -18,7 +18,6 @@
 #include <modulo_core/translators/message_writers.hpp>
 #include <modulo_core/translators/parameter_translators.hpp>
 
-#include <modulo_interfaces/msg/assignment.hpp>
 #include <modulo_interfaces/msg/predicate_collection.hpp>
 #include <modulo_interfaces/srv/empty_trigger.hpp>
 #include <modulo_interfaces/srv/string_trigger.hpp>
@@ -189,34 +188,6 @@ protected:
    */
   template<typename T>
   void set_parameter_value(const std::string& name, const T& value);
-
-  /**
-   * @brief Add an assignment to the map of assignments.
-   * @tparam T The type of the assignment
-   * @param assignment_name the name of the associated assignment
-   */
-  template<typename T>
-  void add_assignment(const std::string& assignment_name);
-
-  /**
-   * @brief Set an assignment.
-   * @tparam T The type of the assignment   
-   * @param assignment_name The name of the assignment to publish
-   * @param assignment_value The value of the assignment
-   */
-  template<typename T>
-  void set_assignment(const std::string& assignment_name, const T& assignment_value);
-
-  /**
-   * @brief Get the value of an assignment.
-   * @tparam T The type of the assignment value   
-   * @param assignment_name The name of the assignment to get
-   * @throws modulo_core::exceptions::InvalidAssignmentException if the assignment does not exist or the type does not 
-     match
-     @throws state_representation::exceptions::EmptyStateException if the assignment has not been set yet 
-   */
-  template<typename T>
-  T get_assignment(const std::string& assignment_name) const;
 
   /**
    * @brief Add a predicate to the map of predicates.
@@ -526,9 +497,6 @@ private:
       empty_services_;///< Map of EmptyTrigger services
   std::map<std::string, std::shared_ptr<rclcpp::Service<modulo_interfaces::srv::StringTrigger>>>
       string_services_;///< Map of StringTrigger services
-
-  state_representation::ParameterMap assignments_map_;                                         ///< Map of assignments
-  std::shared_ptr<rclcpp::Publisher<modulo_interfaces::msg::Assignment>> assignment_publisher_;///< Assignment publisher
 
   std::map<std::string, modulo_core::Predicate> predicates_;///< Map of predicates
   std::shared_ptr<rclcpp::Publisher<modulo_interfaces::msg::PredicateCollection>>
@@ -986,87 +954,6 @@ BaseControllerInterface::create_service(const std::string& service_name, const s
     }
   } catch (const std::exception& ex) {
     RCLCPP_ERROR(get_node()->get_logger(), "Failed to add service '%s': %s", parsed_service_name.c_str(), ex.what());
-  }
-}
-
-template<typename T>
-inline void BaseControllerInterface::add_assignment(const std::string& assignment_name) {
-  std::string parsed_name = modulo_utils::parsing::parse_topic_name(assignment_name);
-  if (parsed_name.empty()) {
-    RCLCPP_ERROR_STREAM(
-        get_node()->get_logger(),
-        "The parsed name for assignment '" + assignment_name
-            + "' is empty. Provide a string with valid characters for the assignment name ([a-z0-9_]).");
-    return;
-  }
-  if (assignment_name != parsed_name) {
-    RCLCPP_WARN_STREAM(
-        get_node()->get_logger(),
-        "The parsed name for assignment '" + assignment_name + "' is '" + parsed_name
-            + "'. Use the parsed name to refer to this assignment.");
-  }
-  try {
-    this->assignments_map_.get_parameter(parsed_name);
-    RCLCPP_WARN_STREAM(
-        get_node()->get_logger(), "Assignment with name '" + parsed_name + "' already exists, overwriting.");
-  } catch (const state_representation::exceptions::InvalidParameterException& ex) {
-    RCLCPP_DEBUG_STREAM(get_node()->get_logger(), "Adding assignment '" << parsed_name << "'.");
-  }
-  try {
-    assignments_map_.set_parameter(state_representation::make_shared_parameter<T>(parsed_name));
-  } catch (const std::exception& ex) {
-    RCLCPP_ERROR_STREAM_THROTTLE(
-        get_node()->get_logger(), *get_node()->get_clock(), 1000,
-        "Failed to add assignment '" << parsed_name << "': " << ex.what());
-  }
-}
-
-template<typename T>
-inline void BaseControllerInterface::set_assignment(const std::string& assignment_name, const T& assignment_value) {
-  modulo_interfaces::msg::Assignment message;
-  std::shared_ptr<state_representation::ParameterInterface> assignment;
-  try {
-    assignment = assignments_map_.get_parameter(assignment_name);
-  } catch (const state_representation::exceptions::InvalidParameterException&) {
-    RCLCPP_ERROR_STREAM_THROTTLE(
-        get_node()->get_logger(), *get_node()->get_clock(), 1000,
-        "Failed to set assignment '" << assignment_name << "': Assignment does not exist.");
-    return;
-  }
-  try {
-    assignment->set_parameter_value<T>(assignment_value);
-  } catch (const state_representation::exceptions::InvalidParameterCastException&) {
-    RCLCPP_ERROR_STREAM_THROTTLE(
-        get_node()->get_logger(), *get_node()->get_clock(), 1000,
-        "Failed to set assignment '" << assignment_name << "': Incompatible value type.");
-    return;
-  }
-  if (assignment_publisher_ == nullptr) {
-    RCLCPP_ERROR_STREAM_THROTTLE(
-        get_node()->get_logger(), *get_node()->get_clock(), 1000,
-        "No assignment publisher configured. Make sure to add assignments `on_init` of the controller.");
-    return;
-  }
-  message.node = get_node()->get_fully_qualified_name();
-  message.assignment = modulo_core::translators::write_parameter(assignment).to_parameter_msg();
-  assignment_publisher_->publish(message);
-}
-
-template<typename T>
-inline T BaseControllerInterface::get_assignment(const std::string& assignment_name) const {
-  std::shared_ptr<state_representation::ParameterInterface> assignment;
-  try {
-    assignment = assignments_map_.get_parameter(assignment_name);
-  } catch (const state_representation::exceptions::InvalidParameterException&) {
-    throw modulo_core::exceptions::InvalidAssignmentException(
-        "Failed to get value of assignment '" + assignment_name + "': Assignment does not exist.");
-  }
-  try {
-    return assignment->get_parameter_value<T>();
-  } catch (const state_representation::exceptions::InvalidParameterCastException&) {
-    auto expected_type = state_representation::get_parameter_type_name(assignment->get_parameter_type());
-    throw modulo_core::exceptions::InvalidAssignmentException(
-        "Incompatible type for assignment '" + assignment_name + "' defined with type '" + expected_type + "'.");
   }
 }
 
