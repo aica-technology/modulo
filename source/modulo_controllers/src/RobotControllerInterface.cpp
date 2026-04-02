@@ -21,7 +21,6 @@ RobotControllerInterface::RobotControllerInterface(
     bool robot_model_required, const std::string& control_type, bool load_geometries)
     : ControllerInterface(true),
       control_type_(control_type),
-      control_type_fixed_(false),
       robot_model_required_(robot_model_required),
       load_geometries_(load_geometries),
       new_joint_command_ready_(false),
