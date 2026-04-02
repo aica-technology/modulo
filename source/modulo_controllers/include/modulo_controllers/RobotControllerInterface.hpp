@@ -133,7 +133,6 @@ private:
 
   std::vector<std::string> joints_;///< The joint names provided by a parameter
   std::string control_type_;       ///< The high-level interface type (position, velocity, acceleration or effort)
-  bool control_type_fixed_;        ///< If true, the control type cannot be changed after
 
   bool robot_model_required_;///< If true, check that a robot model is available on configure
   bool load_geometries_;     ///< If true, load geometries from the URDF into the robot model
