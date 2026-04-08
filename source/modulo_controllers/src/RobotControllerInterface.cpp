@@ -21,7 +21,6 @@ RobotControllerInterface::RobotControllerInterface(
     bool robot_model_required, const std::string& control_type, bool load_geometries)
     : ControllerInterface(true),
       control_type_(control_type),
-      control_type_fixed_(false),
       robot_model_required_(robot_model_required),
       load_geometries_(load_geometries),
       new_joint_command_ready_(false),
@@ -145,7 +144,6 @@ rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn RobotC
     for (const auto& joint : joints_) {
       add_command_interface(joint, control_type_);
     }
-    control_type_fixed_ = true;
   }
 
   auto ft_sensor_name = get_parameter("ft_sensor_name");
@@ -387,7 +385,9 @@ std::string RobotControllerInterface::get_control_type() const {
 }
 
 void RobotControllerInterface::set_control_type(const std::string& control_type) {
-  if (control_type_fixed_) {
+  // FIXME: this is a quick solution to prevent adding a new private attribute to the class.
+  // The joint_state is initialized shortly before the interfaces are added so it can be used as a proxy.
+  if (joint_state_.get_name() == hardware_name_) {
     throw std::runtime_error("Control type is fixed and cannot be changed anymore");
   }
   if (!control_type.empty() && interface_map.count(control_type) == 0) {
