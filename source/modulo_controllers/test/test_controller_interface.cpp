@@ -220,11 +220,11 @@ TYPED_TEST_P(ControllerInterfaceTest, OutputTest) {
 }
 
 TYPED_TEST_P(ControllerInterfaceTest, TF) {
-  EXPECT_THROW(this->interface_->add_tf_broadcaster(), modulo_core::exceptions::CoreException);
-  EXPECT_THROW(this->interface_->add_static_tf_broadcaster(), modulo_core::exceptions::CoreException);
-  EXPECT_THROW(this->interface_->add_tf_listener(), modulo_core::exceptions::CoreException);
+  EXPECT_THROW(this->interface_->add_tf_broadcaster(), std::runtime_error);
+  EXPECT_THROW(this->interface_->add_static_tf_broadcaster(), std::runtime_error);
+  EXPECT_THROW(this->interface_->add_tf_listener(), std::runtime_error);
   auto send_early_tf = state_representation::CartesianPose::Random("controller_test", "world");
-  EXPECT_THROW(this->interface_->send_transform(send_early_tf), modulo_core::exceptions::CoreException);
+  EXPECT_THROW(this->interface_->send_transform(send_early_tf), std::runtime_error);
   this->init();
   this->interface_->add_tf_broadcaster();
   this->interface_->add_static_tf_broadcaster();
