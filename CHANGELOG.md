@@ -29,7 +29,7 @@ Release Versions:
 
 - fix(controllers): safety check for predicate publisher access (#238)
 - fix: remove ABI breaking assignment methods from C++ components and controllers (#240)
-- fix(controllers): revert ABI breaking change for control type (240)
+- fix(controllers): revert ABI breaking change for control type (#240)
 
 ## 5.4.0
 
