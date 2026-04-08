@@ -2,6 +2,7 @@
 
 Release Versions:
 
+- [5.4.1](#541)
 - [5.4.0](#540)
 - [5.3.0](#530)
 - [5.2.3](#523)
@@ -25,7 +26,15 @@ Release Versions:
 - [2.1.1](#211)
 - [2.1.0](#210)
 
-## Upcoming changes
+## 5.4.1
+
+### April 8th, 2026
+
+Version 5.4.1 is a patch releases to revert some changes from v5.3.0 and v5.4.1 that break the ABI of the modulo
+libraries. In particular, the addition of assignments in the C++ classes changed the ABI in ways that components and
+controllers built with previous versions of modulo might stop working. Using v5.3.0 or 5.4.0 is discouraged, and users
+should move to v5.4.1.
+
 
 - fix(controllers): safety check for predicate publisher access (#238)
 - fix: remove ABI breaking assignment methods from C++ components and controllers (#240)
