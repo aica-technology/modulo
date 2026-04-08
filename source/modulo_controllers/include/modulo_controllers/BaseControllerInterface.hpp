@@ -421,12 +421,6 @@ protected:
    */
   std::timed_mutex& get_command_mutex();
 
-  /**
-   * @brief Check if the node has been initialized or not.
-   * @return True if the node is initialized, false otherwise
-   */
-  bool is_node_initialized() const;
-
 private:
   /**
    * @brief Parameter validation function
@@ -1069,9 +1063,6 @@ template<typename T>
 inline void BaseControllerInterface::publish_transforms(
     const std::vector<state_representation::CartesianPose>& transforms, const std::shared_ptr<T>& tf_broadcaster,
     bool is_static) {
-  if (!is_node_initialized()) {
-    throw modulo_core::exceptions::CoreException("Failed send transform(s): Node is not initialized yet.");
-  }
   std::string modifier = is_static ? "static " : "";
   if (tf_broadcaster == nullptr) {
     RCLCPP_ERROR_STREAM_THROTTLE(
