@@ -93,7 +93,6 @@ $(function(){ initResizable(false); });
 <p>It supports the following parameters:</p>
 <ul>
 <li><code>hardware_name</code> [string]: the name of the hardware interface</li>
-<li><code>robot_description</code> [string]: the string formatted content of the controller's URDF description</li>
 <li><code>joints</code> [string_array]: a vector of joint names that the controller will claim</li>
 <li><code>activation_timeout</code> [double]: the seconds to wait for valid data on state interfaces before activating</li>
 <li><code>input_validity_period</code> [double]: the maximum age of an input state before discarding it as expired</li>
@@ -108,7 +107,7 @@ $(function(){ initResizable(false); });
 <p>It will claim individual command interfaces from the hardware interface according to the named <code>joints</code> and the specified <code>control_type</code> given to the class at construction. The <code>hardware_name</code> parameter determines the name of the JointState object.</p>
 <p>This class is intended to be used as a base class to implement joint and task space controllers. They can set the joint command or access the joint state using the <code>set_joint_command()</code> and <code>get_joint_state()</code> methods, respectively.</p>
 <h2>Robot model and URDF</h2>
-<p>If a controller needs a robot model, a <code>robot_model::Model</code> will be configured from URDF information. To support this, the <code>robot_description</code> must be specified.</p>
+<p>If a controller needs a robot model, a <code>robot_model::Model</code> will be configured from URDF information.</p>
 <p>The robot model is used to calculate the CartesianState of a task frame from the JointState using forward kinematics, which is available to derived classes using the <code>get_cartesian_state()</code> method.</p>
 <p>The task frame can be specified using the <code>task_space_frame</code> parameter. If left empty, the final link of the robot model will be used.</p>
 <p>In certain cases, the <code>joints</code> parameter might not be in a physically correct order; for example, they might be sorted alphabetically, which makes the corresponding JointState incompatible with the actual order of joints in a robot system. If set to true, the <code>sort_joints</code> parameter orders the joint names to be physically correct using the robot model data.</p>
