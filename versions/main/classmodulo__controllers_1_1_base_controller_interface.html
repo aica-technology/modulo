@@ -211,6 +211,33 @@ Protected Member Functions</h2></td></tr>
 <tr class="separator:a2a8e3bb1b30b88152aa97c77ae796d31"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a14280b2312b383725b7eda0e9694c694" id="r_a14280b2312b383725b7eda0e9694c694"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a14280b2312b383725b7eda0e9694c694">add_service_lockfree</a> (const std::string &amp;service_name, const std::function&lt; <a class="el" href="structmodulo__controllers_1_1_controller_service_response.html">ControllerServiceResponse</a>(const std::string &amp;string)&gt; &amp;callback)</td></tr>
 <tr class="separator:a14280b2312b383725b7eda0e9694c694"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac1876129dead935f0fa84b972f4966b5" id="r_ac1876129dead935f0fa84b972f4966b5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac1876129dead935f0fa84b972f4966b5">add_tf_listener</a> ()</td></tr>
+<tr class="memdesc:ac1876129dead935f0fa84b972f4966b5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Configure a transform buffer and listener.  <br /></td></tr>
+<tr class="separator:ac1876129dead935f0fa84b972f4966b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3b6358f328fafa25faee1ad5123f1604" id="r_a3b6358f328fafa25faee1ad5123f1604"><td class="memItemLeft" align="right" valign="top">state_representation::CartesianPose&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3b6358f328fafa25faee1ad5123f1604">lookup_transform</a> (const std::string &amp;frame, const std::string &amp;reference_frame, const tf2::TimePoint &amp;time_point, const tf2::Duration &amp;duration)</td></tr>
+<tr class="memdesc:a3b6358f328fafa25faee1ad5123f1604"><td class="mdescLeft">&#160;</td><td class="mdescRight">Look up a transform from TF.  <br /></td></tr>
+<tr class="separator:a3b6358f328fafa25faee1ad5123f1604"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0eb351bc6e4828eb286ab3932f8b0712" id="r_a0eb351bc6e4828eb286ab3932f8b0712"><td class="memItemLeft" align="right" valign="top">state_representation::CartesianPose&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0eb351bc6e4828eb286ab3932f8b0712">lookup_transform</a> (const std::string &amp;frame, const std::string &amp;reference_frame=&quot;world&quot;, double validity_period=-1.0, const tf2::Duration &amp;duration=tf2::Duration(std::chrono::microseconds(10)))</td></tr>
+<tr class="memdesc:a0eb351bc6e4828eb286ab3932f8b0712"><td class="mdescLeft">&#160;</td><td class="mdescRight">Look up a transform from TF.  <br /></td></tr>
+<tr class="separator:a0eb351bc6e4828eb286ab3932f8b0712"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a438014d4440a4b28581f3c1603ec43df" id="r_a438014d4440a4b28581f3c1603ec43df"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a438014d4440a4b28581f3c1603ec43df">add_tf_broadcaster</a> ()</td></tr>
+<tr class="memdesc:a438014d4440a4b28581f3c1603ec43df"><td class="mdescLeft">&#160;</td><td class="mdescRight">Configure a transform broadcaster.  <br /></td></tr>
+<tr class="separator:a438014d4440a4b28581f3c1603ec43df"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a183dfd4eb18dace54c01bed5ece3ba6d" id="r_a183dfd4eb18dace54c01bed5ece3ba6d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a183dfd4eb18dace54c01bed5ece3ba6d">add_static_tf_broadcaster</a> ()</td></tr>
+<tr class="memdesc:a183dfd4eb18dace54c01bed5ece3ba6d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Configure a static transform broadcaster.  <br /></td></tr>
+<tr class="separator:a183dfd4eb18dace54c01bed5ece3ba6d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4ccd7c3386102bff0dff92a3eb60e41e" id="r_a4ccd7c3386102bff0dff92a3eb60e41e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4ccd7c3386102bff0dff92a3eb60e41e">send_transform</a> (const state_representation::CartesianPose &amp;transform)</td></tr>
+<tr class="memdesc:a4ccd7c3386102bff0dff92a3eb60e41e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send a transform to TF.  <br /></td></tr>
+<tr class="separator:a4ccd7c3386102bff0dff92a3eb60e41e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afd6baa388afd781e38dd94d8f83fe2a2" id="r_afd6baa388afd781e38dd94d8f83fe2a2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afd6baa388afd781e38dd94d8f83fe2a2">send_transforms</a> (const std::vector&lt; state_representation::CartesianPose &gt; &amp;transforms)</td></tr>
+<tr class="memdesc:afd6baa388afd781e38dd94d8f83fe2a2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send a vector of transforms to TF.  <br /></td></tr>
+<tr class="separator:afd6baa388afd781e38dd94d8f83fe2a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a07bfc9ff4375a56e845ecb08d3f708f6" id="r_a07bfc9ff4375a56e845ecb08d3f708f6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a07bfc9ff4375a56e845ecb08d3f708f6">send_static_transform</a> (const state_representation::CartesianPose &amp;transform)</td></tr>
+<tr class="memdesc:a07bfc9ff4375a56e845ecb08d3f708f6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send a static transform to TF.  <br /></td></tr>
+<tr class="separator:a07bfc9ff4375a56e845ecb08d3f708f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a31cfe0073895db9700c805366960780a" id="r_a31cfe0073895db9700c805366960780a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a31cfe0073895db9700c805366960780a">send_static_transforms</a> (const std::vector&lt; state_representation::CartesianPose &gt; &amp;transforms)</td></tr>
+<tr class="memdesc:a31cfe0073895db9700c805366960780a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send a vector of static transforms to TF.  <br /></td></tr>
+<tr class="separator:a31cfe0073895db9700c805366960780a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1e3ea95cb692e6f5cd96175950725e00" id="r_a1e3ea95cb692e6f5cd96175950725e00"><td class="memItemLeft" align="right" valign="top">rclcpp::QoS&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1e3ea95cb692e6f5cd96175950725e00">get_qos</a> () const</td></tr>
 <tr class="memdesc:a1e3ea95cb692e6f5cd96175950725e00"><td class="mdescLeft">&#160;</td><td class="mdescRight">Getter of the Quality of Service attribute.  <br /></td></tr>
 <tr class="separator:a1e3ea95cb692e6f5cd96175950725e00"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -254,7 +281,7 @@ Protected Member Functions</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Base controller class to combine ros2_control, control libraries and modulo. </p>
 
-<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8hpp_source.html#l00106">106</a> of file <a class="el" href="_base_controller_interface_8hpp_source.html">BaseControllerInterface.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8hpp_source.html#l00110">110</a> of file <a class="el" href="_base_controller_interface_8hpp_source.html">BaseControllerInterface.hpp</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="ade0d508d65caa265cb489a3c693770a0" name="ade0d508d65caa265cb489a3c693770a0"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ade0d508d65caa265cb489a3c693770a0">&#9670;&#160;</a></span>BaseControllerInterface()</h2>
@@ -273,7 +300,7 @@ Protected Member Functions</h2></td></tr>
 
 <p>Default constructor. </p>
 
-<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8cpp_source.html#l00020">20</a> of file <a class="el" href="_base_controller_interface_8cpp_source.html">BaseControllerInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8cpp_source.html#l00023">23</a> of file <a class="el" href="_base_controller_interface_8cpp_source.html">BaseControllerInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -307,7 +334,7 @@ template&lt;&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8hpp_source.html#l00591">591</a> of file <a class="el" href="_base_controller_interface_8hpp_source.html">BaseControllerInterface.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8hpp_source.html#l00693">693</a> of file <a class="el" href="_base_controller_interface_8hpp_source.html">BaseControllerInterface.hpp</a>.</p>
 
 </div>
 </div>
@@ -340,7 +367,7 @@ template&lt;&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8hpp_source.html#l00598">598</a> of file <a class="el" href="_base_controller_interface_8hpp_source.html">BaseControllerInterface.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8hpp_source.html#l00700">700</a> of file <a class="el" href="_base_controller_interface_8hpp_source.html">BaseControllerInterface.hpp</a>.</p>
 
 </div>
 </div>
@@ -373,7 +400,7 @@ template&lt;&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8hpp_source.html#l00613">613</a> of file <a class="el" href="_base_controller_interface_8hpp_source.html">BaseControllerInterface.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8hpp_source.html#l00715">715</a> of file <a class="el" href="_base_controller_interface_8hpp_source.html">BaseControllerInterface.hpp</a>.</p>
 
 </div>
 </div>
@@ -421,7 +448,7 @@ template&lt;typename T &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8hpp_source.html#l00557">557</a> of file <a class="el" href="_base_controller_interface_8hpp_source.html">BaseControllerInterface.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8hpp_source.html#l00659">659</a> of file <a class="el" href="_base_controller_interface_8hpp_source.html">BaseControllerInterface.hpp</a>.</p>
 
 </div>
 </div>
@@ -454,7 +481,7 @@ template&lt;&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8hpp_source.html#l00656">656</a> of file <a class="el" href="_base_controller_interface_8hpp_source.html">BaseControllerInterface.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8hpp_source.html#l00758">758</a> of file <a class="el" href="_base_controller_interface_8hpp_source.html">BaseControllerInterface.hpp</a>.</p>
 
 </div>
 </div>
@@ -487,7 +514,7 @@ template&lt;&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8hpp_source.html#l00661">661</a> of file <a class="el" href="_base_controller_interface_8hpp_source.html">BaseControllerInterface.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8hpp_source.html#l00763">763</a> of file <a class="el" href="_base_controller_interface_8hpp_source.html">BaseControllerInterface.hpp</a>.</p>
 
 </div>
 </div>
@@ -520,7 +547,7 @@ template&lt;&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8hpp_source.html#l00672">672</a> of file <a class="el" href="_base_controller_interface_8hpp_source.html">BaseControllerInterface.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8hpp_source.html#l00774">774</a> of file <a class="el" href="_base_controller_interface_8hpp_source.html">BaseControllerInterface.hpp</a>.</p>
 
 </div>
 </div>
@@ -568,7 +595,7 @@ template&lt;typename T &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8hpp_source.html#l00636">636</a> of file <a class="el" href="_base_controller_interface_8hpp_source.html">BaseControllerInterface.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8hpp_source.html#l00738">738</a> of file <a class="el" href="_base_controller_interface_8hpp_source.html">BaseControllerInterface.hpp</a>.</p>
 
 </div>
 </div>
@@ -672,7 +699,7 @@ template&lt;typename T &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8hpp_source.html#l00517">517</a> of file <a class="el" href="_base_controller_interface_8hpp_source.html">BaseControllerInterface.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8hpp_source.html#l00619">619</a> of file <a class="el" href="_base_controller_interface_8hpp_source.html">BaseControllerInterface.hpp</a>.</p>
 
 </div>
 </div>
@@ -712,7 +739,7 @@ template&lt;typename T &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8cpp_source.html#l00177">177</a> of file <a class="el" href="_base_controller_interface_8cpp_source.html">BaseControllerInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8cpp_source.html#l00180">180</a> of file <a class="el" href="_base_controller_interface_8cpp_source.html">BaseControllerInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -752,7 +779,7 @@ template&lt;typename T &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8cpp_source.html#l00181">181</a> of file <a class="el" href="_base_controller_interface_8cpp_source.html">BaseControllerInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8cpp_source.html#l00184">184</a> of file <a class="el" href="_base_controller_interface_8cpp_source.html">BaseControllerInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -792,7 +819,7 @@ template&lt;typename T &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8cpp_source.html#l00501">501</a> of file <a class="el" href="_base_controller_interface_8cpp_source.html">BaseControllerInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8cpp_source.html#l00504">504</a> of file <a class="el" href="_base_controller_interface_8cpp_source.html">BaseControllerInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -832,7 +859,7 @@ template&lt;typename T &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8cpp_source.html#l00496">496</a> of file <a class="el" href="_base_controller_interface_8cpp_source.html">BaseControllerInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8cpp_source.html#l00499">499</a> of file <a class="el" href="_base_controller_interface_8cpp_source.html">BaseControllerInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -870,7 +897,7 @@ template&lt;typename T &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8cpp_source.html#l00512">512</a> of file <a class="el" href="_base_controller_interface_8cpp_source.html">BaseControllerInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8cpp_source.html#l00515">515</a> of file <a class="el" href="_base_controller_interface_8cpp_source.html">BaseControllerInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -908,7 +935,94 @@ template&lt;typename T &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8cpp_source.html#l00507">507</a> of file <a class="el" href="_base_controller_interface_8cpp_source.html">BaseControllerInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8cpp_source.html#l00510">510</a> of file <a class="el" href="_base_controller_interface_8cpp_source.html">BaseControllerInterface.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a183dfd4eb18dace54c01bed5ece3ba6d" name="a183dfd4eb18dace54c01bed5ece3ba6d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a183dfd4eb18dace54c01bed5ece3ba6d">&#9670;&#160;</a></span>add_static_tf_broadcaster()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void modulo_controllers::BaseControllerInterface::add_static_tf_broadcaster </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Configure a static transform broadcaster. </p>
+
+<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8cpp_source.html#l00580">580</a> of file <a class="el" href="_base_controller_interface_8cpp_source.html">BaseControllerInterface.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a438014d4440a4b28581f3c1603ec43df" name="a438014d4440a4b28581f3c1603ec43df"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a438014d4440a4b28581f3c1603ec43df">&#9670;&#160;</a></span>add_tf_broadcaster()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void modulo_controllers::BaseControllerInterface::add_tf_broadcaster </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Configure a transform broadcaster. </p>
+
+<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8cpp_source.html#l00570">570</a> of file <a class="el" href="_base_controller_interface_8cpp_source.html">BaseControllerInterface.cpp</a>.</p>
+
+</div>
+</div>
+<a id="ac1876129dead935f0fa84b972f4966b5" name="ac1876129dead935f0fa84b972f4966b5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac1876129dead935f0fa84b972f4966b5">&#9670;&#160;</a></span>add_tf_listener()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void modulo_controllers::BaseControllerInterface::add_tf_listener </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Configure a transform buffer and listener. </p>
+
+<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8cpp_source.html#l00521">521</a> of file <a class="el" href="_base_controller_interface_8cpp_source.html">BaseControllerInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -943,7 +1057,7 @@ template&lt;typename T &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8cpp_source.html#l00239">239</a> of file <a class="el" href="_base_controller_interface_8cpp_source.html">BaseControllerInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8cpp_source.html#l00242">242</a> of file <a class="el" href="_base_controller_interface_8cpp_source.html">BaseControllerInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -973,7 +1087,7 @@ template&lt;typename T &gt; </div>
 <p>Get the reference to the command mutex. </p>
 <dl class="section return"><dt>Returns</dt><dd>The reference to the command mutex </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8cpp_source.html#l00530">530</a> of file <a class="el" href="_base_controller_interface_8cpp_source.html">BaseControllerInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8cpp_source.html#l00619">619</a> of file <a class="el" href="_base_controller_interface_8cpp_source.html">BaseControllerInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -1009,7 +1123,7 @@ template&lt;typename T &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The ParameterInterface pointer to a Parameter instance </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8cpp_source.html#l00110">110</a> of file <a class="el" href="_base_controller_interface_8cpp_source.html">BaseControllerInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8cpp_source.html#l00113">113</a> of file <a class="el" href="_base_controller_interface_8cpp_source.html">BaseControllerInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -1053,7 +1167,7 @@ template&lt;typename T &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The value of the parameter </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8hpp_source.html#l00527">527</a> of file <a class="el" href="_base_controller_interface_8hpp_source.html">BaseControllerInterface.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8hpp_source.html#l00629">629</a> of file <a class="el" href="_base_controller_interface_8hpp_source.html">BaseControllerInterface.hpp</a>.</p>
 
 </div>
 </div>
@@ -1089,7 +1203,7 @@ template&lt;typename T &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>the value of the predicate as a boolean </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8cpp_source.html#l00202">202</a> of file <a class="el" href="_base_controller_interface_8cpp_source.html">BaseControllerInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8cpp_source.html#l00205">205</a> of file <a class="el" href="_base_controller_interface_8cpp_source.html">BaseControllerInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -1119,7 +1233,7 @@ template&lt;typename T &gt; </div>
 <p>Getter of the Quality of Service attribute. </p>
 <dl class="section return"><dt>Returns</dt><dd>The Quality of Service attribute </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8cpp_source.html#l00518">518</a> of file <a class="el" href="_base_controller_interface_8cpp_source.html">BaseControllerInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8cpp_source.html#l00607">607</a> of file <a class="el" href="_base_controller_interface_8cpp_source.html">BaseControllerInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -1149,7 +1263,125 @@ template&lt;typename T &gt; </div>
 <p>Check if the controller is currently in state active or not. </p>
 <dl class="section return"><dt>Returns</dt><dd>True if the controller is active, false otherwise </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8cpp_source.html#l00526">526</a> of file <a class="el" href="_base_controller_interface_8cpp_source.html">BaseControllerInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8cpp_source.html#l00615">615</a> of file <a class="el" href="_base_controller_interface_8cpp_source.html">BaseControllerInterface.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a3b6358f328fafa25faee1ad5123f1604" name="a3b6358f328fafa25faee1ad5123f1604"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3b6358f328fafa25faee1ad5123f1604">&#9670;&#160;</a></span>lookup_transform() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">state_representation::CartesianPose modulo_controllers::BaseControllerInterface::lookup_transform </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>frame</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>reference_frame</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const tf2::TimePoint &amp;</td>          <td class="paramname"><span class="paramname"><em>time_point</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const tf2::Duration &amp;</td>          <td class="paramname"><span class="paramname"><em>duration</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">nodiscard</span><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Look up a transform from TF. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">frame</td><td>The desired frame of the transform </td></tr>
+    <tr><td class="paramname">reference_frame</td><td>The desired reference frame of the transform </td></tr>
+    <tr><td class="paramname">time_point</td><td>The time at which the value of the transform is desired </td></tr>
+    <tr><td class="paramname">duration</td><td>How long to block the lookup call before failing </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classmodulo__core_1_1exceptions_1_1_lookup_transform_exception.html" title="An exception class to notify an error while looking up TF transforms.">modulo_core::exceptions::LookupTransformException</a></td><td>if TF buffer/listener are unconfigured or if the lookupTransform call failed </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>If it exists, the requested transform </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8cpp_source.html#l00532">532</a> of file <a class="el" href="_base_controller_interface_8cpp_source.html">BaseControllerInterface.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a0eb351bc6e4828eb286ab3932f8b0712" name="a0eb351bc6e4828eb286ab3932f8b0712"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0eb351bc6e4828eb286ab3932f8b0712">&#9670;&#160;</a></span>lookup_transform() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">state_representation::CartesianPose modulo_controllers::BaseControllerInterface::lookup_transform </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>frame</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>reference_frame</em></span><span class="paramdefsep"> = </span><span class="paramdefval">&quot;world&quot;</span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>validity_period</em></span><span class="paramdefsep"> = </span><span class="paramdefval">-1.0</span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const tf2::Duration &amp;</td>          <td class="paramname"><span class="paramname"><em>duration</em></span><span class="paramdefsep"> = </span><span class="paramdefval">tf2::Duration(std::chrono::microseconds(10))</span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">nodiscard</span><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Look up a transform from TF. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">frame</td><td>The desired frame of the transform </td></tr>
+    <tr><td class="paramname">reference_frame</td><td>The desired reference frame of the transform </td></tr>
+    <tr><td class="paramname">validity_period</td><td>The validity period of the latest transform from the time of lookup in seconds </td></tr>
+    <tr><td class="paramname">duration</td><td>How long to block the lookup call before failing </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classmodulo__core_1_1exceptions_1_1_lookup_transform_exception.html" title="An exception class to notify an error while looking up TF transforms.">modulo_core::exceptions::LookupTransformException</a></td><td>if TF buffer/listener are unconfigured, if the lookupTransform call failed, or if the transform is too old </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>If it exists and is still valid, the requested transform </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8cpp_source.html#l00541">541</a> of file <a class="el" href="_base_controller_interface_8cpp_source.html">BaseControllerInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -1185,7 +1417,7 @@ template&lt;typename T &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>SUCCESS or ERROR </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8cpp_source.html#l00046">46</a> of file <a class="el" href="_base_controller_interface_8cpp_source.html">BaseControllerInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8cpp_source.html#l00049">49</a> of file <a class="el" href="_base_controller_interface_8cpp_source.html">BaseControllerInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -1215,7 +1447,7 @@ template&lt;typename T &gt; </div>
 <p>Declare parameters and register the on_set_parameters callback. </p>
 <dl class="section return"><dt>Returns</dt><dd>CallbackReturn status </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8cpp_source.html#l00023">23</a> of file <a class="el" href="_base_controller_interface_8cpp_source.html">BaseControllerInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8cpp_source.html#l00026">26</a> of file <a class="el" href="_base_controller_interface_8cpp_source.html">BaseControllerInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -1253,7 +1485,7 @@ template&lt;typename T &gt; </div>
 
 <p>Reimplemented in <a class="el" href="classmodulo__controllers_1_1_robot_controller_interface.html#a3e8115f4baa72f001179efe8295bfe5c">modulo_controllers::RobotControllerInterface</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8cpp_source.html#l00173">173</a> of file <a class="el" href="_base_controller_interface_8cpp_source.html">BaseControllerInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8cpp_source.html#l00176">176</a> of file <a class="el" href="_base_controller_interface_8cpp_source.html">BaseControllerInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -1297,7 +1529,7 @@ template&lt;typename T &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The data on the desired input channel if the input exists and is not older than parameter 'input_validity_period' </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8hpp_source.html#l00682">682</a> of file <a class="el" href="_base_controller_interface_8hpp_source.html">BaseControllerInterface.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8hpp_source.html#l00784">784</a> of file <a class="el" href="_base_controller_interface_8hpp_source.html">BaseControllerInterface.hpp</a>.</p>
 
 </div>
 </div>
@@ -1326,7 +1558,7 @@ template&lt;&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8hpp_source.html#l00682">682</a> of file <a class="el" href="_base_controller_interface_8hpp_source.html">BaseControllerInterface.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8hpp_source.html#l00784">784</a> of file <a class="el" href="_base_controller_interface_8hpp_source.html">BaseControllerInterface.hpp</a>.</p>
 
 </div>
 </div>
@@ -1355,7 +1587,7 @@ template&lt;&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8hpp_source.html#l00682">682</a> of file <a class="el" href="_base_controller_interface_8hpp_source.html">BaseControllerInterface.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8hpp_source.html#l00784">784</a> of file <a class="el" href="_base_controller_interface_8hpp_source.html">BaseControllerInterface.hpp</a>.</p>
 
 </div>
 </div>
@@ -1384,7 +1616,147 @@ template&lt;&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8hpp_source.html#l00682">682</a> of file <a class="el" href="_base_controller_interface_8hpp_source.html">BaseControllerInterface.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8hpp_source.html#l00784">784</a> of file <a class="el" href="_base_controller_interface_8hpp_source.html">BaseControllerInterface.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a07bfc9ff4375a56e845ecb08d3f708f6" name="a07bfc9ff4375a56e845ecb08d3f708f6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a07bfc9ff4375a56e845ecb08d3f708f6">&#9670;&#160;</a></span>send_static_transform()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void modulo_controllers::BaseControllerInterface::send_static_transform </td>
+          <td>(</td>
+          <td class="paramtype">const state_representation::CartesianPose &amp;</td>          <td class="paramname"><span class="paramname"><em>transform</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Send a static transform to TF. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">transform</td><td>The transform to send </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8cpp_source.html#l00598">598</a> of file <a class="el" href="_base_controller_interface_8cpp_source.html">BaseControllerInterface.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a31cfe0073895db9700c805366960780a" name="a31cfe0073895db9700c805366960780a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a31cfe0073895db9700c805366960780a">&#9670;&#160;</a></span>send_static_transforms()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void modulo_controllers::BaseControllerInterface::send_static_transforms </td>
+          <td>(</td>
+          <td class="paramtype">const std::vector&lt; state_representation::CartesianPose &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>transforms</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Send a vector of static transforms to TF. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">transforms</td><td>The vector of transforms to send </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8cpp_source.html#l00602">602</a> of file <a class="el" href="_base_controller_interface_8cpp_source.html">BaseControllerInterface.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a4ccd7c3386102bff0dff92a3eb60e41e" name="a4ccd7c3386102bff0dff92a3eb60e41e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4ccd7c3386102bff0dff92a3eb60e41e">&#9670;&#160;</a></span>send_transform()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void modulo_controllers::BaseControllerInterface::send_transform </td>
+          <td>(</td>
+          <td class="paramtype">const state_representation::CartesianPose &amp;</td>          <td class="paramname"><span class="paramname"><em>transform</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Send a transform to TF. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">transform</td><td>The transform to send </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8cpp_source.html#l00590">590</a> of file <a class="el" href="_base_controller_interface_8cpp_source.html">BaseControllerInterface.cpp</a>.</p>
+
+</div>
+</div>
+<a id="afd6baa388afd781e38dd94d8f83fe2a2" name="afd6baa388afd781e38dd94d8f83fe2a2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afd6baa388afd781e38dd94d8f83fe2a2">&#9670;&#160;</a></span>send_transforms()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void modulo_controllers::BaseControllerInterface::send_transforms </td>
+          <td>(</td>
+          <td class="paramtype">const std::vector&lt; state_representation::CartesianPose &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>transforms</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Send a vector of transforms to TF. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">transforms</td><td>The vector of transforms to send </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8cpp_source.html#l00594">594</a> of file <a class="el" href="_base_controller_interface_8cpp_source.html">BaseControllerInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -1419,7 +1791,7 @@ template&lt;&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8cpp_source.html#l00442">442</a> of file <a class="el" href="_base_controller_interface_8cpp_source.html">BaseControllerInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8cpp_source.html#l00445">445</a> of file <a class="el" href="_base_controller_interface_8cpp_source.html">BaseControllerInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -1467,7 +1839,7 @@ template&lt;typename T &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The value of the parameter </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8hpp_source.html#l00537">537</a> of file <a class="el" href="_base_controller_interface_8hpp_source.html">BaseControllerInterface.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8hpp_source.html#l00639">639</a> of file <a class="el" href="_base_controller_interface_8hpp_source.html">BaseControllerInterface.hpp</a>.</p>
 
 </div>
 </div>
@@ -1507,7 +1879,7 @@ template&lt;typename T &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8cpp_source.html#l00220">220</a> of file <a class="el" href="_base_controller_interface_8cpp_source.html">BaseControllerInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8cpp_source.html#l00223">223</a> of file <a class="el" href="_base_controller_interface_8cpp_source.html">BaseControllerInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -1547,7 +1919,7 @@ template&lt;typename T &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8cpp_source.html#l00224">224</a> of file <a class="el" href="_base_controller_interface_8cpp_source.html">BaseControllerInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8cpp_source.html#l00227">227</a> of file <a class="el" href="_base_controller_interface_8cpp_source.html">BaseControllerInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -1582,7 +1954,7 @@ template&lt;typename T &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8cpp_source.html#l00522">522</a> of file <a class="el" href="_base_controller_interface_8cpp_source.html">BaseControllerInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8cpp_source.html#l00611">611</a> of file <a class="el" href="_base_controller_interface_8cpp_source.html">BaseControllerInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -1617,7 +1989,7 @@ template&lt;typename T &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8cpp_source.html#l00260">260</a> of file <a class="el" href="_base_controller_interface_8cpp_source.html">BaseControllerInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8cpp_source.html#l00263">263</a> of file <a class="el" href="_base_controller_interface_8cpp_source.html">BaseControllerInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -1650,7 +2022,7 @@ template&lt;&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8hpp_source.html#l00875">875</a> of file <a class="el" href="_base_controller_interface_8hpp_source.html">BaseControllerInterface.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8hpp_source.html#l00977">977</a> of file <a class="el" href="_base_controller_interface_8hpp_source.html">BaseControllerInterface.hpp</a>.</p>
 
 </div>
 </div>
@@ -1683,7 +2055,7 @@ template&lt;&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8hpp_source.html#l00880">880</a> of file <a class="el" href="_base_controller_interface_8hpp_source.html">BaseControllerInterface.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8hpp_source.html#l00982">982</a> of file <a class="el" href="_base_controller_interface_8hpp_source.html">BaseControllerInterface.hpp</a>.</p>
 
 </div>
 </div>
@@ -1716,7 +2088,7 @@ template&lt;&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8hpp_source.html#l00890">890</a> of file <a class="el" href="_base_controller_interface_8hpp_source.html">BaseControllerInterface.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8hpp_source.html#l00992">992</a> of file <a class="el" href="_base_controller_interface_8hpp_source.html">BaseControllerInterface.hpp</a>.</p>
 
 </div>
 </div>
@@ -1749,7 +2121,7 @@ template&lt;&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8hpp_source.html#l00895">895</a> of file <a class="el" href="_base_controller_interface_8hpp_source.html">BaseControllerInterface.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8hpp_source.html#l00997">997</a> of file <a class="el" href="_base_controller_interface_8hpp_source.html">BaseControllerInterface.hpp</a>.</p>
 
 </div>
 </div>
@@ -1782,7 +2154,7 @@ template&lt;&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8hpp_source.html#l00885">885</a> of file <a class="el" href="_base_controller_interface_8hpp_source.html">BaseControllerInterface.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8hpp_source.html#l00987">987</a> of file <a class="el" href="_base_controller_interface_8hpp_source.html">BaseControllerInterface.hpp</a>.</p>
 
 </div>
 </div>
@@ -1830,7 +2202,7 @@ template&lt;typename T &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8hpp_source.html#l00782">782</a> of file <a class="el" href="_base_controller_interface_8hpp_source.html">BaseControllerInterface.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_base_controller_interface_8hpp_source.html#l00884">884</a> of file <a class="el" href="_base_controller_interface_8hpp_source.html">BaseControllerInterface.hpp</a>.</p>
 
 </div>
 </div>
