@@ -370,9 +370,10 @@ void RobotControllerInterface::set_joint_command(const JointState& joint_command
 
 bool RobotControllerInterface::on_validate_parameter_callback(const std::shared_ptr<ParameterInterface>& parameter) {
   if ((parameter->get_name() == "command_half_life" || parameter->get_name() == "command_rate_limit")
-      && parameter->get_parameter_value<double>() < 0.0) {
+      && parameter->get_parameter_value<double>() <= 0.0) {
     RCLCPP_ERROR(
-        get_node()->get_logger(), "Parameter value of '%s' should be greater than 0", parameter->get_name().c_str());
+        get_node()->get_logger(), "Parameter value of parameter '%s' should be greater than 0",
+        parameter->get_name().c_str());
     return false;
   }
   return ControllerInterface::on_validate_parameter_callback(parameter);
