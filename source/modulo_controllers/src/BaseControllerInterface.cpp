@@ -162,10 +162,9 @@ BaseControllerInterface::on_set_parameters_callback(const std::vector<rclcpp::Pa
 bool BaseControllerInterface::validate_parameter(const std::shared_ptr<ParameterInterface>& parameter) {
   if (parameter->get_name() == "predicate_publishing_rate" || parameter->get_name() == "input_validity_period") {
     auto value = parameter->get_parameter_value<double>();
-    // FIXME: don't allow zero
-    if (value < 0.0 || value > std::numeric_limits<double>::max()) {
+    if (value <= 0.0 || value > std::numeric_limits<double>::max()) {
       RCLCPP_ERROR(
-          get_node()->get_logger(), "Parameter value of parameter '%s' should be a positive finite number",
+          get_node()->get_logger(), "Parameter value of parameter '%s' should be greater than 0",
           parameter->get_name().c_str());
       return false;
     }
@@ -440,10 +439,6 @@ void BaseControllerInterface::add_outputs() {
       RCLCPP_ERROR(get_node()->get_logger(), "Failed to add output '%s': %s", name.c_str(), ex.what());
     }
   }
-}
-
-void BaseControllerInterface::set_input_validity_period(double input_validity_period) {
-  input_validity_period_ = input_validity_period;
 }
 
 bool BaseControllerInterface::check_input_valid(const std::string& name) const {
