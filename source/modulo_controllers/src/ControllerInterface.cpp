@@ -166,7 +166,6 @@ ControllerInterface::on_activate(const rclcpp_lifecycle::State&) {
   }
 
   auto start_time = get_node()->get_clock()->now();
-  // FIXME: validate activation timeout parameter
   auto activation_timeout = rclcpp::Duration::from_seconds(get_parameter_value<double>("activation_timeout"));
   while (read_state_interfaces() != controller_interface::return_type::OK) {
     RCLCPP_DEBUG_THROTTLE(
@@ -281,6 +280,19 @@ void ControllerInterface::set_command_interface(const std::string& name, const s
         get_node()->get_logger(), *get_node()->get_clock(), 1000,
         "set_command_interface called with an unknown name/interface: %s/%s", name.c_str(), interface.c_str());
   }
+}
+
+bool ControllerInterface::on_validate_parameter_callback(const std::shared_ptr<ParameterInterface>& parameter) {
+  if (parameter->get_name() == "activation_timeout") {
+    auto value = parameter->get_parameter_value<double>();
+    if (value < 0.0 || value > std::numeric_limits<double>::max()) {
+      RCLCPP_ERROR(
+          get_node()->get_logger(), "Parameter value of parameter '%s' should be a positive finite number",
+          parameter->get_name().c_str());
+      return false;
+    }
+  }
+  return true;
 }
 
 }// namespace modulo_controllers
