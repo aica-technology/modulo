@@ -200,6 +200,9 @@ Protected Member Functions</h2></td></tr>
 <tr class="memitem:a9623c4028e3da288789b80a750c96304" id="r_a9623c4028e3da288789b80a750c96304"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9623c4028e3da288789b80a750c96304">set_command_interface</a> (const std::string &amp;name, const std::string &amp;interface, double value)</td></tr>
 <tr class="memdesc:a9623c4028e3da288789b80a750c96304"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the value of a command interface by name.  <br /></td></tr>
 <tr class="separator:a9623c4028e3da288789b80a750c96304"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7bbf9b3324d2e301cd0a67da16c120d8" id="r_a7bbf9b3324d2e301cd0a67da16c120d8"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7bbf9b3324d2e301cd0a67da16c120d8">on_validate_parameter_callback</a> (const std::shared_ptr&lt; state_representation::ParameterInterface &gt; &amp;parameter) override</td></tr>
+<tr class="memdesc:a7bbf9b3324d2e301cd0a67da16c120d8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Parameter validation function to be redefined by derived controller classes.     <br /></td></tr>
+<tr class="separator:a7bbf9b3324d2e301cd0a67da16c120d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_methods_classmodulo__controllers_1_1_base_controller_interface"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pro_methods_classmodulo__controllers_1_1_base_controller_interface')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="classmodulo__controllers_1_1_base_controller_interface.html">modulo_controllers::BaseControllerInterface</a></td></tr>
 <tr class="memitem:aaa7e4a206229bf52629bd8ee977b6edd inherit pro_methods_classmodulo__controllers_1_1_base_controller_interface" id="r_aaa7e4a206229bf52629bd8ee977b6edd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmodulo__controllers_1_1_base_controller_interface.html#aaa7e4a206229bf52629bd8ee977b6edd">add_parameter</a> (const std::shared_ptr&lt; state_representation::ParameterInterface &gt; &amp;parameter, const std::string &amp;description, bool read_only=false)</td></tr>
 <tr class="memdesc:aaa7e4a206229bf52629bd8ee977b6edd inherit pro_methods_classmodulo__controllers_1_1_base_controller_interface"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a parameter.  <br /></td></tr>
@@ -208,9 +211,6 @@ Protected Member Functions</h2></td></tr>
 <tr class="memitem:a6e7805e1592898080a1c65ee28e2700f inherit pro_methods_classmodulo__controllers_1_1_base_controller_interface"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmodulo__controllers_1_1_base_controller_interface.html#a6e7805e1592898080a1c65ee28e2700f">add_parameter</a> (const std::string &amp;name, const T &amp;value, const std::string &amp;description, bool read_only=false)</td></tr>
 <tr class="memdesc:a6e7805e1592898080a1c65ee28e2700f inherit pro_methods_classmodulo__controllers_1_1_base_controller_interface"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a parameter.  <br /></td></tr>
 <tr class="separator:a6e7805e1592898080a1c65ee28e2700f inherit pro_methods_classmodulo__controllers_1_1_base_controller_interface"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad302e4f9728d36c82177a7cfd52e6aec inherit pro_methods_classmodulo__controllers_1_1_base_controller_interface" id="r_ad302e4f9728d36c82177a7cfd52e6aec"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmodulo__controllers_1_1_base_controller_interface.html#ad302e4f9728d36c82177a7cfd52e6aec">on_validate_parameter_callback</a> (const std::shared_ptr&lt; state_representation::ParameterInterface &gt; &amp;parameter)</td></tr>
-<tr class="memdesc:ad302e4f9728d36c82177a7cfd52e6aec inherit pro_methods_classmodulo__controllers_1_1_base_controller_interface"><td class="mdescLeft">&#160;</td><td class="mdescRight">Parameter validation function to be redefined by derived controller classes.  <br /></td></tr>
-<tr class="separator:ad302e4f9728d36c82177a7cfd52e6aec inherit pro_methods_classmodulo__controllers_1_1_base_controller_interface"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0856a54cc05b74122f46871db239a5d7 inherit pro_methods_classmodulo__controllers_1_1_base_controller_interface" id="r_a0856a54cc05b74122f46871db239a5d7"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; state_representation::ParameterInterface &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmodulo__controllers_1_1_base_controller_interface.html#a0856a54cc05b74122f46871db239a5d7">get_parameter</a> (const std::string &amp;name) const</td></tr>
 <tr class="memdesc:a0856a54cc05b74122f46871db239a5d7 inherit pro_methods_classmodulo__controllers_1_1_base_controller_interface"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a parameter by name.  <br /></td></tr>
 <tr class="separator:a0856a54cc05b74122f46871db239a5d7 inherit pro_methods_classmodulo__controllers_1_1_base_controller_interface"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -251,9 +251,6 @@ Protected Member Functions</h2></td></tr>
 <tr class="memitem:a7709be5a6f1d5e538ecf28d9d0253a8f inherit pro_methods_classmodulo__controllers_1_1_base_controller_interface"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmodulo__controllers_1_1_base_controller_interface.html#a7709be5a6f1d5e538ecf28d9d0253a8f">add_output</a> (const std::string &amp;name, const std::string &amp;topic_name=&quot;&quot;)</td></tr>
 <tr class="memdesc:a7709be5a6f1d5e538ecf28d9d0253a8f inherit pro_methods_classmodulo__controllers_1_1_base_controller_interface"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add an output to the controller.  <br /></td></tr>
 <tr class="separator:a7709be5a6f1d5e538ecf28d9d0253a8f inherit pro_methods_classmodulo__controllers_1_1_base_controller_interface"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a87e904e6cf917796ea5c415787ddb872 inherit pro_methods_classmodulo__controllers_1_1_base_controller_interface" id="r_a87e904e6cf917796ea5c415787ddb872"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmodulo__controllers_1_1_base_controller_interface.html#a87e904e6cf917796ea5c415787ddb872">set_input_validity_period</a> (double input_validity_period)</td></tr>
-<tr class="memdesc:a87e904e6cf917796ea5c415787ddb872 inherit pro_methods_classmodulo__controllers_1_1_base_controller_interface"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the input validity period of input signals.  <br /></td></tr>
-<tr class="separator:a87e904e6cf917796ea5c415787ddb872 inherit pro_methods_classmodulo__controllers_1_1_base_controller_interface"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9d35a6d4f02c542eb301068e64ca3a30 inherit pro_methods_classmodulo__controllers_1_1_base_controller_interface" id="r_a9d35a6d4f02c542eb301068e64ca3a30"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
 <tr class="memitem:a9d35a6d4f02c542eb301068e64ca3a30 inherit pro_methods_classmodulo__controllers_1_1_base_controller_interface"><td class="memTemplItemLeft" align="right" valign="top">std::optional&lt; T &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmodulo__controllers_1_1_base_controller_interface.html#a9d35a6d4f02c542eb301068e64ca3a30">read_input</a> (const std::string &amp;name)</td></tr>
 <tr class="memdesc:a9d35a6d4f02c542eb301068e64ca3a30 inherit pro_methods_classmodulo__controllers_1_1_base_controller_interface"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read the most recent message of an input.  <br /></td></tr>
@@ -601,7 +598,7 @@ Protected Attributes</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The value of the command interface </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_controller_interface_8cpp_source.html#l00272">272</a> of file <a class="el" href="_controller_interface_8cpp_source.html">ControllerInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_controller_interface_8cpp_source.html#l00271">271</a> of file <a class="el" href="_controller_interface_8cpp_source.html">ControllerInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -648,7 +645,7 @@ Protected Attributes</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The value of the state interface </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_controller_interface_8cpp_source.html#l00268">268</a> of file <a class="el" href="_controller_interface_8cpp_source.html">ControllerInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_controller_interface_8cpp_source.html#l00267">267</a> of file <a class="el" href="_controller_interface_8cpp_source.html">ControllerInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -690,7 +687,7 @@ Protected Attributes</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The map containing the values of the state interfaces </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_controller_interface_8cpp_source.html#l00264">264</a> of file <a class="el" href="_controller_interface_8cpp_source.html">ControllerInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_controller_interface_8cpp_source.html#l00263">263</a> of file <a class="el" href="_controller_interface_8cpp_source.html">ControllerInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -722,7 +719,7 @@ Protected Attributes</h2></td></tr>
 
 <p>Reimplemented in <a class="el" href="classmodulo__controllers_1_1_robot_controller_interface.html#a27bec46fefa9083c1b0a19e5b8a69172">modulo_controllers::RobotControllerInterface</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="_controller_interface_8cpp_source.html#l00188">188</a> of file <a class="el" href="_controller_interface_8cpp_source.html">ControllerInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_controller_interface_8cpp_source.html#l00187">187</a> of file <a class="el" href="_controller_interface_8cpp_source.html">ControllerInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -858,7 +855,7 @@ Protected Attributes</h2></td></tr>
 
 <p>Reimplemented in <a class="el" href="classmodulo__controllers_1_1_robot_controller_interface.html#a514494756e25fe8b459f487d4ac09939">modulo_controllers::RobotControllerInterface</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="_controller_interface_8cpp_source.html#l00202">202</a> of file <a class="el" href="_controller_interface_8cpp_source.html">ControllerInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_controller_interface_8cpp_source.html#l00201">201</a> of file <a class="el" href="_controller_interface_8cpp_source.html">ControllerInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -894,7 +891,7 @@ Protected Attributes</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>SUCCESS or ERROR </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_controller_interface_8cpp_source.html#l00193">193</a> of file <a class="el" href="_controller_interface_8cpp_source.html">ControllerInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_controller_interface_8cpp_source.html#l00192">192</a> of file <a class="el" href="_controller_interface_8cpp_source.html">ControllerInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -928,6 +925,46 @@ Protected Attributes</h2></td></tr>
 
 </div>
 </div>
+<a id="a7bbf9b3324d2e301cd0a67da16c120d8" name="a7bbf9b3324d2e301cd0a67da16c120d8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7bbf9b3324d2e301cd0a67da16c120d8">&#9670;&#160;</a></span>on_validate_parameter_callback()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool modulo_controllers::ControllerInterface::on_validate_parameter_callback </td>
+          <td>(</td>
+          <td class="paramtype">const std::shared_ptr&lt; state_representation::ParameterInterface &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>parameter</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">protected</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Parameter validation function to be redefined by derived controller classes.    </p>
+<p>This method is automatically invoked whenever the ROS interface tried to modify a parameter. Validation and sanitization can be performed by reading or writing the value of the parameter through the ParameterInterface pointer, depending on the parameter name and desired controller behaviour. If the validation returns true, the updated parameter value (including any modifications) is applied. If the validation returns false, any changes to the parameter are discarded and the parameter value is not changed. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">parameter</td><td>A ParameterInterface pointer to a Parameter instance </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The validation result    </dd></dl>
+
+<p>Reimplemented from <a class="el" href="classmodulo__controllers_1_1_base_controller_interface.html#ad302e4f9728d36c82177a7cfd52e6aec">modulo_controllers::BaseControllerInterface</a>.</p>
+
+<p>Reimplemented in <a class="el" href="classmodulo__controllers_1_1_robot_controller_interface.html#a3e8115f4baa72f001179efe8295bfe5c">modulo_controllers::RobotControllerInterface</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="_controller_interface_8cpp_source.html#l00285">285</a> of file <a class="el" href="_controller_interface_8cpp_source.html">ControllerInterface.cpp</a>.</p>
+
+</div>
+</div>
 <a id="a29a43b47e9a1e82b0670f2ff48d70483" name="a29a43b47e9a1e82b0670f2ff48d70483"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a29a43b47e9a1e82b0670f2ff48d70483">&#9670;&#160;</a></span>read_state_interfaces()</h2>
 
@@ -954,7 +991,7 @@ Protected Attributes</h2></td></tr>
 <p>Read the state interfaces. </p>
 <dl class="section return"><dt>Returns</dt><dd>OK or ERROR </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_controller_interface_8cpp_source.html#l00247">247</a> of file <a class="el" href="_controller_interface_8cpp_source.html">ControllerInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_controller_interface_8cpp_source.html#l00246">246</a> of file <a class="el" href="_controller_interface_8cpp_source.html">ControllerInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -1000,7 +1037,7 @@ Protected Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_controller_interface_8cpp_source.html#l00276">276</a> of file <a class="el" href="_controller_interface_8cpp_source.html">ControllerInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_controller_interface_8cpp_source.html#l00275">275</a> of file <a class="el" href="_controller_interface_8cpp_source.html">ControllerInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -1071,7 +1108,7 @@ Protected Attributes</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>OK or ERROR </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_controller_interface_8cpp_source.html#l00207">207</a> of file <a class="el" href="_controller_interface_8cpp_source.html">ControllerInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_controller_interface_8cpp_source.html#l00206">206</a> of file <a class="el" href="_controller_interface_8cpp_source.html">ControllerInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -1107,7 +1144,7 @@ Protected Attributes</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>OK or ERROR </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_controller_interface_8cpp_source.html#l00256">256</a> of file <a class="el" href="_controller_interface_8cpp_source.html">ControllerInterface.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_controller_interface_8cpp_source.html#l00255">255</a> of file <a class="el" href="_controller_interface_8cpp_source.html">ControllerInterface.cpp</a>.</p>
 
 </div>
 </div>
@@ -1134,7 +1171,7 @@ Protected Attributes</h2></td></tr>
 
 <p>The hardware name provided by a parameter. </p>
 
-<p class="definition">Definition at line <a class="el" href="_controller_interface_8hpp_source.html#l00169">169</a> of file <a class="el" href="_controller_interface_8hpp_source.html">ControllerInterface.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_controller_interface_8hpp_source.html#l00175">175</a> of file <a class="el" href="_controller_interface_8hpp_source.html">ControllerInterface.hpp</a>.</p>
 
 </div>
 </div>
