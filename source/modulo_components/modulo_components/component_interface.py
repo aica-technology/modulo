@@ -76,7 +76,6 @@ class ComponentInterface(Node):
         self.__predicate_publisher = self.create_publisher(PredicateCollection, "/predicates", self.__qos)
         self.__predicate_message = PredicateCollection()
         self.__predicate_message.node = self.get_fully_qualified_name()
-        self.__predicate_message.type = PredicateCollection.COMPONENT
 
         self.__rate = self.get_parameter_value("rate")
         self.__period = 1.0 / self.__rate
