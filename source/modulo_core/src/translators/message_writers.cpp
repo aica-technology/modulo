@@ -1,6 +1,8 @@
 #include "modulo_core/translators/message_writers.hpp"
+#include "trajectory_msgs/msg/joint_trajectory.hpp"
 
 #include <state_representation/space/cartesian/CartesianPose.hpp>
+#include <state_representation/trajectory/JointTrajectory.hpp>
 
 using namespace state_representation;
 
@@ -125,6 +127,33 @@ void write_message(tf2_msgs::msg::TFMessage& message, const CartesianState& stat
   geometry_msgs::msg::TransformStamped transform;
   write_message(transform, state, time);
   message.transforms.push_back(transform);
+}
+
+void write_message(
+    trajectory_msgs::msg::JointTrajectory& message, const JointTrajectory& state, const rclcpp::Time& time) {
+  if (!state) {
+    throw exceptions::MessageTranslationException(
+        state.get_name() + " state is empty while attempting to write it to message");
+  }
+  message.set__joint_names(state.get_joint_names());
+  for (unsigned int i = 0; i < state.get_size(); ++i) {
+    auto [joint_states, duration] = state[i];
+    trajectory_msgs::msg::JointTrajectoryPoint point;
+    point.positions.assign(
+        joint_states.get_positions().data(), joint_states.get_positions().data() + joint_states.get_positions().size());
+    point.velocities.assign(
+        joint_states.get_velocities().data(),
+        joint_states.get_velocities().data() + joint_states.get_velocities().size());
+    point.accelerations.assign(
+        joint_states.get_accelerations().data(),
+        joint_states.get_accelerations().data() + joint_states.get_accelerations().size());
+    point.effort.assign(
+        joint_states.get_torques().data(), joint_states.get_torques().data() + joint_states.get_torques().size());
+    point.time_from_start = rclcpp::Duration(state.get_time_from_start(i));
+    message.points.push_back(point);
+  }
+  message.header.stamp = time;
+  message.header.frame_id = state.get_name();
 }
 
 template<typename U, typename T>

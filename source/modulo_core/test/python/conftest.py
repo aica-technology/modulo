@@ -2,6 +2,7 @@ import clproto
 import pytest
 import rclpy.clock
 import state_representation as sr
+import datetime
 from rclpy import Parameter
 
 
@@ -21,6 +22,25 @@ def joint_state():
 @pytest.fixture
 def clock():
     return rclpy.clock.Clock()
+
+
+@pytest.fixture
+def cartesian_trajectory():
+    trajectory = sr.CartesianTrajectory("test", "ref")
+    for i in range(10):
+        trajectory.add_point(sr.CartesianState().Random("test", "ref"), datetime.timedelta(seconds=(i+1)*10))
+    return trajectory
+
+
+@pytest.fixture
+def joint_trajectory():
+    trajectory = sr.JointTrajectory("test")
+    trajectory.set_joint_names(["joint1", "joint2", "joint3"])
+    for i in range(10):
+        trajectory.add_point(
+            sr.JointState().Random("test", trajectory.get_joint_names()),
+            datetime.timedelta(seconds=(i + 1.05) * 10))
+    return trajectory
 
 
 @pytest.fixture
