@@ -33,6 +33,7 @@ Release Versions:
 - feat(controllers)!: add TF broadcaster in BaseControllerInterface (#170)
 - test(controllers): add TF listener and broadcaster tests (#172)
 - fix(controllers)!: remove input validity setter (#209)
+- feat(controllers): use parent node for tf listener (#190)
 - refactor(interfaces)!: remove type from predicate collection message (#222)
 
 ## 5.4.1

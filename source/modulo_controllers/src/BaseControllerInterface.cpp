@@ -517,7 +517,7 @@ void BaseControllerInterface::add_tf_listener() {
     RCLCPP_DEBUG(get_node()->get_logger(), "Adding TF buffer and listener.");
     console_bridge::setLogLevel(console_bridge::CONSOLE_BRIDGE_LOG_NONE);
     tf_buffer_ = std::make_shared<tf2_ros::Buffer>(get_node()->get_clock());
-    tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
+    tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_, get_node());
   } else {
     RCLCPP_DEBUG(get_node()->get_logger(), "TF buffer and listener already exist.");
   }
