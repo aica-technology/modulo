@@ -252,7 +252,7 @@ class ComponentInterface(Node):
         if parameter.get_name() == "rate":
             value = parameter.get_value()
             if value <= 0 or value > sys.float_info.max:
-                self.get_logger().error("Value for parameter 'rate' has to be a positive finite number.")
+                self.get_logger().error("Value of parameter 'rate' should be greater than 0.")
                 return False
         try:
             result = self.on_validate_parameter_callback(parameter)
