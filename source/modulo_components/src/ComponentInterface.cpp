@@ -31,7 +31,6 @@ ComponentInterface::ComponentInterface(
   this->predicate_publisher_ = rclcpp::create_publisher<modulo_interfaces::msg::PredicateCollection>(
       this->node_parameters_, this->node_topics_, "/predicates", this->qos_);
   this->predicate_message_.node = this->node_base_->get_fully_qualified_name();
-  this->predicate_message_.type = modulo_interfaces::msg::PredicateCollection::COMPONENT;
 
   this->rate_ = this->get_parameter_value<double>("rate");
   this->period_ = 1.0 / this->rate_;

@@ -55,7 +55,6 @@ BaseControllerInterface::on_configure(const rclcpp_lifecycle::State&) {
     predicate_publisher_ =
         get_node()->create_publisher<modulo_interfaces::msg::PredicateCollection>("/predicates", qos_);
     predicate_message_.node = get_node()->get_fully_qualified_name();
-    predicate_message_.type = modulo_interfaces::msg::PredicateCollection::CONTROLLER;
 
     predicate_timer_ = get_node()->create_wall_timer(
         std::chrono::nanoseconds(static_cast<int64_t>(1e9 / get_parameter_value<double>("predicate_publishing_rate"))),
