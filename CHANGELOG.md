@@ -35,6 +35,7 @@ Release Versions:
 - fix(controllers)!: remove input validity setter (#209)
 - feat(controllers): use parent node for tf listener (#190)
 - refactor(interfaces)!: remove type from predicate collection message (#222)
+- chore: harmonize parameter validation messages (#251)
 
 ## 5.4.1
 
