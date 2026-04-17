@@ -174,7 +174,7 @@ bool ComponentInterface::validate_parameter(
   if (parameter->get_name() == "rate") {
     auto value = parameter->get_parameter_value<double>();
     if (value <= 0 || !std::isfinite(value)) {
-      RCLCPP_ERROR(this->node_logging_->get_logger(), "Value for parameter 'rate' has to be a positive finite number.");
+      RCLCPP_ERROR(this->node_logging_->get_logger(), "Value of parameter 'rate' should be greater than 0.");
       return false;
     }
   }

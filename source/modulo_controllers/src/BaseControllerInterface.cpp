@@ -163,7 +163,7 @@ bool BaseControllerInterface::validate_parameter(const std::shared_ptr<Parameter
     auto value = parameter->get_parameter_value<double>();
     if (value <= 0.0 || value > std::numeric_limits<double>::max()) {
       RCLCPP_ERROR(
-          get_node()->get_logger(), "Parameter value of parameter '%s' should be greater than 0",
+          get_node()->get_logger(), "Value of of parameter '%s' should be greater than 0",
           parameter->get_name().c_str());
       return false;
     }

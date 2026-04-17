@@ -372,7 +372,7 @@ bool RobotControllerInterface::on_validate_parameter_callback(const std::shared_
   if ((parameter->get_name() == "command_half_life" || parameter->get_name() == "command_rate_limit")
       && parameter->get_parameter_value<double>() <= 0.0) {
     RCLCPP_ERROR(
-        get_node()->get_logger(), "Parameter value of parameter '%s' should be greater than 0",
+        get_node()->get_logger(), "Value of parameter '%s' should be greater than 0",
         parameter->get_name().c_str());
     return false;
   }
