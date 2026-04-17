@@ -264,7 +264,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span>    <span class="keyword">auto</span> value = parameter-&gt;get_parameter_value&lt;<span class="keywordtype">double</span>&gt;();</div>
 <div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span>    <span class="keywordflow">if</span> (value &lt;= 0.0 || value &gt; std::numeric_limits&lt;double&gt;::max()) {</div>
 <div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span>      RCLCPP_ERROR(</div>
-<div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span>          get_node()-&gt;get_logger(), <span class="stringliteral">&quot;Parameter value of parameter &#39;%s&#39; should be greater than 0&quot;</span>,</div>
+<div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span>          get_node()-&gt;get_logger(), <span class="stringliteral">&quot;Value of of parameter &#39;%s&#39; should be greater than 0&quot;</span>,</div>
 <div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span>          parameter-&gt;get_name().c_str());</div>
 <div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span>      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span>    }</div>

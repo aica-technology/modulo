@@ -486,7 +486,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00372" name="l00372"></a><span class="lineno">  372</span>  <span class="keywordflow">if</span> ((parameter-&gt;get_name() == <span class="stringliteral">&quot;command_half_life&quot;</span> || parameter-&gt;get_name() == <span class="stringliteral">&quot;command_rate_limit&quot;</span>)</div>
 <div class="line"><a id="l00373" name="l00373"></a><span class="lineno">  373</span>      &amp;&amp; parameter-&gt;get_parameter_value&lt;<span class="keywordtype">double</span>&gt;() &lt;= 0.0) {</div>
 <div class="line"><a id="l00374" name="l00374"></a><span class="lineno">  374</span>    RCLCPP_ERROR(</div>
-<div class="line"><a id="l00375" name="l00375"></a><span class="lineno">  375</span>        get_node()-&gt;get_logger(), <span class="stringliteral">&quot;Parameter value of parameter &#39;%s&#39; should be greater than 0&quot;</span>,</div>
+<div class="line"><a id="l00375" name="l00375"></a><span class="lineno">  375</span>        get_node()-&gt;get_logger(), <span class="stringliteral">&quot;Value of parameter &#39;%s&#39; should be greater than 0&quot;</span>,</div>
 <div class="line"><a id="l00376" name="l00376"></a><span class="lineno">  376</span>        parameter-&gt;get_name().c_str());</div>
 <div class="line"><a id="l00377" name="l00377"></a><span class="lineno">  377</span>    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"><a id="l00378" name="l00378"></a><span class="lineno">  378</span>  }</div>

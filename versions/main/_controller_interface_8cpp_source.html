@@ -420,17 +420,15 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00286" name="l00286"></a><span class="lineno">  286</span>  <span class="keywordflow">if</span> (parameter-&gt;get_name() == <span class="stringliteral">&quot;activation_timeout&quot;</span>) {</div>
 <div class="line"><a id="l00287" name="l00287"></a><span class="lineno">  287</span>    <span class="keyword">auto</span> value = parameter-&gt;get_parameter_value&lt;<span class="keywordtype">double</span>&gt;();</div>
 <div class="line"><a id="l00288" name="l00288"></a><span class="lineno">  288</span>    <span class="keywordflow">if</span> (value &lt; 0.0 || value &gt; std::numeric_limits&lt;double&gt;::max()) {</div>
-<div class="line"><a id="l00289" name="l00289"></a><span class="lineno">  289</span>      RCLCPP_ERROR(</div>
-<div class="line"><a id="l00290" name="l00290"></a><span class="lineno">  290</span>          get_node()-&gt;get_logger(), <span class="stringliteral">&quot;Parameter value of parameter &#39;%s&#39; should be a positive finite number&quot;</span>,</div>
-<div class="line"><a id="l00291" name="l00291"></a><span class="lineno">  291</span>          parameter-&gt;get_name().c_str());</div>
-<div class="line"><a id="l00292" name="l00292"></a><span class="lineno">  292</span>      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00293" name="l00293"></a><span class="lineno">  293</span>    }</div>
-<div class="line"><a id="l00294" name="l00294"></a><span class="lineno">  294</span>  }</div>
-<div class="line"><a id="l00295" name="l00295"></a><span class="lineno">  295</span>  <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a id="l00296" name="l00296"></a><span class="lineno">  296</span>}</div>
+<div class="line"><a id="l00289" name="l00289"></a><span class="lineno">  289</span>      RCLCPP_ERROR(get_node()-&gt;get_logger(), <span class="stringliteral">&quot;Value of parameter &#39;activation_timeout&#39; cannot be negative&quot;</span>);</div>
+<div class="line"><a id="l00290" name="l00290"></a><span class="lineno">  290</span>      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00291" name="l00291"></a><span class="lineno">  291</span>    }</div>
+<div class="line"><a id="l00292" name="l00292"></a><span class="lineno">  292</span>  }</div>
+<div class="line"><a id="l00293" name="l00293"></a><span class="lineno">  293</span>  <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00294" name="l00294"></a><span class="lineno">  294</span>}</div>
 </div>
-<div class="line"><a id="l00297" name="l00297"></a><span class="lineno">  297</span> </div>
-<div class="line"><a id="l00298" name="l00298"></a><span class="lineno">  298</span>}<span class="comment">// namespace modulo_controllers</span></div>
+<div class="line"><a id="l00295" name="l00295"></a><span class="lineno">  295</span> </div>
+<div class="line"><a id="l00296" name="l00296"></a><span class="lineno">  296</span>}<span class="comment">// namespace modulo_controllers</span></div>
 <div class="ttc" id="aclassmodulo__controllers_1_1_base_controller_interface_html"><div class="ttname"><a href="classmodulo__controllers_1_1_base_controller_interface.html">modulo_controllers::BaseControllerInterface</a></div><div class="ttdoc">Base controller class to combine ros2_control, control libraries and modulo.</div><div class="ttdef"><b>Definition</b> <a href="_base_controller_interface_8hpp_source.html#l00110">BaseControllerInterface.hpp:110</a></div></div>
 <div class="ttc" id="aclassmodulo__controllers_1_1_base_controller_interface_html_a0856a54cc05b74122f46871db239a5d7"><div class="ttname"><a href="classmodulo__controllers_1_1_base_controller_interface.html#a0856a54cc05b74122f46871db239a5d7">modulo_controllers::BaseControllerInterface::get_parameter</a></div><div class="ttdeci">std::shared_ptr&lt; state_representation::ParameterInterface &gt; get_parameter(const std::string &amp;name) const</div><div class="ttdoc">Get a parameter by name.</div><div class="ttdef"><b>Definition</b> <a href="_base_controller_interface_8cpp_source.html#l00112">BaseControllerInterface.cpp:112</a></div></div>
 <div class="ttc" id="aclassmodulo__controllers_1_1_base_controller_interface_html_a14a5c73e422087ecc701eacf84141579"><div class="ttname"><a href="classmodulo__controllers_1_1_base_controller_interface.html#a14a5c73e422087ecc701eacf84141579">modulo_controllers::BaseControllerInterface::on_configure</a></div><div class="ttdeci">CallbackReturn on_configure(const rclcpp_lifecycle::State &amp;previous_state) override</div><div class="ttdoc">Add signals.</div><div class="ttdef"><b>Definition</b> <a href="_base_controller_interface_8cpp_source.html#l00049">BaseControllerInterface.cpp:49</a></div></div>
