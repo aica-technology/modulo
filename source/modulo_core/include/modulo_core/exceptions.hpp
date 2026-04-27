@@ -43,6 +43,16 @@ public:
 };
 
 /**
+ * @class InvalidAssignmentException
+ * @brief An exception class to notify errors when getting the value of an assignment.
+ * @details This is an exception class to be thrown if there is a problem while getting the value of an assignment in a modulo class.
+ */
+class InvalidAssignmentException : public CoreException {
+public:
+  explicit InvalidAssignmentException(const std::string& msg) : CoreException("InvalidAssignmentException", msg) {}
+};
+
+/**
  * @class InvalidPointerCastException
  * @brief An exception class to notify if the result of getting an instance of a derived class through dynamic
  * down-casting of an object of the base class is not a correctly typed instance of the derived class.

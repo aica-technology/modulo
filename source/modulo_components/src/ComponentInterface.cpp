@@ -28,6 +28,9 @@ ComponentInterface::ComponentInterface(
       });
   this->add_parameter("rate", 10.0, "The rate in Hertz for all periodic callbacks", true);
 
+  this->assignment_publisher_ = rclcpp::create_publisher<modulo_interfaces::msg::Assignment>(
+      this->node_parameters_, this->node_topics_, "/assignments", this->qos_);
+
   this->predicate_publisher_ = rclcpp::create_publisher<modulo_interfaces::msg::PredicateCollection>(
       this->node_parameters_, this->node_topics_, "/predicates", this->qos_);
   this->predicate_message_.node = this->node_base_->get_fully_qualified_name();

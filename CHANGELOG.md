@@ -36,6 +36,7 @@ Release Versions:
 - feat(controllers): use parent node for tf listener (#190)
 - refactor(interfaces)!: remove type from predicate collection message (#222)
 - chore: harmonize parameter validation messages (#251)
+- feat: add assignments in c++ (#221)
 
 ## 5.4.1
 
