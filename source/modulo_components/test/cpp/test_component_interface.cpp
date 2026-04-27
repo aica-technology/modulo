@@ -7,6 +7,7 @@
 #include <modulo_utils/testutils/ServiceClient.hpp>
 
 #include "test_modulo_components/component_public_interfaces.hpp"
+#include "state_representation/exceptions/EmptyStateException.hpp"
 
 #include <sensor_msgs/msg/image.hpp>
 
@@ -40,6 +41,35 @@ protected:
 
 using NodeTypes = ::testing::Types<rclcpp::Node, rclcpp_lifecycle::LifecycleNode>;
 TYPED_TEST_SUITE(ComponentInterfaceTest, NodeTypes);
+
+TYPED_TEST(ComponentInterfaceTest, AddAssignment) {
+  this->component_->template add_assignment<int>("an_assignment");
+  // adding an assignment with empty name should fail
+  EXPECT_NO_THROW(this->component_->template add_assignment<int>(""));
+  // adding an assignment with the same name should just overwrite
+  this->component_->template add_assignment<int>("an_assignment");
+  EXPECT_EQ(this->component_->assignments_map_.get_parameter_list().size(), 1);
+  // names should be cleaned up
+  EXPECT_NO_THROW(this->component_->template add_assignment<int>("7cleEaGn_AaSssiGNgn#ment"));
+  EXPECT_EQ(this->component_->assignments_map_.get_parameter_list().size(), 2);
+  // names without valid characters should fail
+  EXPECT_NO_THROW(this->component_->template add_assignment<int>("@@@@@@"));
+  EXPECT_EQ(this->component_->assignments_map_.get_parameter_list().size(), 2);
+}
+
+TYPED_TEST(ComponentInterfaceTest, GetSetAssignment) {
+  this->component_->template add_assignment<int>("int_assignment");
+  
+  EXPECT_THROW(this->component_->template get_assignment<int>("non_existent"), modulo_core::exceptions::InvalidAssignmentException); 
+  EXPECT_NO_THROW(this->component_->set_assignment("non_existent", 5));
+
+  EXPECT_THROW(this->component_->template get_assignment<int>("int_assignment"), state_representation::exceptions::EmptyStateException); 
+  EXPECT_NO_THROW(this->component_->set_assignment("int_assignment", 5));
+  EXPECT_NO_THROW(this->component_->set_assignment("int_assignment", std::string("test")));
+
+  EXPECT_EQ(this->component_->template get_assignment<int>("int_assignment"), 5); 
+  EXPECT_THROW(this->component_->template get_assignment<std::string>("int_assignment"), modulo_core::exceptions::InvalidAssignmentException); 
+}
 
 TYPED_TEST(ComponentInterfaceTest, AddBoolPredicate) {
   this->component_->add_predicate("foo", true);
