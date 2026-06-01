@@ -2,6 +2,7 @@
 
 Release Versions:
 
+- [5.2.2](#542)
 - [5.4.1](#541)
 - [5.4.0](#540)
 - [5.3.0](#530)
@@ -37,6 +38,13 @@ Release Versions:
 - refactor(interfaces)!: remove type from predicate collection message (#222)
 - chore: harmonize parameter validation messages (#251)
 - feat: add assignments in c++ (#221)
+
+## 5.4.2
+
+### May 28th, 2026
+
+Version 5.4.2 is a patch release that fixes a bug in the controller base class where the joint commands would not be
+written back to the hardware after deactivation.
 
 ## 5.4.1
 
