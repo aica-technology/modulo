@@ -3,24 +3,12 @@ name: Build and release
 on:
   push:
     branches:
-      - main
+      - patch/v5.4.2
 
 jobs:
-  check-version:
-    name: Check if the version has been updated
-    outputs:
-      has_changed: ${{ steps.check.outputs.has_changed }}
-      version: ${{ steps.check.outputs.version }}
-    runs-on: ubuntu-latest
-    steps:
-      - uses: aica-technology/.github/.github/actions/check-version-toml@v1.0.2
-        id: check
-        with:
-          package_path: .
 
   metadata:
     name: Get metadata
-    needs: check-version
     runs-on: ubuntu-latest
     outputs:
       image_name: ${{ steps.ensure-image.outputs.image_name }}
@@ -34,19 +22,9 @@ jobs:
           image_name: aica-technology/modulo
 
       - run: |
-          CREATE_TAG=false
-          GIT_TAG=""
-          if [ ${{ needs.check-version.outputs.has_changed }} = 'true' ]; then
-            CREATE_TAG=true
-            GIT_TAG="v${{ needs.check-version.outputs.version }}"
-            if [[ "${GIT_TAG}" == *"-"* ]]; then
-              IMAGE_TAGS="${GIT_TAG}",rolling
-            else
-              IMAGE_TAGS=latest,"${GIT_TAG}",rolling
-            fi
-          else
-            IMAGE_TAGS=rolling
-          fi
+          GIT_TAG="v5.4.2"
+          IMAGE_TAGS=latest,"${GIT_TAG}"
+          CREATE_TAG=true
           echo "Image tags: ${IMAGE_TAGS}"
           echo "Create tag: ${CREATE_TAG}"
           echo "Git tag: ${GIT_TAG}"

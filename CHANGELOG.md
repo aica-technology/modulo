@@ -2,6 +2,7 @@
 
 Release Versions:
 
+- [5.4.2](#542)
 - [5.4.1](#541)
 - [5.4.0](#540)
 - [5.3.0](#530)
@@ -25,6 +26,13 @@ Release Versions:
 - [2.2.0](#220)
 - [2.1.1](#211)
 - [2.1.0](#210)
+
+## 5.4.2
+
+### May 28th, 2026
+
+Version 5.4.2 is a patch release that fixes a bug in the controller base class where the joint commands would not be
+written back to the hardware after deactivation.
 
 ## 5.4.1
 
