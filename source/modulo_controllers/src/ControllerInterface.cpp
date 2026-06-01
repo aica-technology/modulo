@@ -191,7 +191,14 @@ rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn Contro
 rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn
 ControllerInterface::on_deactivate(const rclcpp_lifecycle::State&) {
   try {
-    return on_deactivate();
+    if (auto ret = on_deactivate(); ret != CallbackReturn::SUCCESS) {
+      return ret;
+    }
+    if (write_command_interfaces(rclcpp::Duration(0s)) != controller_interface::return_type::OK) {
+      RCLCPP_ERROR(get_node()->get_logger(), "Failed to write command interfaces on deactivation.");
+      return CallbackReturn::ERROR;
+    }
+    return CallbackReturn::SUCCESS;
   } catch (const std::exception& ex) {
     RCLCPP_ERROR_STREAM(get_node()->get_logger(), ex.what());
   }
